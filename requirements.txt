@@ -1,0 +1,3 @@
+scikit-learn==0.23.1
+# FIXME: Locking werkzeug until the resolution of pallets/werkzeug#1714
+werkzeug==0.16.1

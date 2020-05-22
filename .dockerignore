@@ -1,0 +1,12 @@
+.coverage*
+.flake8
+.gitignore
+.pytest_cache
+.venv
+bin
+data
+Dockerfile
+Makefile
+README.md
+tests
+videos
