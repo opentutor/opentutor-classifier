@@ -1,13 +1,44 @@
-import .SVMClassifier
+import SVMClassifier
 
 class DispatcherModel():
   def __init__(self):
-    self.model_class = SVMClassifier
+    self.model_class = SVMClassifier.SVMClassifier
     self.model_instances = {}
   
   def train_all(self, x, y):
-         splitTrainingSets = (split into a dictionary of training data sets)
-         for i, x_i, y_i in splitTrainingSets:
-                model = self._model_class()
+    """ 
+    @param x: 2D Table of length n with colummns: dialogname | expectation num | input sentence
+    @param y: List of labels of length n, matching the lines of x
+    """
+    split_training_sets = {}
+    
+    for i in enumerate(x):
+      label = y[i]
+      dialog_name, exp_name, input_sentence = x[i]
+      if expectation_num not in split_training_sets:
+        split_training_sets[exp_name] = [[], []]
+      split_training_sets[exp_name][0].append(input_sentence)
+      split_training_sets[exp_name][1].append(label)
+      
+    for exp_name, (x_i, y_i) in split_training_sets.items():
+                model = self_model_class()
                 model.train(x_i, y_i)
-                self.model_instances[i] = model
+                self.model_instances[exp_name] = model
+  
+  def predict(self, input_sentence, exp_name = None):
+    if exp_name is None: 
+      exp_names = self.model_instances.keys()
+    else
+      exp_names = [exp_name]
+   results = {}
+   for name, model in exp_names.items():
+      label = model.predict(input_sentence)
+      conf = model.confidence(input_sentence)
+      results[name] = (label, conf)
+   return results
+
+   def save():
+      pass
+   de load():
+      pass
+     
