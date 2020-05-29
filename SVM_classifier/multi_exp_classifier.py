@@ -37,8 +37,33 @@ class DispatcherModel():
       results[name] = (label, conf)
    return results
 
-   def save():
-      pass
-   de load():
-      pass
+   
+   def loadDataset(self, file):
+        dataset = pd.read_csv(file, encoding="latin-1")
+        return dataset
      
+    def get_params(self):
+      pass
+    def set_params(self, **params):
+      pass
+    
+    def train(self, trainFeatures, Train_Y):
+        self.model.fit(trainFeatures, Train_Y)
+        print("Triaining complete")
+        
+    def predict(self, testFeatures):
+        return self.model.predict(testFeatures)
+    
+    def score(self, model_predictions, Test_Y):
+        return accuracy_score(model_predictions, Test_Y)*100
+    
+    def save(self, filename):
+        pickle.dump(self.model, open(filename, 'wb'))
+        print("Model saved successfully!")
+        
+    def load(self, filename):
+        model = pickle.load(open(filename, 'rb'))
+        return model
+
+    def confidence_score(self, sentence, expectation_number):
+        if expectation_number == None:
