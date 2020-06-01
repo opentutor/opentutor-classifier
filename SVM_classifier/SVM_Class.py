@@ -74,6 +74,7 @@ class SVMClassifier:
     
     def initialize_ideal_answer(self, X):
         self.ideal_answer = X[0]
+        return self.ideal_answer
 
     def encode_y(self, Train_Y, Test_Y):
         Encoder = LabelEncoder()
@@ -110,7 +111,7 @@ class SVMClassifier:
     
     def train(self, trainFeatures, Train_Y):
         self.model.fit(trainFeatures, Train_Y)
-        print("Triaining complete")
+        # print("Triaining complete")
         
     def predict(self, model, testFeatures):
         return model.predict(testFeatures)
@@ -120,7 +121,7 @@ class SVMClassifier:
     
     def save(self, filename):
         pickle.dump(self.model, open(filename, 'wb'))
-        print("Model saved successfully!")
+        # print("Model saved successfully!")
         
     def load(self, filename):
         model = pickle.load(open(filename, 'rb'))
@@ -129,35 +130,37 @@ class SVMClassifier:
     def confidence_score(self, model, sentence):
         return model.decision_function(sentence)[0]
 
-# expectation1 = SVMClassifier()
-# Corpus = expectation1.loadDataset('comp_dataset.csv')
+if __name__ == '__main__':
+    expectation1 = SVMClassifier()
+    Corpus = expectation1.loadDataset('comp_dataset.csv')
+    # print(Corpus)
 
-# preProcessedDataset = expectation1.preprocessing(Corpus['text'])
-# Train_X, Test_X, Train_Y, Test_Y = expectation1.split(preProcessedDataset, Corpus['label'])
-# expectation1.initialize_ideal_answer(Train_X)
-# Train_Y, Test_Y = expectation1.encode_y(Train_Y, Test_Y)
-# features = expectation1.alignment(Train_X, None)
+    preProcessedDataset = expectation1.preprocessing(Corpus['text'])
+    Train_X, Test_X, Train_Y, Test_Y = expectation1.split(preProcessedDataset, Corpus['label'])
+    expectation1.initialize_ideal_answer(Train_X)
+    Train_Y, Test_Y = expectation1.encode_y(Train_Y, Test_Y)
+    features = expectation1.alignment(Train_X, None)
 
-# C,kernel, degree, gamma, probability = expectation1.get_params()
-# model = expectation1.set_params(C=1.0, kernel='linear', degree=3, gamma='auto', probability=True)
-# expectation1.train(features, Train_Y)
-# train_pred = expectation1.predict(model, features)
+    C,kernel, degree, gamma, probability = expectation1.get_params()
+    model = expectation1.set_params(C=1.0, kernel='linear', degree=3, gamma='auto', probability=True)
+    expectation1.train(features, Train_Y)
+    train_pred = expectation1.predict(model, features)
 
-# testFeatures = expectation1.alignment(Test_X, None)
-# model_predictions = expectation1.predict(model, testFeatures)
-# accuracy = expectation1.score(model_predictions, Test_Y)
-# print("Accuracy of the model: ",accuracy)
+    testFeatures = expectation1.alignment(Test_X, None)
+    model_predictions = expectation1.predict(model, testFeatures)
+    accuracy = expectation1.score(model_predictions, Test_Y)
+    # print("Accuracy of the model: ",accuracy)
 
-# expectation1.save('model1')
+    expectation1.save('model1')
 
-# model1 = expectation1.load('model1')
+    model1 = expectation1.load('model1')
 
-# sentence = ['unfortunately entertain least Awful beyond belief!: I feel I have to write to keep others from wasting their money. This book seems to have been written by a 7th grader with poor grammatical skills for her age! As another reviewer points out, there is a misspelling on the cover, and I believe there is at least one per chapter. For example, it was mentioned twice that she had a "lean" on her house. I was so distracted by the poor writing and weak plot, that I decided to read with a pencil in hand to mark all of the horrible grammar and spelling. Please dont waste your money. I too, believe that the good reviews must have been written by the authors relatives. I will not put much faith in the reviews from now on!']
-# sent_proc = expectation1.preprocessing(sentence)
-# sent_features = expectation1.alignment(sent_proc, None)
+    sentence = ['Peer pressure can cause you to allow inappropriate behavior.']
+    sent_proc = expectation1.preprocessing(sentence)
+    sent_features = expectation1.alignment(sent_proc, None)
 
-# score = expectation1.confidence_score(model1, sent_features)
-
+    score = expectation1.confidence_score(model1, sent_features)
+    # print("score=  ", score)
 
 
 
