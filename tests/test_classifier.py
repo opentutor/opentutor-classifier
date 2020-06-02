@@ -1,19 +1,19 @@
 import pytest
-from opentutor_classifier import Answer, Classifier
+from multi_exp_classifier import DispatcherModel
 
 
 @pytest.mark.parametrize(
-    "input_answer,expected_score",
+    "input_answer,expected_number, expected_score",
     [
-        ("some user answer 1", 0.0),
-        ("some other answer 2 (this will fail for now)", 1.0),
+        (['rules can make you unpopular'], None, {1: [-1.0, 'Good'], 2: [1.0, 'Bad'], 3: [1.0, 'Bad']}),
+        (['peer pressure can get you in trouble'],1, {1: [-0.6666666666666667, 'Good']}),
     ],
 )
 def test_trained_classifier_evalulates_answers_for_a_hard_coded_question(
-    input_answer, expected_score
+    input_answer , expected_number, expected_score
 ):
     classifier = (
-        Classifier()
+        DispatcherModel()
     )  # really this should be loaded with model, maybe trained inline for this test?
-    result = classifier.evaluate(Answer(answer=input_answer))
-    assert result.score == expected_score
+    score = classifier.predict_sentence(input_answer, expected_number)
+    assert score == expected_score
