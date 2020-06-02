@@ -31,13 +31,18 @@ class DispatcherModel():
       C,kernel, degree, gamma, probability = self.model_obj.get_params()
       model = self.model_obj.set_params(C=1.0, kernel='linear', degree=3, gamma='auto', probability=True)
       self.model_obj.train(features, Train_Y)
-      self.model_obj.save('model_' + str(exp_num))
       self.model_instances[exp_num] = model
-    return self.model_instances
+    self.model_obj.save(self.model_instances, 'models')
+    self.model_obj.save(self.ideal_answers_dictionary, 'ideal_answers')
+
+
+  def load(self,models, ideal_answers):
+    return self.model_obj.load('models'), self.model_obj.load('ideal_answers')
 
   def predict_sentence(self, input_sentence, exp_num):
 
     sent_proc = self.model_obj.preprocessing(input_sentence)
+    self.model_instances, self.ideal_answers_dictionary = self.load('models', 'ideal_answers')
     
     if exp_num is None:
       for exp_num,model in self.model_instances.items():

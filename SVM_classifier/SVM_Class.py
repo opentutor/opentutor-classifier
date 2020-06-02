@@ -119,8 +119,8 @@ class SVMClassifier:
     def score(self, model_predictions, Test_Y):
         return accuracy_score(model_predictions, Test_Y)*100
     
-    def save(self, filename):
-        pickle.dump(self.model, open(filename, 'wb'))
+    def save(self, models, filename):
+        pickle.dump(models , open(filename, 'wb'))
         # print("Model saved successfully!")
         
     def load(self, filename):
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     accuracy = expectation1.score(model_predictions, Test_Y)
     # print("Accuracy of the model: ",accuracy)
 
-    expectation1.save('model1')
+    expectation1.save(model, 'model1')
 
     model1 = expectation1.load('model1')
 
@@ -161,6 +161,3 @@ if __name__ == '__main__':
 
     score = expectation1.confidence_score(model1, sent_features)
     # print("score=  ", score)
-
-
-
