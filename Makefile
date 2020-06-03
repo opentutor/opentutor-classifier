@@ -30,6 +30,11 @@ test-lint: $(VENV)
 test-types: $(VENV)
 	. $(VENV)/bin/activate && mypy opentutor_classifier
 
+.PHONY: train
+train: $(VENV)
+	. $(VENV)/bin/activate \
+	&& python3 classifier_train.py
+
 .PHONY: update-deps
 update-deps: $(VENV)
 	. $(VENV)/bin/activate && pip-upgrade requirements*
@@ -39,6 +44,10 @@ venv-create: virtualenv-installed
 	[ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
 	$(VENV)/bin/pip install --upgrade pip
 	$(VENV)/bin/pip install -r ./requirements.test.txt
+	$(VENV)/bin/python3.8 -m nltk.downloader punkt
+	$(VENV)/bin/python3.8 -m nltk.downloader wordnet
+	$(VENV)/bin/python3.8 -m nltk.downloader averaged_perceptron_tagger
+	$(VENV)/bin/python3.8 -m nltk.downloader stopwords
 
 virtualenv-installed:
 	bin/virtualenv_ensure_installed.sh
