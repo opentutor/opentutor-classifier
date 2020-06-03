@@ -1,4 +1,4 @@
-from .svm_class import SVMClassifier
+from .svm_classifier import SVMClassifier
 from collections import defaultdict
 
 
@@ -84,7 +84,6 @@ class DispatcherModel:
 if __name__ == "__main__":
     obj = DispatcherModel()
     model_instances = obj.train_all("comp_dataset.csv")
-
     input_sentence = ["rules can make you unpopular"]
     scores = obj.predict_sentence(input_sentence, None)
     print("scores=  ", scores)
