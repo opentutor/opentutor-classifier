@@ -1,4 +1,4 @@
-from SVM_Class import SVMClassifier
+from .svm_class import SVMClassifier
 from collections import defaultdict
 
 

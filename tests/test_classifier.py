@@ -1,5 +1,5 @@
 import pytest
-from multi_exp_classifier import DispatcherModel
+from opentutor_classifier.multi_exp_classifier import DispatcherModel
 
 
 @pytest.mark.parametrize(
