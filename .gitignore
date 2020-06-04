@@ -17,4 +17,6 @@ QuestionAnswerLog.csv
 */build
 */videos
 .ipynb_checkpoints
+models
+ideal_answers
 

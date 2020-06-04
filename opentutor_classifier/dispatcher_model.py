@@ -1,5 +1,6 @@
 from .svm_classifier import SVMClassifier
 from collections import defaultdict
+import pandas as pd
 
 
 class DispatcherModel:
@@ -9,12 +10,12 @@ class DispatcherModel:
         self.score_dictionary = {}
         self.ideal_answers_dictionary = {}
 
-    def train_all(self, filename):
+    def loadData(self, filename):
+        return pd.read_csv(filename, encoding="latin-1")
+
+    def train_all(self, Corpus):
 
         split_training_sets = defaultdict(int)
-
-        Corpus = self.model_obj.loadDataset(filename)
-
         for i, value in enumerate(Corpus["exp_num"]):
             if value not in split_training_sets:
                 split_training_sets[value] = [[], []]
@@ -44,7 +45,7 @@ class DispatcherModel:
         return self.model_obj.load("models"), self.model_obj.load("ideal_answers")
 
     def predict_sentence(self, input_sentence, exp_num):
-
+        self.score_dictionary = {}
         sent_proc = self.model_obj.preprocessing(input_sentence)
         self.model_instances, self.ideal_answers_dictionary = self.load(
             "models", "ideal_answers"
@@ -79,11 +80,3 @@ class DispatcherModel:
                 class_name = "Bad"
             self.score_dictionary[exp_num] = [model_score, class_name]
         return self.score_dictionary
-
-
-if __name__ == "__main__":
-    obj = DispatcherModel()
-    model_instances = obj.train_all("comp_dataset.csv")
-    input_sentence = ["rules can make you unpopular"]
-    scores = obj.predict_sentence(input_sentence, None)
-    print("scores=  ", scores)
