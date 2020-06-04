@@ -1,21 +1,29 @@
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from typing import List
 
 
 @dataclass
-class Answer:
-    answer: str
+class ExpectationClassifierResult:
+    answer: str = ""
+    expectation: int = 0
+    evaluation: str = ""
+    score: float = 0.0
 
 
 @dataclass
-class AnswerEvaluation:
-    answer: Answer
-    score: float
+class AnswerClassifierInput:
+    input_sentence: str
+    expectation: int
 
 
-class Classifier:
-    """
-    Not necesarily the correct interface for the classifier yet, just a stub example
-    """
+@dataclass
+class AnswerClassifierResult:
+    input: AnswerClassifierInput
+    expectationResults: List[ExpectationClassifierResult] = field(default_factory=list)
 
-    def evaluate(self, answer: Answer) -> AnswerEvaluation:
-        return AnswerEvaluation(answer=answer, score=0.0)
+
+class AnswerClassifier(ABC):
+    @abstractmethod
+    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+        raise NotImplementedError()
