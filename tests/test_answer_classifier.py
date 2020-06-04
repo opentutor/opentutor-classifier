@@ -19,7 +19,7 @@ from opentutor_classifier.svm import SVMAnswerClassifier
                     expectation=1, score=-0.6666666666666667, evaluation="Good"
                 )
             ],
-        ),
+        )
     ],
 )
 def test_evaluates_one_expectation(input_answer, input_expectation, expected_results):
