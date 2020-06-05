@@ -33,11 +33,11 @@ def test_evaluates_one_expectation(input_answer, input_expectation, expected_res
 
 
 @pytest.mark.parametrize(
-    "input_answer,input_with_no_expectation,expected_results",
+    "input_answer,input_expectation_number,expected_results",
     [
         (
             ["peer pressure"],
-            None,
+            -1,
             [
                 ExpectationClassifierResult(
                     expectation=1, score=-0.6666666666666667, evaluation="Good"
@@ -49,14 +49,14 @@ def test_evaluates_one_expectation(input_answer, input_expectation, expected_res
     ],
 )
 def test_evaluates_with_no_input_expectation(
-    input_answer, input_with_no_expectation, expected_results
+    input_answer, input_expectation_number, expected_results
 ):
     classifier = (
         SVMAnswerClassifier()
     )  # really this should be loaded with model, maybe trained inline for this test?
     result = classifier.evaluate(
         AnswerClassifierInput(
-            input_sentence=input_answer, expectation=input_with_no_expectation
+            input_sentence=input_answer, expectation=input_expectation_number
         )
     )
     assert len(result.expectationResults) == len(expected_results)
