@@ -5,7 +5,7 @@ from typing import List
 
 @dataclass
 class ExpectationClassifierResult:
-    answer: str = ""
+    # answer: str = ""
     expectation: int = 0
     evaluation: str = ""
     score: float = 0.0

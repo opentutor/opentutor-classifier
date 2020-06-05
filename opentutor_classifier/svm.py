@@ -95,7 +95,6 @@ class SVMExpectationClassifier:
             kernel=params["kernel"],
             degree=params["degree"],
             gamma=params["gamma"],
-            probability=params["probability"],
         )
         return self.model
 
@@ -168,8 +167,6 @@ class SVMAnswerClassifier:
         return self.model_obj.load("models"), self.model_obj.load("ideal_answers")
 
     def find_model_for_expectation(self, expectation: int) -> svm.SVC:
-        print(f"what is expectation={expectation}")
-        print(f"what is model_instances={self.model_instances}")
         return self.model_instances[expectation]
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
@@ -197,7 +194,6 @@ class SVMAnswerClassifier:
             )
             result.expectationResults.append(
                 ExpectationClassifierResult(
-                    answer=answer.input_sentence,
                     expectation=e.expectation,
                     evaluation=(
                         "Good"
