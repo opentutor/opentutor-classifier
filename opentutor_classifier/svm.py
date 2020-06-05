@@ -6,6 +6,7 @@ from nltk import pos_tag
 from nltk.corpus import stopwords, wordnet as wn
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+from os import path, makedirs
 import pickle
 from sklearn import model_selection, svm
 from sklearn.metrics import accuracy_score
@@ -15,6 +16,7 @@ from opentutor_classifier import (
     AnswerClassifierInput,
     AnswerClassifierResult,
     ExpectationClassifierResult,
+    loadData,
 )
 
 
@@ -31,10 +33,6 @@ class SVMExpectationClassifier:
         self.ideal_answer = None
         self.model = None
         self.score_dictionary = defaultdict(int)
-
-    def loadDataset(self, file):
-        dataset = pd.read_csv(file, encoding="latin-1")
-        return dataset
 
     def preprocessing(self, data):
         preProcessedDataset = []
@@ -133,17 +131,15 @@ class SVMAnswerClassifier:
         self.score_dictionary = {}
         self.ideal_answers_dictionary = {}
 
-    def loadData(self, filename):
-        return pd.read_csv(filename, encoding="latin-1")
-
-    def train_all(self, Corpus):
-        split_training_sets = defaultdict(int)
-        for i, value in enumerate(Corpus["exp_num"]):
+    def train_all(self, corpus: pd.DataFrame, output_dir: str = "."):
+        output_dir = path.abspath(output_dir)
+        makedirs(output_dir, exist_ok=True)
+        split_training_sets: dict = defaultdict(int)
+        for i, value in enumerate(corpus["exp_num"]):
             if value not in split_training_sets:
                 split_training_sets[value] = [[], []]
-            split_training_sets[value][0].append(Corpus["text"][i])
-            split_training_sets[value][1].append(Corpus["label"][i])
-
+            split_training_sets[value][0].append(corpus["text"][i])
+            split_training_sets[value][1].append(corpus["label"][i])
         for exp_num, (Train_X, Train_Y) in split_training_sets.items():
             processed_data = self.model_obj.preprocessing(Train_X)
             ia = self.model_obj.initialize_ideal_answer(processed_data)
@@ -151,7 +147,6 @@ class SVMAnswerClassifier:
             Train_X, Test_X, Train_Y, Test_Y = self.model_obj.split(
                 processed_data, Train_Y
             )
-
             Train_Y, Test_Y = self.model_obj.encode_y(Train_Y, Test_Y)
             features = self.model_obj.alignment(Train_X, None)
             C, kernel, degree, gamma, probability = self.model_obj.get_params()
@@ -160,8 +155,10 @@ class SVMAnswerClassifier:
             )
             self.model_obj.train(features, Train_Y)
             self.model_instances[exp_num] = model
-        self.model_obj.save(self.model_instances, "models")
-        self.model_obj.save(self.ideal_answers_dictionary, "ideal_answers")
+        self.model_obj.save(self.model_instances, path.join(output_dir, "models"))
+        self.model_obj.save(
+            self.ideal_answers_dictionary, path.join(output_dir, "ideal_answers")
+        )
 
     def load(self, models, ideal_answers):
         return self.model_obj.load("models"), self.model_obj.load("ideal_answers")
@@ -181,7 +178,7 @@ class SVMAnswerClassifier:
                     classifier=self.find_model_for_expectation(answer.expectation),
                 )
             ]
-            if answer.expectation is not None
+            if answer.expectation != -1
             else [
                 ExpectationToEvaluate(expectation=int(k), classifier=v)
                 for k, v in self.model_instances.items()
@@ -204,3 +201,9 @@ class SVMAnswerClassifier:
                 )
             )
         return result
+
+
+def train_classifier(training_data_path: str, model_root: str = "."):
+    training_data = loadData(training_data_path)
+    svm_answer_classifier = SVMAnswerClassifier()
+    svm_answer_classifier.train_all(training_data, output_dir=model_root)

@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+import pandas as pd
 from typing import List
 
 
 @dataclass
 class ExpectationClassifierResult:
-    # answer: str = ""
-    expectation: int = 0
+    expectation: int = -1
     evaluation: str = ""
     score: float = 0.0
 
@@ -14,7 +14,7 @@ class ExpectationClassifierResult:
 @dataclass
 class AnswerClassifierInput:
     input_sentence: str
-    expectation: int
+    expectation: int = -1
 
 
 @dataclass
@@ -27,3 +27,7 @@ class AnswerClassifier(ABC):
     @abstractmethod
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         raise NotImplementedError()
+
+
+def loadData(filename: str) -> pd.DataFrame:
+    return pd.read_csv(filename, encoding="latin-1")
