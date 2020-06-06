@@ -7,5 +7,4 @@ obj = SVMAnswerClassifier()
 data = loadData(os.path.join(data_path, "comp_dataset.csv"))
 obj.train_all(data)
 input_sentence = ["peer pressure"]
-result = obj.evaluate(AnswerClassifierInput(input_sentence=input_sentence, expectation=None))
-print("len of result = ", len(result.expectationResults))
+result = obj.evaluate(AnswerClassifierInput(input_sentence=input_sentence, expectation=-1))

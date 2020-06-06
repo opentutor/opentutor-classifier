@@ -1,31 +1,31 @@
 exp_num,text,label
-1,Peer pressure can cause you to allow inappropriate behavior.,good
-1,Rules apply differently to the group.,bad
-1,peer pressure can lower your standards,good
-1,ghosts can lower your standards,bad
-1,making hard decisions can become a problem,good
-1,do not addressing issues of honesty can mess things up,good
-1,Not arriving at your workplace on time may affect others,good
-1,giving respect to others is troublesome,bad
-1,completing the work before time will create issues,bad
-1,taking responsibility for your mistakes may disrespect others,bad
-2,Correcting someone's behaviour can get you in trouble,good
-2,People will love when you correct someone's behaviour,bad
-2,Doing risky things can get you in trouble,good
-2,Risky things can give you a new car,bad
-2,Affecting others emotionally can make it difficult to work with them,good
-2,People love when they are affected emotionally,bad
-2,Shouting or speaking in anger can decrease your integrity values,good
-2,minding your own business is the best choice,bad
-2,giving orders and demeaning others can decrease your integrity qualifications,good
-2,loving and caring for other people ,bad
-3,Enforcing the rules can make you unpopular.,good
-3,enforcing the rules will make you feel superior.,bad
-3,Integrity means doing the right thing even when it is unpopular,good
-3,Integrity means doing the right thing even when it is green,bad
-3,Integrity is the practice of being honest and showing a consistent and uncompromising adherence to strong moral and ethical principles and values,good
-3,Dishonesty and inconsistency are the qualities of itegrity,bad
-3,Helping others is what integrity is all about,good
-3,People with integrity never value other people,bad
-3,Those with integrity are gracious when others provide assistance,good
-3,Those with integrity are not trustworthy,bad
+0,Peer pressure can cause you to allow inappropriate behavior.,good
+0,Rules apply differently to the group.,bad
+0,peer pressure can lower your standards,good
+0,ghosts can lower your standards,bad
+0,making hard decisions can become a problem,good
+0,do not addressing issues of honesty can mess things up,good
+0,Not arriving at your workplace on time may affect others,good
+0,giving respect to others is troublesome,bad
+0,completing the work before time will create issues,bad
+0,taking responsibility for your mistakes may disrespect others,bad
+1,Correcting someone's behaviour can get you in trouble,good
+1,People will love when you correct someone's behaviour,bad
+1,Doing risky things can get you in trouble,good
+1,Risky things can give you a new car,bad
+1,Affecting others emotionally can make it difficult to work with them,good
+1,People love when they are affected emotionally,bad
+1,Shouting or speaking in anger can decrease your integrity values,good
+1,minding your own business is the best choice,bad
+1,giving orders and demeaning others can decrease your integrity qualifications,good
+1,loving and caring for other people ,bad
+2,Enforcing the rules can make you unpopular.,good
+2,enforcing the rules will make you feel superior.,bad
+2,Integrity means doing the right thing even when it is unpopular,good
+2,Integrity means doing the right thing even when it is green,bad
+2,Integrity is the practice of being honest and showing a consistent and uncompromising adherence to strong moral and ethical principles and values,good
+2,Dishonesty and inconsistency are the qualities of itegrity,bad
+2,Helping others is what integrity is all about,good
+2,People with integrity never value other people,bad
+2,Those with integrity are gracious when others provide assistance,good
+2,Those with integrity are not trustworthy,bad

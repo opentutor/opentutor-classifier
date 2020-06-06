@@ -8,7 +8,7 @@ from opentutor_classifier.svm import SVMAnswerClassifier
     [
         (
             ["peer pressure can get you in trouble"],
-            1,
+            0,
             [
                 ExpectationClassifierResult(
                     expectation=1, score=-0.6666666666666667, evaluation="Good"
