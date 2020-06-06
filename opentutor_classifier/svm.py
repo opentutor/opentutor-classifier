@@ -38,7 +38,6 @@ class SVMExpectationClassifier:
         preProcessedDataset = []
         data = [entry.lower() for entry in data]
         data = [word_tokenize(entry) for entry in data]
-        print("data = ", data)
         for index, entry in enumerate(data):
             Final_words = []
             word_Lemmatized = WordNetLemmatizer()
@@ -169,7 +168,6 @@ class SVMAnswerClassifier:
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = self.model_obj.preprocessing(answer.input_sentence)
-        print("sent_proc = ", sent_proc)
         self.model_instances, self.ideal_answers_dictionary = self.load(
             "models", "ideal_answers"
         )
