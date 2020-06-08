@@ -6,7 +6,7 @@ from nltk import pos_tag
 from nltk.corpus import stopwords, wordnet as wn
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
-from os import path, makedirs
+from os import path, makedirs, getcwd
 import pickle
 from sklearn import model_selection, svm
 from sklearn.metrics import accuracy_score
@@ -106,13 +106,9 @@ class SVMExpectationClassifier:
     def score(self, model_predictions, Test_Y):
         return accuracy_score(model_predictions, Test_Y) * 100
 
-    def save(self, models, filename):
-        pickle.dump(models, open(filename, "wb"))
+    def save(self, model_instances, filename):
+        pickle.dump(model_instances, open(filename, "wb"))
         # print("Model saved successfully!")
-
-    def load(self, filename):
-        model = pickle.load(open(filename, "rb"))
-        return model
 
     def confidence_score(self, model, sentence):
         return model.decision_function(sentence)[0]
@@ -124,16 +120,17 @@ class ExpectationToEvaluate:
     classifier: svm.SVC
 
 
-class SVMAnswerClassifier:
+class SVMAnswerClassifierTraining:
     def __init__(self):
         self.model_obj = SVMExpectationClassifier()
         self.model_instances = {}
-        self.score_dictionary = {}
         self.ideal_answers_dictionary = {}
 
     def train_all(self, corpus: pd.DataFrame, output_dir: str = "."):
         output_dir = path.abspath(output_dir)
+        # output_dir = path.join(output_dir, 'models')
         makedirs(output_dir, exist_ok=True)
+        print("output_dir == ", output_dir)
         split_training_sets: dict = defaultdict(int)
         for i, value in enumerate(corpus["exp_num"]):
             if value not in split_training_sets:
@@ -155,22 +152,25 @@ class SVMAnswerClassifier:
             )
             self.model_obj.train(features, Train_Y)
             self.model_instances[exp_num] = model
-        self.model_obj.save(self.model_instances, path.join(output_dir, "models"))
+        self.model_obj.save(
+            self.model_instances, path.join(output_dir, "model_instances")
+        )
         self.model_obj.save(
             self.ideal_answers_dictionary, path.join(output_dir, "ideal_answers")
         )
 
-    def load(self, models, ideal_answers):
-        return self.model_obj.load("models"), self.model_obj.load("ideal_answers")
+
+class SVMAnswerClassifier:
+    def __init__(self, model_instances, ideal_answers_dictionary):
+        self.model_obj = SVMExpectationClassifier()
+        self.model_instances = model_instances
+        self.ideal_answers_dictionary = ideal_answers_dictionary
 
     def find_model_for_expectation(self, expectation: int) -> svm.SVC:
         return self.model_instances[expectation]
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = self.model_obj.preprocessing(answer.input_sentence)
-        self.model_instances, self.ideal_answers_dictionary = self.load(
-            "models", "ideal_answers"
-        )
         expectations = (
             [
                 ExpectationToEvaluate(
@@ -205,5 +205,13 @@ class SVMAnswerClassifier:
 
 def train_classifier(training_data_path: str, model_root: str = "."):
     training_data = loadData(training_data_path)
-    svm_answer_classifier = SVMAnswerClassifier()
-    svm_answer_classifier.train_all(training_data, output_dir=model_root)
+    svm_answer_classifier_training = SVMAnswerClassifierTraining()
+    svm_answer_classifier_training.train_all(training_data, output_dir=model_root)
+
+
+def load_instances(model_filename, ideal_answers_filename):
+    path_directory = path.join(getcwd(), "models")
+    return (
+        pickle.load(open(path.join(path_directory, model_filename), "rb")),
+        pickle.load(open(path.join(path_directory, ideal_answers_filename), "rb")),
+    )

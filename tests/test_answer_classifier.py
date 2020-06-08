@@ -1,6 +1,6 @@
 import pytest
 from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult
-from opentutor_classifier.svm import SVMAnswerClassifier
+from opentutor_classifier.svm import SVMAnswerClassifier, load_instances
 
 
 @pytest.mark.parametrize(
@@ -18,9 +18,8 @@ from opentutor_classifier.svm import SVMAnswerClassifier
     ],
 )
 def test_evaluates_one_expectation(input_answer, input_expectation, expected_results):
-    classifier = (
-        SVMAnswerClassifier()
-    )  # really this should be loaded with model, maybe trained inline for this test?
+    model_instances, ideal_answers = load_instances("model_instances", "ideal_answers")
+    classifier = SVMAnswerClassifier(model_instances, ideal_answers)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer, expectation=input_expectation
@@ -51,9 +50,8 @@ def test_evaluates_one_expectation(input_answer, input_expectation, expected_res
 def test_evaluates_with_no_input_expectation(
     input_answer, input_expectation_number, expected_results
 ):
-    classifier = (
-        SVMAnswerClassifier()
-    )  # really this should be loaded with model, maybe trained inline for this test?
+    model_instances, ideal_answers = load_instances("model_instances", "ideal_answers")
+    classifier = SVMAnswerClassifier(model_instances, ideal_answers)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer, expectation=input_expectation_number
