@@ -11,6 +11,7 @@ import pickle
 from sklearn import model_selection, svm
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
+from typing import Tuple
 
 from opentutor_classifier import (
     AnswerClassifierInput,
@@ -209,9 +210,12 @@ def train_classifier(training_data_path: str, model_root: str = "."):
     svm_answer_classifier_training.train_all(training_data, output_dir=model_root)
 
 
-def load_instances(model_filename, ideal_answers_filename):
-    path_directory = path.join(getcwd(), "models")
+def load_instances(
+    model_root="./models",
+    model_filename="model_instances",
+    ideal_answers_filename="ideal_answers",
+) -> Tuple[dict, dict]:
     return (
-        pickle.load(open(path.join(path_directory, model_filename), "rb")),
-        pickle.load(open(path.join(path_directory, ideal_answers_filename), "rb")),
+        pickle.load(open(path.join(model_root, model_filename), "rb")),
+        pickle.load(open(path.join(model_root, ideal_answers_filename), "rb")),
     )

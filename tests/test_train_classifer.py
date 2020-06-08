@@ -6,10 +6,7 @@ from opentutor_classifier.svm import (
     SVMAnswerClassifier,
     load_instances,
 )
-
-
-def fixture_path(p: str) -> str:
-    return os.path.abspath(os.path.join(".", "tests", "fixtures", p))
+from . import fixture_path
 
 
 def __train_model(tmpdir) -> str:
