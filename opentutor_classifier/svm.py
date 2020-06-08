@@ -6,7 +6,7 @@ from nltk import pos_tag
 from nltk.corpus import stopwords, wordnet as wn
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
-from os import path, makedirs, getcwd
+from os import path, makedirs
 import pickle
 from sklearn import model_selection, svm
 from sklearn.metrics import accuracy_score

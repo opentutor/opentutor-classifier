@@ -26,7 +26,7 @@ def test_outputs_models_at_specified_model_root(tmpdir):
 def test_trained_models_usable_for_inference(tmpdir):
     model_root = __train_model(tmpdir)
     assert os.path.exists(model_root)
-    model_instances, ideal_answers = load_instances("model_instances", "ideal_answers")
+    model_instances, ideal_answers = load_instances(model_root=model_root)
     classifier = SVMAnswerClassifier(model_instances, ideal_answers)
     result = classifier.evaluate(
         AnswerClassifierInput(input_sentence=["peer pressure"])
