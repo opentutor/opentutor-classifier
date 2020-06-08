@@ -18,6 +18,5 @@ QuestionAnswerLog.csv
 */videos
 .ipynb_checkpoints
 models
-model_instances
-ideal_answers
+!tests/fixtures/models
 

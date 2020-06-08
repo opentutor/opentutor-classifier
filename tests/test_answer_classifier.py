@@ -1,6 +1,13 @@
 import pytest
+from typing import Tuple
 from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult
 from opentutor_classifier.svm import SVMAnswerClassifier, load_instances
+from . import fixture_path
+
+
+@pytest.fixture(scope="module")
+def model_and_ideal_answers() -> Tuple[dict, dict]:
+    return load_instances(fixture_path("models"))
 
 
 @pytest.mark.parametrize(
@@ -17,8 +24,10 @@ from opentutor_classifier.svm import SVMAnswerClassifier, load_instances
         )
     ],
 )
-def test_evaluates_one_expectation(input_answer, input_expectation, expected_results):
-    model_instances, ideal_answers = load_instances("model_instances", "ideal_answers")
+def test_evaluates_one_expectation(
+    model_and_ideal_answers, input_answer, input_expectation, expected_results
+):
+    model_instances, ideal_answers = model_and_ideal_answers
     classifier = SVMAnswerClassifier(model_instances, ideal_answers)
     result = classifier.evaluate(
         AnswerClassifierInput(
@@ -48,9 +57,9 @@ def test_evaluates_one_expectation(input_answer, input_expectation, expected_res
     ],
 )
 def test_evaluates_with_no_input_expectation(
-    input_answer, input_expectation_number, expected_results
+    model_and_ideal_answers, input_answer, input_expectation_number, expected_results
 ):
-    model_instances, ideal_answers = load_instances("model_instances", "ideal_answers")
+    model_instances, ideal_answers = model_and_ideal_answers
     classifier = SVMAnswerClassifier(model_instances, ideal_answers)
     result = classifier.evaluate(
         AnswerClassifierInput(
