@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+import click
+
+from opentutor_classifier.svm import SVMAnswerClassifierTraining
+from opentutor_classifier import loadData
+
+
+@click.group()
+def cli():
+    pass
+
+
+@cli.command()
+@click.option("-d", "--data", required=False, type=click.Path(exists=True))
+@click.option("-o", "--output", required=False, type=click.Path(exists=False))
+def train(data, output):
+    corpus = loadData(data)
+    training = SVMAnswerClassifierTraining()
+    training.train_all(corpus=corpus, output_dir=output)
+
+
+cli.add_command(train)
+
+if __name__ == "__main__":
+    cli()
