@@ -21,10 +21,6 @@ from opentutor_classifier import (
 )
 
 
-np.random.seed(1)
-# will remove in the development mode.
-
-
 class SVMExpectationClassifier:
     def __init__(self):
         self.tag_map = defaultdict(lambda: wn.NOUN)
@@ -34,6 +30,7 @@ class SVMExpectationClassifier:
         self.ideal_answer = None
         self.model = None
         self.score_dictionary = defaultdict(int)
+        np.random.seed(1)
 
     def preprocessing(self, data):
         preProcessedDataset = []
@@ -129,7 +126,6 @@ class SVMAnswerClassifierTraining:
 
     def train_all(self, corpus: pd.DataFrame, output_dir: str = "."):
         output_dir = path.abspath(output_dir)
-        # output_dir = path.join(output_dir, 'models')
         makedirs(output_dir, exist_ok=True)
         split_training_sets: dict = defaultdict(int)
         for i, value in enumerate(corpus["exp_num"]):
