@@ -113,3 +113,21 @@ workflows:
           filters: *only-untagged
           requires:
             - approve-build-and-push
+  test-build-deploy-release:
+    jobs:
+      - test-format:
+          filters: *only-tagged-releases
+      - test-lint:
+          filters: *only-tagged-releases
+      - test-types:
+          filters: *only-tagged-releases
+      - test:
+          filters: *only-tagged-releases
+      - build-and-push:
+          is-release-tag: true
+          filters: *only-tagged-releases
+          requires:
+            - test-format
+            - test-lint
+            - test-types
+            - test
