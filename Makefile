@@ -1,3 +1,5 @@
+DOCKER_IMAGE?=opentutor_classifier
+
 # virtualenv used for pytest
 VENV=.venv
 $(VENV):
@@ -7,6 +9,26 @@ $(VENV):
 clean:
 	rm -rf .venv htmlcov .coverage 
 
+
+.PHONY docker-build:
+docker-build:
+	docker build -t $(DOCKER_IMAGE) .
+
+.PHONY docker-run-shell:
+docker-run-shell:
+	docker run -it --rm  --entrypoint /bin/bash $(DOCKER_IMAGE)
+
+# use to test dockerized training locally
+.PHONY: docker-test-train
+docker-test-train:
+	docker run \
+		-it \
+		--rm \
+		-v $(PWD)/tests/fixtures/data:/data \
+		-v $(PWD)/docker-test-train-out:/output \
+	$(DOCKER_IMAGE) train --data /data/training_data.csv --output /output
+
+		
 .PHONY: format
 format: $(VENV)
 	$(VENV)/bin/black opentutor_classifier tests
@@ -30,11 +52,6 @@ test-lint: $(VENV)
 test-types: $(VENV)
 	. $(VENV)/bin/activate && mypy opentutor_classifier
 
-.PHONY: train
-train: $(VENV)
-	. $(VENV)/bin/activate \
-	&& python3 classifier_train.py
-
 .PHONY: update-deps
 update-deps: $(VENV)
 	. $(VENV)/bin/activate && pip-upgrade requirements*
@@ -50,4 +67,4 @@ venv-create: virtualenv-installed
 	$(VENV)/bin/python3.8 -m nltk.downloader stopwords
 
 virtualenv-installed:
-	bin/virtualenv_ensure_installed.sh
+	tools/virtualenv_ensure_installed.sh
