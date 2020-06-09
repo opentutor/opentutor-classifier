@@ -131,7 +131,6 @@ class SVMAnswerClassifierTraining:
         output_dir = path.abspath(output_dir)
         # output_dir = path.join(output_dir, 'models')
         makedirs(output_dir, exist_ok=True)
-        print("output_dir == ", output_dir)
         split_training_sets: dict = defaultdict(int)
         for i, value in enumerate(corpus["exp_num"]):
             if value not in split_training_sets:

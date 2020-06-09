@@ -18,7 +18,7 @@ def model_and_ideal_answers() -> Tuple[dict, dict]:
             0,
             [
                 ExpectationClassifierResult(
-                    expectation=1, score=-0.6666666666666667, evaluation="Good"
+                    expectation=0, score=-0.6666666666666667, evaluation="Good"
                 )
             ],
         )
@@ -48,10 +48,10 @@ def test_evaluates_one_expectation(
             -1,
             [
                 ExpectationClassifierResult(
-                    expectation=1, score=-0.6666666666666667, evaluation="Good"
+                    expectation=0, score=-0.6666666666666667, evaluation="Good"
                 ),
+                ExpectationClassifierResult(expectation=1, score=1.0, evaluation="Bad"),
                 ExpectationClassifierResult(expectation=2, score=1.0, evaluation="Bad"),
-                ExpectationClassifierResult(expectation=3, score=1.0, evaluation="Bad"),
             ],
         )
     ],
