@@ -16,7 +16,10 @@ def cli():
 def train(data, output):
     corpus = loadData(data)
     training = SVMAnswerClassifierTraining()
-    training.train_all(corpus=corpus, output_dir=output)
+    accuracy = training.train_all(corpus=corpus, output_dir=output)
+    print("Models are saved at: " + output + ' directory.')
+    for exp_num, acc in accuracy.items():
+        print(f"Accuracy for model={exp_num} is {acc}.")
 
 
 cli.add_command(train)

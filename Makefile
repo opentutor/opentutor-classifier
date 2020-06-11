@@ -25,8 +25,8 @@ docker-test-train:
 		-it \
 		--rm \
 		-v $(PWD)/tests/fixtures/data:/data \
-		-v $(PWD)/docker-test-train-out:/output \
-	$(DOCKER_IMAGE) train --data /data/training_data.csv --output /output
+		-v $(PWD)/docker-test-train-out:/docker-test-train-out \
+	$(DOCKER_IMAGE) train --data /data/training_data.csv --output /docker-test-train-out
 
 		
 .PHONY: format

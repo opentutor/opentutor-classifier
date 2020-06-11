@@ -11,7 +11,7 @@ import pickle
 from sklearn import model_selection, svm
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
-from typing import Tuple
+from typing import Tuple, Dict
 
 from opentutor_classifier import (
     AnswerClassifierInput,
@@ -101,7 +101,7 @@ class SVMExpectationClassifier:
     def predict(self, model, testFeatures):
         return model.predict(testFeatures)
 
-    def score(self, model_predictions, Test_Y):
+    def find_accuracy(self, model_predictions, Test_Y):
         return accuracy_score(model_predictions, Test_Y) * 100
 
     def save(self, model_instances, filename):
@@ -123,8 +123,9 @@ class SVMAnswerClassifierTraining:
         self.model_obj = SVMExpectationClassifier()
         self.model_instances = {}
         self.ideal_answers_dictionary = {}
+        self.accuracy = {}
 
-    def train_all(self, corpus: pd.DataFrame, output_dir: str = "."):
+    def train_all(self, corpus: pd.DataFrame, output_dir: str = ".") -> Dict:
         output_dir = path.abspath(output_dir)
         makedirs(output_dir, exist_ok=True)
         split_training_sets: dict = defaultdict(int)
@@ -148,12 +149,21 @@ class SVMAnswerClassifierTraining:
             )
             self.model_obj.train(features, Train_Y)
             self.model_instances[exp_num] = model
+
+            training_predictions = self.model_obj.predict(model, features)
+            self.accuracy[exp_num] = self.model_obj.find_accuracy(training_predictions, Train_Y)
+
+
+
+
+
         self.model_obj.save(
             self.model_instances, path.join(output_dir, "model_instances")
         )
         self.model_obj.save(
             self.ideal_answers_dictionary, path.join(output_dir, "ideal_answers")
         )
+        return self.accuracy
 
 
 class SVMAnswerClassifier:
