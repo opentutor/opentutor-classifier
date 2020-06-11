@@ -151,11 +151,9 @@ class SVMAnswerClassifierTraining:
             self.model_instances[exp_num] = model
 
             training_predictions = self.model_obj.predict(model, features)
-            self.accuracy[exp_num] = self.model_obj.find_accuracy(training_predictions, Train_Y)
-
-
-
-
+            self.accuracy[exp_num] = self.model_obj.find_accuracy(
+                training_predictions, Train_Y
+            )
 
         self.model_obj.save(
             self.model_instances, path.join(output_dir, "model_instances")

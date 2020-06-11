@@ -7,6 +7,7 @@ from opentutor_classifier.svm import SVMAnswerClassifier, load_instances
 from . import fixture_path
 import re
 
+
 @pytest.fixture(autouse=True)
 def python_path_env(monkeypatch):
     monkeypatch.setenv("PYTHONPATH", ".")
@@ -35,11 +36,15 @@ def __train_model(tmpdir) -> str:
     print(f"err={err}")
     print(f"out={out}")
     out_str = out.decode("utf-8")
-    match_out = re.findall(r"M.+\/.+\n.+\=0.+[0-9]{2}\.[0-9]*\n.+\=1.+[0-9]{2}\.[0-9]*\n.+\=2.+[0-9]{2}\.[0-9]*\n", out_str)
+    match_out = re.findall(
+        r"M.+\/.+\n.+\=0.+[0-9]{2}\.[0-9]*\n.+\=1.+[0-9]{2}\.[0-9]*\n.+\=2.+[0-9]{2}\.[0-9]*\n",
+        out_str,
+    )
     assert out_str == match_out[0]
     assert len(out_str) == len(match_out[0])
     assert exitcode == 0
     return model_root
+
 
 def test_cli_outputs_models_at_specified_model_root(tmpdir):
     model_root = __train_model(tmpdir)
