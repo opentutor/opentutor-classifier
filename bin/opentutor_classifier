@@ -2,7 +2,7 @@
 import click
 
 from opentutor_classifier.svm import SVMAnswerClassifierTraining
-from opentutor_classifier import loadData
+from opentutor_classifier import load_data
 
 
 @click.group()
@@ -14,7 +14,7 @@ def cli():
 @click.option("-d", "--data", required=False, type=click.Path(exists=True))
 @click.option("-o", "--output", required=False, type=click.Path(exists=False))
 def train(data, output):
-    corpus = loadData(data)
+    corpus = load_data(data)
     training = SVMAnswerClassifierTraining()
     accuracy = training.train_all(corpus=corpus, output_dir=output)
     print("Models are saved at: " + output)

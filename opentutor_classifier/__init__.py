@@ -20,7 +20,7 @@ class AnswerClassifierInput:
 @dataclass
 class AnswerClassifierResult:
     input: AnswerClassifierInput
-    expectationResults: List[ExpectationClassifierResult] = field(default_factory=list)
+    expectation_results: List[ExpectationClassifierResult] = field(default_factory=list)
 
 
 class AnswerClassifier(ABC):
@@ -29,5 +29,5 @@ class AnswerClassifier(ABC):
         raise NotImplementedError()
 
 
-def loadData(filename: str) -> pd.DataFrame:
+def load_data(filename: str) -> pd.DataFrame:
     return pd.read_csv(filename, encoding="latin-1")

@@ -31,8 +31,8 @@ def test_trained_models_usable_for_inference(tmpdir):
     result = classifier.evaluate(
         AnswerClassifierInput(input_sentence=["peer pressure"], expectation=-1)
     )
-    assert len(result.expectationResults) == 3
-    for exp_res in result.expectationResults:
+    assert len(result.expectation_results) == 3
+    for exp_res in result.expectation_results:
         if exp_res.expectation == 0:
             assert exp_res.evaluation == "Good"
             assert exp_res.score == -0.6666666666666667

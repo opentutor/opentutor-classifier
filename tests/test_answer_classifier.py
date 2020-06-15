@@ -34,8 +34,8 @@ def test_evaluates_one_expectation(
             input_sentence=input_answer, expectation=input_expectation
         )
     )
-    assert len(result.expectationResults) == len(expected_results)
-    for res, res_expected in zip(result.expectationResults, expected_results):
+    assert len(result.expectation_results) == len(expected_results)
+    for res, res_expected in zip(result.expectation_results, expected_results):
         assert res.score == res_expected.score
         assert res.evaluation == res_expected.evaluation
 
@@ -66,7 +66,7 @@ def test_evaluates_with_no_input_expectation(
             input_sentence=input_answer, expectation=input_expectation_number
         )
     )
-    assert len(result.expectationResults) == len(expected_results)
-    for res, res_expected in zip(result.expectationResults, expected_results):
+    assert len(result.expectation_results) == len(expected_results)
+    for res, res_expected in zip(result.expectation_results, expected_results):
         assert res.score == res_expected.score
         assert res.evaluation == res_expected.evaluation

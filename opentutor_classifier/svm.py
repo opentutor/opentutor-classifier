@@ -17,7 +17,7 @@ from opentutor_classifier import (
     AnswerClassifierInput,
     AnswerClassifierResult,
     ExpectationClassifierResult,
-    loadData,
+    load_data,
 )
 
 
@@ -41,8 +41,8 @@ class SVMExpectationClassifier:
             lemmatized_word = WordNetLemmatizer()
             for word, tag in pos_tag(entry):
                 if word not in stopwords.words("english") and word.isalpha():
-                    word_Final = lemmatized_word.lemmatize(word, self.tag_map[tag[0]])
-                    final_words.append(word_Final)
+                    word_final = lemmatized_word.lemmatize(word, self.tag_map[tag[0]])
+                    final_words.append(word_final)
             pre_processed_dataset.append(final_words)
         return pre_processed_dataset
 
@@ -52,8 +52,8 @@ class SVMExpectationClassifier:
         )
         return train_x, test_x, train_y, test_y
 
-    def initialize_ideal_answer(self, X):
-        self.ideal_answer = X[0]
+    def initialize_ideal_answer(self, processed_data):
+        self.ideal_answer = processed_data[0]
         return self.ideal_answer
 
     def encode_y(self, train_y, test_y):
@@ -78,16 +78,16 @@ class SVMExpectationClassifier:
         return (np.array(features)).reshape(-1, 1)
 
     def get_params(self):
-        C = 1.0
+        c = 1.0
         kernel = "linear"
         degree = 3
         gamma = "auto"
         probability = True
-        return C, kernel, degree, gamma, probability
+        return c, kernel, degree, gamma, probability
 
     def set_params(self, **params):
         self.model = svm.SVC(
-            C=params["C"],
+            C=params["c"],
             kernel=params["kernel"],
             degree=params["degree"],
             gamma=params["gamma"],
@@ -142,9 +142,9 @@ class SVMAnswerClassifierTraining:
             )
             train_y, test_y = self.model_obj.encode_y(train_y, test_y)
             features = self.model_obj.alignment(train_x, None)
-            C, kernel, degree, gamma, probability = self.model_obj.get_params()
+            c, kernel, degree, gamma, probability = self.model_obj.get_params()
             model = self.model_obj.set_params(
-                C=1.0, kernel="linear", degree=3, gamma="auto", probability=True
+                c=c, kernel=kernel, degree=degree, gamma=gamma, probability=probability
             )
             self.model_obj.train(features, train_y)
             self.model_instances[exp_num] = model
@@ -187,12 +187,12 @@ class SVMAnswerClassifier:
                 for k, v in self.model_instances.items()
             ]
         )
-        result = AnswerClassifierResult(input=answer, expectationResults=[])
+        result = AnswerClassifierResult(input=answer, expectation_results=[])
         for e in expectations:
             sent_features = self.model_obj.alignment(
                 sent_proc, self.ideal_answers_dictionary[e.expectation]
             )
-            result.expectationResults.append(
+            result.expectation_results.append(
                 ExpectationClassifierResult(
                     expectation=e.expectation,
                     evaluation=(
@@ -207,7 +207,7 @@ class SVMAnswerClassifier:
 
 
 def train_classifier(training_data_path: str, model_root: str = "."):
-    training_data = loadData(training_data_path)
+    training_data = load_data(training_data_path)
     svm_answer_classifier_training = SVMAnswerClassifierTraining()
     svm_answer_classifier_training.train_all(training_data, output_dir=model_root)
 
