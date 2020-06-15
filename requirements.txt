@@ -3,4 +3,4 @@ pandas==1.0.4
 nltk==3.5
 scikit-learn==0.23.1
 # FIXME: Locking werkzeug until the resolution of pallets/werkzeug#1714
-werkzeug==0.16.1
+werkzeug==1.0.1
