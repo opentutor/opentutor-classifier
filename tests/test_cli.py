@@ -35,25 +35,28 @@ def __train_model(tmpdir) -> str:
     out, err, exitcode = capture(command)
     print(f"err={err}")
     print(f"out={out}")
-    out_str = out.decode("utf-8")
-    match_out = re.findall(
-        r"M.+\/.+\n.+\=0.+[0-9]{2}\.[0-9]*\n.+\=1.+[0-9]{2}\.[0-9]*\n.+\=2.+[0-9]{2}\.[0-9]*\n",
-        out_str,
-    )
-    assert out_str == match_out[0]
-    assert len(out_str) == len(match_out[0])
-    assert exitcode == 0
-    return model_root
+    return out, err, exitcode, model_root
 
 
 def test_cli_outputs_models_at_specified_model_root(tmpdir):
-    model_root = __train_model(tmpdir)
+    out, _, exit_code, model_root = __train_model(tmpdir)
+
+    assert exit_code == 0
     assert path.exists(path.join(model_root, "model_instances"))
     assert path.exists(path.join(model_root, "ideal_answers"))
+    out_str = out.decode("utf-8")
+    out_str = out_str.split("\n")
+    assert re.search(r"Models are saved at: /.+/model_instances", out_str[0])
+    for i in range(0, 3):
+        assert re.search(
+            f"Accuracy for model={i} is [0-9]+.[0-9]+.",
+            out_str[i + 1],
+            flags=re.MULTILINE,
+        )
 
 
 def test_cli_trained_models_usable_for_inference(tmpdir):
-    model_root = __train_model(tmpdir)
+    _, _, _, model_root = __train_model(tmpdir)
     assert os.path.exists(model_root)
     model_instances, ideal_answers = load_instances(model_root=model_root)
     classifier = SVMAnswerClassifier(model_instances, ideal_answers)

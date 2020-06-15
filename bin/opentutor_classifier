@@ -17,7 +17,7 @@ def train(data, output):
     corpus = loadData(data)
     training = SVMAnswerClassifierTraining()
     accuracy = training.train_all(corpus=corpus, output_dir=output)
-    print("Models are saved at: " + output + ' directory.')
+    print("Models are saved at: " + output)
     for exp_num, acc in accuracy.items():
         print(f"Accuracy for model={exp_num} is {acc}.")
 

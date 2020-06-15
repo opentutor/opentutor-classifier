@@ -33,48 +33,48 @@ class SVMExpectationClassifier:
         np.random.seed(1)
 
     def preprocessing(self, data):
-        preProcessedDataset = []
+        pre_processed_dataset = []
         data = [entry.lower() for entry in data]
         data = [word_tokenize(entry) for entry in data]
-        for index, entry in enumerate(data):
-            Final_words = []
-            word_Lemmatized = WordNetLemmatizer()
+        for entry in data:
+            final_words = []
+            lemmatized_word = WordNetLemmatizer()
             for word, tag in pos_tag(entry):
                 if word not in stopwords.words("english") and word.isalpha():
-                    word_Final = word_Lemmatized.lemmatize(word, self.tag_map[tag[0]])
-                    Final_words.append(word_Final)
-            preProcessedDataset.append(Final_words)
-        return preProcessedDataset
+                    word_Final = lemmatized_word.lemmatize(word, self.tag_map[tag[0]])
+                    final_words.append(word_Final)
+            pre_processed_dataset.append(final_words)
+        return pre_processed_dataset
 
-    def split(self, preProcessedDataset, target):
-        Train_X, Test_X, Train_Y, Test_Y = model_selection.train_test_split(
-            preProcessedDataset, target, test_size=0.25
+    def split(self, pre_processed_dataset, target):
+        train_x, test_x, train_y, test_y = model_selection.train_test_split(
+            pre_processed_dataset, target, test_size=0.25
         )
-        return Train_X, Test_X, Train_Y, Test_Y
+        return train_x, test_x, train_y, test_y
 
     def initialize_ideal_answer(self, X):
         self.ideal_answer = X[0]
         return self.ideal_answer
 
-    def encode_y(self, Train_Y, Test_Y):
-        Encoder = LabelEncoder()
-        Train_Y = Encoder.fit_transform(Train_Y)
-        Test_Y = Encoder.fit_transform(Test_Y)
-        return Train_Y, Test_Y
+    def encode_y(self, train_y, test_y):
+        encoder = LabelEncoder()
+        train_y = encoder.fit_transform(train_y)
+        test_y = encoder.fit_transform(test_y)
+        return train_y, test_y
 
-    def word_overlap_score(self, Train_X, ideal_answer):
+    def word_overlap_score(self, train_x, ideal_answer):
         features = []
-        for example in Train_X:
+        for example in train_x:
             intersection = set(ideal_answer).intersection(set(example))
             score = len(intersection) / len(set(ideal_answer))
             features.append(score)
         return features
 
     # function for extracting features
-    def alignment(self, Train_X, ideal_answer):
+    def alignment(self, train_x, ideal_answer):
         if ideal_answer is None:
             ideal_answer = self.ideal_answer
-        features = self.word_overlap_score(Train_X, ideal_answer)
+        features = self.word_overlap_score(train_x, ideal_answer)
         return (np.array(features)).reshape(-1, 1)
 
     def get_params(self):
@@ -94,15 +94,14 @@ class SVMExpectationClassifier:
         )
         return self.model
 
-    def train(self, trainFeatures, Train_Y):
-        self.model.fit(trainFeatures, Train_Y)
-        # print("Triaining complete")
+    def train(self, train_features, train_y):
+        self.model.fit(train_features, train_y)
 
-    def predict(self, model, testFeatures):
-        return model.predict(testFeatures)
+    def predict(self, model, test_features):
+        return model.predict(test_features)
 
-    def find_accuracy(self, model_predictions, Test_Y):
-        return accuracy_score(model_predictions, Test_Y) * 100
+    def find_accuracy(self, model_predictions, test_y):
+        return accuracy_score(model_predictions, test_y) * 100
 
     def save(self, model_instances, filename):
         pickle.dump(model_instances, open(filename, "wb"))
@@ -134,25 +133,25 @@ class SVMAnswerClassifierTraining:
                 split_training_sets[value] = [[], []]
             split_training_sets[value][0].append(corpus["text"][i])
             split_training_sets[value][1].append(corpus["label"][i])
-        for exp_num, (Train_X, Train_Y) in split_training_sets.items():
-            processed_data = self.model_obj.preprocessing(Train_X)
+        for exp_num, (train_x, train_y) in split_training_sets.items():
+            processed_data = self.model_obj.preprocessing(train_x)
             ia = self.model_obj.initialize_ideal_answer(processed_data)
             self.ideal_answers_dictionary[exp_num] = ia
-            Train_X, Test_X, Train_Y, Test_Y = self.model_obj.split(
-                processed_data, Train_Y
+            train_x, test_x, train_y, test_y = self.model_obj.split(
+                processed_data, train_y
             )
-            Train_Y, Test_Y = self.model_obj.encode_y(Train_Y, Test_Y)
-            features = self.model_obj.alignment(Train_X, None)
+            train_y, test_y = self.model_obj.encode_y(train_y, test_y)
+            features = self.model_obj.alignment(train_x, None)
             C, kernel, degree, gamma, probability = self.model_obj.get_params()
             model = self.model_obj.set_params(
                 C=1.0, kernel="linear", degree=3, gamma="auto", probability=True
             )
-            self.model_obj.train(features, Train_Y)
+            self.model_obj.train(features, train_y)
             self.model_instances[exp_num] = model
 
             training_predictions = self.model_obj.predict(model, features)
             self.accuracy[exp_num] = self.model_obj.find_accuracy(
-                training_predictions, Train_Y
+                training_predictions, train_y
             )
 
         self.model_obj.save(
