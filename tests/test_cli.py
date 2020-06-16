@@ -33,8 +33,6 @@ def __train_model(tmpdir) -> str:
         model_root,
     ]
     out, err, exitcode = capture(command)
-    print(f"err={err}")
-    print(f"out={out}")
     return out, err, exitcode, model_root
 
 
@@ -49,7 +47,7 @@ def test_cli_outputs_models_at_specified_model_root(tmpdir):
     assert re.search(r"Models are saved at: /.+/model_instances", out_str[0])
     for i in range(0, 3):
         assert re.search(
-            f"Accuracy for model={i} is [0-9]+.[0-9]+.",
+            f"Accuracy for model={i} is [0-9]+\\.[0-9]+\\.",
             out_str[i + 1],
             flags=re.MULTILINE,
         )
