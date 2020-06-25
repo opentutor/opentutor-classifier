@@ -8,6 +8,17 @@ aliases:
   - &only-untagged
     tags:
       ignore: /.*/
+  - &git-lfs-install
+    run:
+      name: Git lfs install
+      command: |
+        curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash \
+          && sudo apt-get install -y git-lfs \
+          && git lfs install
+  - &git-lfs-pull
+    run:
+      name: Git lfs pull
+      command: git lfs pull
 orbs:
   docker: circleci/docker@1.2.1
   environment:
@@ -56,6 +67,8 @@ jobs:
       - run:
           command: |
             echo "Digest is: $(</tmp/digest.txt)"
+      - *git-lfs-install
+      - *git-lfs-pull
   test-format:
     executor: python
     steps:
@@ -63,6 +76,8 @@ jobs:
       - run:
           name: Test format
           command: make test-format
+      - *git-lfs-install
+      - *git-lfs-pull
   test-lint:
     executor: python
     steps:
@@ -70,6 +85,8 @@ jobs:
       - run:
           name: Test lint
           command: make test-lint
+      - *git-lfs-install
+      - *git-lfs-pull
   test-types:
     executor: python
     steps:
@@ -77,6 +94,8 @@ jobs:
       - run:
           name: Test types
           command: make test-types
+      - *git-lfs-install
+      - *git-lfs-pull
   test:
     executor: python
     steps:
@@ -89,6 +108,8 @@ jobs:
       - run:
           name: Run tests
           command: make test
+      - *git-lfs-install
+      - *git-lfs-pull
 workflows:
   test-build-publish:
     jobs:
