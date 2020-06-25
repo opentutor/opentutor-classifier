@@ -2,6 +2,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 import pandas as pd
 import numpy as np
+from gensim.models import KeyedVectors
 from nltk import pos_tag
 from nltk.corpus import stopwords, wordnet as wn
 from nltk.stem import WordNetLemmatizer
@@ -9,15 +10,20 @@ from nltk.tokenize import word_tokenize
 from os import path, makedirs
 import pickle
 from sklearn import model_selection, svm
-from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelEncoder
 from typing import Tuple, Dict
+import math
+from scipy import spatial
+from sklearn.model_selection import LeaveOneOut
+
 
 from opentutor_classifier import (
     AnswerClassifierInput,
     AnswerClassifierResult,
     ExpectationClassifierResult,
     load_data,
+    load_question,
+    load_word2vec_model,
 )
 
 
@@ -31,6 +37,21 @@ class SVMExpectationClassifier:
         self.model = None
         self.score_dictionary = defaultdict(int)
         np.random.seed(1)
+
+    def processing_single_sentence(self, data):
+        processed_sentence = []
+        data = [data]
+        data = [entry.lower() for entry in data]
+        data = [word_tokenize(entry) for entry in data]
+        for entry in data:
+            final_words = []
+            lemmatized_word = WordNetLemmatizer()
+            for word, tag in pos_tag(entry):
+                if word not in stopwords.words("english") and word.isalpha():
+                    word_final = lemmatized_word.lemmatize(word, self.tag_map[tag[0]])
+                    final_words.append(word_final)
+            processed_sentence.append(final_words)
+        return processed_sentence
 
     def preprocessing(self, data):
         pre_processed_dataset = []
@@ -48,7 +69,7 @@ class SVMExpectationClassifier:
 
     def split(self, pre_processed_dataset, target):
         train_x, test_x, train_y, test_y = model_selection.train_test_split(
-            pre_processed_dataset, target, test_size=0.25
+            pre_processed_dataset, target, test_size=0.0
         )
         return train_x, test_x, train_y, test_y
 
@@ -56,59 +77,115 @@ class SVMExpectationClassifier:
         self.ideal_answer = processed_data[0]
         return self.ideal_answer
 
-    def encode_y(self, train_y, test_y):
+    def load_word2vec(self, path):
+        return KeyedVectors.load_word2vec_format(path, binary=True)
+
+    def encode_y(self, train_y):
         encoder = LabelEncoder()
         train_y = encoder.fit_transform(train_y)
-        test_y = encoder.fit_transform(test_y)
-        return train_y, test_y
+        return train_y
 
-    def word_overlap_score(self, train_x, ideal_answer):
-        features = []
-        for example in train_x:
-            intersection = set(ideal_answer).intersection(set(example))
-            score = len(intersection) / len(set(ideal_answer))
-            features.append(score)
-        return features
+    def word_overlap_feature(self, example, ideal_answer):
+        intersection = set(ideal_answer).intersection(set(example))
+        score = len(intersection) / len(set(ideal_answer))
+        return score
 
-    # function for extracting features
-    def alignment(self, train_x, ideal_answer):
+    def avg_feature_vector(self, words, model, num_features, index2word_set):
+        feature_vec = np.zeros((num_features,), dtype="float32")
+        nwords = 0
+        common_words = set(words).intersection(index2word_set)
+        for word in common_words:
+            nwords = nwords + 1
+            feature_vec = np.add(feature_vec, model[word])
+        if nwords > 0:
+            feature_vec = np.divide(feature_vec, nwords)
+        return feature_vec
+
+    def calculate_similarity(self, a, b):
+        similarity = 1 - spatial.distance.cosine(a, b)
+        if math.isnan(similarity):
+            similarity = 0
+        return similarity
+
+    def word2vec_question_similarity_feature(
+        self, word2vec_model, index2word_set, example, question
+    ):
+        example_feature_vec = self.avg_feature_vector(
+            example,
+            model=word2vec_model,
+            num_features=300,
+            index2word_set=index2word_set,
+        )
+        question_feature_vec = self.avg_feature_vector(
+            question[0],
+            model=word2vec_model,
+            num_features=300,
+            index2word_set=index2word_set,
+        )
+        similarity = self.calculate_similarity(
+            example_feature_vec, question_feature_vec
+        )
+        return similarity
+
+    def word2vec_example_similarity_feature(
+        self, word2vec_model, index2word_set, example, ideal_answer
+    ):
+        example_feature_vec = self.avg_feature_vector(
+            example,
+            model=word2vec_model,
+            num_features=300,
+            index2word_set=index2word_set,
+        )
+        ia_feature_vec = self.avg_feature_vector(
+            ideal_answer,
+            model=word2vec_model,
+            num_features=300,
+            index2word_set=index2word_set,
+        )
+        similarity = self.calculate_similarity(example_feature_vec, ia_feature_vec)
+        return similarity
+
+    def length_ratio_feature(self, example, ideal_answer):
+        return len(example) / len(ideal_answer)
+
+    def calculate_features(
+        self, question, train_x, ideal_answer, word2vec_model, index2word_set
+    ):
         if ideal_answer is None:
             ideal_answer = self.ideal_answer
-        features = self.word_overlap_score(train_x, ideal_answer)
-        return (np.array(features)).reshape(-1, 1)
+        all_features = []
+        for example in train_x:
+            feature = []
+            feature.append(self.length_ratio_feature(example, ideal_answer))
+            # feature.append(self.word_overlap_feature(example, ideal_answer))
+            feature.append(
+                self.word2vec_example_similarity_feature(
+                    word2vec_model, index2word_set, example, ideal_answer
+                )
+            )
+            feature.append(
+                self.word2vec_question_similarity_feature(
+                    word2vec_model, index2word_set, example, question
+                )
+            )
+            all_features.append(feature)
+        return all_features
 
-    def get_params(self):
-        c = 1.0
-        kernel = "linear"
-        degree = 3
-        gamma = "auto"
-        probability = True
-        return c, kernel, degree, gamma, probability
-
-    def set_params(self, **params):
-        self.model = svm.SVC(
-            C=params["c"],
-            kernel=params["kernel"],
-            degree=params["degree"],
-            gamma=params["gamma"],
-        )
-        return self.model
-
-    def train(self, train_features, train_y):
-        self.model.fit(train_features, train_y)
+    def train(self, model, train_features, train_y):
+        model.fit(train_features, train_y)
+        return model
 
     def predict(self, model, test_features):
         return model.predict(test_features)
 
-    def find_accuracy(self, model_predictions, test_y):
-        return accuracy_score(model_predictions, test_y) * 100
-
     def save(self, model_instances, filename):
         pickle.dump(model_instances, open(filename, "wb"))
-        # print("Model saved successfully!")
 
     def confidence_score(self, model, sentence):
-        return model.decision_function(sentence)[0]
+        score = model.decision_function(sentence)[0]
+        x = score + model.intercept_[0]
+        sigmoid = 1 / (1 + math.exp(-3 * x))
+        return sigmoid
 
 
 @dataclass
@@ -118,13 +195,16 @@ class ExpectationToEvaluate:
 
 
 class SVMAnswerClassifierTraining:
-    def __init__(self):
+    def __init__(self, word2vec_model):
         self.model_obj = SVMExpectationClassifier()
         self.model_instances = {}
         self.ideal_answers_dictionary = {}
         self.accuracy = {}
+        self.word2vec_model = word2vec_model
 
-    def train_all(self, corpus: pd.DataFrame, output_dir: str = ".") -> Dict:
+    def train_all(
+        self, question: str, corpus: pd.DataFrame, output_dir: str = "."
+    ) -> Dict:
         output_dir = path.abspath(output_dir)
         makedirs(output_dir, exist_ok=True)
         split_training_sets: dict = defaultdict(int)
@@ -133,27 +213,30 @@ class SVMAnswerClassifierTraining:
                 split_training_sets[value] = [[], []]
             split_training_sets[value][0].append(corpus["text"][i])
             split_training_sets[value][1].append(corpus["label"][i])
+        index2word_set = set(self.word2vec_model.index2word)
         for exp_num, (train_x, train_y) in split_training_sets.items():
             processed_data = self.model_obj.preprocessing(train_x)
+            processed_question = self.model_obj.processing_single_sentence(question)
             ia = self.model_obj.initialize_ideal_answer(processed_data)
             self.ideal_answers_dictionary[exp_num] = ia
-            train_x, test_x, train_y, test_y = self.model_obj.split(
-                processed_data, train_y
+            features = np.array(
+                self.model_obj.calculate_features(
+                    processed_question,
+                    processed_data,
+                    None,
+                    self.word2vec_model,
+                    index2word_set,
+                )
             )
-            train_y, test_y = self.model_obj.encode_y(train_y, test_y)
-            features = self.model_obj.alignment(train_x, None)
-            c, kernel, degree, gamma, probability = self.model_obj.get_params()
-            model = self.model_obj.set_params(
-                c=c, kernel=kernel, degree=degree, gamma=gamma, probability=probability
+            train_y = np.array(self.model_obj.encode_y(train_y))
+            model = svm.SVC()
+            model.fit(features, train_y)
+            # may wanna create a separate function for this?
+            results_loocv = model_selection.cross_val_score(
+                model, features, train_y, cv=LeaveOneOut(), scoring="accuracy"
             )
-            self.model_obj.train(features, train_y)
+            self.accuracy[exp_num] = results_loocv.mean() * 100.0
             self.model_instances[exp_num] = model
-
-            training_predictions = self.model_obj.predict(model, features)
-            self.accuracy[exp_num] = self.model_obj.find_accuracy(
-                training_predictions, train_y
-            )
-
         self.model_obj.save(
             self.model_instances, path.join(output_dir, "model_instances")
         )
@@ -164,16 +247,21 @@ class SVMAnswerClassifierTraining:
 
 
 class SVMAnswerClassifier:
-    def __init__(self, model_instances, ideal_answers_dictionary):
+    def __init__(
+        self, model_instances, ideal_answers_dictionary, word2vec_model, question
+    ):
         self.model_obj = SVMExpectationClassifier()
         self.model_instances = model_instances
         self.ideal_answers_dictionary = ideal_answers_dictionary
+        self.word2vec_model = word2vec_model
+        self.question = question
 
     def find_model_for_expectation(self, expectation: int) -> svm.SVC:
         return self.model_instances[expectation]
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
-        sent_proc = self.model_obj.preprocessing(answer.input_sentence)
+        sent_proc = self.model_obj.processing_single_sentence(answer.input_sentence)
+        question_proc = self.model_obj.processing_single_sentence(self.question)
         expectations = (
             [
                 ExpectationToEvaluate(
@@ -188,16 +276,21 @@ class SVMAnswerClassifier:
             ]
         )
         result = AnswerClassifierResult(input=answer, expectation_results=[])
+        index2word = set(self.word2vec_model.index2word)
         for e in expectations:
-            sent_features = self.model_obj.alignment(
-                sent_proc, self.ideal_answers_dictionary[e.expectation]
+            sent_features = self.model_obj.calculate_features(
+                question_proc,
+                sent_proc,
+                self.ideal_answers_dictionary[e.expectation],
+                self.word2vec_model,
+                index2word,
             )
             result.expectation_results.append(
                 ExpectationClassifierResult(
                     expectation=e.expectation,
                     evaluation=(
                         "Good"
-                        if self.model_obj.predict(e.classifier, sent_features)[0] == 0
+                        if self.model_obj.predict(e.classifier, sent_features)[0] == 1
                         else "Bad"
                     ),
                     score=self.model_obj.confidence_score(e.classifier, sent_features),
@@ -206,10 +299,20 @@ class SVMAnswerClassifier:
         return result
 
 
-def train_classifier(training_data_path: str, model_root: str = "."):
+def train_classifier(
+    question_path: str,
+    training_data_path: str,
+    word2vec_model_path: str,
+    model_root: str = ".",
+):
     training_data = load_data(training_data_path)
-    svm_answer_classifier_training = SVMAnswerClassifierTraining()
-    svm_answer_classifier_training.train_all(training_data, output_dir=model_root)
+    question = load_question(question_path)
+    word2vec_model = load_word2vec_model(word2vec_model_path)
+    svm_answer_classifier_training = SVMAnswerClassifierTraining(word2vec_model)
+    accuracy = svm_answer_classifier_training.train_all(
+        question, training_data, output_dir=model_root
+    )
+    return accuracy
 
 
 def load_instances(

@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 import pandas as pd
 from typing import List
+import yaml
+from gensim.models import KeyedVectors
+from typing import Any
 
 
 @dataclass
@@ -31,3 +34,13 @@ class AnswerClassifier(ABC):
 
 def load_data(filename: str) -> pd.DataFrame:
     return pd.read_csv(filename, encoding="latin-1")
+
+
+def load_word2vec_model(path: str) -> Any:
+    return KeyedVectors.load_word2vec_format(path, binary=True)
+
+
+def load_question(path: str) -> str:
+    file = open(path)
+    parsed_file = yaml.load(file, Loader=yaml.FullLoader)
+    return parsed_file["main_question"]

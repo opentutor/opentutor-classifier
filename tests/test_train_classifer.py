@@ -1,19 +1,36 @@
 import os
 from os import path
-from opentutor_classifier import AnswerClassifierInput
+from opentutor_classifier import (
+    AnswerClassifierInput,
+    load_question,
+    load_word2vec_model,
+)
 from opentutor_classifier.svm import (
     train_classifier,
     SVMAnswerClassifier,
     load_instances,
 )
-from . import fixture_path
+from . import fixture_path, fixture_path_word2vec_model, fixture_path_question
 
 
 def __train_model(tmpdir) -> str:
     test_root = tmpdir.mkdir("test")
-    training_data = fixture_path(path.join("data", "training_data.csv"))
+    training_data = fixture_path(path.join("data", "lesson1_dataset.csv"))
+    question_path = fixture_path_question(path.join("data", "config.yml"))
+    word2vec_model_path = fixture_path_word2vec_model(
+        path.join("model_word2vec", "model.bin")
+    )
     model_root = os.path.join(test_root, "model_instances")
-    train_classifier(training_data, model_root=model_root)
+    accuracy = train_classifier(
+        question_path, training_data, word2vec_model_path, model_root=model_root
+    )
+    for model_num, acc in accuracy.items():
+        if model_num == 0:
+            assert acc == 90.0
+        if model_num == 1:
+            assert acc == 70.0
+        if model_num == 2:
+            assert acc == 70.0
     return model_root
 
 
@@ -27,18 +44,27 @@ def test_trained_models_usable_for_inference(tmpdir):
     model_root = __train_model(tmpdir)
     assert os.path.exists(model_root)
     model_instances, ideal_answers = load_instances(model_root=model_root)
-    classifier = SVMAnswerClassifier(model_instances, ideal_answers)
+    word2vec_model = load_word2vec_model(
+        fixture_path_word2vec_model(path.join("model_word2vec", "model.bin"))
+    )
+    question = load_question(fixture_path_question(path.join("data", "config.yml")))
+    print("question = ", question)
+    classifier = SVMAnswerClassifier(
+        model_instances, ideal_answers, word2vec_model, question
+    )
     result = classifier.evaluate(
-        AnswerClassifierInput(input_sentence=["peer pressure"], expectation=-1)
+        AnswerClassifierInput(
+            input_sentence="peer pressure can change your behavior", expectation=-1
+        )
     )
     assert len(result.expectation_results) == 3
     for exp_res in result.expectation_results:
         if exp_res.expectation == 0:
             assert exp_res.evaluation == "Good"
-            assert exp_res.score == -0.6666666666666667
+            assert round(exp_res.score, 2) == 0.94
         if exp_res.expectation == 1:
             assert exp_res.evaluation == "Bad"
-            assert exp_res.score == 1.0
+            assert round(exp_res.score, 2) == 0.23
         if exp_res.expectation == 2:
             assert exp_res.evaluation == "Bad"
-            assert exp_res.score == 1.0
+            assert round(exp_res.score, 2) == 0.28

@@ -1,8 +1,14 @@
 import pytest
+from os import path
 from typing import Tuple
-from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult
+from opentutor_classifier import (
+    AnswerClassifierInput,
+    ExpectationClassifierResult,
+    load_word2vec_model,
+    load_question,
+)
 from opentutor_classifier.svm import SVMAnswerClassifier, load_instances
-from . import fixture_path
+from . import fixture_path, fixture_path_word2vec_model, fixture_path_question
 
 
 @pytest.fixture(scope="module")
@@ -10,57 +16,41 @@ def model_and_ideal_answers() -> Tuple[dict, dict]:
     return load_instances(fixture_path("models"))
 
 
-@pytest.mark.parametrize(
-    "input_answer,input_expectation,expected_results",
-    [
-        (
-            ["peer pressure can get you in trouble"],
-            0,
-            [
-                ExpectationClassifierResult(
-                    expectation=0, score=-0.6666666666666667, evaluation="Good"
-                )
-            ],
-        )
-    ],
-)
-def test_evaluates_one_expectation(
-    model_and_ideal_answers, input_answer, input_expectation, expected_results
-):
-    model_instances, ideal_answers = model_and_ideal_answers
-    classifier = SVMAnswerClassifier(model_instances, ideal_answers)
-    result = classifier.evaluate(
-        AnswerClassifierInput(
-            input_sentence=input_answer, expectation=input_expectation
-        )
+@pytest.fixture(scope="module")
+def word2vec_model():
+    return load_word2vec_model(
+        fixture_path_word2vec_model(path.join("model_word2vec", "model.bin"))
     )
-    assert len(result.expectation_results) == len(expected_results)
-    for res, res_expected in zip(result.expectation_results, expected_results):
-        assert res.score == res_expected.score
-        assert res.evaluation == res_expected.evaluation
+
+
+@pytest.fixture(scope="module")
+def question():
+    return load_question(fixture_path_question(path.join("data", "config.yml")))
 
 
 @pytest.mark.parametrize(
     "input_answer,input_expectation_number,expected_results",
     [
         (
-            ["peer pressure"],
-            -1,
-            [
-                ExpectationClassifierResult(
-                    expectation=0, score=-0.6666666666666667, evaluation="Good"
-                ),
-                ExpectationClassifierResult(expectation=1, score=1.0, evaluation="Bad"),
-                ExpectationClassifierResult(expectation=2, score=1.0, evaluation="Bad"),
-            ],
+            "peer pressure can change your behavior",
+            0,
+            [ExpectationClassifierResult(expectation=0, score=0.94, evaluation="Good")],
         )
     ],
 )
-def test_evaluates_with_no_input_expectation(
-    model_and_ideal_answers, input_answer, input_expectation_number, expected_results
+def test_evaluates_one_expectation(
+    question,
+    word2vec_model,
+    model_and_ideal_answers,
+    input_answer,
+    input_expectation_number,
+    expected_results,
 ):
     model_instances, ideal_answers = model_and_ideal_answers
-    classifier = SVMAnswerClassifier(model_instances, ideal_answers)
+
+    classifier = SVMAnswerClassifier(
+        model_instances, ideal_answers, word2vec_model, question
+    )
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer, expectation=input_expectation_number
@@ -68,5 +58,48 @@ def test_evaluates_with_no_input_expectation(
     )
     assert len(result.expectation_results) == len(expected_results)
     for res, res_expected in zip(result.expectation_results, expected_results):
-        assert res.score == res_expected.score
+        assert round(res.score, 2) == res_expected.score
+        assert res.evaluation == res_expected.evaluation
+
+
+@pytest.mark.parametrize(
+    "input_answer,input_expectation_number,expected_results",
+    [
+        (
+            "peer pressure can change your behavior",
+            -1,
+            [
+                ExpectationClassifierResult(
+                    expectation=0, score=0.94, evaluation="Good"
+                ),
+                ExpectationClassifierResult(
+                    expectation=1, score=0.23, evaluation="Bad"
+                ),
+                ExpectationClassifierResult(
+                    expectation=2, score=0.28, evaluation="Bad"
+                ),
+            ],
+        )
+    ],
+)
+def test_evaluates_with_no_input_expectation_number(
+    question,
+    word2vec_model,
+    model_and_ideal_answers,
+    input_answer,
+    input_expectation_number,
+    expected_results,
+):
+    model_instances, ideal_answers = model_and_ideal_answers
+    classifier = SVMAnswerClassifier(
+        model_instances, ideal_answers, word2vec_model, question
+    )
+    result = classifier.evaluate(
+        AnswerClassifierInput(
+            input_sentence=input_answer, expectation=input_expectation_number
+        )
+    )
+    assert len(result.expectation_results) == len(expected_results)
+    for res, res_expected in zip(result.expectation_results, expected_results):
+        assert round(res.score, 2) == res_expected.score
         assert res.evaluation == res_expected.evaluation
