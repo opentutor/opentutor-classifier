@@ -16,11 +16,11 @@ from . import fixture_path, fixture_path_word2vec_model, fixture_path_question
 def __train_model(tmpdir) -> str:
     test_root = tmpdir.mkdir("test")
     training_data = fixture_path(path.join("data", "lesson1_dataset.csv"))
-    question_path = fixture_path_question(path.join("data", "config.yml"))
+    question_path = fixture_path_question(path.join("data", "config.yaml"))
     word2vec_model_path = fixture_path_word2vec_model(
         path.join("model_word2vec", "model.bin")
     )
-    model_root = os.path.join(test_root, "model_instances")
+    model_root = os.path.join(test_root, "model_root")
     accuracy = train_classifier(
         question_path, training_data, word2vec_model_path, model_root=model_root
     )
@@ -36,21 +36,19 @@ def __train_model(tmpdir) -> str:
 
 def test_outputs_models_at_specified_model_root(tmpdir):
     model_root = __train_model(tmpdir)
-    assert path.exists(path.join(model_root, "model_instances"))
-    assert path.exists(path.join(model_root, "ideal_answers"))
+    assert path.exists(path.join(model_root, "models_by_expectation_num"))
+    assert path.exists(path.join(model_root, "ideal_answers_by_expectation_num"))
+    assert path.exists(path.join(model_root, "config.yaml"))
 
 
 def test_trained_models_usable_for_inference(tmpdir):
     model_root = __train_model(tmpdir)
     assert os.path.exists(model_root)
-    model_instances, ideal_answers = load_instances(model_root=model_root)
     word2vec_model = load_word2vec_model(
         fixture_path_word2vec_model(path.join("model_word2vec", "model.bin"))
     )
-    question = load_question(fixture_path_question(path.join("data", "config.yml")))
-    print("question = ", question)
     classifier = SVMAnswerClassifier(
-        model_instances, ideal_answers, word2vec_model, question
+        model_root, word2vec_model
     )
     result = classifier.evaluate(
         AnswerClassifierInput(

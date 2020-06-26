@@ -12,8 +12,8 @@ from . import fixture_path, fixture_path_word2vec_model, fixture_path_question
 
 
 @pytest.fixture(scope="module")
-def model_and_ideal_answers() -> Tuple[dict, dict]:
-    return load_instances(fixture_path("models"))
+def model_root() -> str:
+    return fixture_path("models")
 
 
 @pytest.fixture(scope="module")
@@ -21,11 +21,6 @@ def word2vec_model():
     return load_word2vec_model(
         fixture_path_word2vec_model(path.join("model_word2vec", "model.bin"))
     )
-
-
-@pytest.fixture(scope="module")
-def question():
-    return load_question(fixture_path_question(path.join("data", "config.yml")))
 
 
 @pytest.mark.parametrize(
@@ -39,18 +34,9 @@ def question():
     ],
 )
 def test_evaluates_one_expectation(
-    question,
-    word2vec_model,
-    model_and_ideal_answers,
-    input_answer,
-    input_expectation_number,
-    expected_results,
+    model_root, word2vec_model, input_answer, input_expectation_number, expected_results
 ):
-    model_instances, ideal_answers = model_and_ideal_answers
-
-    classifier = SVMAnswerClassifier(
-        model_instances, ideal_answers, word2vec_model, question
-    )
+    classifier = SVMAnswerClassifier(model_root, word2vec_model)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer, expectation=input_expectation_number
@@ -83,17 +69,9 @@ def test_evaluates_one_expectation(
     ],
 )
 def test_evaluates_with_no_input_expectation_number(
-    question,
-    word2vec_model,
-    model_and_ideal_answers,
-    input_answer,
-    input_expectation_number,
-    expected_results,
+    model_root, word2vec_model, input_answer, input_expectation_number, expected_results
 ):
-    model_instances, ideal_answers = model_and_ideal_answers
-    classifier = SVMAnswerClassifier(
-        model_instances, ideal_answers, word2vec_model, question
-    )
+    classifier = SVMAnswerClassifier(model_root, word2vec_model)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer, expectation=input_expectation_number

@@ -16,7 +16,7 @@ def cli():
 @click.option("-o", "--output", required=False, type=click.Path(exists=False))
 def train(data_path, shared_model, output):
     corpus = load_data(os.path.join(data_path, "lesson1_dataset.csv"))
-    question = load_question(os.path.join(data_path, "config.yml"))
+    question = load_question(os.path.join(data_path, "config.yaml"))
     word2vec_model = load_word2vec_model(shared_model)
     training = SVMAnswerClassifierTraining(word2vec_model)
     accuracy = training.train_all(question, corpus=corpus, output_dir=output)

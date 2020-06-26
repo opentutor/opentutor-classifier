@@ -1,5 +1,5 @@
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 import pandas as pd
 import numpy as np
 from gensim.models import KeyedVectors
@@ -11,10 +11,11 @@ from os import path, makedirs
 import pickle
 from sklearn import model_selection, svm
 from sklearn.preprocessing import LabelEncoder
-from typing import Tuple, Dict
+from typing import Dict, List, Tuple
 import math
 from scipy import spatial
 from sklearn.model_selection import LeaveOneOut
+import yaml
 
 
 from opentutor_classifier import (
@@ -27,13 +28,29 @@ from opentutor_classifier import (
 )
 
 
+@dataclass
+class InstanceConfig:
+    question: str
+
+    def write_to(self, file_path: str):
+        with open(file_path, "w") as config_file:
+            yaml.dump(asdict(self), config_file)
+
+
+@dataclass
+class InstanceModels:
+    models_by_expectation_num: Dict[int, svm.SVC]
+    ideal_answers_by_expectation_num: Dict[int, List[str]]
+    config: InstanceConfig
+
+
 class SVMExpectationClassifier:
     def __init__(self):
         self.tag_map = defaultdict(lambda: wn.NOUN)
         self.tag_map["J"] = wn.ADJ
         self.tag_map["V"] = wn.VERB
         self.tag_map["R"] = wn.ADV
-        self.ideal_answer = None
+        self.ideal_answer = ""
         self.model = None
         self.score_dictionary = defaultdict(int)
         np.random.seed(1)
@@ -149,15 +166,19 @@ class SVMExpectationClassifier:
         return len(example) / len(ideal_answer)
 
     def calculate_features(
-        self, question, train_x, ideal_answer, word2vec_model, index2word_set
+        self,
+        question: str,
+        train_x: np.ndarray,
+        ideal_answer: List[str],
+        word2vec_model,
+        index2word_set: set,
     ):
-        if ideal_answer is None:
+        if not ideal_answer:
             ideal_answer = self.ideal_answer
         all_features = []
         for example in train_x:
             feature = []
             feature.append(self.length_ratio_feature(example, ideal_answer))
-            # feature.append(self.word_overlap_feature(example, ideal_answer))
             feature.append(
                 self.word2vec_example_similarity_feature(
                     word2vec_model, index2word_set, example, ideal_answer
@@ -223,7 +244,7 @@ class SVMAnswerClassifierTraining:
                 self.model_obj.calculate_features(
                     processed_question,
                     processed_data,
-                    None,
+                    [],
                     self.word2vec_model,
                     index2word_set,
                 )
@@ -238,30 +259,44 @@ class SVMAnswerClassifierTraining:
             self.accuracy[exp_num] = results_loocv.mean() * 100.0
             self.model_instances[exp_num] = model
         self.model_obj.save(
-            self.model_instances, path.join(output_dir, "model_instances")
+            self.model_instances, path.join(output_dir, "models_by_expectation_num")
         )
         self.model_obj.save(
-            self.ideal_answers_dictionary, path.join(output_dir, "ideal_answers")
+            self.ideal_answers_dictionary, path.join(output_dir, "ideal_answers_by_expectation_num")
         )
+        InstanceConfig(question=question).write_to(path.join(output_dir, "config.yaml"))
         return self.accuracy
 
 
 class SVMAnswerClassifier:
-    def __init__(
-        self, model_instances, ideal_answers_dictionary, word2vec_model, question
-    ):
+    def __init__(self, model_root, word2vec_model):
+        self.model_root = model_root
         self.model_obj = SVMExpectationClassifier()
-        self.model_instances = model_instances
-        self.ideal_answers_dictionary = ideal_answers_dictionary
         self.word2vec_model = word2vec_model
-        self.question = question
+        self._instance_models = None
+
+    def instance_models(self) -> InstanceModels:
+        if not self._instance_models:
+            self._instance_models = load_instances(model_root=self.model_root)
+        return self._instance_models
+
+    def models_by_expectation_num(self) -> Dict[int, svm.SVC]:
+        return self.instance_models().models_by_expectation_num
+
+    def find_ideal_answer(self, expectation_num: int) -> List[str]:
+        return self.instance_models().ideal_answers_by_expectation_num[expectation_num]
+
+    def config(self) -> InstanceConfig:
+        return self.instance_models().config
 
     def find_model_for_expectation(self, expectation: int) -> svm.SVC:
-        return self.model_instances[expectation]
+        return self.models_by_expectation_num()[expectation]
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = self.model_obj.processing_single_sentence(answer.input_sentence)
-        question_proc = self.model_obj.processing_single_sentence(self.question)
+        question_proc = self.model_obj.processing_single_sentence(
+            self.config().question
+        )
         expectations = (
             [
                 ExpectationToEvaluate(
@@ -272,7 +307,7 @@ class SVMAnswerClassifier:
             if answer.expectation != -1
             else [
                 ExpectationToEvaluate(expectation=int(k), classifier=v)
-                for k, v in self.model_instances.items()
+                for k, v in self.models_by_expectation_num().items()
             ]
         )
         result = AnswerClassifierResult(input=answer, expectation_results=[])
@@ -281,7 +316,7 @@ class SVMAnswerClassifier:
             sent_features = self.model_obj.calculate_features(
                 question_proc,
                 sent_proc,
-                self.ideal_answers_dictionary[e.expectation],
+                self.find_ideal_answer(e.expectation),
                 self.word2vec_model,
                 index2word,
             )
@@ -317,10 +352,23 @@ def train_classifier(
 
 def load_instances(
     model_root="./models",
-    model_filename="model_instances",
-    ideal_answers_filename="ideal_answers",
-) -> Tuple[dict, dict]:
-    return (
-        pickle.load(open(path.join(model_root, model_filename), "rb")),
-        pickle.load(open(path.join(model_root, ideal_answers_filename), "rb")),
+    models_by_expectation_num_filename="models_by_expectation_num",
+    ideal_answers_by_expectation_num_filename="ideal_answers_by_expectation_num",
+    config_filename="config.yaml",
+) -> InstanceModels:
+    with open(path.join(model_root, config_filename)) as config_file:
+        config = InstanceConfig(**yaml.load(config_file, Loader=yaml.FullLoader))
+    with open(
+        path.join(model_root, models_by_expectation_num_filename), "rb"
+    ) as models_file:
+        models_by_expectation_num: Dict[int, svm.SVC] = pickle.load(models_file)
+    with open(
+        path.join(model_root, ideal_answers_by_expectation_num_filename), "rb"
+    ) as ideal_file:
+        ideal_answers_by_expectation_num: Dict[int, List[str]] = pickle.load(ideal_file)
+    return InstanceModels(
+        config=config,
+        models_by_expectation_num=models_by_expectation_num,
+        ideal_answers_by_expectation_num=ideal_answers_by_expectation_num,
     )
+

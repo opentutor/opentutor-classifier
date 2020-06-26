@@ -30,7 +30,7 @@ def __train_model(tmpdir) -> str:
     word2vec_model_path = fixture_path_word2vec_model(
         os.path.join("model_word2vec", "model.bin")
     )
-    model_root = os.path.join(test_root, "model_instances")
+    model_root = os.path.join(test_root, "model_root")
     command = [
         ".venv/bin/python3.8",
         "bin/opentutor_classifier",
@@ -47,13 +47,14 @@ def __train_model(tmpdir) -> str:
 
 
 def test_cli_outputs_models_at_specified_model_root(tmpdir):
-    out, _, exit_code, model_root = __train_model(tmpdir)
+    out, err, exit_code, model_root = __train_model(tmpdir)
     assert exit_code == 0
-    assert path.exists(path.join(model_root, "model_instances"))
-    assert path.exists(path.join(model_root, "ideal_answers"))
+    assert path.exists(path.join(model_root, "models_by_expectation_num"))
+    assert path.exists(path.join(model_root, "ideal_answers_by_expectation_num"))
+    assert path.exists(path.join(model_root, "config.yaml"))
     out_str = out.decode("utf-8")
     out_str = out_str.split("\n")
-    assert re.search(r"Models are saved at: /.+/model_instances", out_str[0])
+    assert re.search(r"Models are saved at: /.+/model_root", out_str[0])
     for i in range(0, 3):
         assert re.search(
             f"Accuracy for model={i} is [0-9]+\\.[0-9]+\\.",
@@ -65,17 +66,12 @@ def test_cli_outputs_models_at_specified_model_root(tmpdir):
 def test_cli_trained_models_usable_for_inference(tmpdir):
     _, _, _, model_root = __train_model(tmpdir)
     assert os.path.exists(model_root)
-    model_instances, ideal_answers = load_instances(model_root=model_root)
-
     word2vec_model = load_word2vec_model(
         fixture_path_word2vec_model(path.join("model_word2vec", "model.bin"))
     )
-    question = load_question(fixture_path_question(path.join("data", "config.yml")))
-
     classifier = SVMAnswerClassifier(
-        model_instances, ideal_answers, word2vec_model, question
+        model_root, word2vec_model
     )
-
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="peer pressure can change your behavior", expectation=-1
