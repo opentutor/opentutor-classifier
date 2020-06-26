@@ -2,10 +2,11 @@ import os
 from os import path
 from opentutor_classifier import AnswerClassifierInput, load_word2vec_model
 from opentutor_classifier.svm import train_classifier, SVMAnswerClassifier
+from typing import Dict, Tuple
 from . import fixture_path, fixture_path_word2vec_model
 
 
-def __train_model(tmpdir) -> str:
+def __train_model(tmpdir) -> Tuple[str, Dict[int, int]]:
     test_root = tmpdir.mkdir("test")
     training_data = fixture_path(path.join("data", "lesson1_dataset.csv"))
     question_path = fixture_path(path.join("data", "config.yaml"))
@@ -16,6 +17,19 @@ def __train_model(tmpdir) -> str:
     accuracy = train_classifier(
         question_path, training_data, word2vec_model_path, model_root=model_root
     )
+    return model_root, accuracy
+
+
+def test_outputs_models_at_specified_model_root(tmpdir):
+    model_root, _ = __train_model(tmpdir)
+    assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
+    assert path.exists(path.join(model_root, "ideal_answers_by_expectation_num.pkl"))
+    assert path.exists(path.join(model_root, "config.yaml"))
+
+
+def test_trained_models_usable_for_inference(tmpdir):
+    model_root, accuracy = __train_model(tmpdir)
+    assert os.path.exists(model_root)
     for model_num, acc in accuracy.items():
         if model_num == 0:
             assert acc == 90.0
@@ -23,19 +37,6 @@ def __train_model(tmpdir) -> str:
             assert acc == 70.0
         if model_num == 2:
             assert acc == 70.0
-    return model_root
-
-
-def test_outputs_models_at_specified_model_root(tmpdir):
-    model_root = __train_model(tmpdir)
-    assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
-    assert path.exists(path.join(model_root, "ideal_answers_by_expectation_num.pkl"))
-    assert path.exists(path.join(model_root, "config.yaml"))
-
-
-def test_trained_models_usable_for_inference(tmpdir):
-    model_root = __train_model(tmpdir)
-    assert os.path.exists(model_root)
     word2vec_model = load_word2vec_model(
         fixture_path_word2vec_model(path.join("model_word2vec", "model.bin"))
     )
