@@ -11,7 +11,7 @@ from os import path, makedirs
 import pickle
 from sklearn import model_selection, svm
 from sklearn.preprocessing import LabelEncoder
-from typing import Dict, List, Tuple
+from typing import Dict, List
 import math
 from scipy import spatial
 from sklearn.model_selection import LeaveOneOut
@@ -259,10 +259,11 @@ class SVMAnswerClassifierTraining:
             self.accuracy[exp_num] = results_loocv.mean() * 100.0
             self.model_instances[exp_num] = model
         self.model_obj.save(
-            self.model_instances, path.join(output_dir, "models_by_expectation_num")
+            self.model_instances, path.join(output_dir, "models_by_expectation_num.pkl")
         )
         self.model_obj.save(
-            self.ideal_answers_dictionary, path.join(output_dir, "ideal_answers_by_expectation_num")
+            self.ideal_answers_dictionary,
+            path.join(output_dir, "ideal_answers_by_expectation_num.pkl"),
         )
         InstanceConfig(question=question).write_to(path.join(output_dir, "config.yaml"))
         return self.accuracy
@@ -352,8 +353,8 @@ def train_classifier(
 
 def load_instances(
     model_root="./models",
-    models_by_expectation_num_filename="models_by_expectation_num",
-    ideal_answers_by_expectation_num_filename="ideal_answers_by_expectation_num",
+    models_by_expectation_num_filename="models_by_expectation_num.pkl",
+    ideal_answers_by_expectation_num_filename="ideal_answers_by_expectation_num.pkl",
     config_filename="config.yaml",
 ) -> InstanceModels:
     with open(path.join(model_root, config_filename)) as config_file:
@@ -371,4 +372,3 @@ def load_instances(
         models_by_expectation_num=models_by_expectation_num,
         ideal_answers_by_expectation_num=ideal_answers_by_expectation_num,
     )
-

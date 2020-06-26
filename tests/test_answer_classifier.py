@@ -1,14 +1,12 @@
 import pytest
 from os import path
-from typing import Tuple
 from opentutor_classifier import (
     AnswerClassifierInput,
     ExpectationClassifierResult,
     load_word2vec_model,
-    load_question,
 )
-from opentutor_classifier.svm import SVMAnswerClassifier, load_instances
-from . import fixture_path, fixture_path_word2vec_model, fixture_path_question
+from opentutor_classifier.svm import SVMAnswerClassifier
+from . import fixture_path, fixture_path_word2vec_model
 
 
 @pytest.fixture(scope="module")

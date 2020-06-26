@@ -3,13 +3,8 @@ from os import path
 import pytest
 import subprocess
 from opentutor_classifier import AnswerClassifierInput
-from opentutor_classifier.svm import (
-    SVMAnswerClassifier,
-    load_instances,
-    load_question,
-    load_word2vec_model,
-)
-from . import fixture_path, fixture_path_word2vec_model, fixture_path_question
+from opentutor_classifier.svm import SVMAnswerClassifier, load_word2vec_model
+from . import fixture_path, fixture_path_word2vec_model
 import re
 
 
@@ -49,8 +44,8 @@ def __train_model(tmpdir) -> str:
 def test_cli_outputs_models_at_specified_model_root(tmpdir):
     out, err, exit_code, model_root = __train_model(tmpdir)
     assert exit_code == 0
-    assert path.exists(path.join(model_root, "models_by_expectation_num"))
-    assert path.exists(path.join(model_root, "ideal_answers_by_expectation_num"))
+    assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
+    assert path.exists(path.join(model_root, "ideal_answers_by_expectation_num.pkl"))
     assert path.exists(path.join(model_root, "config.yaml"))
     out_str = out.decode("utf-8")
     out_str = out_str.split("\n")
@@ -69,9 +64,7 @@ def test_cli_trained_models_usable_for_inference(tmpdir):
     word2vec_model = load_word2vec_model(
         fixture_path_word2vec_model(path.join("model_word2vec", "model.bin"))
     )
-    classifier = SVMAnswerClassifier(
-        model_root, word2vec_model
-    )
+    classifier = SVMAnswerClassifier(model_root, word2vec_model)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="peer pressure can change your behavior", expectation=-1
