@@ -4,7 +4,7 @@ import pandas as pd
 from typing import List
 import yaml
 from gensim.models import KeyedVectors
-from typing import Any
+from gensim.models.keyedvectors import Word2VecKeyedVectors
 
 
 @dataclass
@@ -36,7 +36,7 @@ def load_data(filename: str) -> pd.DataFrame:
     return pd.read_csv(filename, encoding="latin-1")
 
 
-def load_word2vec_model(path: str) -> Any:
+def load_word2vec_model(path: str) -> Word2VecKeyedVectors:
     return KeyedVectors.load_word2vec_format(path, binary=True)
 
 
