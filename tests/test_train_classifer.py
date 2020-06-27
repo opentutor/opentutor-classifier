@@ -1,35 +1,48 @@
 import os
 from os import path
-from opentutor_classifier import AnswerClassifierInput, load_word2vec_model
+from opentutor_classifier import AnswerClassifierInput
 from opentutor_classifier.svm import train_classifier, SVMAnswerClassifier
+import pytest
 from typing import Dict, Tuple
-from . import fixture_path, fixture_path_word2vec_model
+from . import fixture_path
 
 
-def __train_model(tmpdir) -> Tuple[str, Dict[int, int]]:
-    test_root = tmpdir.mkdir("test")
-    training_data = fixture_path(path.join("data", "lesson1_dataset.csv"))
-    question_path = fixture_path(path.join("data", "config.yaml"))
-    word2vec_model_path = fixture_path_word2vec_model(
-        path.join("model_word2vec", "model.bin")
-    )
-    model_root = os.path.join(test_root, "model_root")
+@pytest.fixture(scope="module")
+def data_root() -> str:
+    return fixture_path("data")
+
+
+@pytest.fixture(scope="module")
+def shared_root() -> str:
+    return fixture_path("shared")
+
+
+def __train_model(
+    tmpdir, data_root: str, shared_root: str
+) -> Tuple[str, Dict[int, int]]:
+    output_dir = os.path.join(tmpdir.mkdir("test"), "model_root")
     accuracy = train_classifier(
-        question_path, training_data, word2vec_model_path, model_root=model_root
+        data_root=data_root, shared_root=shared_root, output_dir=output_dir
     )
-    return model_root, accuracy
+    return output_dir, accuracy
 
 
-def test_outputs_models_at_specified_model_root(tmpdir):
-    model_root, _ = __train_model(tmpdir)
-    assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
-    assert path.exists(path.join(model_root, "ideal_answers_by_expectation_num.pkl"))
-    assert path.exists(path.join(model_root, "config.yaml"))
+def test_outputs_models_at_specified_model_root(
+    tmpdir, data_root: str, shared_root: str
+):
+    output_dir, _ = __train_model(
+        tmpdir, path.join(data_root, "question1"), shared_root
+    )
+    assert path.exists(path.join(output_dir, "models_by_expectation_num.pkl"))
+    assert path.exists(path.join(output_dir, "ideal_answers_by_expectation_num.pkl"))
+    assert path.exists(path.join(output_dir, "config.yaml"))
 
 
-def test_trained_models_usable_for_inference(tmpdir):
-    model_root, accuracy = __train_model(tmpdir)
-    assert os.path.exists(model_root)
+def test_trained_models_usable_for_inference(tmpdir, data_root: str, shared_root: str):
+    output_dir, accuracy = __train_model(
+        tmpdir, path.join(data_root, "question1"), shared_root
+    )
+    assert os.path.exists(output_dir)
     for model_num, acc in accuracy.items():
         if model_num == 0:
             assert acc == 90.0
@@ -37,10 +50,7 @@ def test_trained_models_usable_for_inference(tmpdir):
             assert acc == 70.0
         if model_num == 2:
             assert acc == 70.0
-    word2vec_model = load_word2vec_model(
-        fixture_path_word2vec_model(path.join("model_word2vec", "model.bin"))
-    )
-    classifier = SVMAnswerClassifier(model_root, word2vec_model)
+    classifier = SVMAnswerClassifier(model_root=output_dir, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="peer pressure can change your behavior", expectation=-1

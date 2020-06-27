@@ -1,12 +1,7 @@
 import pytest
-from os import path
-from opentutor_classifier import (
-    AnswerClassifierInput,
-    ExpectationClassifierResult,
-    load_word2vec_model,
-)
+from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult
 from opentutor_classifier.svm import SVMAnswerClassifier
-from . import fixture_path, fixture_path_word2vec_model
+from . import fixture_path
 
 
 @pytest.fixture(scope="module")
@@ -15,10 +10,8 @@ def model_root() -> str:
 
 
 @pytest.fixture(scope="module")
-def word2vec_model():
-    return load_word2vec_model(
-        fixture_path_word2vec_model(path.join("model_word2vec", "model.bin"))
-    )
+def shared_root() -> str:
+    return fixture_path("shared")
 
 
 @pytest.mark.parametrize(
@@ -32,9 +25,9 @@ def word2vec_model():
     ],
 )
 def test_evaluates_one_expectation(
-    model_root, word2vec_model, input_answer, input_expectation_number, expected_results
+    model_root, shared_root, input_answer, input_expectation_number, expected_results
 ):
-    classifier = SVMAnswerClassifier(model_root, word2vec_model)
+    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer, expectation=input_expectation_number
@@ -67,9 +60,9 @@ def test_evaluates_one_expectation(
     ],
 )
 def test_evaluates_with_no_input_expectation_number(
-    model_root, word2vec_model, input_answer, input_expectation_number, expected_results
+    model_root, shared_root, input_answer, input_expectation_number, expected_results
 ):
-    classifier = SVMAnswerClassifier(model_root, word2vec_model)
+    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer, expectation=input_expectation_number
