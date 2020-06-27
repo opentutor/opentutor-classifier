@@ -2,7 +2,7 @@
 import click
 import os
 from opentutor_classifier.svm import SVMAnswerClassifierTraining
-from opentutor_classifier import load_data, load_word2vec_model, load_question
+from opentutor_classifier import load_data
 
 
 @click.group()
@@ -11,19 +11,15 @@ def cli():
 
 
 @cli.command()
-@click.option("-p", "--data_path", required=False, type=click.Path(exists=True))
-@click.option("-s", "--shared_model", required=False, type=click.Path(exists=True))
+@click.option("-p", "--data", required=False, type=click.Path(exists=True))
+@click.option("-s", "--shared", required=False, type=click.Path(exists=True))
 @click.option("-o", "--output", required=False, type=click.Path(exists=False))
-def train(data_path, shared_model, output):
-    corpus = load_data(os.path.join(data_path, "lesson1_dataset.csv"))
-    question = load_question(os.path.join(data_path, "config.yml"))
-    word2vec_model = load_word2vec_model(shared_model)
-    training = SVMAnswerClassifierTraining(word2vec_model)
-    accuracy = training.train_all(question, corpus=corpus, output_dir=output)
+def train(data: str, shared: str, output: str):
+    training = SVMAnswerClassifierTraining(shared_root=shared)
+    accuracy = training.train_all(data_root=data, output_dir=output)
     print("Models are saved at: " + output)
     for exp_num, acc in accuracy.items():
         print(f"Accuracy for model={exp_num} is {acc}.")
-
 
 
 cli.add_command(train)

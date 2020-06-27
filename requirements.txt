@@ -1,5 +1,5 @@
 click==7.1.2
-pandas==1.0.4
+pandas==1.0.5
 nltk==3.5
 scikit-learn==0.23.1
 # FIXME: Locking werkzeug until the resolution of pallets/werkzeug#1714

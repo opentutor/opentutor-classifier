@@ -3,13 +3,8 @@ from os import path
 import pytest
 import subprocess
 from opentutor_classifier import AnswerClassifierInput
-from opentutor_classifier.svm import (
-    SVMAnswerClassifier,
-    load_instances,
-    load_question,
-    load_word2vec_model,
-)
-from . import fixture_path, fixture_path_word2vec_model, fixture_path_question
+from opentutor_classifier.svm import SVMAnswerClassifier
+from . import fixture_path
 import re
 
 
@@ -24,36 +19,37 @@ def capture(command):
     return out, err, proc.returncode
 
 
-def __train_model(tmpdir) -> str:
+def __train_model(tmpdir, question_id: str, shared_root: str) -> str:
     test_root = tmpdir.mkdir("test")
-    training_data_path = fixture_path("data")
-    word2vec_model_path = fixture_path_word2vec_model(
-        os.path.join("model_word2vec", "model.bin")
-    )
-    model_root = os.path.join(test_root, "model_instances")
+    training_data_path = os.path.join(fixture_path("data"), question_id)
+    output_dir = os.path.join(test_root, "output")
     command = [
         ".venv/bin/python3.8",
         "bin/opentutor_classifier",
         "train",
-        "--data_path",
+        "--data",
         training_data_path,
-        "--shared_model",
-        word2vec_model_path,
+        "--shared",
+        shared_root,
         "--output",
-        model_root,
+        output_dir,
     ]
     out, err, exitcode = capture(command)
-    return out, err, exitcode, model_root
+    return out, err, exitcode, output_dir
 
 
 def test_cli_outputs_models_at_specified_model_root(tmpdir):
-    out, _, exit_code, model_root = __train_model(tmpdir)
+    shared_root = fixture_path("shared")
+    out, err, exit_code, model_root = __train_model(tmpdir, "question1", shared_root)
+    print(f"err={str(err)}")
+    print(f"out={str(out)}")
     assert exit_code == 0
-    assert path.exists(path.join(model_root, "model_instances"))
-    assert path.exists(path.join(model_root, "ideal_answers"))
+    assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
+    assert path.exists(path.join(model_root, "ideal_answers_by_expectation_num.pkl"))
+    assert path.exists(path.join(model_root, "config.yaml"))
     out_str = out.decode("utf-8")
     out_str = out_str.split("\n")
-    assert re.search(r"Models are saved at: /.+/model_instances", out_str[0])
+    assert re.search(r"Models are saved at: /.+/output", out_str[0])
     for i in range(0, 3):
         assert re.search(
             f"Accuracy for model={i} is [0-9]+\\.[0-9]+\\.",
@@ -63,19 +59,10 @@ def test_cli_outputs_models_at_specified_model_root(tmpdir):
 
 
 def test_cli_trained_models_usable_for_inference(tmpdir):
-    _, _, _, model_root = __train_model(tmpdir)
+    shared_root = fixture_path("shared")
+    _, _, _, model_root = __train_model(tmpdir, "question1", shared_root)
     assert os.path.exists(model_root)
-    model_instances, ideal_answers = load_instances(model_root=model_root)
-
-    word2vec_model = load_word2vec_model(
-        fixture_path_word2vec_model(path.join("model_word2vec", "model.bin"))
-    )
-    question = load_question(fixture_path_question(path.join("data", "config.yml")))
-
-    classifier = SVMAnswerClassifier(
-        model_instances, ideal_answers, word2vec_model, question
-    )
-
+    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="peer pressure can change your behavior", expectation=-1
