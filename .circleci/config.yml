@@ -95,11 +95,6 @@ jobs:
       - checkout
       - *git-lfs-pull
       - run:
-          name: install required packages
-          command: sudo apt-get install libsndfile1
-          # tests don't actually depend on libsndfile1
-          # but will fail raise errors importing the soundfile module without it
-      - run:
           name: Run tests
           command: make test
 workflows:
