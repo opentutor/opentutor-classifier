@@ -8,17 +8,6 @@ aliases:
   - &only-untagged
     tags:
       ignore: /.*/
-  - &git-lfs-install
-    run:
-      name: Git lfs install
-      command: |
-        curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash \
-          && sudo apt-get install -y git-lfs \
-          && git lfs install
-  - &git-lfs-pull
-    run:
-      name: Git lfs pull
-      command: git lfs pull
 orbs:
   docker: circleci/docker@1.2.1
   environment:
@@ -91,9 +80,7 @@ jobs:
   test:
     executor: python
     steps:
-      - *git-lfs-install
       - checkout
-      - *git-lfs-pull
       - run:
           name: Run tests
           command: make test
