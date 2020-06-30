@@ -55,6 +55,7 @@ def test_cli_outputs_models_at_specified_model_root_for_q1(tmpdir):
             flags=re.MULTILINE,
         )
 
+
 def test_cli_outputs_models_at_specified_model_root_for_q2(tmpdir):
     shared_root = fixture_path("shared")
     out, err, exit_code, model_root = __train_model(tmpdir, "question2", shared_root)
@@ -71,7 +72,6 @@ def test_cli_outputs_models_at_specified_model_root_for_q2(tmpdir):
             out_str[i + 1],
             flags=re.MULTILINE,
         )
-
 
 
 def test_cli_trained_models_usable_for_inference_for_q1(tmpdir):
@@ -96,6 +96,7 @@ def test_cli_trained_models_usable_for_inference_for_q1(tmpdir):
             assert exp_res.evaluation == "Bad"
             assert round(exp_res.score, 2) == 0.28
 
+
 def test_cli_trained_models_usable_for_inference_for_q2(tmpdir):
     shared_root = fixture_path("shared")
     _, _, _, model_root = __train_model(tmpdir, "question2", shared_root)
@@ -103,7 +104,8 @@ def test_cli_trained_models_usable_for_inference_for_q2(tmpdir):
     classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
-            input_sentence="Current flows in the same direction as the arrow", expectation=0
+            input_sentence="Current flows in the same direction as the arrow",
+            expectation=0,
         )
     )
     assert len(result.expectation_results) == 1
@@ -111,4 +113,3 @@ def test_cli_trained_models_usable_for_inference_for_q2(tmpdir):
         if exp_res.expectation == 0:
             assert exp_res.evaluation == "Good"
             assert round(exp_res.score, 2) == 0.93
-        
