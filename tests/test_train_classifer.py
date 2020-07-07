@@ -60,11 +60,11 @@ def test_trained_models_usable_for_inference(tmpdir, data_root: str, shared_root
     assert os.path.exists(output_dir)
     for model_num, acc in accuracy.items():
         if model_num == 0:
-            assert acc == 90.0
+            assert acc == 80.0
         if model_num == 1:
-            assert acc == 70.0
+            assert acc == 80.0
         if model_num == 2:
-            assert acc == 70.0
+            assert acc == 90.0
     classifier = SVMAnswerClassifier(model_root=output_dir, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
@@ -75,13 +75,13 @@ def test_trained_models_usable_for_inference(tmpdir, data_root: str, shared_root
     for exp_res in result.expectation_results:
         if exp_res.expectation == 0:
             assert exp_res.evaluation == "Good"
-            assert round(exp_res.score, 2) == 0.94
+            assert round(exp_res.score, 2) == 0.93
         if exp_res.expectation == 1:
-            assert exp_res.evaluation == "Bad"
-            assert round(exp_res.score, 2) == 0.23
+            assert exp_res.evaluation == "Good"
+            assert round(exp_res.score, 2) == 0.96
         if exp_res.expectation == 2:
-            assert exp_res.evaluation == "Bad"
-            assert round(exp_res.score, 2) == 0.28
+            assert exp_res.evaluation == "Good"
+            assert round(exp_res.score, 2) == 0.84
 
 
 def test_trained_models_usable_for_inference_for_q2(
@@ -93,7 +93,7 @@ def test_trained_models_usable_for_inference_for_q2(
     assert os.path.exists(output_dir)
     for model_num, acc in accuracy.items():
         if model_num == 0:
-            assert acc == 90.0
+            assert acc == 100.0
 
     classifier = SVMAnswerClassifier(model_root=output_dir, shared_root=shared_root)
     result = classifier.evaluate(
@@ -106,4 +106,4 @@ def test_trained_models_usable_for_inference_for_q2(
     for exp_res in result.expectation_results:
         if exp_res.expectation == 0:
             assert exp_res.evaluation == "Good"
-            assert round(exp_res.score, 2) == 0.93
+            assert round(exp_res.score, 2) == 0.96

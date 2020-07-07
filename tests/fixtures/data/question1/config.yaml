@@ -1,1 +1,3 @@
 question : "What are the challenges to demonstrating integrity in a group?"
+good_regex: '\b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b|\b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b|\b(unpop\w*|hate\w*|unlik\w*|not\040popular)\b'
+bad_regex: '\brule\w*\b.*\bdiffer\w*\b|\b(lov\w*|lik\w*|car)\b|\b(super\w*|bette\w*)\b'

@@ -21,7 +21,7 @@ def shared_root() -> str:
         (
             "peer pressure can change your behavior",
             0,
-            [ExpectationClassifierResult(expectation=0, score=0.94, evaluation="Good")],
+            [ExpectationClassifierResult(expectation=0, score=0.93, evaluation="Good")],
         )
     ],
 )
@@ -47,7 +47,7 @@ def test_evaluates_one_expectation_for_q1(
         (
             "Current flows in the same direction as the arrow",
             0,
-            [ExpectationClassifierResult(expectation=0, score=0.93, evaluation="Good")],
+            [ExpectationClassifierResult(expectation=0, score=0.96, evaluation="Good")],
         )
     ],
 )
@@ -75,13 +75,13 @@ def test_evaluates_one_expectation_for_q2(
             -1,
             [
                 ExpectationClassifierResult(
-                    expectation=0, score=0.94, evaluation="Good"
+                    expectation=0, score=0.93, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=1, score=0.23, evaluation="Bad"
+                    expectation=1, score=0.96, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=2, score=0.28, evaluation="Bad"
+                    expectation=2, score=0.84, evaluation="Good"
                 ),
             ],
         )

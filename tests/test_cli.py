@@ -88,13 +88,13 @@ def test_cli_trained_models_usable_for_inference_for_q1(tmpdir):
     for exp_res in result.expectation_results:
         if exp_res.expectation == 0:
             assert exp_res.evaluation == "Good"
-            assert round(exp_res.score, 2) == 0.94
+            assert round(exp_res.score, 2) == 0.93
         if exp_res.expectation == 1:
-            assert exp_res.evaluation == "Bad"
-            assert round(exp_res.score, 2) == 0.23
+            assert exp_res.evaluation == "Good"
+            assert round(exp_res.score, 2) == 0.96
         if exp_res.expectation == 2:
-            assert exp_res.evaluation == "Bad"
-            assert round(exp_res.score, 2) == 0.28
+            assert exp_res.evaluation == "Good"
+            assert round(exp_res.score, 2) == 0.84
 
 
 def test_cli_trained_models_usable_for_inference_for_q2(tmpdir):
@@ -112,4 +112,4 @@ def test_cli_trained_models_usable_for_inference_for_q2(tmpdir):
     for exp_res in result.expectation_results:
         if exp_res.expectation == 0:
             assert exp_res.evaluation == "Good"
-            assert round(exp_res.score, 2) == 0.93
+            assert round(exp_res.score, 2) == 0.96
