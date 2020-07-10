@@ -2,7 +2,6 @@ expectation_features:
 - bad_regex:
   - \b(oppo\w*|diffe\w*|back\w*|bot\w|aga\w*t|rev\w*)\b
   - \b(right|cath\w*)\b.*\b(left|anode)\b
-  expectation: 0
   good_regex:
   - \b(sam\w*|const\w*|on\w*|eq(?!uip)\w*|id\w*n\w*[ck]\w*)\b
   - \b(left|anode)\b.*\b(right|cath\w*)\b
