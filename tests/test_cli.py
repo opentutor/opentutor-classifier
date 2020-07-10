@@ -91,10 +91,10 @@ def test_cli_trained_models_usable_for_inference_for_q1(tmpdir):
             assert round(exp_res.score, 2) == 0.93
         if exp_res.expectation == 1:
             assert exp_res.evaluation == "Good"
-            assert round(exp_res.score, 2) == 0.96
+            assert round(exp_res.score, 2) == 0.89
         if exp_res.expectation == 2:
-            assert exp_res.evaluation == "Good"
-            assert round(exp_res.score, 2) == 0.84
+            assert exp_res.evaluation == "Bad"
+            assert round(exp_res.score, 2) == 0.16
 
 
 def test_cli_trained_models_usable_for_inference_for_q2(tmpdir):

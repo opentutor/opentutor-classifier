@@ -78,10 +78,10 @@ def test_evaluates_one_expectation_for_q2(
                     expectation=0, score=0.93, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=1, score=0.96, evaluation="Good"
+                    expectation=1, score=0.89, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=2, score=0.84, evaluation="Good"
+                    expectation=2, score=0.16, evaluation="Bad"
                 ),
             ],
         )
