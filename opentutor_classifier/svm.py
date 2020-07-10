@@ -4,8 +4,7 @@ import numpy as np
 from gensim.models import KeyedVectors
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
-from nltk.corpus import stopwords, wordnet as wn
-from nltk.stem import WordNetLemmatizer
+from nltk.corpus import wordnet as wn
 from nltk.tokenize import word_tokenize
 from os import path, makedirs
 import pickle
@@ -16,7 +15,7 @@ import math
 from scipy import spatial
 from sklearn.model_selection import LeaveOneOut
 import yaml
-
+import re
 
 from opentutor_classifier import (
     AnswerClassifierInput,
@@ -39,12 +38,21 @@ def find_or_load_word2vec(file_path: str) -> Word2VecKeyedVectors:
 
 
 @dataclass
+class InstanceExpectationFeatures:
+    good_regex: List[str]
+    bad_regex: List[str]
+    expectation: int
+
+
+@dataclass
 class InstanceConfig:
+
     question: str
+    expectation_features: List[InstanceExpectationFeatures]
 
     def write_to(self, file_path: str):
         with open(file_path, "w") as config_file:
-            yaml.dump(asdict(self), config_file)
+            yaml.safe_dump(asdict(self), config_file)
 
 
 @dataclass
@@ -63,6 +71,144 @@ class SVMExpectationClassifier:
         self.ideal_answer = ""
         self.model = None
         self.score_dictionary = defaultdict(int)
+        self.stopwords = set(
+            [
+                "i",
+                "me",
+                "my",
+                "myself",
+                "we",
+                "our",
+                "ours",
+                "ourselves",
+                "you",
+                "you're",
+                "you've",
+                "you'll",
+                "you'd",
+                "your",
+                "yours",
+                "yourself",
+                "yourselves",
+                "he",
+                "him",
+                "his",
+                "himself",
+                "she",
+                "she's",
+                "her",
+                "hers",
+                "herself",
+                "it",
+                "it's",
+                "its",
+                "itself",
+                "they",
+                "them",
+                "their",
+                "theirs",
+                "themselves",
+                "what",
+                "which",
+                "who",
+                "whom",
+                "this",
+                "that",
+                "that'll",
+                "these",
+                "those",
+                "am",
+                "is",
+                "are",
+                "was",
+                "were",
+                "be",
+                "been",
+                "being",
+                "have",
+                "has",
+                "had",
+                "having",
+                "did",
+                "doing",
+                "a",
+                "an",
+                "the",
+                "and",
+                "but",
+                "if",
+                "or",
+                "because",
+                "as",
+                "until",
+                "while",
+                "of",
+                "at",
+                "by",
+                "for",
+                "with",
+                "about",
+                "against",
+                "between",
+                "into",
+                "through",
+                "during",
+                "before",
+                "after",
+                "above",
+                "below",
+                "to",
+                "from",
+                "up",
+                "down",
+                "in",
+                "out",
+                "on",
+                "off",
+                "over",
+                "under",
+                "again",
+                "further",
+                "then",
+                "once",
+                "here",
+                "there",
+                "when",
+                "where",
+                "why",
+                "how",
+                "all",
+                "any",
+                "each",
+                "few",
+                "more",
+                "most",
+                "other",
+                "some",
+                "such",
+                "only",
+                "own",
+                "so",
+                "than",
+                "too",
+                "very",
+                "s",
+                "t",
+                "can",
+                "will",
+                "just",
+                "should",
+                "should've",
+                "now",
+                "d",
+                "ll",
+                "m",
+                "o",
+                "re",
+                "ve",
+                "y",
+            ]
+        )
         np.random.seed(1)
 
     def processing_single_sentence(self, data):
@@ -72,11 +218,9 @@ class SVMExpectationClassifier:
         data = [word_tokenize(entry) for entry in data]
         for entry in data:
             final_words = []
-            lemmatized_word = WordNetLemmatizer()
             for word, tag in pos_tag(entry):
-                if word not in stopwords.words("english") and word.isalpha():
-                    word_final = lemmatized_word.lemmatize(word, self.tag_map[tag[0]])
-                    final_words.append(word_final)
+                if word not in self.stopwords and word.isalpha():
+                    final_words.append(word)
             processed_sentence.append(final_words)
         return processed_sentence
 
@@ -84,13 +228,14 @@ class SVMExpectationClassifier:
         pre_processed_dataset = []
         data = [entry.lower() for entry in data]
         data = [word_tokenize(entry) for entry in data]
+
         for entry in data:
             final_words = []
-            lemmatized_word = WordNetLemmatizer()
+
             for word, tag in pos_tag(entry):
-                if word not in stopwords.words("english") and word.isalpha():
-                    word_final = lemmatized_word.lemmatize(word, self.tag_map[tag[0]])
-                    final_words.append(word_final)
+
+                if word not in self.stopwords and word.isalpha():
+                    final_words.append(word)
             pre_processed_dataset.append(final_words)
         return pre_processed_dataset
 
@@ -163,6 +308,50 @@ class SVMExpectationClassifier:
     def length_ratio_feature(self, example, ideal_answer):
         return len(example) / len(ideal_answer)
 
+    def number_of_negatives(self, example):
+        negative_regex = r"\b(?:no|never|nothing|nowhere|none|not|havent|hasnt|hadnt|cant|couldnt|shouldnt|wont|wouldnt|dont|doesnt|didnt|isnt|arent|aint)\b"
+        str_example = " ".join(example)
+        replaced_example = re.sub("[.*'.*]", "", str_example)
+        no_of_negatives = len(re.findall(negative_regex, replaced_example))
+        if no_of_negatives % 2 == 0:
+            even_negatives = True
+        else:
+            even_negatives = False
+        return no_of_negatives, even_negatives
+
+    def get_regex(self, exp_num, dict_expectation_features, regex_type):
+        try:
+            regex = dict_expectation_features[exp_num][regex_type]
+        except ValueError:
+            regex = []
+
+        return regex
+
+    def good_regex_features(self, example, good_regex):
+        str_example = " ".join(example)
+        count = 0
+        for r in good_regex:
+            if re.search(r, str_example):
+                count += 1
+        return float(count / len(good_regex))
+
+    def bad_regex_features(self, example, bad_regex):
+        str_example = " ".join(example)
+        count = 0
+        for r in bad_regex:
+            if re.search(r, str_example):
+                count += 1
+        return float(count / len(bad_regex))
+
+    def expectation_features_to_dict(self, expectation_features):
+        dict_expectation_features = {}
+        for i in expectation_features:
+            temp = {}
+            temp["good_regex"] = i["good_regex"]
+            temp["bad_regex"] = i["bad_regex"]
+            dict_expectation_features[i["expectation"]] = temp
+        return dict_expectation_features
+
     def calculate_features(
         self,
         question: str,
@@ -170,12 +359,18 @@ class SVMExpectationClassifier:
         ideal_answer: List[str],
         word2vec: Word2VecKeyedVectors,
         index2word_set: set,
+        good_regex: List[str],
+        bad_regex: List[str],
     ):
         if not ideal_answer:
             ideal_answer = self.ideal_answer
         all_features = []
         for example in train_x:
             feature = []
+            good_regex_score = self.good_regex_features(example, good_regex)
+            bad_regex_score = self.bad_regex_features(example, bad_regex)
+            feature.append(good_regex_score)
+            feature.append(bad_regex_score)
             feature.append(self.length_ratio_feature(example, ideal_answer))
             feature.append(
                 self.word2vec_example_similarity_feature(
@@ -223,7 +418,10 @@ class SVMAnswerClassifierTraining:
 
     def train_all(self, data_root: str = "data", output_dir: str = "output") -> Dict:
         config_path = path.join(data_root, "config.yaml")
-        question = load_yaml(config_path).get("question", "")
+        config = load_yaml(config_path)
+        question = config.get("question")
+        expectation_features = config.get("expectation_features")
+
         if not question:
             raise ValueError(f"config.yaml must have a 'question' at {config_path}")
         corpus = load_data(path.join(data_root, "training.csv"))
@@ -236,10 +434,24 @@ class SVMAnswerClassifierTraining:
             split_training_sets[value][0].append(corpus["text"][i])
             split_training_sets[value][1].append(corpus["label"][i])
         index2word_set: set = set(self.word2vec.index2word)
+        expectation_features_objects = []
         for exp_num, (train_x, train_y) in split_training_sets.items():
             processed_data = self.model_obj.preprocessing(train_x)
             processed_question = self.model_obj.processing_single_sentence(question)
             ia = self.model_obj.initialize_ideal_answer(processed_data)
+            good_regex = self.model_obj.get_regex(
+                exp_num, expectation_features, "good_regex"
+            )
+            bad_regex = self.model_obj.get_regex(
+                exp_num, expectation_features, "bad_regex"
+            )
+
+            expectation_features_objects.append(
+                InstanceExpectationFeatures(
+                    good_regex=good_regex, bad_regex=bad_regex, expectation=int(exp_num)
+                )
+            )
+
             self.ideal_answers_dictionary[exp_num] = ia
             features = np.array(
                 self.model_obj.calculate_features(
@@ -248,12 +460,14 @@ class SVMAnswerClassifierTraining:
                     [],
                     self.word2vec,
                     index2word_set,
+                    good_regex,
+                    bad_regex,
                 )
             )
             train_y = np.array(self.model_obj.encode_y(train_y))
             model = svm.SVC()
             model.fit(features, train_y)
-            # may wanna create a separate function for this?
+
             results_loocv = model_selection.cross_val_score(
                 model, features, train_y, cv=LeaveOneOut(), scoring="accuracy"
             )
@@ -266,7 +480,10 @@ class SVMAnswerClassifierTraining:
             self.ideal_answers_dictionary,
             path.join(output_dir, "ideal_answers_by_expectation_num.pkl"),
         )
-        InstanceConfig(question=question).write_to(path.join(output_dir, "config.yaml"))
+
+        InstanceConfig(
+            question=question, expectation_features=expectation_features_objects
+        ).write_to(path.join(output_dir, "config.yaml"))
         return self.accuracy
 
 
@@ -307,6 +524,12 @@ class SVMAnswerClassifier:
         question_proc = self.model_obj.processing_single_sentence(
             self.config().question
         )
+        expectation_features = self.config().expectation_features
+
+        dict_expectation_features = self.model_obj.expectation_features_to_dict(
+            expectation_features
+        )
+
         expectations = (
             [
                 ExpectationToEvaluate(
@@ -330,6 +553,12 @@ class SVMAnswerClassifier:
                 self.find_ideal_answer(e.expectation),
                 word2vec,
                 index2word,
+                self.model_obj.get_regex(
+                    e.expectation, dict_expectation_features, "good_regex"
+                ),
+                self.model_obj.get_regex(
+                    e.expectation, dict_expectation_features, "bad_regex"
+                ),
             )
             result.expectation_results.append(
                 ExpectationClassifierResult(

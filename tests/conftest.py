@@ -7,7 +7,6 @@ from . import fixture_path
 
 
 def download(url: str, to_path: str):
-    print(f"download url to '{to_path}'")
     r = requests.get(url, stream=True)
     os.makedirs(os.path.dirname(to_path), exist_ok=True)
     with open(to_path, "wb") as f:
