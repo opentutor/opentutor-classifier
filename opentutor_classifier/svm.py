@@ -41,14 +41,20 @@ def find_or_load_word2vec(file_path: str) -> Word2VecKeyedVectors:
 class InstanceExpectationFeatures:
     good_regex: List[str]
     bad_regex: List[str]
-    expectation: int
 
 
 @dataclass
 class InstanceConfig:
-
     question: str
     expectation_features: List[InstanceExpectationFeatures]
+
+    def __post_init__(self):
+        self.expectation_features = [
+            x
+            if isinstance(x, InstanceExpectationFeatures)
+            else InstanceExpectationFeatures(**x)
+            for x in self.expectation_features
+        ]
 
     def write_to(self, file_path: str):
         with open(file_path, "w") as config_file:
@@ -343,15 +349,6 @@ class SVMExpectationClassifier:
                 count += 1
         return float(count / len(bad_regex))
 
-    def expectation_features_to_dict(self, expectation_features):
-        dict_expectation_features = {}
-        for i in expectation_features:
-            temp = {}
-            temp["good_regex"] = i["good_regex"]
-            temp["bad_regex"] = i["bad_regex"]
-            dict_expectation_features[i["expectation"]] = temp
-        return dict_expectation_features
-
     def calculate_features(
         self,
         question: str,
@@ -445,13 +442,9 @@ class SVMAnswerClassifierTraining:
             bad_regex = self.model_obj.get_regex(
                 exp_num, expectation_features, "bad_regex"
             )
-
             expectation_features_objects.append(
-                InstanceExpectationFeatures(
-                    good_regex=good_regex, bad_regex=bad_regex, expectation=int(exp_num)
-                )
+                InstanceExpectationFeatures(good_regex=good_regex, bad_regex=bad_regex)
             )
-
             self.ideal_answers_dictionary[exp_num] = ia
             features = np.array(
                 self.model_obj.calculate_features(
@@ -467,7 +460,6 @@ class SVMAnswerClassifierTraining:
             train_y = np.array(self.model_obj.encode_y(train_y))
             model = svm.SVC()
             model.fit(features, train_y)
-
             results_loocv = model_selection.cross_val_score(
                 model, features, train_y, cv=LeaveOneOut(), scoring="accuracy"
             )
@@ -480,7 +472,6 @@ class SVMAnswerClassifierTraining:
             self.ideal_answers_dictionary,
             path.join(output_dir, "ideal_answers_by_expectation_num.pkl"),
         )
-
         InstanceConfig(
             question=question, expectation_features=expectation_features_objects
         ).write_to(path.join(output_dir, "config.yaml"))
@@ -521,15 +512,8 @@ class SVMAnswerClassifier:
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = self.model_obj.processing_single_sentence(answer.input_sentence)
-        question_proc = self.model_obj.processing_single_sentence(
-            self.config().question
-        )
-        expectation_features = self.config().expectation_features
-
-        dict_expectation_features = self.model_obj.expectation_features_to_dict(
-            expectation_features
-        )
-
+        conf = self.config()
+        question_proc = self.model_obj.processing_single_sentence(conf.question)
         expectations = (
             [
                 ExpectationToEvaluate(
@@ -546,19 +530,15 @@ class SVMAnswerClassifier:
         result = AnswerClassifierResult(input=answer, expectation_results=[])
         word2vec = self.find_word2vec()
         index2word = set(word2vec.index2word)
-        for e in expectations:
+        for i, e in enumerate(expectations):
             sent_features = self.model_obj.calculate_features(
                 question_proc,
                 sent_proc,
                 self.find_ideal_answer(e.expectation),
                 word2vec,
                 index2word,
-                self.model_obj.get_regex(
-                    e.expectation, dict_expectation_features, "good_regex"
-                ),
-                self.model_obj.get_regex(
-                    e.expectation, dict_expectation_features, "bad_regex"
-                ),
+                conf.expectation_features[i].good_regex,
+                conf.expectation_features[i].bad_regex,
             )
             result.expectation_results.append(
                 ExpectationClassifierResult(
