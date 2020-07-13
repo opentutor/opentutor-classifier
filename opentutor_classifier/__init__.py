@@ -1,21 +1,45 @@
-from dataclasses import dataclass
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+import pandas as pd
+from typing import Any, Dict, List
+import yaml
+from gensim.models import KeyedVectors
+from gensim.models.keyedvectors import Word2VecKeyedVectors
 
 
 @dataclass
-class Answer:
-    answer: str
+class ExpectationClassifierResult:
+    expectation: int = -1
+    evaluation: str = ""
+    score: float = 0.0
 
 
 @dataclass
-class AnswerEvaluation:
-    answer: Answer
-    score: float
+class AnswerClassifierInput:
+    input_sentence: str
+    expectation: int = -1
 
 
-class Classifier:
-    """
-    Not necesarily the correct interface for the classifier yet, just a stub example
-    """
+@dataclass
+class AnswerClassifierResult:
+    input: AnswerClassifierInput
+    expectation_results: List[ExpectationClassifierResult] = field(default_factory=list)
 
-    def evaluate(self, answer: Answer) -> AnswerEvaluation:
-        return AnswerEvaluation(answer=answer, score=0.0)
+
+class AnswerClassifier(ABC):
+    @abstractmethod
+    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+        raise NotImplementedError()
+
+
+def load_data(filename: str) -> pd.DataFrame:
+    return pd.read_csv(filename, encoding="latin-1")
+
+
+def load_word2vec_model(path: str) -> Word2VecKeyedVectors:
+    return KeyedVectors.load_word2vec_format(path, binary=True)
+
+
+def load_yaml(file_path: str) -> Dict[str, Any]:
+    with open(file_path, "r") as yaml_file:
+        return yaml.load(yaml_file, Loader=yaml.FullLoader)

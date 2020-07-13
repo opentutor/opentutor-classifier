@@ -2,6 +2,7 @@ __pycache__
 .DS_Store
 build
 dist
+docker-test-train-out
 htmlcov
 QuestionAnswerLog.csv
 .coverage
@@ -16,4 +17,10 @@ QuestionAnswerLog.csv
 */temp
 */build
 */videos
+.ipynb_checkpoints
+models
+!tests/fixtures/models
+*.bin
+*.zip
+
 
