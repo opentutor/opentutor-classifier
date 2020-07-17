@@ -15,10 +15,21 @@ class ExpectationClassifierResult:
 
 
 @dataclass
+class InstanceDefaultExpectationFeatures:
+    ideal_answer: str
+
+
+@dataclass
+class InstanceConfigDefault:
+    question: str
+    expectation_features_default: List[InstanceDefaultExpectationFeatures]
+
+
+@dataclass
 class AnswerClassifierInput:
     input_sentence: str
+    config_data: InstanceConfigDefault
     expectation: int = -1
-    config_data: Dict = field(default_factory={})
 
 
 @dataclass

@@ -1,6 +1,6 @@
 import pytest
 from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult
-from opentutor_classifier.svm import SVMAnswerClassifier
+from opentutor_classifier.svm import SVMAnswerClassifier, load_config_into_objects
 from . import fixture_path
 import os
 
@@ -39,7 +39,7 @@ def test_evaluates_one_expectation_for_q1(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=config_data,
+            config_data=load_config_into_objects(config_data),
             expectation=input_expectation_number,
         )
     )
@@ -57,11 +57,11 @@ def test_evaluates_one_expectation_for_q1(
             0,
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
-                "expectation_features": [
+                "expectations": [
                     {
-                        "ideal_answer": "Peer pressure can cause you to allow inappropriate behavior"
+                        "ideal": "Peer pressure can cause you to allow inappropriate behavior"
                     },
-                    {"ideal_answer": "Enforcing the rules can make you unpopular"},
+                    {"ideal": "Enforcing the rules can make you unpopular"},
                 ],
             },
             [
@@ -88,7 +88,7 @@ def test_evaluates_for_default_model(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=config_data,
+            config_data=load_config_into_objects(config_data),
             expectation=input_expectation_number,
         )
     )
@@ -122,7 +122,7 @@ def test_evaluates_one_expectation_for_q2(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=config_data,
+            config_data=load_config_into_objects(config_data),
             expectation=input_expectation_number,
         )
     )
@@ -166,7 +166,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=config_data,
+            config_data=load_config_into_objects(config_data),
             expectation=input_expectation_number,
         )
     )
