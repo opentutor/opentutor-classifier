@@ -423,11 +423,13 @@ class SVMExpectationClassifier:
             loaded_df["exp_num"] = 0
             for i in range(len(exp_idx) - 1):
                 temp_data["ideal_answer"] = loaded_df.text[exp_idx[i]]
-                loaded_df["exp_data"][exp_idx[i]:exp_idx[i + 1]] = json.dumps(
-                    temp_data
-                )
+                r1 = exp_idx[i]
+                r2 = exp_idx[i + 1]
+                loaded_df["exp_data"][r1:r2] = json.dumps(temp_data)
             temp_data["ideal_answer"] = loaded_df.text[exp_idx[-1]]
-            loaded_df["exp_data"][exp_idx[-1]:len(loaded_df)] = json.dumps(temp_data)
+            r3 = exp_idx[-1]
+            r4 = len(loaded_df)
+            loaded_df["exp_data"][r3:r4] = json.dumps(temp_data)
             dataframes.append(loaded_df)
 
         result = pd.concat(dataframes, axis=0)
