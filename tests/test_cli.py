@@ -43,7 +43,6 @@ def test_cli_outputs_models_at_specified_model_root_for_q1(tmpdir):
     out, err, exit_code, model_root = __train_model(tmpdir, "question1", shared_root)
     assert exit_code == 0
     assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
-    assert path.exists(path.join(model_root, "ideal_answers_by_expectation_num.pkl"))
     assert path.exists(path.join(model_root, "config.yaml"))
     out_str = out.decode("utf-8")
     out_str = out_str.split("\n")
@@ -61,7 +60,6 @@ def test_cli_outputs_models_at_specified_model_root_for_q2(tmpdir):
     out, err, exit_code, model_root = __train_model(tmpdir, "question2", shared_root)
     assert exit_code == 0
     assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
-    assert path.exists(path.join(model_root, "ideal_answers_by_expectation_num.pkl"))
     assert path.exists(path.join(model_root, "config.yaml"))
     out_str = out.decode("utf-8")
     out_str = out_str.split("\n")
@@ -81,7 +79,9 @@ def test_cli_trained_models_usable_for_inference_for_q1(tmpdir):
     classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
-            input_sentence="peer pressure can change your behavior", expectation=-1
+            input_sentence="peer pressure can change your behavior",
+            config_data={},
+            expectation=-1,
         )
     )
     assert len(result.expectation_results) == 3
@@ -105,6 +105,7 @@ def test_cli_trained_models_usable_for_inference_for_q2(tmpdir):
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="Current flows in the same direction as the arrow",
+            config_data={},
             expectation=0,
         )
     )

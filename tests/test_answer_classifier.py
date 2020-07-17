@@ -16,23 +16,31 @@ def shared_root() -> str:
 
 
 @pytest.mark.parametrize(
-    "input_answer,input_expectation_number,expected_results",
+    "input_answer,input_expectation_number,config_data,expected_results",
     [
         (
             "peer pressure can change your behavior",
             0,
+            {},
             [ExpectationClassifierResult(expectation=0, score=0.93, evaluation="Good")],
         )
     ],
 )
 def test_evaluates_one_expectation_for_q1(
-    model_root, shared_root, input_answer, input_expectation_number, expected_results
+    model_root,
+    shared_root,
+    input_answer,
+    input_expectation_number,
+    config_data,
+    expected_results,
 ):
     model_root = os.path.join(model_root, "question1")
     classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
-            input_sentence=input_answer, expectation=input_expectation_number
+            input_sentence=input_answer,
+            config_data=config_data,
+            expectation=input_expectation_number,
         )
     )
     assert len(result.expectation_results) == len(expected_results)
@@ -42,23 +50,80 @@ def test_evaluates_one_expectation_for_q1(
 
 
 @pytest.mark.parametrize(
-    "input_answer,input_expectation_number,expected_results",
+    "input_answer,input_expectation_number,config_data,expected_results",
+    [
+        (
+            "peer pressure can change your behavior",
+            0,
+            {
+                "question": "What are the challenges to demonstrating integrity in a group?",
+                "expectation_features": [
+                    {
+                        "ideal_answer": "Peer pressure can cause you to allow inappropriate behavior"
+                    },
+                    {"ideal_answer": "Enforcing the rules can make you unpopular"},
+                ],
+            },
+            [
+                ExpectationClassifierResult(
+                    expectation=0, evaluation="Good", score=0.91
+                ),
+                ExpectationClassifierResult(
+                    expectation=0, evaluation="Bad", score=0.35
+                ),
+            ],
+        )
+    ],
+)
+def test_evaluates_for_default_model(
+    model_root,
+    shared_root,
+    input_answer,
+    input_expectation_number,
+    config_data,
+    expected_results,
+):
+    model_root = os.path.join(model_root, "default")
+    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
+    result = classifier.evaluate(
+        AnswerClassifierInput(
+            input_sentence=input_answer,
+            config_data=config_data,
+            expectation=input_expectation_number,
+        )
+    )
+    assert len(result.expectation_results) == len(expected_results)
+    for res, res_expected in zip(result.expectation_results, expected_results):
+        assert round(res.score, 2) == res_expected.score
+        assert res.evaluation == res_expected.evaluation
+
+
+@pytest.mark.parametrize(
+    "input_answer,input_expectation_number,config_data,expected_results",
     [
         (
             "Current flows in the same direction as the arrow",
             0,
+            {},
             [ExpectationClassifierResult(expectation=0, score=0.96, evaluation="Good")],
         )
     ],
 )
 def test_evaluates_one_expectation_for_q2(
-    model_root, shared_root, input_answer, input_expectation_number, expected_results
+    model_root,
+    shared_root,
+    input_answer,
+    input_expectation_number,
+    config_data,
+    expected_results,
 ):
     model_root = os.path.join(model_root, "question2")
     classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
-            input_sentence=input_answer, expectation=input_expectation_number
+            input_sentence=input_answer,
+            config_data=config_data,
+            expectation=input_expectation_number,
         )
     )
     assert len(result.expectation_results) == len(expected_results)
@@ -68,11 +133,12 @@ def test_evaluates_one_expectation_for_q2(
 
 
 @pytest.mark.parametrize(
-    "input_answer,input_expectation_number,expected_results",
+    "input_answer,input_expectation_number,config_data,expected_results",
     [
         (
             "peer pressure can change your behavior",
             -1,
+            {},
             [
                 ExpectationClassifierResult(
                     expectation=0, score=0.93, evaluation="Good"
@@ -88,13 +154,20 @@ def test_evaluates_one_expectation_for_q2(
     ],
 )
 def test_evaluates_with_no_input_expectation_number_for_q1(
-    model_root, shared_root, input_answer, input_expectation_number, expected_results
+    model_root,
+    shared_root,
+    input_answer,
+    input_expectation_number,
+    config_data,
+    expected_results,
 ):
     model_root = os.path.join(model_root, "question1")
     classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
-            input_sentence=input_answer, expectation=input_expectation_number
+            input_sentence=input_answer,
+            config_data=config_data,
+            expectation=input_expectation_number,
         )
     )
     assert len(result.expectation_results) == len(expected_results)

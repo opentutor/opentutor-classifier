@@ -3,12 +3,34 @@ expectation_features:
   - \brule\w*\b.*\bdiffer\w*\b
   good_regex:
   - \b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b
+  ideal_answer:
+  - peer
+  - pressure
+  - cause
+  - allow
+  - inappropriate
+  - behavior
 - bad_regex:
   - \b(lov\w*|lik\w*|car)\b
   good_regex:
   - \b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b
+  ideal_answer:
+  - correct
+  - someone
+  - behavior
+  - may
+  - get
+  - trouble
+  - may
+  - harder
+  - work
 - bad_regex:
   - \b(super\w*|bette\w*)\b
   good_regex:
   - \b(unpop\w*|hate\w*|unlik\w*|not\040popular)\b
+  ideal_answer:
+  - enforcing
+  - rules
+  - make
+  - unpopular
 question: What are the challenges to demonstrating integrity in a group?

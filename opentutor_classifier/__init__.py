@@ -18,6 +18,7 @@ class ExpectationClassifierResult:
 class AnswerClassifierInput:
     input_sentence: str
     expectation: int = -1
+    config_data: Dict = field(default_factory={})
 
 
 @dataclass
