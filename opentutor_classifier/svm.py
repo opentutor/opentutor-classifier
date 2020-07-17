@@ -26,6 +26,8 @@ from opentutor_classifier import (
     ExpectationClassifierResult,
     load_data,
     load_yaml,
+    InstanceConfigDefault,
+    InstanceDefaultExpectationFeatures,
 )
 
 WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
@@ -624,7 +626,8 @@ class SVMAnswerClassifier:
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = self.model_obj.processing_single_sentence(answer.input_sentence)
-        conf = answer.config_data or self.config()
+        # conf2 = answer.config_data or
+        print("janna hai ", answer.config_data)
         expectations = (
             [
                 ExpectationToEvaluate(
@@ -643,11 +646,13 @@ class SVMAnswerClassifier:
         index2word = set(word2vec.index2word)
 
         if answer.config_data:
-            question_proc = self.model_obj.processing_single_sentence(conf["question"])
-            for i in range(len(conf["expectation_features"])):
+            conf = answer.config_data
+            question_proc = self.model_obj.processing_single_sentence(conf.question)
+
+            for i in range(len(conf.expectation_features_default)):
 
                 ideal_answer = self.model_obj.processing_single_sentence(
-                    conf["expectation_features"][i]["ideal_answer"]
+                    conf.expectation_features_default[i].ideal_answer
                 )
                 sent_features = self.model_obj.calculate_features(
                     question_proc, sent_proc, ideal_answer, word2vec, index2word, [], []
@@ -656,16 +661,19 @@ class SVMAnswerClassifier:
                     self.find_score_and_class(expectations, 0, [sent_features])
                 )
         else:
-            question_proc = self.model_obj.processing_single_sentence(conf.question)
+            conf2 = self.config()
+            print(conf2)
+            question_proc = self.model_obj.processing_single_sentence(conf2.question)
+
             for i in range(len(expectations)):
                 sent_features = self.model_obj.calculate_features(
                     question_proc,
                     sent_proc,
-                    conf.expectation_features[i].ideal_answer,
+                    conf2.expectation_features[i].ideal_answer,
                     word2vec,
                     index2word,
-                    conf.expectation_features[i].good_regex,
-                    conf.expectation_features[i].bad_regex,
+                    conf2.expectation_features[i].good_regex,
+                    conf2.expectation_features[i].bad_regex,
                 )
                 result.expectation_results.append(
                     self.find_score_and_class(expectations, i, [sent_features])
@@ -704,14 +712,27 @@ def load_instances(
         with open(path.join(model_root, config_filename)) as config_file:
             config = InstanceConfig(**yaml.load(config_file, Loader=yaml.FullLoader))
     except Exception:
-        config = None
+        config = InstanceConfig(question="", expectation_features=[])
     try:
         with open(
             path.join(model_root, models_by_expectation_num_filename), "rb"
         ) as models_file:
             models_by_expectation_num: Dict[int, svm.SVC] = pickle.load(models_file)
     except Exception:
-        models_by_expectation_num = None
+        models_by_expectation_num = {}
     return InstanceModels(
         config=config, models_by_expectation_num=models_by_expectation_num
     )
+
+
+def load_config_into_objects(config_data):
+    if config_data:
+        exp_feature_list = []
+        for i in config_data["expectations"]:
+            exp_feature_list.append(
+                InstanceDefaultExpectationFeatures(ideal_answer=i["ideal"])
+            )
+        return InstanceConfigDefault(
+            question=config_data["question"],
+            expectation_features_default=exp_feature_list,
+        )

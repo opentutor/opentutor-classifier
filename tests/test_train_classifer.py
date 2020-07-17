@@ -5,6 +5,7 @@ from opentutor_classifier.svm import (
     train_classifier,
     train_default_classifier,
     SVMAnswerClassifier,
+    load_config_into_objects,
 )
 import pytest
 from typing import Dict, Tuple
@@ -53,19 +54,16 @@ def __train_default_model(
         "model_root",
         os.path.basename(os.path.normpath(data_root)),
     )
-
     config_data = {
         "question": "What are the challenges to demonstrating integrity in a group?",
-        "expectation_features": [
-            {
-                "ideal_answer": "Peer pressure can cause you to allow inappropriate behavior"
-            },
-            {"ideal_answer": "Enforcing the rules can make you unpopular"},
+        "expectations": [
+            {"ideal": "Peer pressure can cause you to allow inappropriate behavior"},
+            {"ideal": "Enforcing the rules can make you unpopular"},
         ],
     }
     accuracy = train_default_classifier(
         data_root=data_root,
-        config_data=config_data,
+        config_data=load_config_into_objects(config_data),
         shared_root=shared_root,
         output_dir=output_dir,
     )
@@ -105,7 +103,7 @@ def test_trained_models_usable_for_inference(tmpdir, data_root: str, shared_root
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="peer pressure can change your behavior",
-            config_data={},
+            config_data=load_config_into_objects({}),
             expectation=-1,
         )
     )
@@ -137,7 +135,7 @@ def test_trained_models_usable_for_inference_for_q2(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="Current flows in the same direction as the arrow",
-            config_data={},
+            config_data=load_config_into_objects({}),
             expectation=0,
         )
     )
@@ -156,18 +154,16 @@ def test_trained_default_model_usable_for_inference(
     assert accuracy == 67.5
     config_data = {
         "question": "What are the challenges to demonstrating integrity in a group?",
-        "expectation_features": [
-            {
-                "ideal_answer": "Peer pressure can cause you to allow inappropriate behavior"
-            },
-            {"ideal_answer": "Enforcing the rules can make you unpopular"},
+        "expectations": [
+            {"ideal": "Peer pressure can cause you to allow inappropriate behavior"},
+            {"ideal": "Enforcing the rules can make you unpopular"},
         ],
     }
     classifier = SVMAnswerClassifier(model_root=output_dir, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="peer pressure can change your behavior",
-            config_data=config_data,
+            config_data=load_config_into_objects(config_data),
             expectation=0,
         )
     )
