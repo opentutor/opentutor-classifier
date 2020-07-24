@@ -56,20 +56,20 @@ def __sync_model(tmpdir, question_id: str, url: str, output: str):
     return out, err, exitcode, output_dir
 
 
-def test_cli_syncs_training_data_for_q1(tmpdir):
-    data_root = fixture_path("data")
-    out, err, exit_code, output_root = __sync_model(
-        tmpdir,
-        "navyIntegrityFull",
-        "https://dev-opentutor.pal3.org/grading-api",
-        data_root,
-    )
-    assert exit_code == 0
-    assert path.exists(path.join(output_root, "training.csv"))
-    assert path.exists(path.join(output_root, "config.yaml"))
-    out_str = out.decode("utf-8")
-    out_str = out_str.split("\n")
-    assert re.search(r"Data is saved at: /.+/output", out_str[0])
+# def test_cli_syncs_training_data_for_q1(tmpdir):
+#     data_root = fixture_path("data")
+#     out, err, exit_code, output_root = __sync_model(
+#         tmpdir,
+#         "navyIntegrityFull",
+#         "https://dev-opentutor.pal3.org/grading-api",
+#         data_root,
+#     )
+#     assert exit_code == 0
+#     assert path.exists(path.join(output_root, "training.csv"))
+#     assert path.exists(path.join(output_root, "config.yaml"))
+#     out_str = out.decode("utf-8")
+#     out_str = out_str.split("\n")
+#     assert re.search(r"Data is saved at: /.+/output", out_str[0])
 
 
 def test_cli_outputs_models_at_specified_model_root_for_q1(tmpdir):
