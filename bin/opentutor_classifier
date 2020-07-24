@@ -2,6 +2,7 @@
 import click
 import os
 from opentutor_classifier.svm import SVMAnswerClassifierTraining
+from opentutor_classifier.sync import sync
 from opentutor_classifier import load_data
 
 
@@ -31,6 +32,16 @@ def traindefault(data: str, shared: str, output: str):
     accuracy = training.default_train_all(data_root=data, output_dir=output)
     print("Models are saved at: " + output)
     print(f"Accuracy for model is {accuracy}")
+
+
+@cli.command()
+@click.option("-p", "--lesson", required=False, default="navyIntegrityFull")
+@click.option("-s", "--url", required=False, default="https://dev-opentutor.pal3.org/grading-api")
+@click.option("-o", "--output", required=False, default="data")
+def sync(lesson: str, url: str, output: str):
+    data_path = os.path.join(output, lesson)
+    sync(lesson_id=lesson, url, data_path)
+    print(f"Data is saved at: {data_path}")
 
 
 cli.add_command(train)
