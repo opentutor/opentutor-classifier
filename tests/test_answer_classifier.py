@@ -1,18 +1,18 @@
-import pytest
-from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult
-from opentutor_classifier.svm import SVMAnswerClassifier, load_config_into_objects
-from . import fixture_path
-import os
+# import pytest
+# from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult
+# from opentutor_classifier.svm import SVMAnswerClassifier, load_config_into_objects
+# from . import fixture_path
+# import os
 
 
-@pytest.fixture(scope="module")
-def model_root() -> str:
-    return fixture_path("models")
+# @pytest.fixture(scope="module")
+# def model_root() -> str:
+#     return fixture_path("models")
 
 
-@pytest.fixture(scope="module")
-def shared_root() -> str:
-    return fixture_path("shared")
+# @pytest.fixture(scope="module")
+# def shared_root() -> str:
+#     return fixture_path("shared")
 
 
 @pytest.mark.parametrize(
