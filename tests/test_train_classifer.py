@@ -96,7 +96,7 @@ def test_trained_models_usable_for_inference(tmpdir, data_root: str, shared_root
         if model_num == 0:
             assert acc == 80.0
         if model_num == 1:
-            assert acc == 80.0
+            assert acc == 90.0
         if model_num == 2:
             assert acc == 100.0
     classifier = SVMAnswerClassifier(model_root=output_dir, shared_root=shared_root)
@@ -111,10 +111,10 @@ def test_trained_models_usable_for_inference(tmpdir, data_root: str, shared_root
     for exp_res in result.expectation_results:
         if exp_res.expectation == 0:
             assert exp_res.evaluation == "Good"
-            assert round(exp_res.score, 2) == 0.97
+            assert round(exp_res.score, 2) == 0.99
         if exp_res.expectation == 1:
-            assert exp_res.evaluation == "Good"
-            assert round(exp_res.score, 2) == 0.47
+            assert exp_res.evaluation == "Bad"
+            assert round(exp_res.score, 2) == 0.50
         if exp_res.expectation == 2:
             assert exp_res.evaluation == "Bad"
             assert round(exp_res.score, 2) == 0.57
@@ -151,12 +151,11 @@ def test_trained_default_model_usable_for_inference(
 ):
     output_dir, accuracy = __train_default_model(tmpdir, data_root, shared_root)
     assert os.path.exists(output_dir)
-    assert accuracy == 67.5
+    assert accuracy == 72.5
     config_data = {
         "question": "What are the challenges to demonstrating integrity in a group?",
         "expectations": [
-            {"ideal": "Peer pressure can cause you to allow inappropriate behavior"},
-            {"ideal": "Enforcing the rules can make you unpopular"},
+            {"ideal": "Peer pressure can cause you to allow inappropriate behavior"}
         ],
     }
     classifier = SVMAnswerClassifier(model_root=output_dir, shared_root=shared_root)
@@ -167,8 +166,6 @@ def test_trained_default_model_usable_for_inference(
             expectation=0,
         )
     )
-    assert len(result.expectation_results) == 2
+    assert len(result.expectation_results) == 1
     assert result.expectation_results[0].evaluation == "Good"
-    assert round(result.expectation_results[0].score, 2) == 0.89
-    assert result.expectation_results[1].evaluation == "Bad"
-    assert round(result.expectation_results[1].score, 2) == 0.69
+    assert round(result.expectation_results[0].score, 2) == 1.0

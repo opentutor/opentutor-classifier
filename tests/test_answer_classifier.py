@@ -22,7 +22,7 @@ def shared_root() -> str:
             "peer pressure can change your behavior",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.97, evaluation="Good")],
+            [ExpectationClassifierResult(expectation=0, score=0.99, evaluation="Good")],
         )
     ],
 )
@@ -53,7 +53,7 @@ def test_evaluates_one_expectation_for_q1(
     "input_answer,input_expectation_number,config_data,expected_results",
     [
         (
-            "peer pressure can change your behavior",
+            "peer pressure",
             0,
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
@@ -65,13 +65,24 @@ def test_evaluates_one_expectation_for_q1(
                 ],
             },
             [
+                ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.0),
                 ExpectationClassifierResult(
-                    expectation=0, evaluation="Good", score=0.89
-                ),
-                ExpectationClassifierResult(
-                    expectation=0, evaluation="Bad", score=0.69
+                    expectation=0, evaluation="Bad", score=0.04
                 ),
             ],
+        ),
+        (
+            "influence from others can change your behaviori",
+            0,
+            {
+                "question": "What are the challenges to demonstrating integrity in a group?",
+                "expectations": [
+                    {
+                        "ideal": "Peer pressure can cause you to allow inappropriate behavior"
+                    }
+                ],
+            },
+            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.02)],
         ),
         (
             "hi",
@@ -84,7 +95,7 @@ def test_evaluates_one_expectation_for_q1(
                     }
                 ],
             },
-            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.99)],
+            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.02)],
         ),
         (
             "some gibberish kjlsdafhalkjfha",
@@ -97,7 +108,7 @@ def test_evaluates_one_expectation_for_q1(
                     }
                 ],
             },
-            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.99)],
+            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.02)],
         ),
     ],
 )
@@ -167,10 +178,10 @@ def test_evaluates_one_expectation_for_q2(
             {},
             [
                 ExpectationClassifierResult(
-                    expectation=0, score=0.97, evaluation="Good"
+                    expectation=0, score=0.99, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=1, score=0.47, evaluation="Good"
+                    expectation=1, score=0.50, evaluation="Bad"
                 ),
                 ExpectationClassifierResult(
                     expectation=2, score=0.57, evaluation="Bad"

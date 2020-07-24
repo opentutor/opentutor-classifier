@@ -15,15 +15,9 @@ expectation_features:
   good_regex:
   - \b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b
   ideal_answer:
-  - correct
-  - someone
-  - behavior
   - may
   - get
   - trouble
-  - may
-  - harder
-  - work
 - bad_regex:
   - \b(super\w*|bette\w*)\b
   good_regex:
