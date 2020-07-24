@@ -9,16 +9,19 @@ from nltk.tokenize import word_tokenize
 from os import path, makedirs
 import pickle
 from sklearn import model_selection, svm
+from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
 from typing import Dict, List
 import math
 from scipy import spatial
+from scipy.optimize import linear_sum_assignment
 from sklearn.model_selection import LeaveOneOut
 import yaml
 import re
 from glob import glob
 import pandas as pd
 import json
+
 
 from opentutor_classifier import (
     AnswerClassifierInput,
@@ -312,6 +315,30 @@ class SVMExpectationClassifier:
         similarity = self.calculate_similarity(example_feature_vec, ia_feature_vec)
         return similarity
 
+    def word_alignment_feature(self, example, ia, word2vec, index2word_set):
+        cost = []
+        n_exact_matches = len(set(ia).intersection(set(example)))
+        ia, example = (
+            list(set(ia).difference(example)),
+            list(set(example).difference(ia)),
+        )
+        if not ia:
+            return 1
+
+        for ia_i in ia:
+            inner_cost = []
+            for e in example:
+                dist = self.word2vec_example_similarity_feature(
+                    word2vec, index2word_set, [e], [ia_i]
+                )
+                inner_cost.append(dist)
+            cost.append(inner_cost)
+        row_idx, col_idx = linear_sum_assignment(cost, maximize=True)
+        score = (
+            n_exact_matches + sum([cost[r][c] for r, c in zip(row_idx, col_idx)])
+        ) / float(len(ia) + n_exact_matches)
+        return score
+
     def length_ratio_feature(self, example, ideal_answer):
         return len(example) / len(ideal_answer)
 
@@ -321,9 +348,9 @@ class SVMExpectationClassifier:
         replaced_example = re.sub("[.*'.*]", "", str_example)
         no_of_negatives = len(re.findall(negative_regex, replaced_example))
         if no_of_negatives % 2 == 0:
-            even_negatives = True
+            even_negatives = 1
         else:
-            even_negatives = False
+            even_negatives = 0
         return no_of_negatives, even_negatives
 
     def get_regex(self, exp_num, dict_expectation_features, regex_type):
@@ -368,13 +395,22 @@ class SVMExpectationClassifier:
         bad_regex: List[str],
     ):
         feature_array = []
-        if good_regex is not None:
+        if good_regex:
             good_regex_score = self.good_regex_features(example, good_regex)
             feature_array.append(good_regex_score)
         if bad_regex:
             bad_regex_score = self.bad_regex_features(example, bad_regex)
             feature_array.append(bad_regex_score)
+        no_of_negatives, even_negatives = self.number_of_negatives(example)
+        feature_array.append(no_of_negatives)
+        feature_array.append(even_negatives)
+
+        feature_array.append(
+            self.word_alignment_feature(example, ideal_answer, word2vec, index2word_set)
+        )
+
         feature_array.append(self.length_ratio_feature(example, ideal_answer))
+
         feature_array.append(
             self.word2vec_example_similarity_feature(
                 word2vec, index2word_set, example, ideal_answer
@@ -385,7 +421,6 @@ class SVMExpectationClassifier:
                 word2vec, index2word_set, example, question
             )
         )
-
         return feature_array
 
     def train(self, model, train_features, train_y):
@@ -440,6 +475,15 @@ class SVMExpectationClassifier:
         result.to_csv(path.join(output_dir, "training.csv"), index=False)
         return result
 
+    def initialize_model(self):
+        return svm.SVC(kernel="rbf", C=10, gamma="auto")
+
+    def tune_hyper_parameters(self, model, parameters):
+        model = GridSearchCV(
+            model, parameters, cv=LeaveOneOut(), return_train_score=False
+        )
+        return model
+
 
 @dataclass
 class ExpectationToEvaluate:
@@ -464,7 +508,7 @@ class SVMAnswerClassifierTraining:
             corpus = load_data(path.join(data_root, "default", "training.csv"))
         except Exception:
             corpus = self.model_obj.combine_dataset(data_root)
-        model = svm.SVC()
+        model = self.model_obj.initialize_model()
         index2word_set = set(self.word2vec.index2word)
         output_dir = path.abspath(output_dir)
         makedirs(output_dir, exist_ok=True)
@@ -548,7 +592,6 @@ class SVMAnswerClassifierTraining:
                 )
             )
             features = []
-            # self.ideal_answers_dictionary[exp_num] = ia
             for example in processed_data:
                 feature = np.array(
                     self.model_obj.calculate_features(
@@ -563,7 +606,9 @@ class SVMAnswerClassifierTraining:
                 )
                 features.append(feature)
             train_y = np.array(self.model_obj.encode_y(train_y))
-            model = svm.SVC()
+
+            model = self.model_obj.initialize_model()
+
             model.fit(features, train_y)
             results_loocv = model_selection.cross_val_score(
                 model, features, train_y, cv=LeaveOneOut(), scoring="accuracy"
@@ -609,19 +654,22 @@ class SVMAnswerClassifier:
         return self._word2vec
 
     def find_score_and_class(self, expectations, exp_num_i, sent_features):
+        _evaluation = (
+            "Good"
+            if self.model_obj.predict(
+                expectations[exp_num_i].classifier, sent_features
+            )[0]
+            == 1
+            else "Bad"
+        )
+        _score = self.model_obj.confidence_score(
+            expectations[exp_num_i].classifier, sent_features
+        )
+
         return ExpectationClassifierResult(
             expectation=expectations[exp_num_i].expectation,
-            evaluation=(
-                "Good"
-                if self.model_obj.predict(
-                    expectations[exp_num_i].classifier, sent_features
-                )[0]
-                == 1
-                else "Bad"
-            ),
-            score=self.model_obj.confidence_score(
-                expectations[exp_num_i].classifier, sent_features
-            ),
+            evaluation=_evaluation,
+            score=_score if _evaluation == "Good" else 1 - _score,
         )
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:

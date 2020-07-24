@@ -22,7 +22,7 @@ def shared_root() -> str:
             "peer pressure can change your behavior",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.93, evaluation="Good")],
+            [ExpectationClassifierResult(expectation=0, score=0.97, evaluation="Good")],
         )
     ],
 )
@@ -66,13 +66,39 @@ def test_evaluates_one_expectation_for_q1(
             },
             [
                 ExpectationClassifierResult(
-                    expectation=0, evaluation="Good", score=0.91
+                    expectation=0, evaluation="Good", score=0.89
                 ),
                 ExpectationClassifierResult(
-                    expectation=0, evaluation="Bad", score=0.35
+                    expectation=0, evaluation="Bad", score=0.69
                 ),
             ],
-        )
+        ),
+        (
+            "hi",
+            0,
+            {
+                "question": "What are the challenges to demonstrating integrity in a group?",
+                "expectations": [
+                    {
+                        "ideal": "Peer pressure can cause you to allow inappropriate behavior"
+                    }
+                ],
+            },
+            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.99)],
+        ),
+        (
+            "some gibberish kjlsdafhalkjfha",
+            0,
+            {
+                "question": "What are the challenges to demonstrating integrity in a group?",
+                "expectations": [
+                    {
+                        "ideal": "Peer pressure can cause you to allow inappropriate behavior"
+                    }
+                ],
+            },
+            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.99)],
+        ),
     ],
 )
 def test_evaluates_for_default_model(
@@ -141,13 +167,13 @@ def test_evaluates_one_expectation_for_q2(
             {},
             [
                 ExpectationClassifierResult(
-                    expectation=0, score=0.93, evaluation="Good"
+                    expectation=0, score=0.97, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=1, score=0.89, evaluation="Good"
+                    expectation=1, score=0.47, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=2, score=0.16, evaluation="Bad"
+                    expectation=2, score=0.57, evaluation="Bad"
                 ),
             ],
         )

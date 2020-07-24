@@ -22,7 +22,7 @@ def word2vec() -> str:
     if os.path.isfile(word2vec_path):
         return word2vec_path
     word2vec_zip = os.path.join(shared, "word2vec.zip")
-    download("http://vectors.nlpl.eu/repository/20/5.zip", word2vec_zip)
+    download("http://vectors.nlpl.eu/repository/20/6.zip", word2vec_zip)
     with ZipFile(word2vec_zip, "r") as z:
         z.extract("model.bin")
     shutil.move("model.bin", word2vec_path)
