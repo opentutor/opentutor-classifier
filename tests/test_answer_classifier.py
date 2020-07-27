@@ -65,7 +65,7 @@ def test_evaluates_one_expectation_for_q1(
             },
             [
                 ExpectationClassifierResult(
-                    expectation=0, evaluation="Bad", score=0.01
+                    expectation=0, evaluation="Bad", score=0.02
                 ),
                 ExpectationClassifierResult(
                     expectation=1, evaluation="Good", score=1.0
@@ -85,14 +85,16 @@ def test_evaluates_one_expectation_for_q1(
                 ],
             },
             [
-                ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.0),
                 ExpectationClassifierResult(
-                    expectation=1, evaluation="Bad", score=0.04
+                    expectation=0, evaluation="Bad", score=0.01
+                ),
+                ExpectationClassifierResult(
+                    expectation=1, evaluation="Bad", score=0.17
                 ),
             ],
         ),
         (
-            "influence from others can change your behaviori",
+            "influence from others can change your behavior",
             0,
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
@@ -102,7 +104,7 @@ def test_evaluates_one_expectation_for_q1(
                     }
                 ],
             },
-            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.02)],
+            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.01)],
         ),
         (
             "hi",
@@ -115,7 +117,7 @@ def test_evaluates_one_expectation_for_q1(
                     }
                 ],
             },
-            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.02)],
+            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.14)],
         ),
         (
             "some gibberish kjlsdafhalkjfha",
@@ -128,7 +130,7 @@ def test_evaluates_one_expectation_for_q1(
                     }
                 ],
             },
-            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.02)],
+            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.14)],
         ),
     ],
 )
