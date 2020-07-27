@@ -395,7 +395,7 @@ class SVMExpectationClassifier:
         bad_regex: List[str],
     ):
         feature_array = []
-        
+
         good_regex_score = self.good_regex_features(example, good_regex)
         feature_array.append(good_regex_score)
 

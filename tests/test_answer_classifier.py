@@ -85,7 +85,9 @@ def test_evaluates_one_expectation_for_q1(
                 ],
             },
             [
-                ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.01),
+                ExpectationClassifierResult(
+                    expectation=0, evaluation="Bad", score=0.01
+                ),
                 ExpectationClassifierResult(
                     expectation=1, evaluation="Bad", score=0.17
                 ),
