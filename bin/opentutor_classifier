@@ -2,8 +2,7 @@
 import click
 import os
 from opentutor_classifier.svm import SVMAnswerClassifierTraining
-from opentutor_classifier.sync import sync
-from opentutor_classifier import load_data
+from opentutor_classifier.sync import sync as _sync
 
 
 @click.group()
@@ -29,10 +28,12 @@ def train(data: str, shared: str, output: str):
 @click.option("-o", "--output", required=False, default="data")
 def sync(lesson: str, url: str, output: str):
     data_path = os.path.join(output, lesson)
-    sync(lesson_id=lesson, url, data_path)
+    _sync(lesson, url, data_path)
     print(f"Data is saved at: {data_path}")
 
+
 cli.add_command(train)
+cli.add_command(sync)
 
 if __name__ == "__main__":
     cli()
