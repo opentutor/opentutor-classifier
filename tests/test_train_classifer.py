@@ -54,16 +54,9 @@ def __train_default_model(
         "model_root",
         os.path.basename(os.path.normpath(data_root)),
     )
-    config_data = {
-        "question": "What are the challenges to demonstrating integrity in a group?",
-        "expectations": [
-            {"ideal": "Peer pressure can cause you to allow inappropriate behavior"},
-            {"ideal": "Enforcing the rules can make you unpopular"},
-        ],
-    }
     accuracy = train_default_classifier(
         data_root=data_root,
-        config_data=load_config_into_objects(config_data),
+        config_data=load_config_into_objects({}),
         shared_root=shared_root,
         output_dir=output_dir,
     )
@@ -151,7 +144,7 @@ def test_trained_default_model_usable_for_inference(
 ):
     output_dir, accuracy = __train_default_model(tmpdir, data_root, shared_root)
     assert os.path.exists(output_dir)
-    assert accuracy == 70.0
+    assert accuracy == 72.5
     config_data = {
         "question": "What are the challenges to demonstrating integrity in a group?",
         "expectations": [
@@ -167,5 +160,5 @@ def test_trained_default_model_usable_for_inference(
         )
     )
     assert len(result.expectation_results) == 1
-    assert result.expectation_results[0].evaluation == "Good"
-    assert round(result.expectation_results[0].score, 2) == 1.0
+    assert result.expectation_results[0].evaluation == "Bad"
+    assert round(result.expectation_results[0].score, 2) == 0.0

@@ -356,7 +356,7 @@ class SVMExpectationClassifier:
     def get_regex(self, exp_num, dict_expectation_features, regex_type):
         try:
             regex = dict_expectation_features[exp_num][regex_type]
-        except ValueError:
+        except Exception:
             regex = []
 
         return regex
@@ -395,12 +395,13 @@ class SVMExpectationClassifier:
         bad_regex: List[str],
     ):
         feature_array = []
-        if good_regex:
-            good_regex_score = self.good_regex_features(example, good_regex)
-            feature_array.append(good_regex_score)
-        if bad_regex:
-            bad_regex_score = self.bad_regex_features(example, bad_regex)
-            feature_array.append(bad_regex_score)
+        
+        good_regex_score = self.good_regex_features(example, good_regex)
+        feature_array.append(good_regex_score)
+
+        bad_regex_score = self.bad_regex_features(example, bad_regex)
+        feature_array.append(bad_regex_score)
+
         no_of_negatives, even_negatives = self.number_of_negatives(example)
         feature_array.append(no_of_negatives)
         feature_array.append(even_negatives)
@@ -561,8 +562,7 @@ class SVMAnswerClassifierTraining:
         config_path = path.join(data_root, "config.yaml")
         config = load_yaml(config_path)
         question = config.get("question")
-        expectation_features = config.get("expectation_features")
-
+        expectation_features = config.get("expectation_features") or []
         if not question:
             raise ValueError(f"config.yaml must have a 'question' at {config_path}")
         corpus = load_data(path.join(data_root, "training.csv"))
