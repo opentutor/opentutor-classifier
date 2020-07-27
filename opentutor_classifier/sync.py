@@ -1,33 +1,23 @@
-import csv
+import json
 import requests
 from pathlib import Path
 
 
-def sync(lesson_id: str, api_url: str, output_dir: str):
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
-    sync_training(lesson_id, api_url, output_dir)
-    sync_config(lesson_id, api_url, output_dir)
-
-
-def sync_training(lesson_id: str, api_url: str, output_dir: str):
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
-    query = f'query {{ lessonTrainingData(lessonId: "{lesson_id}") }}'
-    request = requests.post(api_url, json={"query": query})
-    lesson_training_data = request.json()["data"]["lessonTrainingData"]
-    file = open(f"{output_dir}/training.csv", "w+", newline="")
-    writer = csv.writer(file)
-    for line in lesson_training_data.split("\n"):
-        csv_data = line.split(",")
-        writer.writerow([csv_data[0], csv_data[1], csv_data[2]])
-    print(file.read())
-
-
-def sync_config(lesson_id: str, api_url: str, output_dir: str):
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
-    query = f'query {{ lesson(lessonId: "{lesson_id}") {{ question }} }}'
-    request = requests.post(api_url, json={"query": query})
-    question = request.json()["data"]["lesson"]["question"]
-    file = open(f"{output_dir}/config.yaml", "w+", newline="")
-    file.write(f'question: "{question}"')
-    print(file.read())
-    file.close()
+def sync(lesson: str, url: str, output: str):
+    Path(output).mkdir(parents=True, exist_ok=True)
+    if url.startswith("http"):
+        query = f'query {{ trainingData(lessonId: "{lesson}") {{ config training }} }}'
+        request = requests.post(url, json={"query": query})
+        training = request.json()["data"]["trainingData"]["training"]
+        config = request.json()["data"]["trainingData"]["config"]
+    else:
+        with open(url) as file:
+            data = json.load(file)
+            training = data["data"]["trainingData"]["training"]
+            config = data["data"]["trainingData"]["config"]
+    with open(f"{output}/training.csv", "w+", newline="") as file:
+        file.write(training)
+        file.close()
+    with open(f"{output}/config.yaml", "w+", newline="") as file:
+        file.write(config)
+        file.close()
