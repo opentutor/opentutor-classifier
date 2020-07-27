@@ -151,7 +151,7 @@ def test_trained_default_model_usable_for_inference(
 ):
     output_dir, accuracy = __train_default_model(tmpdir, data_root, shared_root)
     assert os.path.exists(output_dir)
-    assert accuracy == 72.5
+    assert accuracy == 70.0
     config_data = {
         "question": "What are the challenges to demonstrating integrity in a group?",
         "expectations": [
