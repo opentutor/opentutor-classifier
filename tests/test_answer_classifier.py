@@ -45,6 +45,7 @@ def test_evaluates_one_expectation_for_q1(
     )
     assert len(result.expectation_results) == len(expected_results)
     for res, res_expected in zip(result.expectation_results, expected_results):
+        assert res.expectation == res_expected.expectation
         assert round(res.score, 2) == res_expected.score
         assert res.evaluation == res_expected.evaluation
 
@@ -52,6 +53,25 @@ def test_evaluates_one_expectation_for_q1(
 @pytest.mark.parametrize(
     "input_answer,input_expectation_number,config_data,expected_results",
     [
+        (
+            "they need sunlight",
+            0,
+            {
+                "question": "how can i grow better plants?",
+                "expectations": [
+                    {"ideal": "give them the right amount of water"},
+                    {"ideal": "they need sunlight"},
+                ],
+            },
+            [
+                ExpectationClassifierResult(
+                    expectation=0, evaluation="Bad", score=0.01
+                ),
+                ExpectationClassifierResult(
+                    expectation=1, evaluation="Good", score=1.0
+                ),
+            ],
+        ),
         (
             "peer pressure",
             0,
@@ -67,7 +87,7 @@ def test_evaluates_one_expectation_for_q1(
             [
                 ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.0),
                 ExpectationClassifierResult(
-                    expectation=0, evaluation="Bad", score=0.04
+                    expectation=1, evaluation="Bad", score=0.04
                 ),
             ],
         ),
@@ -131,6 +151,7 @@ def test_evaluates_for_default_model(
     )
     assert len(result.expectation_results) == len(expected_results)
     for res, res_expected in zip(result.expectation_results, expected_results):
+        assert res.expectation == res_expected.expectation
         assert round(res.score, 2) == res_expected.score
         assert res.evaluation == res_expected.evaluation
 
@@ -165,6 +186,7 @@ def test_evaluates_one_expectation_for_q2(
     )
     assert len(result.expectation_results) == len(expected_results)
     for res, res_expected in zip(result.expectation_results, expected_results):
+        assert res.expectation == res_expected.expectation
         assert round(res.score, 2) == res_expected.score
         assert res.evaluation == res_expected.evaluation
 
@@ -209,5 +231,6 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
     )
     assert len(result.expectation_results) == len(expected_results)
     for res, res_expected in zip(result.expectation_results, expected_results):
+        assert res.expectation == res_expected.expectation
         assert round(res.score, 2) == res_expected.score
         assert res.evaluation == res_expected.evaluation

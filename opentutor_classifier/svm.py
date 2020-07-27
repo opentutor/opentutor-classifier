@@ -653,21 +653,16 @@ class SVMAnswerClassifier:
             )
         return self._word2vec
 
-    def find_score_and_class(self, expectations, exp_num_i, sent_features):
+    def find_score_and_class(self, classifier, exp_num_i, sent_features):
         _evaluation = (
             "Good"
-            if self.model_obj.predict(
-                expectations[exp_num_i].classifier, sent_features
-            )[0]
-            == 1
+            if self.model_obj.predict(classifier, sent_features)[0] == 1
             else "Bad"
         )
-        _score = self.model_obj.confidence_score(
-            expectations[exp_num_i].classifier, sent_features
-        )
+        _score = self.model_obj.confidence_score(classifier, sent_features)
 
         return ExpectationClassifierResult(
-            expectation=expectations[exp_num_i].expectation,
+            expectation=exp_num_i,
             evaluation=_evaluation,
             score=_score if _evaluation == "Good" else 1 - _score,
         )
@@ -703,8 +698,10 @@ class SVMAnswerClassifier:
                 sent_features = self.model_obj.calculate_features(
                     question_proc, sent_proc, ideal_answer, word2vec, index2word, [], []
                 )
+                exp_num = i
+                classifier = expectations[0].classifier
                 result.expectation_results.append(
-                    self.find_score_and_class(expectations, 0, [sent_features])
+                    self.find_score_and_class(classifier, exp_num, [sent_features])
                 )
         else:
             conf2 = self.config()
@@ -720,8 +717,10 @@ class SVMAnswerClassifier:
                     conf2.expectation_features[i].good_regex,
                     conf2.expectation_features[i].bad_regex,
                 )
+                exp_num = expectations[i].expectation
+                classifier = expectations[exp_num].classifier
                 result.expectation_results.append(
-                    self.find_score_and_class(expectations, i, [sent_features])
+                    self.find_score_and_class(classifier, exp_num, [sent_features])
                 )
         return result
 
