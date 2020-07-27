@@ -17,7 +17,7 @@ $(VENV)-update: virtualenv-installed
 
 .PHONY clean:
 clean:
-	rm -rf .venv htmlcov .coverage 
+	rm -rf .venv htmlcov .coverage tests/fixtures/shared/word2vec.bin
 
 
 .PHONY docker-build:
