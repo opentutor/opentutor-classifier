@@ -1,0 +1,8 @@
+{
+    "data": {
+        "trainingData": {
+            "config": "question: \"What are the challenges to demonstrating integrity in a group?\"",
+            "training": "exp_num,text,label\n0,peer pressure,Good"
+        }
+    }
+}
