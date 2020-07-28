@@ -38,6 +38,36 @@ def __train_model(tmpdir, question_id: str, shared_root: str) -> str:
     return out, err, exitcode, output_dir
 
 
+def __sync(tmpdir, lesson: str, url: str) -> str:
+    test_root = tmpdir.mkdir("test")
+    output_dir = os.path.join(test_root, lesson)
+    command = [
+        ".venv/bin/python3.8",
+        "bin/opentutor_classifier",
+        "sync",
+        "--lesson",
+        lesson,
+        "--url",
+        url,
+        "--output",
+        test_root,
+    ]
+    out, err, exitcode = capture(command)
+    return out, err, exitcode, output_dir
+
+
+def test_cli_syncs_training_data_for_q1(tmpdir):
+    out, err, exit_code, output_root = __sync(
+        tmpdir, "q1", fixture_path(os.path.join("graphql", "example-1.json"))
+    )
+    assert exit_code == 0
+    assert path.exists(path.join(output_root, "training.csv"))
+    assert path.exists(path.join(output_root, "config.yaml"))
+    out_str = out.decode("utf-8")
+    out_str = out_str.split("\n")
+    assert out_str[0] == f"Data is saved at: {output_root}"
+
+
 def test_cli_outputs_models_at_specified_model_root_for_q1(tmpdir):
     shared_root = fixture_path("shared")
     out, err, exit_code, model_root = __train_model(tmpdir, "question1", shared_root)
