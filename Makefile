@@ -1,4 +1,4 @@
-DOCKER_IMAGE?=opentutor_classifier
+DOCKER_IMAGE?=uscictdocker/opentutor-classifier:1.0.0-alpha.17
 
 # virtualenv used for pytest
 VENV=.venv
@@ -29,16 +29,16 @@ docker-run-shell:
 	docker run -it --rm  --entrypoint /bin/bash $(DOCKER_IMAGE)
 
 # use to test dockerized training locally
-.PHONY: docker-test-train
-docker-test-train:
+.PHONY: docker-train
+docker-train-%:
 	docker run \
 		-it \
 		--rm \
-		-v $(PWD)/tests/fixtures/data:/data \
-		-v $(PWD)/docker-test-train-out:/docker-test-train-out \
-	$(DOCKER_IMAGE) train --data /data/lesson1_dataset.csv --output /output
+		-v $(PWD)/tests/fixtures/data/$*:/data \
+		-v $(PWD)/tests/fixtures/shared:/shared \
+		-v $(PWD)/tests/fixtures/models/$*:/output \
+	$(DOCKER_IMAGE) train --data /data/ --shared /shared --output /output 
 
-		
 .PHONY: format
 format: $(VENV)
 	$(VENV)/bin/black .
