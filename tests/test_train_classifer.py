@@ -55,10 +55,7 @@ def __train_default_model(
         os.path.basename(os.path.normpath(data_root)),
     )
     accuracy = train_default_classifier(
-        data_root=data_root,
-        config_data=load_config_into_objects({}),
-        shared_root=shared_root,
-        output_dir=output_dir,
+        data_root=data_root, shared_root=shared_root, output_dir=output_dir
     )
     return output_dir, accuracy
 

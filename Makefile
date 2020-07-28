@@ -1,4 +1,4 @@
-DOCKER_IMAGE?=uscictdocker/opentutor-classifier:1.0.0-alpha.17
+DOCKER_IMAGE?=opentutor_classifier_docker:latest
 
 # virtualenv used for pytest
 VENV=.venv
@@ -38,6 +38,17 @@ docker-train-%:
 		-v $(PWD)/tests/fixtures/shared:/shared \
 		-v $(PWD)/tests/fixtures/models/$*:/output \
 	$(DOCKER_IMAGE) train --data /data/ --shared /shared --output /output 
+
+.PHONY: docker-train-default
+docker-train-default:
+	docker run \
+		-it \
+		--rm \
+		-v $(PWD)/tests/fixtures/data/:/data \
+		-v $(PWD)/tests/fixtures/shared:/shared \
+		-v $(PWD)/tests/fixtures/models/default:/output \
+	$(DOCKER_IMAGE) traindefault --data /data/ --shared /shared --output /output 
+
 
 .PHONY: format
 format: $(VENV)

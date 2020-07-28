@@ -500,10 +500,7 @@ class SVMAnswerClassifierTraining:
         self.accuracy: Dict[int, int] = {}
 
     def default_train_all(
-        self,
-        data_root: str = "data",
-        config_data: Dict = {},
-        output_dir: str = "output",
+        self, data_root: str = "data", output_dir: str = "output"
     ) -> Dict:
         try:
             corpus = load_data(path.join(data_root, "default", "training.csv"))
@@ -736,13 +733,13 @@ def train_classifier(data_root="data", shared_root="shared", output_dir: str = "
 
 
 def train_default_classifier(
-    data_root="data", config_data={}, shared_root="shared", output_dir: str = "out"
+    data_root="data", shared_root="shared", output_dir: str = "out"
 ):
     svm_answer_classifier_training = SVMAnswerClassifierTraining(
         shared_root=shared_root
     )
     accuracy = svm_answer_classifier_training.default_train_all(
-        data_root=data_root, config_data=config_data, output_dir=output_dir
+        data_root=data_root, output_dir=output_dir
     )
     return accuracy
 

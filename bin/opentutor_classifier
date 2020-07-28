@@ -22,7 +22,20 @@ def train(data: str, shared: str, output: str):
         print(f"Accuracy for model={exp_num} is {acc}.")
 
 
+@cli.command()
+@click.option("-p", "--data", required=False, type=click.Path(exists=True))
+@click.option("-s", "--shared", required=False, type=click.Path(exists=True))
+@click.option("-o", "--output", required=False, type=click.Path(exists=False))
+def traindefault(data: str, shared: str, output: str):
+    training = SVMAnswerClassifierTraining(shared_root=shared)
+    accuracy = training.default_train_all(data_root=data, output_dir=output)
+    print("Models are saved at: " + output)
+    print(f"Accuracy for model is {accuracy}")
+
+
 cli.add_command(train)
+cli.add_command(traindefault)
+
 
 if __name__ == "__main__":
     cli()
