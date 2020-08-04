@@ -47,7 +47,7 @@ def find_or_load_word2vec(file_path: str) -> Word2VecKeyedVectors:
 
 @dataclass
 class InstanceExpectationFeatures:
-    ideal_answer: List[str]
+    ideal: List[str]
     good_regex: List[str]
     bad_regex: List[str]
 
@@ -263,9 +263,9 @@ class SVMExpectationClassifier:
         train_y = encoder.fit_transform(train_y)
         return train_y
 
-    def word_overlap_feature(self, example, ideal_answer):
-        intersection = set(ideal_answer).intersection(set(example))
-        score = len(intersection) / len(set(ideal_answer))
+    def word_overlap_feature(self, example, ideal):
+        intersection = set(ideal).intersection(set(example))
+        score = len(intersection) / len(set(ideal))
         return score
 
     def avg_feature_vector(self, words, model, num_features, index2word_set):
@@ -301,16 +301,13 @@ class SVMExpectationClassifier:
         return similarity
 
     def word2vec_example_similarity_feature(
-        self, word2vec: Word2VecKeyedVectors, index2word_set, example, ideal_answer
+        self, word2vec: Word2VecKeyedVectors, index2word_set, example, ideal
     ):
         example_feature_vec = self.avg_feature_vector(
             example, model=word2vec, num_features=300, index2word_set=index2word_set
         )
         ia_feature_vec = self.avg_feature_vector(
-            ideal_answer,
-            model=word2vec,
-            num_features=300,
-            index2word_set=index2word_set,
+            ideal, model=word2vec, num_features=300, index2word_set=index2word_set
         )
         similarity = self.calculate_similarity(example_feature_vec, ia_feature_vec)
         return similarity
@@ -339,8 +336,8 @@ class SVMExpectationClassifier:
         ) / float(len(ia) + n_exact_matches)
         return score
 
-    def length_ratio_feature(self, example, ideal_answer):
-        return len(example) / len(ideal_answer)
+    def length_ratio_feature(self, example, ideal):
+        return len(example) / len(ideal)
 
     def number_of_negatives(self, example):
         negative_regex = r"\b(?:no|never|nothing|nowhere|none|not|havent|hasnt|hadnt|cant|couldnt|shouldnt|wont|wouldnt|dont|doesnt|didnt|isnt|arent|aint)\b"
@@ -388,7 +385,7 @@ class SVMExpectationClassifier:
         self,
         question: List[str],
         example: List[str],
-        ideal_answer: List[str],
+        ideal: List[str],
         word2vec: Word2VecKeyedVectors,
         index2word_set: set,
         good_regex: List[str],
@@ -407,14 +404,14 @@ class SVMExpectationClassifier:
         feature_array.append(even_negatives)
 
         feature_array.append(
-            self.word_alignment_feature(example, ideal_answer, word2vec, index2word_set)
+            self.word_alignment_feature(example, ideal, word2vec, index2word_set)
         )
 
-        feature_array.append(self.length_ratio_feature(example, ideal_answer))
+        feature_array.append(self.length_ratio_feature(example, ideal))
 
         feature_array.append(
             self.word2vec_example_similarity_feature(
-                word2vec, index2word_set, example, ideal_answer
+                word2vec, index2word_set, example, ideal
             )
         )
         feature_array.append(
@@ -460,11 +457,11 @@ class SVMExpectationClassifier:
             loaded_df["exp_data"] = 0
             loaded_df["exp_num"] = 0
             for i in range(len(exp_idx) - 1):
-                temp_data["ideal_answer"] = loaded_df.text[exp_idx[i]]
+                temp_data["ideal"] = loaded_df.text[exp_idx[i]]
                 r1 = exp_idx[i]
                 r2 = exp_idx[i + 1]
                 loaded_df["exp_data"][r1:r2] = json.dumps(temp_data)
-            temp_data["ideal_answer"] = loaded_df.text[exp_idx[-1]]
+            temp_data["ideal"] = loaded_df.text[exp_idx[-1]]
             r3 = exp_idx[-1]
             r4 = len(loaded_df)
             loaded_df["exp_data"][r3:r4] = json.dumps(temp_data)
@@ -518,9 +515,7 @@ class SVMAnswerClassifierTraining:
             processed_question = self.model_obj.processing_single_sentence(
                 features["question"]
             )
-            processed_ia = self.model_obj.processing_single_sentence(
-                features["ideal_answer"]
-            )
+            processed_ia = self.model_obj.processing_single_sentence(features["ideal"])
 
             features_list = self.model_obj.calculate_features(
                 processed_question,
@@ -585,7 +580,7 @@ class SVMAnswerClassifierTraining:
             )
             expectation_features_objects.append(
                 InstanceExpectationFeatures(
-                    ideal_answer=ia, good_regex=good_regex, bad_regex=bad_regex
+                    ideal=ia, good_regex=good_regex, bad_regex=bad_regex
                 )
             )
             features = []
@@ -689,11 +684,11 @@ class SVMAnswerClassifier:
 
             for i in range(len(conf.expectation_features_default)):
 
-                ideal_answer = self.model_obj.processing_single_sentence(
-                    conf.expectation_features_default[i].ideal_answer
+                ideal = self.model_obj.processing_single_sentence(
+                    conf.expectation_features_default[i].ideal
                 )
                 sent_features = self.model_obj.calculate_features(
-                    question_proc, sent_proc, ideal_answer, word2vec, index2word, [], []
+                    question_proc, sent_proc, ideal, word2vec, index2word, [], []
                 )
                 exp_num = i
                 classifier = expectations[0].classifier
@@ -708,7 +703,7 @@ class SVMAnswerClassifier:
                 sent_features = self.model_obj.calculate_features(
                     question_proc,
                     sent_proc,
-                    conf2.expectation_features[i].ideal_answer,
+                    conf2.expectation_features[i].ideal,
                     word2vec,
                     index2word,
                     conf2.expectation_features[i].good_regex,
@@ -771,7 +766,7 @@ def load_config_into_objects(config_data):
         exp_feature_list = []
         for i in config_data["expectations"]:
             exp_feature_list.append(
-                InstanceDefaultExpectationFeatures(ideal_answer=i["ideal"])
+                InstanceDefaultExpectationFeatures(ideal=i["ideal"])
             )
         return InstanceConfigDefault(
             question=config_data["question"],

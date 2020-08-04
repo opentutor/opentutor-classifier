@@ -16,7 +16,7 @@ class ExpectationClassifierResult:
 
 @dataclass
 class InstanceDefaultExpectationFeatures:
-    ideal_answer: str
+    ideal: str
 
 
 @dataclass

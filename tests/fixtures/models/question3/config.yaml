@@ -1,0 +1,19 @@
+expectation_features:
+- bad_regex: []
+  good_regex: []
+  ideal:
+  - closer
+  - ratio
+  - gets
+  - square
+- bad_regex: []
+  good_regex: []
+  ideal:
+  - affects
+  - less
+- bad_regex: []
+  good_regex: []
+  ideal:
+  - like
+  - square
+question: Which rectangle do you think looks more like a square?

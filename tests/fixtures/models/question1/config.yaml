@@ -3,7 +3,7 @@ expectation_features:
   - \brule\w*\b.*\bdiffer\w*\b
   good_regex:
   - \b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b
-  ideal_answer:
+  ideal:
   - peer
   - pressure
   - cause
@@ -14,7 +14,7 @@ expectation_features:
   - \b(lov\w*|lik\w*|car)\b
   good_regex:
   - \b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b
-  ideal_answer:
+  ideal:
   - may
   - get
   - trouble
@@ -22,7 +22,7 @@ expectation_features:
   - \b(super\w*|bette\w*)\b
   good_regex:
   - \b(unpop\w*|hate\w*|unlik\w*|not\040popular)\b
-  ideal_answer:
+  ideal:
   - enforcing
   - rule
   - make
