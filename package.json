@@ -1,0 +1,28 @@
+{
+  "name": "opentutor-classifier",
+  "version": "1.0.0",
+  "description": "A short answer classifier service focused on cold-start performance",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "license-check-and-add": "^3.0.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "license:fix": "license-check-and-add remove -f license-config.json && license-check-and-add add -f license-config.json",
+    "test:license": "license-check-and-add check -f license-config.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ICTLearningSciences/opentutor-classifier.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ICTLearningSciences/opentutor-classifier/issues"
+  },
+  "homepage": "https://github.com/ICTLearningSciences/opentutor-classifier#readme"
+}

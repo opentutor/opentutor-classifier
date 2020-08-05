@@ -1,0 +1,8 @@
+# Ignore everything
+*
+
+# But not these files...
+!/tests/*.py
+!/tests/*/*.py
+!/opentutor_classifier/*.py
+!/opentutor_classifier/*/*.py

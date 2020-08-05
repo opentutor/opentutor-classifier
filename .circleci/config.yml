@@ -13,6 +13,9 @@ orbs:
   environment:
     DOCKER_BUILDKIT: 1
 executors:
+  node:
+    docker:
+      - image: circleci/node:12.18
   python:
     docker:
       - image: circleci/python:3.8
@@ -70,6 +73,13 @@ jobs:
       - run:
           name: Test lint
           command: make test-lint
+  test-license:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          name: Test license
+          command: npm ci && make test-license
   test-types:
     executor: python
     steps:
@@ -91,6 +101,8 @@ workflows:
           filters: *only-untagged
       - test-lint:
           filters: *only-untagged
+      - test-license:
+          filters: *only-untagged
       - test-types:
           filters: *only-untagged
       - test:
@@ -101,6 +113,7 @@ workflows:
           requires:
             - test-format
             - test-lint
+            - test-license
             - test-types
             - test
       - build-and-push:
@@ -114,6 +127,8 @@ workflows:
           filters: *only-tagged-releases
       - test-lint:
           filters: *only-tagged-releases
+      - test-license:
+          filters: *only-tagged-releases
       - test-types:
           filters: *only-tagged-releases
       - test:
@@ -124,5 +139,6 @@ workflows:
           requires:
             - test-format
             - test-lint
+            - test-license
             - test-types
             - test
