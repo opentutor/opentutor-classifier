@@ -17,7 +17,5 @@ def sync(lesson: str, url: str, output: str):
             config = data["data"]["trainingData"]["config"]
     with open(f"{output}/training.csv", "w+", newline="") as file:
         file.write(training)
-        file.close()
     with open(f"{output}/config.yaml", "w+", newline="") as file:
         file.write(config)
-        file.close()

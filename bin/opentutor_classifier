@@ -34,9 +34,9 @@ def traindefault(data: str, shared: str, output: str):
 
 
 @cli.command()
-@click.option("-p", "--lesson", required=False, default="navyIntegrityFull")
-@click.option("-s", "--url", required=False, default="https://dev-opentutor.pal3.org/grading-api")
-@click.option("-o", "--output", required=False, default="data")
+@click.option("-p", "--lesson", required=True)
+@click.option("-s", "--url", required=True)
+@click.option("-o", "--output", required=False)
 def sync(lesson: str, url: str, output: str):
     data_path = os.path.join(output, lesson)
     _sync(lesson, url, data_path)

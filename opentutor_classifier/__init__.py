@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 import pandas as pd
 from typing import Any, Dict, List
 import yaml
@@ -15,20 +15,20 @@ class ExpectationClassifierResult:
 
 
 @dataclass
-class InstanceDefaultExpectationFeatures:
+class ExpectationFeatures:
     ideal: str
 
 
 @dataclass
-class InstanceConfigDefault:
+class QuestionConfig:
     question: str
-    expectation_features_default: List[InstanceDefaultExpectationFeatures]
+    expectation_features: List[ExpectationFeatures]
 
 
 @dataclass
 class AnswerClassifierInput:
     input_sentence: str
-    config_data: InstanceConfigDefault
+    config_data: QuestionConfig
     expectation: int = -1
 
 
@@ -36,6 +36,9 @@ class AnswerClassifierInput:
 class AnswerClassifierResult:
     input: AnswerClassifierInput
     expectation_results: List[ExpectationClassifierResult] = field(default_factory=list)
+
+    def to_dict(self) -> dict:
+        return asdict(self)
 
 
 class AnswerClassifier(ABC):

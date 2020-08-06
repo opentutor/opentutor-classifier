@@ -36,11 +36,12 @@ def __train_model(
     return output_dir, accuracy
 
 
-def test_outputs_models_at_specified_model_root_for_q1(
-    tmpdir, data_root: str, shared_root: str
+@pytest.mark.parametrize("input_lesson", [("question1"), ("question2")])
+def test_outputs_models_at_specified_model_root_for_q1_and_q2(
+    tmpdir, data_root: str, shared_root: str, input_lesson: str
 ):
     output_dir, _ = __train_model(
-        tmpdir, path.join(data_root, "question1"), shared_root
+        tmpdir, path.join(data_root, input_lesson), shared_root
     )
     assert path.exists(path.join(output_dir, "models_by_expectation_num.pkl"))
     assert path.exists(path.join(output_dir, "config.yaml"))
@@ -65,16 +66,6 @@ def test_outputs_models_at_specified_model_root_for_default_model(
 ):
     output_dir, _ = __train_default_model(tmpdir, data_root, shared_root)
     assert path.exists(path.join(output_dir, "models_by_expectation_num.pkl"))
-
-
-def test_outputs_models_at_specified_model_root_for_q2(
-    tmpdir, data_root: str, shared_root: str
-):
-    output_dir, _ = __train_model(
-        tmpdir, path.join(data_root, "question2"), shared_root
-    )
-    assert path.exists(path.join(output_dir, "models_by_expectation_num.pkl"))
-    assert path.exists(path.join(output_dir, "config.yaml"))
 
 
 def test_trained_models_usable_for_inference(tmpdir, data_root: str, shared_root: str):

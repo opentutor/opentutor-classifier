@@ -4,7 +4,6 @@ import numpy as np
 from gensim.models import KeyedVectors
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
-from nltk.corpus import wordnet as wn
 from nltk.tokenize import word_tokenize
 from os import path, makedirs
 import pickle
@@ -29,8 +28,8 @@ from opentutor_classifier import (
     ExpectationClassifierResult,
     load_data,
     load_yaml,
-    InstanceConfigDefault,
-    InstanceDefaultExpectationFeatures,
+    QuestionConfig,
+    ExpectationFeatures,
 )
 
 WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
@@ -78,10 +77,6 @@ class InstanceModels:
 
 class SVMExpectationClassifier:
     def __init__(self):
-        self.tag_map = defaultdict(lambda: wn.NOUN)
-        self.tag_map["J"] = wn.ADJ
-        self.tag_map["V"] = wn.VERB
-        self.tag_map["R"] = wn.ADV
         self.model = None
         self.score_dictionary = defaultdict(int)
         self.stopwords = set(
@@ -682,10 +677,10 @@ class SVMAnswerClassifier:
             conf = answer.config_data
             question_proc = self.model_obj.processing_single_sentence(conf.question)
 
-            for i in range(len(conf.expectation_features_default)):
+            for i in range(len(conf.expectation_features)):
 
                 ideal = self.model_obj.processing_single_sentence(
-                    conf.expectation_features_default[i].ideal
+                    conf.expectation_features[i].ideal
                 )
                 sent_features = self.model_obj.calculate_features(
                     question_proc, sent_proc, ideal, word2vec, index2word, [], []
@@ -765,10 +760,7 @@ def load_config_into_objects(config_data):
     if config_data:
         exp_feature_list = []
         for i in config_data["expectations"]:
-            exp_feature_list.append(
-                InstanceDefaultExpectationFeatures(ideal=i["ideal"])
-            )
-        return InstanceConfigDefault(
-            question=config_data["question"],
-            expectation_features_default=exp_feature_list,
+            exp_feature_list.append(ExpectationFeatures(ideal=i["ideal"]))
+        return QuestionConfig(
+            question=config_data["question"], expectation_features=exp_feature_list
         )

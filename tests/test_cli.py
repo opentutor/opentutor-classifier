@@ -2,7 +2,7 @@ import os
 from os import path
 import pytest
 import subprocess
-from opentutor_classifier import AnswerClassifierInput
+from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult
 from opentutor_classifier.svm import SVMAnswerClassifier
 from . import fixture_path
 import re
@@ -68,16 +68,21 @@ def test_cli_syncs_training_data_for_q1(tmpdir):
     assert out_str[0] == f"Data is saved at: {output_root}"
 
 
-def test_cli_outputs_models_at_specified_model_root_for_q1(tmpdir):
+@pytest.mark.parametrize(
+    "input_lesson,no_of_expectations", [("question1", 3), ("question2", 1)]
+)
+def test_cli_outputs_models_at_specified_model_root_for_q1_and_q2(
+    tmpdir, input_lesson, no_of_expectations
+):
     shared_root = fixture_path("shared")
-    out, err, exit_code, model_root = __train_model(tmpdir, "question1", shared_root)
+    out, err, exit_code, model_root = __train_model(tmpdir, input_lesson, shared_root)
     assert exit_code == 0
     assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
     assert path.exists(path.join(model_root, "config.yaml"))
     out_str = out.decode("utf-8")
     out_str = out_str.split("\n")
     assert re.search(r"Models are saved at: /.+/output", out_str[0])
-    for i in range(0, 3):
+    for i in range(0, no_of_expectations):
         assert re.search(
             f"Accuracy for model={i} is [0-9]+\\.[0-9]+\\.",
             out_str[i + 1],
@@ -85,62 +90,57 @@ def test_cli_outputs_models_at_specified_model_root_for_q1(tmpdir):
         )
 
 
-def test_cli_outputs_models_at_specified_model_root_for_q2(tmpdir):
+@pytest.mark.parametrize(
+    "input_lesson,input_answer,input_expectation_number,config_data,expected_results",
+    [
+        (
+            "question1",
+            "peer pressure can change your behavior",
+            -1,
+            {},
+            [
+                ExpectationClassifierResult(
+                    expectation=0, score=0.99, evaluation="Good"
+                ),
+                ExpectationClassifierResult(
+                    expectation=1, score=0.50, evaluation="Bad"
+                ),
+                ExpectationClassifierResult(
+                    expectation=2, score=0.57, evaluation="Bad"
+                ),
+            ],
+        ),
+        (
+            "question2",
+            "Current flows in the same direction as the arrow",
+            0,
+            {},
+            [ExpectationClassifierResult(expectation=0, score=0.96, evaluation="Good")],
+        ),
+    ],
+)
+def test_cli_trained_models_usable_for_inference_for_q1_and_q2(
+    input_lesson,
+    input_answer,
+    input_expectation_number,
+    config_data,
+    expected_results,
+    tmpdir,
+):
     shared_root = fixture_path("shared")
-    out, err, exit_code, model_root = __train_model(tmpdir, "question2", shared_root)
-    assert exit_code == 0
-    assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
-    assert path.exists(path.join(model_root, "config.yaml"))
-    out_str = out.decode("utf-8")
-    out_str = out_str.split("\n")
-    assert re.search(r"Models are saved at: /.+/output", out_str[0])
-    for i in range(0, 1):
-        assert re.search(
-            f"Accuracy for model={i} is [0-9]+\\.[0-9]+\\.",
-            out_str[i + 1],
-            flags=re.MULTILINE,
-        )
-
-
-def test_cli_trained_models_usable_for_inference_for_q1(tmpdir):
-    shared_root = fixture_path("shared")
-    _, _, _, model_root = __train_model(tmpdir, "question1", shared_root)
+    _, _, _, model_root = __train_model(tmpdir, input_lesson, shared_root)
     assert os.path.exists(model_root)
     classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
-            input_sentence="peer pressure can change your behavior",
-            config_data={},
-            expectation=-1,
+            input_sentence=input_answer,
+            config_data=config_data,
+            expectation=input_expectation_number,
         )
     )
-    assert len(result.expectation_results) == 3
-    for exp_res in result.expectation_results:
-        if exp_res.expectation == 0:
-            assert exp_res.evaluation == "Good"
-            assert round(exp_res.score, 2) == 0.99
-        if exp_res.expectation == 1:
-            assert exp_res.evaluation == "Bad"
-            assert round(exp_res.score, 2) == 0.50
-        if exp_res.expectation == 2:
-            assert exp_res.evaluation == "Bad"
-            assert round(exp_res.score, 2) == 0.57
+    assert len(result.expectation_results) == len(expected_results)
 
-
-def test_cli_trained_models_usable_for_inference_for_q2(tmpdir):
-    shared_root = fixture_path("shared")
-    _, _, _, model_root = __train_model(tmpdir, "question2", shared_root)
-    assert os.path.exists(model_root)
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
-    result = classifier.evaluate(
-        AnswerClassifierInput(
-            input_sentence="Current flows in the same direction as the arrow",
-            config_data={},
-            expectation=0,
-        )
-    )
-    assert len(result.expectation_results) == 1
-    for exp_res in result.expectation_results:
-        if exp_res.expectation == 0:
-            assert exp_res.evaluation == "Good"
-            assert round(exp_res.score, 2) == 0.96
+    for res, res_expected in zip(result.expectation_results, expected_results):
+        assert res.expectation == res_expected.expectation
+        assert round(res.score, 2) == res_expected.score
+        assert res.evaluation == res_expected.evaluation
