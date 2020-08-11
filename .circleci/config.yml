@@ -13,9 +13,6 @@ orbs:
   environment:
     DOCKER_BUILDKIT: 1
 executors:
-  node:
-    docker:
-      - image: circleci/node:12.18
   python:
     docker:
       - image: circleci/python:3.8
@@ -74,12 +71,12 @@ jobs:
           name: Test lint
           command: make test-lint
   test-license:
-    executor: node
+    executor: python
     steps:
       - checkout
       - run:
           name: Test license
-          command: npm ci && make test-license
+          command: make test-license
   test-types:
     executor: python
     steps:

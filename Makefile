@@ -19,7 +19,6 @@ $(VENV)-update: virtualenv-installed
 clean:
 	rm -rf .venv htmlcov .coverage tests/fixtures/shared/word2vec.bin
 
-
 .PHONY docker-build:
 docker-build:
 	docker build -t $(DOCKER_IMAGE) .
@@ -48,7 +47,6 @@ docker-train-default:
 		-v $(PWD)/tests/fixtures/shared:/shared \
 		-v $(PWD)/tests/fixtures/models/default:/output \
 	$(DOCKER_IMAGE) traindefault --data /data/ --shared /shared --output /output 
-
 
 .PHONY: format
 format: $(VENV)
@@ -89,12 +87,11 @@ LICENSE_HEADER:
 	exit 1
 
 .PHONY: license
-license: LICENSE LICENSE_HEADER
-	npm run license:fix
+license: LICENSE LICENSE_HEADER $(VENV)
+	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d tests
+	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier
 
 .PHONY: test-license
-test-license: LICENSE LICENSE_HEADER
-	npm run test:license
-
-node_modules/license-check-and-add:
-	npm ci
+test-license: LICENSE LICENSE_HEADER $(VENV)
+	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d tests --check
+	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier --check
