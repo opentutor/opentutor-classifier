@@ -22,5 +22,3 @@ models
 !tests/fixtures/models
 *.bin
 *.zip
-
-

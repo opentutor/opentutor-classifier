@@ -16,7 +16,7 @@ Any changes made to this repo should be covered by tests. To run the existing te
 make test
 ```
 
-All pushed commits must also pass format and lint checks. To check all required tests before a commit:
+All pushed commits must also pass format, lint, and license checks. To check all required tests before a commit:
 
 ```
 make test-all
@@ -26,4 +26,20 @@ To fix formatting issues:
 
 ```
 make format
+```
+
+## Licensing
+
+All source code files must include a USC open license header.
+
+To check if files have a license header:
+
+```
+make test-license
+```
+
+To add license headers:
+
+```
+make license
 ```
