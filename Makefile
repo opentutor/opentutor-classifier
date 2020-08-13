@@ -16,7 +16,6 @@ $(VENV)-update: virtualenv-installed
 clean:
 	rm -rf .venv htmlcov .coverage tests/fixtures/shared/word2vec.bin
 
-
 .PHONY docker-build:
 docker-build:
 	docker build -t $(DOCKER_IMAGE) .
@@ -46,7 +45,6 @@ docker-train-default:
 		-v $(PWD)/tests/fixtures/models/default:/output \
 	$(DOCKER_IMAGE) traindefault --data /data/ --shared /shared --output /output 
 
-
 .PHONY: format
 format: $(VENV)
 	$(VENV)/bin/black .
@@ -56,7 +54,7 @@ test: $(VENV)
 	$(VENV)/bin/py.test -vv $(args)
 
 .PHONY: test-all
-test-all: test-format test-lint test-types test
+test-all: test-format test-lint test-types test-license test
 
 .PHONY: test-format
 test-format: $(VENV)
@@ -76,3 +74,21 @@ update-deps: $(VENV)
 
 virtualenv-installed:
 	tools/virtualenv_ensure_installed.sh
+
+LICENSE:
+	@echo "you must have a LICENSE file" 1>&2
+	exit 1
+
+LICENSE_HEADER:
+	@echo "you must have a LICENSE_HEADER file" 1>&2
+	exit 1
+
+.PHONY: license
+license: LICENSE LICENSE_HEADER $(VENV)
+	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d tests
+	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier
+
+.PHONY: test-license
+test-license: LICENSE LICENSE_HEADER $(VENV)
+	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d tests --check
+	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier --check
