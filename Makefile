@@ -10,6 +10,10 @@ $(VENV)-update: virtualenv-installed
 	[ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
 	$(VENV)/bin/pip install --upgrade pip
 	$(VENV)/bin/pip install -r ./requirements.test.txt
+	$(VENV)/bin/python3.8 -m nltk.downloader punkt
+	$(VENV)/bin/python3.8 -m nltk.downloader wordnet
+	$(VENV)/bin/python3.8 -m nltk.downloader averaged_perceptron_tagger
+	$(VENV)/bin/python3.8 -m nltk.downloader stopwords
 
 
 .PHONY clean:

@@ -8,4 +8,4 @@ gensim==3.8.3
 PyYAML==5.3.1
 spacy==2.3.2
 requests==2.24.0
-git+git://github.com/kycarr/licenseheaders.git@master#egg=licenseheaders
+licenseheaders @ git+http://github.com/kycarr/licenseheaders.git@master#egg=licenseheaders
