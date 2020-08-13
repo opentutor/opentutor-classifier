@@ -1,5 +1,15 @@
+#
+# This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved. 
+# Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
+#
+# The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
+#
 import pytest
-from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult, SpeechActClassifierResult
+from opentutor_classifier import (
+    AnswerClassifierInput,
+    ExpectationClassifierResult,
+    SpeechActClassifierResult,
+)
 from opentutor_classifier.svm import SVMAnswerClassifier, load_config_into_objects
 from . import fixture_path
 import os
@@ -248,9 +258,8 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             [ExpectationClassifierResult(expectation=0, score=0.86, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
-                "profanity":SpeechActClassifierResult(evaluation="Bad", score=0),
-
-            }
+                "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
+            },
         ),
         (
             "I do not understand",
@@ -259,9 +268,8 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             [ExpectationClassifierResult(expectation=0, score=0.87, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
-                "profanity":SpeechActClassifierResult(evaluation="Bad", score=0),
-
-            }
+                "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
+            },
         ),
         (
             "I believe the answer is peer pressure can change your behavior",
@@ -270,9 +278,8 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             [ExpectationClassifierResult(expectation=0, score=0.99, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
-                "profanity":SpeechActClassifierResult(evaluation="Bad", score=0),
-
-            }
+                "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
+            },
         ),
         (
             "Fuck you tutor",
@@ -281,9 +288,8 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             [ExpectationClassifierResult(expectation=0, score=0.95, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
-                "profanity":SpeechActClassifierResult(evaluation="Good", score=1),
-
-            }
+                "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
+            },
         ),
         (
             "What the hell is that?",
@@ -292,9 +298,8 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             [ExpectationClassifierResult(expectation=0, score=0.96, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
-                "profanity":SpeechActClassifierResult(evaluation="Good", score=1),
-
-            }
+                "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
+            },
         ),
         (
             "I dont know this shit",
@@ -303,9 +308,8 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             [ExpectationClassifierResult(expectation=0, score=0.86, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
-                "profanity":SpeechActClassifierResult(evaluation="Good", score=1),
-
-            }
+                "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
+            },
         ),
         (
             "I dont know this shit but I guess the answer is peer pressure can change your behavior",
@@ -314,10 +318,9 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             [ExpectationClassifierResult(expectation=0, score=0.99, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
-                "profanity":SpeechActClassifierResult(evaluation="Good", score=1),
-
-            }
-        )
+                "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
+            },
+        ),
     ],
 )
 def test_evaluates_meta_cognitive_sentences(
@@ -327,7 +330,7 @@ def test_evaluates_meta_cognitive_sentences(
     input_expectation_number,
     config_data,
     expected_results,
-    expected_sa_results
+    expected_sa_results,
 ):
     model_root = os.path.join(model_root, "question1")
     classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
@@ -339,10 +342,21 @@ def test_evaluates_meta_cognitive_sentences(
         )
     )
     assert len(result.expectation_results) == len(expected_results)
-    assert expected_sa_results["metacognitive"].evaluation == result.speech_acts["metacognitive"].evaluation
-    assert expected_sa_results["metacognitive"].score == result.speech_acts["metacognitive"].score
-    assert expected_sa_results["profanity"].evaluation == result.speech_acts["profanity"].evaluation
-    assert expected_sa_results["profanity"].score == result.speech_acts["profanity"].score
+    assert (
+        expected_sa_results["metacognitive"].evaluation
+        == result.speech_acts["metacognitive"].evaluation
+    )
+    assert (
+        expected_sa_results["metacognitive"].score
+        == result.speech_acts["metacognitive"].score
+    )
+    assert (
+        expected_sa_results["profanity"].evaluation
+        == result.speech_acts["profanity"].evaluation
+    )
+    assert (
+        expected_sa_results["profanity"].score == result.speech_acts["profanity"].score
+    )
 
     for res, res_expected in zip(result.expectation_results, expected_results):
         assert res.expectation == res_expected.expectation

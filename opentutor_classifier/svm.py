@@ -1,3 +1,9 @@
+#
+# This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved. 
+# Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
+#
+# The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
+#
 from collections import defaultdict
 from dataclasses import dataclass, asdict
 import numpy as np
@@ -30,7 +36,7 @@ from opentutor_classifier import (
     load_yaml,
     QuestionConfig,
     ExpectationFeatures,
-    SpeechActClassifierResult
+    SpeechActClassifierResult,
 )
 
 WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
@@ -479,7 +485,6 @@ class SVMExpectationClassifier:
         return model
 
 
-
 @dataclass
 class ExpectationToEvaluate:
     expectation: int
@@ -612,36 +617,26 @@ class SVMAnswerClassifierTraining:
         ).write_to(path.join(output_dir, "config.yaml"))
         return self.accuracy
 
+
 class SpeechActClassifier:
     def __init__(self):
-        self.meta_regex =  r"\b(idk|belie\w*|don\w*|comprehend\w*|confuse\w*|guess\w*|(?<=n[o']t)\s?\b(know\w*|underst\w*|follow\w*|recogniz\w*|sure\w*|get)\b|messed|no\s?(idea|clue)|lost|forg[eo]t|need\s?help|imagined?|interpret(ed)?|(seen?|saw)|suppos(ed)?)\b"
+        self.meta_regex = r"\b(idk|belie\w*|don\w*|comprehend\w*|confuse\w*|guess\w*|(?<=n[o']t)\s?\b(know\w*|underst\w*|follow\w*|recogniz\w*|sure\w*|get)\b|messed|no\s?(idea|clue)|lost|forg[eo]t|need\s?help|imagined?|interpret(ed)?|(seen?|saw)|suppos(ed)?)\b"
         self.profanity = r"\b(\w*fuck\w*|\w*ass\w*|hell\w*|shit\w*|piss\w*|\w*cock\w*|douche\w*|bitch\w*|retard[ed]|midget\w*|dyke\w*|fag\w*|\w*cunt\w*|\w*nigg\w*|trann\w*|slut\w*|cumbu\w*|dick\w*|puss\w*|dild\w*|idiot\w*|hate\w*|shut\w*|stup\w*|fat\w*|ugl\w*)\b"
-    
+
     def check_meta_cognitive(self, result):
         input_sentence = result.input.input_sentence
         if re.search(self.meta_regex, input_sentence, re.IGNORECASE):
-            return  SpeechActClassifierResult(
-                evaluation="Good",
-                score=1
-                )
+            return SpeechActClassifierResult(evaluation="Good", score=1)
         else:
-            return SpeechActClassifierResult(
-                evaluation="Bad",
-                score=0
-            )
+            return SpeechActClassifierResult(evaluation="Bad", score=0)
 
     def check_profanity(self, result):
         input_sentence = result.input.input_sentence
         if re.search(self.profanity, input_sentence, re.IGNORECASE):
-            return SpeechActClassifierResult(
-                evaluation="Good",
-                score=1
-            )
+            return SpeechActClassifierResult(evaluation="Good", score=1)
         else:
-            return SpeechActClassifierResult(
-                evaluation="Bad",
-                score=0
-            )
+            return SpeechActClassifierResult(evaluation="Bad", score=0)
+
 
 class SVMAnswerClassifier:
     def __init__(self, model_root="models", shared_root="shared"):
@@ -705,8 +700,10 @@ class SVMAnswerClassifier:
         result = AnswerClassifierResult(input=answer, expectation_results=[])
         word2vec = self.find_word2vec()
         index2word = set(word2vec.index2word)
-        
-        result.speech_acts["metacognitive"] = self.speech_act_obj.check_meta_cognitive(result)
+
+        result.speech_acts["metacognitive"] = self.speech_act_obj.check_meta_cognitive(
+            result
+        )
         result.speech_acts["profanity"] = self.speech_act_obj.check_profanity(result)
         print("resul = ", result)
         if answer.config_data:
