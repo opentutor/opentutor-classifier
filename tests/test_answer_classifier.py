@@ -1,5 +1,5 @@
 import pytest
-from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult
+from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult, SpeechActClassifierResult
 from opentutor_classifier.svm import SVMAnswerClassifier, load_config_into_objects
 from . import fixture_path
 import os
@@ -232,6 +232,118 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
         )
     )
     assert len(result.expectation_results) == len(expected_results)
+    for res, res_expected in zip(result.expectation_results, expected_results):
+        assert res.expectation == res_expected.expectation
+        assert round(res.score, 2) == res_expected.score
+        assert res.evaluation == res_expected.evaluation
+
+
+@pytest.mark.parametrize(
+    "input_answer,input_expectation_number,config_data,expected_results,expected_sa_results",
+    [
+        (
+            "I dont know what you are talking about",
+            0,
+            {},
+            [ExpectationClassifierResult(expectation=0, score=0.86, evaluation="Bad")],
+            {
+                "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
+                "profanity":SpeechActClassifierResult(evaluation="Bad", score=0),
+
+            }
+        ),
+        (
+            "I do not understand",
+            0,
+            {},
+            [ExpectationClassifierResult(expectation=0, score=0.87, evaluation="Bad")],
+            {
+                "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
+                "profanity":SpeechActClassifierResult(evaluation="Bad", score=0),
+
+            }
+        ),
+        (
+            "I believe the answer is peer pressure can change your behavior",
+            0,
+            {},
+            [ExpectationClassifierResult(expectation=0, score=0.99, evaluation="Good")],
+            {
+                "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
+                "profanity":SpeechActClassifierResult(evaluation="Bad", score=0),
+
+            }
+        ),
+        (
+            "Fuck you tutor",
+            0,
+            {},
+            [ExpectationClassifierResult(expectation=0, score=0.95, evaluation="Bad")],
+            {
+                "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
+                "profanity":SpeechActClassifierResult(evaluation="Good", score=1),
+
+            }
+        ),
+        (
+            "What the hell is that?",
+            0,
+            {},
+            [ExpectationClassifierResult(expectation=0, score=0.96, evaluation="Bad")],
+            {
+                "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
+                "profanity":SpeechActClassifierResult(evaluation="Good", score=1),
+
+            }
+        ),
+        (
+            "I dont know this shit",
+            0,
+            {},
+            [ExpectationClassifierResult(expectation=0, score=0.86, evaluation="Bad")],
+            {
+                "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
+                "profanity":SpeechActClassifierResult(evaluation="Good", score=1),
+
+            }
+        ),
+        (
+            "I dont know this shit but I guess the answer is peer pressure can change your behavior",
+            0,
+            {},
+            [ExpectationClassifierResult(expectation=0, score=0.99, evaluation="Good")],
+            {
+                "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
+                "profanity":SpeechActClassifierResult(evaluation="Good", score=1),
+
+            }
+        )
+    ],
+)
+def test_evaluates_meta_cognitive_sentences(
+    model_root,
+    shared_root,
+    input_answer,
+    input_expectation_number,
+    config_data,
+    expected_results,
+    expected_sa_results
+):
+    model_root = os.path.join(model_root, "question1")
+    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
+    result = classifier.evaluate(
+        AnswerClassifierInput(
+            input_sentence=input_answer,
+            config_data=load_config_into_objects(config_data),
+            expectation=input_expectation_number,
+        )
+    )
+    assert len(result.expectation_results) == len(expected_results)
+    assert expected_sa_results["metacognitive"].evaluation == result.speech_acts["metacognitive"].evaluation
+    assert expected_sa_results["metacognitive"].score == result.speech_acts["metacognitive"].score
+    assert expected_sa_results["profanity"].evaluation == result.speech_acts["profanity"].evaluation
+    assert expected_sa_results["profanity"].score == result.speech_acts["profanity"].score
+
     for res, res_expected in zip(result.expectation_results, expected_results):
         assert res.expectation == res_expected.expectation
         assert round(res.score, 2) == res_expected.score

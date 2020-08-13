@@ -32,13 +32,22 @@ class AnswerClassifierInput:
     expectation: int = -1
 
 
+
+@dataclass
+class SpeechActClassifierResult:
+    evaluation: str = ""
+    score: float = 0.0
+
 @dataclass
 class AnswerClassifierResult:
     input: AnswerClassifierInput
     expectation_results: List[ExpectationClassifierResult] = field(default_factory=list)
+    speech_acts: Dict[str, SpeechActClassifierResult]  = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return asdict(self)
+
+
 
 
 class AnswerClassifier(ABC):

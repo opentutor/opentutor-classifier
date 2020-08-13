@@ -30,6 +30,7 @@ from opentutor_classifier import (
     load_yaml,
     QuestionConfig,
     ExpectationFeatures,
+    SpeechActClassifierResult
 )
 
 WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
@@ -478,6 +479,7 @@ class SVMExpectationClassifier:
         return model
 
 
+
 @dataclass
 class ExpectationToEvaluate:
     expectation: int
@@ -610,6 +612,36 @@ class SVMAnswerClassifierTraining:
         ).write_to(path.join(output_dir, "config.yaml"))
         return self.accuracy
 
+class SpeechActClassifier:
+    def __init__(self):
+        self.meta_regex =  r"\b(idk|belie\w*|don\w*|comprehend\w*|confuse\w*|guess\w*|(?<=n[o']t)\s?\b(know\w*|underst\w*|follow\w*|recogniz\w*|sure\w*|get)\b|messed|no\s?(idea|clue)|lost|forg[eo]t|need\s?help|imagined?|interpret(ed)?|(seen?|saw)|suppos(ed)?)\b"
+        self.profanity = r"\b(\w*fuck\w*|\w*ass\w*|hell\w*|shit\w*|piss\w*|\w*cock\w*|douche\w*|bitch\w*|retard[ed]|midget\w*|dyke\w*|fag\w*|\w*cunt\w*|\w*nigg\w*|trann\w*|slut\w*|cumbu\w*|dick\w*|puss\w*|dild\w*|idiot\w*|hate\w*|shut\w*|stup\w*|fat\w*|ugl\w*)\b"
+    
+    def check_meta_cognitive(self, result):
+        input_sentence = result.input.input_sentence
+        if re.search(self.meta_regex, input_sentence, re.IGNORECASE):
+            return  SpeechActClassifierResult(
+                evaluation="Good",
+                score=1
+                )
+        else:
+            return SpeechActClassifierResult(
+                evaluation="Bad",
+                score=0
+            )
+
+    def check_profanity(self, result):
+        input_sentence = result.input.input_sentence
+        if re.search(self.profanity, input_sentence, re.IGNORECASE):
+            return SpeechActClassifierResult(
+                evaluation="Good",
+                score=1
+            )
+        else:
+            return SpeechActClassifierResult(
+                evaluation="Bad",
+                score=0
+            )
 
 class SVMAnswerClassifier:
     def __init__(self, model_root="models", shared_root="shared"):
@@ -618,6 +650,7 @@ class SVMAnswerClassifier:
         self.model_obj = SVMExpectationClassifier()
         self._word2vec = None
         self._instance_models = None
+        self.speech_act_obj = SpeechActClassifier()
 
     def instance_models(self) -> InstanceModels:
         if not self._instance_models:
@@ -672,7 +705,10 @@ class SVMAnswerClassifier:
         result = AnswerClassifierResult(input=answer, expectation_results=[])
         word2vec = self.find_word2vec()
         index2word = set(word2vec.index2word)
-
+        
+        result.speech_acts["metacognitive"] = self.speech_act_obj.check_meta_cognitive(result)
+        result.speech_acts["profanity"] = self.speech_act_obj.check_profanity(result)
+        print("resul = ", result)
         if answer.config_data:
             conf = answer.config_data
             question_proc = self.model_obj.processing_single_sentence(conf.question)
