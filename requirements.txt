@@ -1,11 +1,11 @@
+celery==4.4.7
 click==7.1.2
-pandas==1.0.5
-nltk==3.5
-scikit-learn==0.23.1
-# FIXME: Locking werkzeug until the resolution of pallets/werkzeug#1714
-werkzeug==1.0.1
 gensim==3.8.3
+pandas==1.0.5
 PyYAML==5.3.1
-spacy==2.3.2
+nltk==3.5
+redis==3.5.3
 requests==2.24.0
-licenseheaders @ git+http://github.com/kycarr/licenseheaders.git@master#egg=licenseheaders
+scikit-learn==0.23.1
+spacy==2.3.2
+werkzeug==1.0.1

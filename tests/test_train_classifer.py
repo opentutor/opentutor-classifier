@@ -9,6 +9,7 @@ from os import path
 from opentutor_classifier import AnswerClassifierInput
 from opentutor_classifier.svm import (
     train_classifier,
+    train_classifier_online,
     train_default_classifier,
     SVMAnswerClassifier,
     load_config_into_objects,
@@ -28,14 +29,18 @@ def shared_root() -> str:
     return fixture_path("shared")
 
 
-def __train_model(
-    tmpdir, data_root: str, shared_root: str
-) -> Tuple[str, Dict[int, int]]:
-    output_dir = os.path.join(
+def __output_dir_for_test(tmpdir, data_root: str) -> str:
+    return os.path.join(
         tmpdir.mkdir("test"),
         "model_root",
         os.path.basename(os.path.normpath(data_root)),
     )
+
+
+def __train_model(
+    tmpdir, data_root: str, shared_root: str
+) -> Tuple[str, Dict[int, int]]:
+    output_dir = __output_dir_for_test(tmpdir, data_root)
     accuracy = train_classifier(
         data_root=data_root, shared_root=shared_root, output_dir=output_dir
     )
@@ -105,6 +110,42 @@ def test_trained_models_usable_for_inference(tmpdir, data_root: str, shared_root
         if exp_res.expectation == 2:
             assert exp_res.evaluation == "Bad"
             assert round(exp_res.score, 2) == 0.57
+
+
+def test_train_online(tmpdir, data_root: str, shared_root: str):
+    lesson = "question1"
+    output_dir = __output_dir_for_test(tmpdir, path.join(data_root, "question1"))
+    result = train_classifier_online(
+        lesson, shared_root=shared_root, output_dir=output_dir
+    )
+    assert result.to_dict() == {"lesson": lesson, "expectations": []}
+    # assert os.path.exists(output_dir)
+    # for model_num, acc in accuracy.items():
+    #     if model_num == 0:
+    #         assert acc == 80.0
+    #     if model_num == 1:
+    #         assert acc == 90.0
+    #     if model_num == 2:
+    #         assert acc == 100.0
+    # classifier = SVMAnswerClassifier(model_root=output_dir, shared_root=shared_root)
+    # result = classifier.evaluate(
+    #     AnswerClassifierInput(
+    #         input_sentence="peer pressure can change your behavior",
+    #         config_data=load_config_into_objects({}),
+    #         expectation=-1,
+    #     )
+    # )
+    # assert len(result.expectation_results) == 3
+    # for exp_res in result.expectation_results:
+    #     if exp_res.expectation == 0:
+    #         assert exp_res.evaluation == "Good"
+    #         assert round(exp_res.score, 2) == 0.99
+    #     if exp_res.expectation == 1:
+    #         assert exp_res.evaluation == "Bad"
+    #         assert round(exp_res.score, 2) == 0.50
+    #     if exp_res.expectation == 2:
+    #         assert exp_res.evaluation == "Bad"
+    #         assert round(exp_res.score, 2) == 0.57
 
 
 def test_trained_models_usable_for_inference_for_q2(
