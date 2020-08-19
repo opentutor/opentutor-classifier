@@ -54,6 +54,20 @@ class AnswerClassifierResult:
         return asdict(self)
 
 
+@dataclass
+class ExpectationTrainingResult:
+    accuracy: float = 0
+
+
+@dataclass
+class TrainingResult:
+    lesson: str = ""
+    expectations: List[ExpectationTrainingResult] = field(default_factory=list)
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
 class AnswerClassifier(ABC):
     @abstractmethod
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:

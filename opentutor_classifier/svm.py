@@ -37,6 +37,7 @@ from opentutor_classifier import (
     QuestionConfig,
     ExpectationFeatures,
     SpeechActClassifierResult,
+    TrainingResult,
 )
 
 WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
@@ -749,10 +750,22 @@ def train_classifier(data_root="data", shared_root="shared", output_dir: str = "
     svm_answer_classifier_training = SVMAnswerClassifierTraining(
         shared_root=shared_root
     )
-    accuracy = svm_answer_classifier_training.train_all(
+    return svm_answer_classifier_training.train_all(
         data_root=data_root, output_dir=output_dir
     )
-    return accuracy
+
+
+def train_classifier_online(
+    lesson: str, shared_root="shared", output_dir: str = "out"
+) -> TrainingResult:
+    # training = SVMAnswerClassifierTraining(
+    #     shared_root=shared_root
+    # )
+    # accuracy = svm_answer_classifier_training.train_all(
+    #     data_root=data_root, output_dir=output_dir
+    # )
+    # return accuracy
+    return TrainingResult(lesson=lesson, expectations=[])
 
 
 def train_default_classifier(

@@ -1,6 +1,7 @@
 -r requirements.txt
 black==19.3b0
 flake8==3.8.3
+licenseheaders @ git+http://github.com/kycarr/licenseheaders.git@master#egg=licenseheaders
 mypy==v0.782
 pep8-naming==0.11.1
 pip-upgrader
