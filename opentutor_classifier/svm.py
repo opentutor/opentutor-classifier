@@ -621,7 +621,7 @@ class SVMAnswerClassifierTraining:
 class SpeechActClassifier:
     def __init__(self):
         self.meta_regex = r"\b(idk|belie\w*|don\w*|comprehend\w*|confuse\w*|guess\w*|(?<=n[o']t)\s?\b(know\w*|underst\w*|follow\w*|recogniz\w*|sure\w*|get)\b|messed|no\s?(idea|clue)|lost|forg[eo]t|need\s?help|imagined?|interpret(ed)?|(seen?|saw)|suppos(ed)?)\b"
-        self.profanity = r"\b(\w*fuck\w*|\w*ass\w*|hell\w*|shit\w*|piss\w*|\w*cock\w*|douche\w*|bitch\w*|retard[ed]|midget\w*|dyke\w*|fag\w*|\w*cunt\w*|\w*nigg\w*|trann\w*|slut\w*|cumbu\w*|dick\w*|puss\w*|dild\w*|idiot\w*|hate\w*|shut\w*|stup\w*|fat\w*|ugl\w*)\b"
+        self.profanity = r"\b(\w*fuck\w*|ass|ass(hole|wipe|wad|kisser)|hell|shit|piss\w*|cock|cock(sucker|head|eater)|douche\w*|bitch\w*|retard[ed]|midget\w*|dyke|fag|faggot|cunt\w*|\w*nigg\w*|tranny|slut\w*|cum[bucket]|dick\w*|pussy\w*|dildo\w*|idiot\w*|(hate you)|stupid\w*)\b"
 
     def check_meta_cognitive(self, result):
         input_sentence = result.input.input_sentence

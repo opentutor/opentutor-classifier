@@ -321,6 +321,16 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
             },
         ),
+        (
+            "assistant, assistance",
+            0,
+            {},
+            [ExpectationClassifierResult(expectation=0, score=0.96, evaluation="Bad")],
+            {
+                "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
+                "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
+            },
+        ),
     ],
 )
 def test_evaluates_meta_cognitive_sentences(
