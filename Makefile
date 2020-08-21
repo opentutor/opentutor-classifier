@@ -1,4 +1,4 @@
-DOCKER_IMAGE?=opentutor_classifier_docker:latest
+DOCKER_IMAGE?=uscictdocker/opentutor-classifier:1.1.0-alpha.1
 
 # virtualenv used for pytest
 VENV=.venv
