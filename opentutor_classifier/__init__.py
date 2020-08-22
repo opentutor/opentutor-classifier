@@ -26,8 +26,14 @@ class ExpectationFeatures:
 
 @dataclass
 class QuestionConfig:
-    question: str
-    expectation_features: List[ExpectationFeatures]
+    question: str = ""
+    expectation_features: List[ExpectationFeatures] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.expectation_features = [
+            x if isinstance(x, ExpectationFeatures) else ExpectationFeatures(**x)
+            for x in self.expectation_features or []
+        ]
 
 
 @dataclass

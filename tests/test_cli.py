@@ -9,7 +9,7 @@ from os import path
 import pytest
 import subprocess
 from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult
-from opentutor_classifier.svm import SVMAnswerClassifier
+from opentutor_classifier.svm.predict import SVMAnswerClassifier
 from . import fixture_path
 import re
 

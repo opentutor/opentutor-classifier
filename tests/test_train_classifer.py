@@ -7,13 +7,13 @@
 import os
 from os import path
 from opentutor_classifier import AnswerClassifierInput
-from opentutor_classifier.svm import (
+from opentutor_classifier.svm.predict import SVMAnswerClassifier
+from opentutor_classifier.svm.train import (
     train_classifier,
     train_classifier_online,
     train_default_classifier,
-    SVMAnswerClassifier,
-    load_config_into_objects,
 )
+from opentutor_classifier.svm.utils import load_question_config
 import pytest
 from typing import Dict, Tuple
 from . import fixture_path
@@ -95,7 +95,7 @@ def test_trained_models_usable_for_inference(tmpdir, data_root: str, shared_root
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="peer pressure can change your behavior",
-            config_data=load_config_into_objects({}),
+            config_data=load_question_config({}),
             expectation=-1,
         )
     )
@@ -163,7 +163,7 @@ def test_trained_models_usable_for_inference_for_q2(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="Current flows in the same direction as the arrow",
-            config_data=load_config_into_objects({}),
+            config_data=load_question_config({}),
             expectation=0,
         )
     )
@@ -190,7 +190,7 @@ def test_trained_default_model_usable_for_inference(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="peer pressure can change your behavior",
-            config_data=load_config_into_objects(config_data),
+            config_data=load_question_config(config_data),
             expectation=0,
         )
     )

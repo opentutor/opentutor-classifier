@@ -6,11 +6,12 @@
 #
 from os import path
 import pickle
-from typing import Dict
+from typing import Dict, Optional
 import yaml
 
 from sklearn import svm
 
+from opentutor_classifier import ExpectationFeatures, QuestionConfig
 from .dtos import InstanceConfig, InstanceModels
 
 
@@ -33,4 +34,19 @@ def load_instances(
         models_by_expectation_num = {}
     return InstanceModels(
         config=config, models_by_expectation_num=models_by_expectation_num
+    )
+
+
+# TODO this should never return None, but code currently depends on that
+def load_question_config(config_data: dict) -> Optional[QuestionConfig]:
+    return (
+        QuestionConfig(
+            question=config_data.get("question", ""),
+            expectation_features=[
+                ExpectationFeatures(ideal=i["ideal"])
+                for i in config_data.get("expectations", [])
+            ],
+        )
+        if config_data
+        else None
     )

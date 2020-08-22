@@ -10,7 +10,8 @@ from opentutor_classifier import (
     ExpectationClassifierResult,
     SpeechActClassifierResult,
 )
-from opentutor_classifier.svm import SVMAnswerClassifier, load_config_into_objects
+from opentutor_classifier.svm.predict import SVMAnswerClassifier
+from opentutor_classifier.svm.utils import load_question_config
 from . import fixture_path
 import os
 
@@ -49,7 +50,7 @@ def test_evaluates_one_expectation_for_q1(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=load_config_into_objects(config_data),
+            config_data=load_question_config(config_data),
             expectation=input_expectation_number,
         )
     )
@@ -157,7 +158,7 @@ def test_evaluates_for_default_model(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=load_config_into_objects(config_data),
+            config_data=load_question_config(config_data),
             expectation=input_expectation_number,
         )
     )
@@ -192,7 +193,7 @@ def test_evaluates_one_expectation_for_q2(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=load_config_into_objects(config_data),
+            config_data=load_question_config(config_data),
             expectation=input_expectation_number,
         )
     )
@@ -237,7 +238,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=load_config_into_objects(config_data),
+            config_data=load_question_config(config_data),
             expectation=input_expectation_number,
         )
     )
@@ -347,7 +348,7 @@ def test_evaluates_meta_cognitive_sentences(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=load_config_into_objects(config_data),
+            config_data=load_question_config(config_data),
             expectation=input_expectation_number,
         )
     )
