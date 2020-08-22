@@ -5,7 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from collections import defaultdict
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 import numpy as np
 from gensim.models import KeyedVectors
 from gensim.models.keyedvectors import Word2VecKeyedVectors
@@ -40,6 +40,7 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.speechact import SpeechActClassifier
 from opentutor_classifier.stopwords import STOPWORDS
+from .dtos import InstanceConfig, InstanceExpectationFeatures, InstanceModels
 
 WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
 
@@ -51,37 +52,6 @@ def find_or_load_word2vec(file_path: str) -> Word2VecKeyedVectors:
             abs_path, binary=True
         )
     return WORD2VEC_MODELS[abs_path]
-
-
-@dataclass
-class InstanceExpectationFeatures:
-    ideal: List[str]
-    good_regex: List[str]
-    bad_regex: List[str]
-
-
-@dataclass
-class InstanceConfig:
-    question: str
-    expectation_features: List[InstanceExpectationFeatures]
-
-    def __post_init__(self):
-        self.expectation_features = [
-            x
-            if isinstance(x, InstanceExpectationFeatures)
-            else InstanceExpectationFeatures(**x)
-            for x in self.expectation_features
-        ]
-
-    def write_to(self, file_path: str):
-        with open(file_path, "w") as config_file:
-            yaml.safe_dump(asdict(self), config_file)
-
-
-@dataclass
-class InstanceModels:
-    models_by_expectation_num: Dict[int, svm.SVC]
-    config: InstanceConfig
 
 
 class SVMExpectationClassifier:
