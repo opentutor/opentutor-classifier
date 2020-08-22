@@ -11,6 +11,7 @@ from typing import Any, Dict, List
 import yaml
 from gensim.models import KeyedVectors
 from gensim.models.keyedvectors import Word2VecKeyedVectors
+from opentutor_classifier.speechact import SpeechActClassifierResult
 
 
 @dataclass
@@ -36,12 +37,6 @@ class AnswerClassifierInput:
     input_sentence: str
     config_data: QuestionConfig
     expectation: int = -1
-
-
-@dataclass
-class SpeechActClassifierResult:
-    evaluation: str = ""
-    score: float = 0.0
 
 
 @dataclass
