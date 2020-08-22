@@ -40,6 +40,8 @@ from opentutor_classifier import (
     TrainingResult,
 )
 
+from opentutor_classifier.stopwords import STOPWORDS
+
 WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
 
 
@@ -87,144 +89,6 @@ class SVMExpectationClassifier:
     def __init__(self):
         self.model = None
         self.score_dictionary = defaultdict(int)
-        self.stopwords = set(
-            [
-                "i",
-                "me",
-                "my",
-                "myself",
-                "we",
-                "our",
-                "ours",
-                "ourselves",
-                "you",
-                "you're",
-                "you've",
-                "you'll",
-                "you'd",
-                "your",
-                "yours",
-                "yourself",
-                "yourselves",
-                "he",
-                "him",
-                "his",
-                "himself",
-                "she",
-                "she's",
-                "her",
-                "hers",
-                "herself",
-                "it",
-                "it's",
-                "its",
-                "itself",
-                "they",
-                "them",
-                "their",
-                "theirs",
-                "themselves",
-                "what",
-                "which",
-                "who",
-                "whom",
-                "this",
-                "that",
-                "that'll",
-                "these",
-                "those",
-                "am",
-                "is",
-                "are",
-                "was",
-                "were",
-                "be",
-                "been",
-                "being",
-                "have",
-                "has",
-                "had",
-                "having",
-                "did",
-                "doing",
-                "a",
-                "an",
-                "the",
-                "and",
-                "but",
-                "if",
-                "or",
-                "because",
-                "as",
-                "until",
-                "while",
-                "of",
-                "at",
-                "by",
-                "for",
-                "with",
-                "about",
-                "against",
-                "between",
-                "into",
-                "through",
-                "during",
-                "before",
-                "after",
-                "above",
-                "below",
-                "to",
-                "from",
-                "up",
-                "down",
-                "in",
-                "out",
-                "on",
-                "off",
-                "over",
-                "under",
-                "again",
-                "further",
-                "then",
-                "once",
-                "here",
-                "there",
-                "when",
-                "where",
-                "why",
-                "how",
-                "all",
-                "any",
-                "each",
-                "few",
-                "more",
-                "most",
-                "other",
-                "some",
-                "such",
-                "only",
-                "own",
-                "so",
-                "than",
-                "too",
-                "very",
-                "s",
-                "t",
-                "can",
-                "will",
-                "just",
-                "should",
-                "should've",
-                "now",
-                "d",
-                "ll",
-                "m",
-                "o",
-                "re",
-                "ve",
-                "y",
-            ]
-        )
         np.random.seed(1)
 
     def processing_single_sentence(self, data):
@@ -234,7 +98,7 @@ class SVMExpectationClassifier:
         for entry in data:
             final_words = []
             for word, tag in pos_tag(entry):
-                if word not in self.stopwords and word.isalpha():
+                if word not in STOPWORDS and word.isalpha():
                     final_words.append(word)
         return final_words
 
@@ -247,7 +111,7 @@ class SVMExpectationClassifier:
 
             for word, tag in pos_tag(entry):
 
-                if word not in self.stopwords and word.isalpha():
+                if word not in STOPWORDS and word.isalpha():
                     final_words.append(word)
             pre_processed_dataset.append(final_words)
         return pre_processed_dataset

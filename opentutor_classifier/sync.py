@@ -9,6 +9,10 @@ import requests
 from pathlib import Path
 
 
+def fetch_training_data(lesson: str, url: str):
+    pass
+
+
 def sync(lesson: str, url: str, output: str):
     Path(output).mkdir(parents=True, exist_ok=True)
     if url.startswith("http"):
