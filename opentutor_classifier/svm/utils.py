@@ -4,45 +4,33 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from dataclasses import dataclass, asdict
-from typing import Dict, List
+from os import path
+import pickle
+from typing import Dict
 import yaml
 
 from sklearn import svm
 
-
-@dataclass
-class ExpectationToEvaluate:
-    expectation: int
-    classifier: svm.SVC
+from .dtos import InstanceConfig, InstanceModels
 
 
-@dataclass
-class InstanceExpectationFeatures:
-    ideal: List[str]
-    good_regex: List[str]
-    bad_regex: List[str]
-
-
-@dataclass
-class InstanceConfig:
-    question: str
-    expectation_features: List[InstanceExpectationFeatures]
-
-    def __post_init__(self):
-        self.expectation_features = [
-            x
-            if isinstance(x, InstanceExpectationFeatures)
-            else InstanceExpectationFeatures(**x)
-            for x in self.expectation_features
-        ]
-
-    def write_to(self, file_path: str):
-        with open(file_path, "w") as config_file:
-            yaml.safe_dump(asdict(self), config_file)
-
-
-@dataclass
-class InstanceModels:
-    models_by_expectation_num: Dict[int, svm.SVC]
-    config: InstanceConfig
+def load_instances(
+    model_root="./models",
+    models_by_expectation_num_filename="models_by_expectation_num.pkl",
+    config_filename="config.yaml",
+) -> InstanceModels:
+    try:
+        with open(path.join(model_root, config_filename)) as config_file:
+            config = InstanceConfig(**yaml.load(config_file, Loader=yaml.FullLoader))
+    except Exception:
+        config = InstanceConfig(question="", expectation_features=[])
+    try:
+        with open(
+            path.join(model_root, models_by_expectation_num_filename), "rb"
+        ) as models_file:
+            models_by_expectation_num: Dict[int, svm.SVC] = pickle.load(models_file)
+    except Exception:
+        models_by_expectation_num = {}
+    return InstanceModels(
+        config=config, models_by_expectation_num=models_by_expectation_num
+    )

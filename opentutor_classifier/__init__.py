@@ -9,8 +9,6 @@ from dataclasses import dataclass, field, asdict
 import pandas as pd
 from typing import Any, Dict, List
 import yaml
-from gensim.models import KeyedVectors
-from gensim.models.keyedvectors import Word2VecKeyedVectors
 from opentutor_classifier.speechact import SpeechActClassifierResult
 
 
@@ -71,10 +69,6 @@ class AnswerClassifier(ABC):
 
 def load_data(filename: str) -> pd.DataFrame:
     return pd.read_csv(filename, encoding="latin-1")
-
-
-def load_word2vec_model(path: str) -> Word2VecKeyedVectors:
-    return KeyedVectors.load_word2vec_format(path, binary=True)
 
 
 def load_yaml(file_path: str) -> Dict[str, Any]:
