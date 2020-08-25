@@ -77,8 +77,12 @@ class SVMAnswerClassifierTraining:
         self.model_obj.save(
             self.model_instances, path.join(output_dir, "models_by_expectation_num.pkl")
         )
-
         return accuracy
+
+    def train(self, lesson: str, output_dir: str = "output") -> TrainingResult:
+        output_dir = path.abspath(output_dir)
+        makedirs(output_dir, exist_ok=True)
+        return TrainingResult(lesson=lesson, expectations=[])
 
     def train_all(self, data_root: str = "data", output_dir: str = "output") -> Dict:
         config_path = path.join(data_root, "config.yaml")
@@ -158,14 +162,16 @@ def train_classifier(data_root="data", shared_root="shared", output_dir: str = "
 def train_classifier_online(
     lesson: str, shared_root="shared", output_dir: str = "out"
 ) -> TrainingResult:
-    # training = SVMAnswerClassifierTraining(
-    #     shared_root=shared_root
-    # )
+    training = SVMAnswerClassifierTraining(
+        shared_root=shared_root
+    )
+    result = training.train(lesson=lesson, output_dir=output_dir)
     # accuracy = svm_answer_classifier_training.train_all(
     #     data_root=data_root, output_dir=output_dir
     # )
     # return accuracy
-    return TrainingResult(lesson=lesson, expectations=[])
+    # return TrainingResult(lesson=lesson, expectations=[])
+    return result
 
 
 def train_default_classifier(

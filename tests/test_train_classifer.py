@@ -119,7 +119,7 @@ def test_train_online(tmpdir, data_root: str, shared_root: str):
         lesson, shared_root=shared_root, output_dir=output_dir
     )
     assert result.to_dict() == {"lesson": lesson, "expectations": []}
-    # assert os.path.exists(output_dir)
+    assert os.path.exists(output_dir)
     # for model_num, acc in accuracy.items():
     #     if model_num == 0:
     #         assert acc == 80.0
