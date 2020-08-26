@@ -16,7 +16,10 @@ from opentutor_classifier import TrainingInput
 GRAPHQL_ENDPOINT = "http://graphql"
 
 
-def fetch_training_data(lesson: str, url=GRAPHQL_ENDPOINT) -> TrainingInput:
+def __fetch_training_data(lesson: str, url: str) -> dict:
+    if not url.startswith("http"):
+        with open(url) as f:
+            return json.load(f)
     res = requests.post(
         url,
         json={
@@ -24,10 +27,26 @@ def fetch_training_data(lesson: str, url=GRAPHQL_ENDPOINT) -> TrainingInput:
         },
     )
     res.raise_for_status()
-    resjson = res.json()
-    if "errors" in resjson:
-        raise Exception(json.dumps(resjson.get("errors")))
-    data = resjson["data"]["trainingData"]
+    return res.json()
+
+
+def fetch_training_data(lesson: str, url=GRAPHQL_ENDPOINT) -> TrainingInput:
+    # if not url.startswith("http"):
+    #     with open(url) as file:
+    #         data = json.load(file)
+    #         training = data["data"]["trainingData"]["training"]
+    #         config = data["data"]["trainingData"]["config"]
+    # res = requests.post(
+    #     url,
+    #     json={
+    #         "query": f'query {{ trainingData(lessonId: "{lesson}") {{ config training }} }}'
+    #     },
+    # )
+    # res.raise_for_status()
+    tdjson = __fetch_training_data(lesson, url)
+    if "errors" in tdjson:
+        raise Exception(json.dumps(tdjson.get("errors")))
+    data = tdjson["data"]["trainingData"]
     return TrainingInput(
         lesson=lesson,
         config=yaml.safe_load(data.get("config") or ""),

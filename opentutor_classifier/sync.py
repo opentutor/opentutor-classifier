@@ -4,28 +4,16 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import json
-import requests
 from pathlib import Path
+import yaml
 
-
-def fetch_training_data(lesson: str, url: str):
-    pass
+from .api import fetch_training_data
 
 
 def sync(lesson: str, url: str, output: str):
+    data = fetch_training_data(lesson, url)
     Path(output).mkdir(parents=True, exist_ok=True)
-    if url.startswith("http"):
-        query = f'query {{ trainingData(lessonId: "{lesson}") {{ config training }} }}'
-        request = requests.post(url, json={"query": query})
-        training = request.json()["data"]["trainingData"]["training"]
-        config = request.json()["data"]["trainingData"]["config"]
-    else:
-        with open(url) as file:
-            data = json.load(file)
-            training = data["data"]["trainingData"]["training"]
-            config = data["data"]["trainingData"]["config"]
     with open(f"{output}/training.csv", "w+", newline="") as file:
-        file.write(training)
+        file.write(data.data.to_csv(index=False))
     with open(f"{output}/config.yaml", "w+", newline="") as file:
-        file.write(config)
+        file.write(yaml.dump(data.config))
