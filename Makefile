@@ -15,6 +15,8 @@ $(VENV)-update: virtualenv-installed
 	$(VENV)/bin/python3.8 -m nltk.downloader averaged_perceptron_tagger
 	$(VENV)/bin/python3.8 -m nltk.downloader stopwords
 
+.PHONY: test-all
+test-all: test-format test-lint test-types test-license test
 
 .PHONY clean:
 clean:
@@ -56,9 +58,6 @@ format: $(VENV)
 PHONY: test
 test: $(VENV)
 	$(VENV)/bin/py.test -vv $(args)
-
-.PHONY: test-all
-test-all: test-format test-lint test-types test-license test
 
 .PHONY: test-format
 test-format: $(VENV)

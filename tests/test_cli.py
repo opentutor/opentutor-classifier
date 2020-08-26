@@ -12,6 +12,7 @@ from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierRes
 from opentutor_classifier.svm.predict import SVMAnswerClassifier
 from . import fixture_path
 import re
+import logging
 
 
 @pytest.fixture(autouse=True)
@@ -66,6 +67,8 @@ def test_cli_syncs_training_data_for_q1(tmpdir):
     out, err, exit_code, output_root = __sync(
         tmpdir, "q1", fixture_path(os.path.join("graphql", "example-1.json"))
     )
+    logging.warning(f"out={out}")
+    logging.warning(f"err={err}")
     assert exit_code == 0
     assert path.exists(path.join(output_root, "training.csv"))
     assert path.exists(path.join(output_root, "config.yaml"))

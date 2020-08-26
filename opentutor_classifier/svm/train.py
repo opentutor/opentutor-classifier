@@ -5,15 +5,24 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from collections import defaultdict
-import numpy as np
+import json
 from os import path, makedirs
-from typing import Dict
+from typing import Dict, List
+
+import numpy as np
+
+# import pandas as pd
 from sklearn import model_selection, svm
 from sklearn.model_selection import LeaveOneOut
-import json
 
-
-from opentutor_classifier import load_data, load_yaml, TrainingResult
+from opentutor_classifier import (
+    load_data,
+    load_yaml,
+    ExpectationTrainingResult,
+    TrainingInput,
+    TrainingResult,
+)
+from opentutor_classifier.api import fetch_training_data, GRAPHQL_ENDPOINT
 from .dtos import InstanceConfig, InstanceExpectationFeatures
 from .predict import SVMAnswerClassifier, SVMExpectationClassifier  # noqa: F401
 from .word2vec import find_or_load_word2vec
@@ -30,9 +39,9 @@ class SVMAnswerClassifierTraining:
         self, data_root: str = "data", output_dir: str = "output"
     ) -> Dict:
         try:
-            corpus = load_data(path.join(data_root, "default", "training.csv"))
+            training_data = load_data(path.join(data_root, "default", "training.csv"))
         except Exception:
-            corpus = self.model_obj.combine_dataset(data_root)
+            training_data = self.model_obj.combine_dataset(data_root)
         model = self.model_obj.initialize_model()
         index2word_set = set(self.word2vec.index2word)
         output_dir = path.abspath(output_dir)
@@ -59,30 +68,92 @@ class SVMAnswerClassifierTraining:
             return features_list
 
         all_features = list(
-            corpus.apply(
+            training_data.apply(
                 lambda row: process_features(
                     json.loads(row["exp_data"]), row["text"], index2word_set
                 ),
                 axis=1,
             )
         )
-        train_y = np.array(self.model_obj.encode_y(corpus["label"]))
+        train_y = np.array(self.model_obj.encode_y(training_data["label"]))
         model.fit(all_features, train_y)
-
         results_loocv = model_selection.cross_val_score(
             model, all_features, train_y, cv=LeaveOneOut(), scoring="accuracy"
         )
         accuracy = results_loocv.mean() * 100.0
-        self.model_instances[corpus["exp_num"].iloc[0]] = model
+        self.model_instances[training_data["exp_num"].iloc[0]] = model
         self.model_obj.save(
             self.model_instances, path.join(output_dir, "models_by_expectation_num.pkl")
         )
         return accuracy
 
-    def train(self, lesson: str, output_dir: str = "output") -> TrainingResult:
+    def train(
+        self, train_input: TrainingInput, output_dir: str = "output"
+    ) -> TrainingResult:
+        question = str(train_input.config.get("question") or "")
+        expectation_features = train_input.config.get("expectation_features") or []
+        if not question:
+            raise ValueError("config must have a 'question'")
         output_dir = path.abspath(output_dir)
         makedirs(output_dir, exist_ok=True)
-        return TrainingResult(lesson=lesson, expectations=[])
+        split_training_sets: dict = defaultdict(int)
+        for i, value in enumerate(train_input.data["exp_num"]):
+            if value not in split_training_sets:
+                split_training_sets[value] = [[], []]
+            split_training_sets[value][0].append(train_input.data["text"][i])
+            split_training_sets[value][1].append(train_input.data["label"][i])
+        index2word_set: set = set(self.word2vec.index2word)
+        expectation_features_objects = []
+        expectation_results: List[ExpectationTrainingResult] = []
+        for exp_num, (train_x, train_y) in split_training_sets.items():
+            processed_data = self.model_obj.preprocessing(train_x)
+            processed_question = self.model_obj.processing_single_sentence(question)
+            ia = self.model_obj.initialize_ideal_answer(processed_data)
+            good_regex = self.model_obj.get_regex(
+                exp_num, expectation_features, "good_regex"
+            )
+            bad_regex = self.model_obj.get_regex(
+                exp_num, expectation_features, "bad_regex"
+            )
+            expectation_features_objects.append(
+                InstanceExpectationFeatures(
+                    ideal=ia, good_regex=good_regex, bad_regex=bad_regex
+                )
+            )
+            features = []
+            for example in processed_data:
+                feature = np.array(
+                    self.model_obj.calculate_features(
+                        processed_question,
+                        example,
+                        ia,
+                        self.word2vec,
+                        index2word_set,
+                        good_regex,
+                        bad_regex,
+                    )
+                )
+                features.append(feature)
+            train_y = np.array(self.model_obj.encode_y(train_y))
+            model = self.model_obj.initialize_model()
+            model.fit(features, train_y)
+            results_loocv = model_selection.cross_val_score(
+                model, features, train_y, cv=LeaveOneOut(), scoring="accuracy"
+            )
+            expectation_results.append(
+                ExpectationTrainingResult(accuracy=results_loocv.mean() * 100.0)
+            )
+            # self.accuracy[exp_num] = results_loocv.mean() * 100.0
+            self.model_instances[exp_num] = model
+        self.model_obj.save(
+            self.model_instances, path.join(output_dir, "models_by_expectation_num.pkl")
+        )
+        InstanceConfig(
+            question=question, expectation_features=expectation_features_objects
+        ).write_to(path.join(output_dir, "config.yaml"))
+        return TrainingResult(
+            lesson=train_input.lesson, expectations=expectation_results
+        )
 
     def train_all(self, data_root: str = "data", output_dir: str = "output") -> Dict:
         config_path = path.join(data_root, "config.yaml")
@@ -91,15 +162,15 @@ class SVMAnswerClassifierTraining:
         expectation_features = config.get("expectation_features") or []
         if not question:
             raise ValueError(f"config.yaml must have a 'question' at {config_path}")
-        corpus = load_data(path.join(data_root, "training.csv"))
+        data = load_data(path.join(data_root, "training.csv"))
         output_dir = path.abspath(output_dir)
         makedirs(output_dir, exist_ok=True)
         split_training_sets: dict = defaultdict(int)
-        for i, value in enumerate(corpus["exp_num"]):
+        for i, value in enumerate(data["exp_num"]):
             if value not in split_training_sets:
                 split_training_sets[value] = [[], []]
-            split_training_sets[value][0].append(corpus["text"][i])
-            split_training_sets[value][1].append(corpus["label"][i])
+            split_training_sets[value][0].append(data["text"][i])
+            split_training_sets[value][1].append(data["label"][i])
         index2word_set: set = set(self.word2vec.index2word)
         expectation_features_objects = []
         for exp_num, (train_x, train_y) in split_training_sets.items():
@@ -160,18 +231,14 @@ def train_classifier(data_root="data", shared_root="shared", output_dir: str = "
 
 
 def train_classifier_online(
-    lesson: str, shared_root="shared", output_dir: str = "out"
+    lesson: str,
+    shared_root="shared",
+    output_dir: str = "out",
+    fetch_training_data_url=GRAPHQL_ENDPOINT,
 ) -> TrainingResult:
-    training = SVMAnswerClassifierTraining(
-        shared_root=shared_root
+    return SVMAnswerClassifierTraining(shared_root=shared_root).train(
+        fetch_training_data(lesson), output_dir=output_dir
     )
-    result = training.train(lesson=lesson, output_dir=output_dir)
-    # accuracy = svm_answer_classifier_training.train_all(
-    #     data_root=data_root, output_dir=output_dir
-    # )
-    # return accuracy
-    # return TrainingResult(lesson=lesson, expectations=[])
-    return result
 
 
 def train_default_classifier(

@@ -58,6 +58,12 @@ class ExpectationTrainingResult:
     accuracy: float = 0
 
 
+class AnswerClassifier(ABC):
+    @abstractmethod
+    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+        raise NotImplementedError()
+
+
 @dataclass
 class TrainingResult:
     lesson: str = ""
@@ -67,10 +73,11 @@ class TrainingResult:
         return asdict(self)
 
 
-class AnswerClassifier(ABC):
-    @abstractmethod
-    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
-        raise NotImplementedError()
+@dataclass
+class TrainingInput:
+    lesson: str = ""
+    config: dict = field(default_factory=dict)
+    data: pd.DataFrame = field(default_factory=pd.DataFrame)
 
 
 def load_data(filename: str) -> pd.DataFrame:
