@@ -31,18 +31,6 @@ def __fetch_training_data(lesson: str, url: str) -> dict:
 
 
 def fetch_training_data(lesson: str, url=GRAPHQL_ENDPOINT) -> TrainingInput:
-    # if not url.startswith("http"):
-    #     with open(url) as file:
-    #         data = json.load(file)
-    #         training = data["data"]["trainingData"]["training"]
-    #         config = data["data"]["trainingData"]["config"]
-    # res = requests.post(
-    #     url,
-    #     json={
-    #         "query": f'query {{ trainingData(lessonId: "{lesson}") {{ config training }} }}'
-    #     },
-    # )
-    # res.raise_for_status()
     tdjson = __fetch_training_data(lesson, url)
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
