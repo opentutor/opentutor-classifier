@@ -6,7 +6,6 @@
 #
 import json
 from os import path
-import logging
 from typing import Dict, List, Tuple
 
 import pytest
@@ -34,36 +33,40 @@ def shared_root() -> str:
     return fixture_path("shared")
 
 
+def __add_graphql_response(name: str):
+    with open(fixture_path(path.join("graphql", f"{name}.json"))) as f:
+        responses.add(responses.POST, GRAPHQL_ENDPOINT, json=json.load(f), status=200)
+
+
 def __output_dir_for_test(tmpdir, data_root: str) -> str:
     return path.join(
         tmpdir.mkdir("test"), "model_root", path.basename(path.normpath(data_root))
     )
 
 
-def __train_model(
-    tmpdir, data_root: str, shared_root: str
-) -> Tuple[str, Dict[int, int]]:
-    output_dir = __output_dir_for_test(tmpdir, data_root)
-    accuracy = train_classifier(
-        data_root=data_root, shared_root=shared_root, output_dir=output_dir
-    )
-    return output_dir, accuracy
-
-
-def __add_graphql_response(name: str):
-    with open(fixture_path(path.join("graphql", f"{name}.json"))) as f:
-        responses.add(responses.POST, GRAPHQL_ENDPOINT, json=json.load(f), status=200)
-
-
-@pytest.mark.parametrize("input_lesson", [("question1"), ("question2")])
-def test_outputs_models_at_specified_model_root_for_q1_and_q2(
-    tmpdir, data_root: str, shared_root: str, input_lesson: str
+def __test_classifier(
+    model_root: str,
+    shared_root: str,
+    evaluate_input: str,
+    expected_evaluate_result: List[Dict],
 ):
-    output_dir, _ = __train_model(
-        tmpdir, path.join(data_root, input_lesson), shared_root
+    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
+    evaluate_result = classifier.evaluate(
+        AnswerClassifierInput(
+            input_sentence="peer pressure can change your behavior",
+            config_data=load_question_config({}),
+            expectation=-1,
+        )
     )
-    assert path.exists(path.join(output_dir, "models_by_expectation_num.pkl"))
-    assert path.exists(path.join(output_dir, "config.yaml"))
+    assert len(evaluate_result.expectation_results) == len(expected_evaluate_result)
+    for i in range(len(expected_evaluate_result)):
+        assert evaluate_result.expectation_results[i].expectation == i
+        assert round(
+            evaluate_result.expectation_results[i].score, 2
+        ) == expected_evaluate_result[i].get("score")
+        assert evaluate_result.expectation_results[
+            i
+        ].evaluation == expected_evaluate_result[i].get("evaluation")
 
 
 def __train_default_model(
@@ -78,6 +81,27 @@ def __train_default_model(
     return output_dir, accuracy
 
 
+def __train_classifier(
+    tmpdir, data_root: str, shared_root: str
+) -> Tuple[str, Dict[int, int]]:
+    output_dir = __output_dir_for_test(tmpdir, data_root)
+    accuracy = train_classifier(
+        data_root=data_root, shared_root=shared_root, output_dir=output_dir
+    )
+    return output_dir, accuracy
+
+
+@pytest.mark.parametrize("input_lesson", [("question1"), ("question2")])
+def test_outputs_models_at_specified_model_root_for_q1_and_q2(
+    tmpdir, data_root: str, shared_root: str, input_lesson: str
+):
+    output_dir, _ = __train_classifier(
+        tmpdir, path.join(data_root, input_lesson), shared_root
+    )
+    assert path.exists(path.join(output_dir, "models_by_expectation_num.pkl"))
+    assert path.exists(path.join(output_dir, "config.yaml"))
+
+
 def test_outputs_models_at_specified_model_root_for_default_model(
     tmpdir, data_root: str, shared_root: str
 ):
@@ -85,8 +109,31 @@ def test_outputs_models_at_specified_model_root_for_default_model(
     assert path.exists(path.join(output_dir, "models_by_expectation_num.pkl"))
 
 
-def test_trained_models_usable_for_inference(tmpdir, data_root: str, shared_root: str):
-    output_dir, accuracy = __train_model(
+@pytest.mark.parametrize(
+    "lesson,evaluate_input,expected_training_result,expected_evaluate_result",
+    [
+        (
+            "question1",
+            "peer pressure can change your behavior",
+            [{"accuracy": 70.0}, {"accuracy": 50.0}, {"accuracy": 70.0}],
+            [
+                {"evaluation": "Good", "score": 0.99},
+                {"evaluation": "Bad", "score": 0.50},
+                {"evaluation": "Bad", "score": 0.57},
+            ],
+        )
+    ],
+)
+def test_train_classifier(
+    lesson: str,
+    evaluate_input: str,
+    expected_training_result: List[Dict],
+    expected_evaluate_result: List[Dict],
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+):
+    output_dir, accuracy = __train_classifier(
         tmpdir, path.join(data_root, "question1"), shared_root
     )
     assert path.exists(output_dir)
@@ -97,25 +144,7 @@ def test_trained_models_usable_for_inference(tmpdir, data_root: str, shared_root
             assert acc == 90.0
         if model_num == 2:
             assert acc == 100.0
-    classifier = SVMAnswerClassifier(model_root=output_dir, shared_root=shared_root)
-    result = classifier.evaluate(
-        AnswerClassifierInput(
-            input_sentence="peer pressure can change your behavior",
-            config_data=load_question_config({}),
-            expectation=-1,
-        )
-    )
-    assert len(result.expectation_results) == 3
-    for exp_res in result.expectation_results:
-        if exp_res.expectation == 0:
-            assert exp_res.evaluation == "Good"
-            assert round(exp_res.score, 2) == 0.99
-        if exp_res.expectation == 1:
-            assert exp_res.evaluation == "Bad"
-            assert round(exp_res.score, 2) == 0.50
-        if exp_res.expectation == 2:
-            assert exp_res.evaluation == "Bad"
-            assert round(exp_res.score, 2) == 0.57
+    __test_classifier(output_dir, shared_root, evaluate_input, expected_evaluate_result)
 
 
 @responses.activate
@@ -143,50 +172,29 @@ def test_train_online(
     shared_root: str,
     tmpdir,
 ):
-    # training_data = load_data(path.join(data_root, lesson, "training.csv"))
-    # logging.warning(json.dumps({"training": training_data.to_csv()}))
     __add_graphql_response(lesson)
     output_dir = __output_dir_for_test(tmpdir, lesson)
     train_result = train_classifier_online(
         lesson, shared_root=shared_root, output_dir=output_dir
     )
-    # logging.warning(f"train_result={train_result}")
     assert train_result.to_dict() == {
         "lesson": lesson,
         "expectations": expected_training_result,
     }
     assert path.exists(output_dir)
-    classifier = SVMAnswerClassifier(model_root=output_dir, shared_root=shared_root)
-    evaluate_result = classifier.evaluate(
-        AnswerClassifierInput(
-            input_sentence="peer pressure can change your behavior",
-            config_data=load_question_config({}),
-            expectation=-1,
-        )
-    )
-    assert len(evaluate_result.expectation_results) == 3
-    logging.warning(f"pred res={evaluate_result.expectation_results}")
-    for i in range(len(expected_evaluate_result)):
-        assert evaluate_result.expectation_results[i].expectation == i
-        assert round(
-            evaluate_result.expectation_results[i].score, 2
-        ) == expected_evaluate_result[i].get("score")
-        assert evaluate_result.expectation_results[
-            i
-        ].evaluation == expected_evaluate_result[i].get("evaluation")
+    __test_classifier(output_dir, shared_root, evaluate_input, expected_evaluate_result)
 
 
 def test_trained_models_usable_for_inference_for_q2(
     tmpdir, data_root: str, shared_root: str
 ):
-    output_dir, accuracy = __train_model(
+    output_dir, accuracy = __train_classifier(
         tmpdir, path.join(data_root, "question2"), shared_root
     )
     assert path.exists(output_dir)
     for model_num, acc in accuracy.items():
         if model_num == 0:
             assert acc == 100.0
-
     classifier = SVMAnswerClassifier(model_root=output_dir, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
