@@ -10,7 +10,6 @@ from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 from os import path, makedirs
-import pickle
 from sklearn import model_selection, svm
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
@@ -39,36 +38,23 @@ from .utils import load_instances
 from .word2vec import find_or_load_word2vec
 
 
+def preprocess_sentence(sentence: str) -> List[str]:
+    data: List[str] = [sentence]
+    data = [entry.lower() for entry in data]
+    data = [word_tokenize(entry) for entry in data]
+    for entry in data:
+        final_words = []
+        for word, tag in pos_tag(entry):
+            if word not in STOPWORDS and word.isalpha():
+                final_words.append(word)
+    return final_words
+
+
 class SVMExpectationClassifier:
     def __init__(self):
         self.model = None
         self.score_dictionary = defaultdict(int)
         np.random.seed(1)
-
-    def processing_single_sentence(self, data):
-        data = [data]
-        data = [entry.lower() for entry in data]
-        data = [word_tokenize(entry) for entry in data]
-        for entry in data:
-            final_words = []
-            for word, tag in pos_tag(entry):
-                if word not in STOPWORDS and word.isalpha():
-                    final_words.append(word)
-        return final_words
-
-    def preprocessing(self, data):
-        pre_processed_dataset = []
-        data = [entry.lower() for entry in data]
-        data = [word_tokenize(entry) for entry in data]
-        for entry in data:
-            final_words = []
-
-            for word, tag in pos_tag(entry):
-
-                if word not in STOPWORDS and word.isalpha():
-                    final_words.append(word)
-            pre_processed_dataset.append(final_words)
-        return pre_processed_dataset
 
     def split(self, pre_processed_dataset, target):
         train_x, test_x, train_y, test_y = model_selection.train_test_split(
@@ -249,9 +235,6 @@ class SVMExpectationClassifier:
     def predict(self, model, test_features):
         return model.predict(test_features)
 
-    def save(self, model_instances, filename):
-        pickle.dump(model_instances, open(filename, "wb"))
-
     def confidence_score(self, model, sentence):
         score = model.decision_function(sentence)[0]
         x = score + model.intercept_[0]
@@ -349,7 +332,7 @@ class SVMAnswerClassifier:
         )
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
-        sent_proc = self.model_obj.processing_single_sentence(answer.input_sentence)
+        sent_proc = preprocess_sentence(answer.input_sentence)
         expectations = (
             [
                 ExpectationToEvaluate(
@@ -376,13 +359,11 @@ class SVMAnswerClassifier:
         print("resul = ", result)
         if answer.config_data:
             conf = answer.config_data
-            question_proc = self.model_obj.processing_single_sentence(conf.question)
+            question_proc = preprocess_sentence(conf.question)
 
             for i in range(len(conf.expectation_features)):
 
-                ideal = self.model_obj.processing_single_sentence(
-                    conf.expectation_features[i].ideal
-                )
+                ideal = preprocess_sentence(conf.expectation_features[i].ideal)
                 sent_features = self.model_obj.calculate_features(
                     question_proc, sent_proc, ideal, word2vec, index2word, [], []
                 )
@@ -393,7 +374,7 @@ class SVMAnswerClassifier:
                 )
         else:
             conf2 = self.config()
-            question_proc = self.model_obj.processing_single_sentence(conf2.question)
+            question_proc = preprocess_sentence(conf2.question)
 
             for i in range(len(expectations)):
                 sent_features = self.model_obj.calculate_features(

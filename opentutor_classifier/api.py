@@ -6,6 +6,7 @@
 #
 from io import StringIO
 import json
+import os
 import requests
 import yaml
 
@@ -13,7 +14,7 @@ import pandas as pd
 
 from opentutor_classifier import TrainingInput
 
-GRAPHQL_ENDPOINT = "http://graphql"
+GRAPHQL_ENDPOINT = os.environ.get("GRAPHQL_ENDPOINT") or "http://graphql/graphql"
 
 
 def __fetch_training_data(lesson: str, url: str) -> dict:
@@ -31,18 +32,6 @@ def __fetch_training_data(lesson: str, url: str) -> dict:
 
 
 def fetch_training_data(lesson: str, url=GRAPHQL_ENDPOINT) -> TrainingInput:
-    # if not url.startswith("http"):
-    #     with open(url) as file:
-    #         data = json.load(file)
-    #         training = data["data"]["trainingData"]["training"]
-    #         config = data["data"]["trainingData"]["config"]
-    # res = requests.post(
-    #     url,
-    #     json={
-    #         "query": f'query {{ trainingData(lessonId: "{lesson}") {{ config training }} }}'
-    #     },
-    # )
-    # res.raise_for_status()
     tdjson = __fetch_training_data(lesson, url)
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
