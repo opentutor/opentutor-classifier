@@ -4,13 +4,25 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+import logging
+from logging.config import dictConfig
+import os
 
-from .dtos import InstanceConfig, InstanceExpectationFeatures  # noqa: F401
-from .predict import SVMAnswerClassifier, SVMExpectationClassifier  # noqa: F401
-from .word2vec import find_or_load_word2vec  # noqa: F401
-from .train import (  # noqa: F401
-    SVMAnswerClassifierTraining,
-    train_classifier,
-    train_classifier_online,
-    train_default_classifier,
+LOG_LEVEL_DEFAULT = os.environ.get("LOG_LEVEL_CLASSIFIER") or "INFO"
+
+dictConfig(
+    {
+        "version": 1,
+        "handlers": {
+            "console": {"class": "logging.StreamHandler", "level": LOG_LEVEL_DEFAULT}
+        },
+        "formatters": {
+            "default": {
+                "format": "[%(asctime)s] %(levelname)s in %(module)s: %(message)s"
+            }
+        },
+        "root": {"level": LOG_LEVEL_DEFAULT, "handlers": ["console"]},
+    }
 )
+
+logger = logging.getLogger("opentutor_classifier")

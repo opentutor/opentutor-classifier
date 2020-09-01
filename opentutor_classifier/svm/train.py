@@ -117,11 +117,11 @@ class SVMAnswerClassifierTraining:
         output_dir = path.abspath(output_dir)
         makedirs(output_dir, exist_ok=True)
         split_training_sets: dict = defaultdict(int)
-        for i, value in enumerate(train_input.data["exp_num"]):
-            if value not in split_training_sets:
-                split_training_sets[value] = [[], []]
-            split_training_sets[value][0].append(train_input.data["text"][i])
-            split_training_sets[value][1].append(train_input.data["label"][i])
+        for i, exp_num in enumerate(train_input.data["exp_num"]):
+            if exp_num not in split_training_sets:
+                split_training_sets[exp_num] = [[], []]
+            split_training_sets[exp_num][0].append(train_input.data["text"][i])
+            split_training_sets[exp_num][1].append(train_input.data["label"][i])
         index2word_set: set = set(self.word2vec.index2word)
         expectation_features_objects = []
         expectation_results: List[ExpectationTrainingResult] = []

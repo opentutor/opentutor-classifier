@@ -5,7 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import json
-from os import path
+from os import environ, path
 from typing import Dict, List, Tuple
 
 import pytest
@@ -34,6 +34,9 @@ def shared_root() -> str:
 
 
 def __add_graphql_response(name: str):
+    if environ.get("MOCKING_DISABLED"):
+        responses.add_passthru(GRAPHQL_ENDPOINT)
+        return
     with open(fixture_path(path.join("graphql", f"{name}.json"))) as f:
         responses.add(responses.POST, GRAPHQL_ENDPOINT, json=json.load(f), status=200)
 
@@ -172,6 +175,7 @@ def test_train_online(
     shared_root: str,
     tmpdir,
 ):
+    lesson = environ.get("LESSON_OVERRIDE") or lesson
     __add_graphql_response(lesson)
     output_dir = __output_dir_for_test(tmpdir, lesson)
     train_result = train_classifier_online(
