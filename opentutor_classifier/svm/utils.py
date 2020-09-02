@@ -15,14 +15,18 @@ from opentutor_classifier import ExpectationFeatures, QuestionConfig
 from .dtos import InstanceConfig, InstanceModels
 
 
+def load_config(config_file: str) -> InstanceConfig:
+    with open(config_file) as f:
+        return InstanceConfig(**yaml.load(f, Loader=yaml.FullLoader))
+
+
 def load_instances(
     model_root="./models",
     models_by_expectation_num_filename="models_by_expectation_num.pkl",
     config_filename="config.yaml",
 ) -> InstanceModels:
     try:
-        with open(path.join(model_root, config_filename)) as config_file:
-            config = InstanceConfig(**yaml.load(config_file, Loader=yaml.FullLoader))
+        config = load_config(path.join(model_root, config_filename))
     except Exception:
         config = InstanceConfig(question="", expectation_features=[])
     try:

@@ -9,7 +9,7 @@ import time
 
 from celery import Celery
 
-from opentutor_classifier.svm import train_classifier_online
+from opentutor_classifier.svm import train_online
 
 config = {
     "CELERY_BROKER_URL": os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0"),
@@ -33,6 +33,6 @@ OUTPUT_ROOT = os.environ.get("OUTPUT_ROOT") or "trained"
 @celery.task()
 def train_task(lesson: str) -> dict:
     time.sleep(3)
-    return train_classifier_online(
+    return train_online(
         lesson, shared_root=SHARED_ROOT, output_dir=os.path.join(OUTPUT_ROOT, lesson)
     ).to_dict()

@@ -12,7 +12,7 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.svm.predict import SVMAnswerClassifier
 from opentutor_classifier.svm.utils import load_question_config
-from . import fixture_path
+from .helpers import fixture_path
 import os
 
 

@@ -4,7 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass, field
 from typing import Dict, List
 import yaml
 
@@ -19,9 +19,9 @@ class ExpectationToEvaluate:
 
 @dataclass
 class InstanceExpectationFeatures:
-    ideal: List[str]
-    good_regex: List[str]
-    bad_regex: List[str]
+    ideal: List[str] = field(default_factory=list)
+    good_regex: List[str] = field(default_factory=list)
+    bad_regex: List[str] = field(default_factory=list)
 
 
 @dataclass

@@ -8,7 +8,7 @@ import os
 import responses
 from os import path
 from opentutor_classifier.sync import sync
-from . import fixture_path
+from .helpers import fixture_path
 
 
 def __sync(tmpdir, lesson: str, url: str):

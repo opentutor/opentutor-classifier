@@ -9,7 +9,7 @@ import pytest
 import requests
 import shutil
 from zipfile import ZipFile
-from . import fixture_path
+from .helpers import fixture_path
 
 
 def download(url: str, to_path: str):

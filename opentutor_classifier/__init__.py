@@ -7,7 +7,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, asdict
 import pandas as pd
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 import yaml
 from opentutor_classifier.speechact import SpeechActClassifierResult
 
@@ -39,7 +39,7 @@ class QuestionConfig:
 @dataclass
 class AnswerClassifierInput:
     input_sentence: str
-    config_data: QuestionConfig
+    config_data: Optional[QuestionConfig] = None
     expectation: int = -1
 
 
@@ -68,9 +68,11 @@ class AnswerClassifier(ABC):
 class TrainingResult:
     lesson: str = ""
     expectations: List[ExpectationTrainingResult] = field(default_factory=list)
+    models: str = ""
+    archive: str = ""
 
     def to_dict(self) -> dict:
-        return asdict(self)
+        return {k: v for k, v in asdict(self).items() if v}
 
 
 @dataclass

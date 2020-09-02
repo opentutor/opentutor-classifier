@@ -10,7 +10,7 @@ from .predict import SVMAnswerClassifier, SVMExpectationClassifier  # noqa: F401
 from .word2vec import find_or_load_word2vec  # noqa: F401
 from .train import (  # noqa: F401
     SVMAnswerClassifierTraining,
-    train_classifier,
-    train_classifier_online,
+    train_data_root,
+    train_online,
     train_default_classifier,
 )
