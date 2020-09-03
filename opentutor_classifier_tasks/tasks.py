@@ -26,13 +26,17 @@ config = {
 celery = Celery("opentutor-classifier-tasks", broker=config["CELERY_BROKER_URL"])
 celery.conf.update(config)
 
+ARCHIVE_ROOT = os.environ.get("ARCHIVE_ROOT") or "archive"
+OUTPUT_ROOT = os.environ.get("OUTPUT_ROOT") or "models"
 SHARED_ROOT = os.environ.get("SHARED_ROOT") or "shared"
-OUTPUT_ROOT = os.environ.get("OUTPUT_ROOT") or "trained"
 
 
 @celery.task()
 def train_task(lesson: str) -> dict:
     time.sleep(3)
     return train_online(
-        lesson, shared_root=SHARED_ROOT, output_dir=os.path.join(OUTPUT_ROOT, lesson)
+        lesson,
+        archive_root=ARCHIVE_ROOT,
+        shared_root=SHARED_ROOT,
+        output_dir=os.path.join(OUTPUT_ROOT, lesson),
     ).to_dict()

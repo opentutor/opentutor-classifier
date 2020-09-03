@@ -7,8 +7,9 @@
 from collections import defaultdict
 from datetime import datetime
 import json
-from os import makedirs, path, rename
+from os import makedirs, path
 import pickle
+import shutil
 import tempfile
 from typing import Dict, List
 
@@ -27,6 +28,7 @@ from opentutor_classifier import (
     TrainingResult,
 )
 from opentutor_classifier.api import fetch_training_data, GRAPHQL_ENDPOINT
+from opentutor_classifier.log import logger
 from opentutor_classifier.stopwords import STOPWORDS
 from .dtos import InstanceConfig, InstanceExpectationFeatures
 from .predict import (  # noqa: F401
@@ -44,7 +46,9 @@ def _archive_if_exists(p: str, archive_root: str) -> str:
     archive_path = path.join(
         archive_root, f"{path.basename(p)}-{datetime.now().strftime('%Y%m%dT%H%M%S')}"
     )
-    rename(p, archive_path)
+    # can't use rename here because target is likely a network mount (e.g. S3 bucket)
+    shutil.copytree(p, archive_path)
+    shutil.rmtree(p)
     return archive_path
 
 
@@ -62,6 +66,7 @@ def _preprocess_trainx(data):
 
 
 def _save(model_instances, filename):
+    logger.info(f"saving models to {filename}")
     pickle.dump(model_instances, open(filename, "wb"))
 
 
@@ -123,8 +128,8 @@ class SVMAnswerClassifierTraining:
     def train(
         self,
         train_input: TrainingInput,
-        output_dir: str = "output",
         archive_root: str = "archive",
+        output_dir: str = "output",
     ) -> TrainingResult:
         question = str(train_input.config.get("question") or "")
         expectation_features = train_input.config.get("expectation_features") or []
@@ -189,12 +194,15 @@ class SVMAnswerClassifierTraining:
         output_dir = path.abspath(output_dir)
         archive_path = _archive_if_exists(output_dir, archive_root)
         makedirs(path.dirname(output_dir), exist_ok=True)
-        rename(tmp_save_dir, output_dir)
+        logger.debug(f"copying results from {tmp_save_dir} to {output_dir}")
+        # can't use rename here because target is likely a network mount (e.g. S3 bucket)
+        shutil.copytree(tmp_save_dir, output_dir)
+        shutil.rmtree(tmp_save_dir)
         return TrainingResult(
-            lesson=train_input.lesson,
-            expectations=expectation_results,
-            models=output_dir,
             archive=archive_path,
+            expectations=expectation_results,
+            lesson=train_input.lesson,
+            models=output_dir,
         )
 
 
