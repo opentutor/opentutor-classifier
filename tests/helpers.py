@@ -10,7 +10,11 @@ from typing import List
 
 import responses
 
-from opentutor_classifier import AnswerClassifierInput, ExpectationClassifierResult
+from opentutor_classifier import (
+    AnswerClassifierInput,
+    ExpectationClassifierResult,
+    ExpectationTrainingResult,
+)
 from opentutor_classifier.api import GRAPHQL_ENDPOINT
 from opentutor_classifier.svm.predict import SVMAnswerClassifier
 
@@ -21,6 +25,17 @@ def add_graphql_response(name: str):
         return
     with open(fixture_path(path.join("graphql", f"{name}.json"))) as f:
         responses.add(responses.POST, GRAPHQL_ENDPOINT, json=json.load(f), status=200)
+
+
+def assert_train_expectation_results(
+    observed: List[ExpectationTrainingResult],
+    expected: List[ExpectationTrainingResult],
+    precision=2,
+):
+    assert [
+        ExpectationTrainingResult(accuracy=round(x.accuracy, precision))
+        for x in observed
+    ] == expected
 
 
 def create_and_test_classifier(

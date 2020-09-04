@@ -15,6 +15,7 @@ import responses
 from opentutor_classifier import (
     AnswerClassifierInput,
     ExpectationClassifierResult,
+    ExpectationTrainingResult,
     TrainingResult,
 )
 from opentutor_classifier.svm.predict import SVMAnswerClassifier
@@ -26,6 +27,7 @@ from opentutor_classifier.svm.train import (
 from opentutor_classifier.svm.utils import load_config, load_question_config
 from .helpers import (
     add_graphql_response,
+    assert_train_expectation_results,
     create_and_test_classifier,
     fixture_path,
     output_and_archive_for_test,
@@ -133,7 +135,11 @@ def test_outputs_models_at_specified_model_root_for_default_model(
         (
             "question1",
             "peer pressure can change your behavior",
-            [{"accuracy": 80.0}, {"accuracy": 90.0}, {"accuracy": 100.0}],
+            [
+                ExpectationTrainingResult(accuracy=0.8),
+                ExpectationTrainingResult(accuracy=0.9),
+                ExpectationTrainingResult(accuracy=1.0),
+            ],
             [
                 ExpectationClassifierResult(
                     evaluation="Good", score=0.99, expectation=0
@@ -149,7 +155,7 @@ def test_outputs_models_at_specified_model_root_for_default_model(
         (
             "question2",
             "Current flows in the same direction as the arrow",
-            [{"accuracy": 100.0}],
+            [ExpectationTrainingResult(accuracy=1.0)],
             [ExpectationClassifierResult(evaluation="Good", score=0.96, expectation=0)],
         ),
     ],
@@ -165,7 +171,9 @@ def test_train_and_predict(
 ):
     train_result = __train_classifier(tmpdir, path.join(data_root, lesson), shared_root)
     assert path.exists(train_result.models)
-    assert train_result.to_dict().get("expectations") == expected_training_result
+    assert_train_expectation_results(
+        train_result.expectations, expected_training_result
+    )
     create_and_test_classifier(
         train_result.models, shared_root, evaluate_input, expected_evaluate_result
     )
@@ -178,16 +186,20 @@ def test_train_and_predict(
         (
             "question1",
             "peer pressure can change your behavior",
-            [{"accuracy": 70.0}, {"accuracy": 50.0}, {"accuracy": 70.0}],
+            [
+                ExpectationTrainingResult(accuracy=0.73),
+                ExpectationTrainingResult(accuracy=0.64),
+                ExpectationTrainingResult(accuracy=0.91),
+            ],
             [
                 ExpectationClassifierResult(
-                    evaluation="Good", score=0.69, expectation=0
+                    evaluation="Good", score=0.66, expectation=0
                 ),
                 ExpectationClassifierResult(
                     evaluation="Bad", score=0.07, expectation=1
                 ),
                 ExpectationClassifierResult(
-                    evaluation="Bad", score=0.53, expectation=2
+                    evaluation="Bad", score=0.46, expectation=2
                 ),
             ],
         ),
@@ -217,7 +229,10 @@ def test_train_online(
         output_dir=output_dir,
         shared_root=shared_root,
     )
-    assert train_result.to_dict().get("expectations") == expected_training_result
+    assert_train_expectation_results(
+        train_result.expectations, expected_training_result
+    )
+    # assert train_result.to_dict().get("expectations") == expected_training_result
     assert path.exists(train_result.models)
     create_and_test_classifier(
         train_result.models, shared_root, evaluate_input, expected_evaluate_result
@@ -229,7 +244,7 @@ def test_trained_default_model_usable_for_inference(
 ):
     output_dir, accuracy = __train_default_model(tmpdir, data_root, shared_root)
     assert path.exists(output_dir)
-    assert accuracy == 72.5
+    assert round(accuracy, 2) == 0.72
     config_data = {
         "question": "What are the challenges to demonstrating integrity in a group?",
         "expectations": [

@@ -5,7 +5,7 @@
 ## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 ##
 question: "What are the challenges to demonstrating integrity in a group?"
-expectation_features:
+expectations:
   - good_regex:
       - '\b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b'
     bad_regex:

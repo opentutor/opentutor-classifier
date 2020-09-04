@@ -16,6 +16,7 @@ from typing import Dict, List
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 import numpy as np
+import pandas as pd
 
 from sklearn import model_selection, svm
 from sklearn.model_selection import LeaveOneOut
@@ -23,14 +24,15 @@ from sklearn.model_selection import LeaveOneOut
 from opentutor_classifier import (
     load_data,
     load_yaml,
+    ExpectationFeatures,
     ExpectationTrainingResult,
+    QuestionConfig,
     TrainingInput,
     TrainingResult,
 )
 from opentutor_classifier.api import fetch_training_data, GRAPHQL_ENDPOINT
 from opentutor_classifier.log import logger
 from opentutor_classifier.stopwords import STOPWORDS
-from .dtos import InstanceConfig, InstanceExpectationFeatures
 from .predict import (  # noqa: F401
     preprocess_sentence,
     SVMAnswerClassifier,
@@ -118,29 +120,46 @@ class SVMAnswerClassifierTraining:
         results_loocv = model_selection.cross_val_score(
             model, all_features, train_y, cv=LeaveOneOut(), scoring="accuracy"
         )
-        accuracy = results_loocv.mean() * 100.0
+        accuracy = results_loocv.mean()
         expectation_models[training_data["exp_num"].iloc[0]] = model
         _save(
             expectation_models, path.join(output_dir, "models_by_expectation_num.pkl")
         )
+        # need to write config for default even though it's empty
+        # or will get errors later on attempt to load
+        QuestionConfig(question="").write_to(path.join(output_dir, "config.yaml"))
         return accuracy
 
     def train(
         self,
         train_input: TrainingInput,
+        add_ideal_answers_to_training_data=True,
         archive_root: str = "archive",
         output_dir: str = "output",
     ) -> TrainingResult:
+        pd.set_option("display.max_colwidth", 1000)
         question = str(train_input.config.get("question") or "")
-        expectation_features = train_input.config.get("expectation_features") or []
+        config_expectations = train_input.config.get("expectations") or []
         if not question:
             raise ValueError("config must have a 'question'")
+        train_data = (
+            pd.DataFrame(
+                [
+                    [i, x.get("ideal"), "good"]
+                    for i, x in enumerate(config_expectations)
+                    if x.get("ideal")
+                ],
+                columns=["exp_num", "text", "label"],
+            ).append(train_input.data, ignore_index=True)
+            if add_ideal_answers_to_training_data
+            else train_input.data
+        )
         split_training_sets: dict = defaultdict(int)
-        for i, exp_num in enumerate(train_input.data["exp_num"]):
+        for i, exp_num in enumerate(train_data["exp_num"]):
             if exp_num not in split_training_sets:
                 split_training_sets[exp_num] = [[], []]
-            split_training_sets[exp_num][0].append(train_input.data["text"][i])
-            split_training_sets[exp_num][1].append(train_input.data["label"][i])
+            split_training_sets[exp_num][0].append(train_data["text"][i])
+            split_training_sets[exp_num][1].append(train_data["label"][i])
         index2word_set: set = set(self.word2vec.index2word)
         expectation_features_objects = []
         expectation_results: List[ExpectationTrainingResult] = []
@@ -150,13 +169,13 @@ class SVMAnswerClassifierTraining:
             processed_question = preprocess_sentence(question)
             ia = self.model_obj.initialize_ideal_answer(processed_data)
             good_regex = self.model_obj.get_regex(
-                exp_num, expectation_features, "good_regex"
+                exp_num, config_expectations, "good_regex"
             )
             bad_regex = self.model_obj.get_regex(
-                exp_num, expectation_features, "bad_regex"
+                exp_num, config_expectations, "bad_regex"
             )
             expectation_features_objects.append(
-                InstanceExpectationFeatures(
+                ExpectationFeatures(
                     ideal=ia, good_regex=good_regex, bad_regex=bad_regex
                 )
             )
@@ -181,15 +200,15 @@ class SVMAnswerClassifierTraining:
                 model, features, train_y, cv=LeaveOneOut(), scoring="accuracy"
             )
             expectation_results.append(
-                ExpectationTrainingResult(accuracy=results_loocv.mean() * 100.0)
+                ExpectationTrainingResult(accuracy=results_loocv.mean())
             )
             expectation_models[exp_num] = model
         tmp_save_dir = tempfile.mkdtemp()
         _save(
             expectation_models, path.join(tmp_save_dir, "models_by_expectation_num.pkl")
         )
-        InstanceConfig(
-            question=question, expectation_features=expectation_features_objects
+        QuestionConfig(
+            question=question, expectations=expectation_features_objects
         ).write_to(path.join(tmp_save_dir, "config.yaml"))
         output_dir = path.abspath(output_dir)
         archive_path = _archive_if_exists(output_dir, archive_root)

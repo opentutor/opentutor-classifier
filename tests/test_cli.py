@@ -88,7 +88,7 @@ def test_cli_outputs_models_files(tmpdir, input_lesson, no_of_expectations):
     shared_root = fixture_path("shared")
     out, err, exit_code, model_root = __train_model(tmpdir, input_lesson, shared_root)
     logging.warning(f"err={err}")
-    # assert exit_code == 0
+    assert exit_code == 0
     assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
     assert path.exists(path.join(model_root, "config.yaml"))
     out_str = out.decode("utf-8")

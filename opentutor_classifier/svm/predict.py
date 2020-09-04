@@ -28,12 +28,13 @@ from opentutor_classifier import (
     AnswerClassifierInput,
     AnswerClassifierResult,
     ExpectationClassifierResult,
+    QuestionConfig,
     load_data,
     load_yaml,
 )
 from opentutor_classifier.speechact import SpeechActClassifier
 from opentutor_classifier.stopwords import STOPWORDS
-from .dtos import ExpectationToEvaluate, InstanceConfig, InstanceModels
+from .dtos import ExpectationToEvaluate, InstanceModels
 from .utils import load_instances
 from .word2vec import find_or_load_word2vec
 
@@ -304,7 +305,7 @@ class SVMAnswerClassifier:
     def models_by_expectation_num(self) -> Dict[int, svm.SVC]:
         return self.instance_models().models_by_expectation_num
 
-    def config(self) -> InstanceConfig:
+    def config(self) -> QuestionConfig:
         return self.instance_models().config
 
     def find_model_for_expectation(self, expectation: int) -> svm.SVC:
@@ -361,9 +362,9 @@ class SVMAnswerClassifier:
             conf = answer.config_data
             question_proc = preprocess_sentence(conf.question)
 
-            for i in range(len(conf.expectation_features)):
+            for i in range(len(conf.expectations)):
 
-                ideal = preprocess_sentence(conf.expectation_features[i].ideal)
+                ideal = preprocess_sentence(conf.expectations[i].ideal)
                 sent_features = self.model_obj.calculate_features(
                     question_proc, sent_proc, ideal, word2vec, index2word, [], []
                 )
@@ -380,11 +381,11 @@ class SVMAnswerClassifier:
                 sent_features = self.model_obj.calculate_features(
                     question_proc,
                     sent_proc,
-                    conf2.expectation_features[i].ideal,
+                    conf2.expectations[i].ideal,
                     word2vec,
                     index2word,
-                    conf2.expectation_features[i].good_regex,
-                    conf2.expectation_features[i].bad_regex,
+                    conf2.expectations[i].good_regex,
+                    conf2.expectations[i].bad_regex,
                 )
                 exp_num = expectations[i].expectation
                 classifier = expectations[exp_num].classifier

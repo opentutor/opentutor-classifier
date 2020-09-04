@@ -12,12 +12,12 @@ import yaml
 from sklearn import svm
 
 from opentutor_classifier import ExpectationFeatures, QuestionConfig
-from .dtos import InstanceConfig, InstanceModels
+from .dtos import InstanceModels
 
 
-def load_config(config_file: str) -> InstanceConfig:
+def load_config(config_file: str) -> QuestionConfig:
     with open(config_file) as f:
-        return InstanceConfig(**yaml.load(f, Loader=yaml.FullLoader))
+        return QuestionConfig(**yaml.load(f, Loader=yaml.FullLoader))
 
 
 def load_instances(
@@ -25,20 +25,14 @@ def load_instances(
     models_by_expectation_num_filename="models_by_expectation_num.pkl",
     config_filename="config.yaml",
 ) -> InstanceModels:
-    try:
-        config = load_config(path.join(model_root, config_filename))
-    except Exception:
-        config = InstanceConfig(question="", expectation_features=[])
-    try:
-        with open(
-            path.join(model_root, models_by_expectation_num_filename), "rb"
-        ) as models_file:
-            models_by_expectation_num: Dict[int, svm.SVC] = pickle.load(models_file)
-    except Exception:
-        models_by_expectation_num = {}
-    return InstanceModels(
-        config=config, models_by_expectation_num=models_by_expectation_num
-    )
+    with open(
+        path.join(model_root, models_by_expectation_num_filename), "rb"
+    ) as models_file:
+        models_by_expectation_num: Dict[int, svm.SVC] = pickle.load(models_file)
+        return InstanceModels(
+            config=load_config(path.join(model_root, config_filename)),
+            models_by_expectation_num=models_by_expectation_num,
+        )
 
 
 # TODO this should never return None, but code currently depends on that
@@ -46,7 +40,7 @@ def load_question_config(config_data: dict) -> Optional[QuestionConfig]:
     return (
         QuestionConfig(
             question=config_data.get("question", ""),
-            expectation_features=[
+            expectations=[
                 ExpectationFeatures(ideal=i["ideal"])
                 for i in config_data.get("expectations", [])
             ],

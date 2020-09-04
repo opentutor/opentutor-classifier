@@ -21,19 +21,25 @@ class ExpectationClassifierResult:
 
 @dataclass
 class ExpectationFeatures:
-    ideal: str
+    ideal: str = ""
+    bad_regex: List[str] = field(default_factory=list)
+    good_regex: List[str] = field(default_factory=list)
 
 
 @dataclass
 class QuestionConfig:
     question: str = ""
-    expectation_features: List[ExpectationFeatures] = field(default_factory=list)
+    expectations: List[ExpectationFeatures] = field(default_factory=list)
 
     def __post_init__(self):
-        self.expectation_features = [
+        self.expectations = [
             x if isinstance(x, ExpectationFeatures) else ExpectationFeatures(**x)
-            for x in self.expectation_features or []
+            for x in self.expectations or []
         ]
+
+    def write_to(self, file_path: str):
+        with open(file_path, "w") as config_file:
+            yaml.safe_dump(asdict(self), config_file)
 
 
 @dataclass

@@ -4,11 +4,12 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from dataclasses import asdict, dataclass, field
-from typing import Dict, List
-import yaml
+from dataclasses import dataclass
+from typing import Dict
 
 from sklearn import svm
+
+from opentutor_classifier import QuestionConfig
 
 
 @dataclass
@@ -18,31 +19,6 @@ class ExpectationToEvaluate:
 
 
 @dataclass
-class InstanceExpectationFeatures:
-    ideal: List[str] = field(default_factory=list)
-    good_regex: List[str] = field(default_factory=list)
-    bad_regex: List[str] = field(default_factory=list)
-
-
-@dataclass
-class InstanceConfig:
-    question: str
-    expectation_features: List[InstanceExpectationFeatures]
-
-    def __post_init__(self):
-        self.expectation_features = [
-            x
-            if isinstance(x, InstanceExpectationFeatures)
-            else InstanceExpectationFeatures(**x)
-            for x in self.expectation_features
-        ]
-
-    def write_to(self, file_path: str):
-        with open(file_path, "w") as config_file:
-            yaml.safe_dump(asdict(self), config_file)
-
-
-@dataclass
 class InstanceModels:
     models_by_expectation_num: Dict[int, svm.SVC]
-    config: InstanceConfig
+    config: QuestionConfig
