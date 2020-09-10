@@ -42,14 +42,17 @@ from .word2vec import find_or_load_word2vec
 
 
 def preprocess_sentence(sentence: str) -> List[str]:
-    data: List[str] = [sentence]
+    logging.warning(f"what is sentence? {sentence}")
+    logging.warning(f"typeof sentence {type(sentence)}")
+    data: List[str] = [sentence] if isinstance(sentence, str) else sentence
     data = [entry.lower() for entry in data]
     data = [word_tokenize(entry) for entry in data]
+    final_words = []
     for entry in data:
-        final_words = []
-        for word, tag in pos_tag(entry):
+        for word, _ in pos_tag(entry):
             if word not in STOPWORDS and word.isalpha():
                 final_words.append(word)
+    logging.warning(f"what is final words? {final_words}")
     return final_words
 
 
