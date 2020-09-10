@@ -4,6 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+import logging
 from os import path
 import pickle
 from typing import Dict, Optional
@@ -16,6 +17,7 @@ from .dtos import InstanceModels
 
 
 def load_config(config_file: str) -> QuestionConfig:
+    logging.warning(f"logging config from {config_file}...")
     with open(config_file) as f:
         return QuestionConfig(**yaml.load(f, Loader=yaml.FullLoader))
 
@@ -36,7 +38,7 @@ def load_instances(
 
 
 # TODO this should never return None, but code currently depends on that
-def load_question_config(config_data: dict) -> Optional[QuestionConfig]:
+def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
     return (
         QuestionConfig(
             question=config_data.get("question", ""),

@@ -37,6 +37,9 @@ class QuestionConfig:
             for x in self.expectations or []
         ]
 
+    def to_dict(self) -> dict:
+        return asdict(self)
+
     def write_to(self, file_path: str):
         with open(file_path, "w") as config_file:
             yaml.safe_dump(asdict(self), config_file)
