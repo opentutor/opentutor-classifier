@@ -44,9 +44,10 @@ from .word2vec import find_or_load_word2vec
 def preprocess_sentence(sentence: str) -> List[str]:
     logging.warning(f"what is sentence? {sentence}")
     logging.warning(f"typeof sentence {type(sentence)}")
-    data: List[str] = [sentence] if isinstance(sentence, str) else sentence
-    data = [entry.lower() for entry in data]
-    data = [word_tokenize(entry) for entry in data]
+    data: List[str] = [
+        word_tokenize(entry.lower())
+        for entry in ([sentence] if isinstance(sentence, str) else sentence)
+    ]
     final_words = []
     for entry in data:
         for word, _ in pos_tag(entry):
