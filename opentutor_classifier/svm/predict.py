@@ -5,23 +5,24 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from collections import defaultdict
+from glob import glob
+import json
+import math
+from os import path, makedirs
+import re
+from typing import Dict, List
+
 import numpy as np
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
-from os import path, makedirs
 from sklearn import model_selection, svm
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
-from typing import Dict, List
-import math
 from scipy import spatial
 from scipy.optimize import linear_sum_assignment
 from sklearn.model_selection import LeaveOneOut
-import re
-from glob import glob
 import pandas as pd
-import json
 
 
 from opentutor_classifier import (
@@ -40,15 +41,16 @@ from .word2vec import find_or_load_word2vec
 
 
 def preprocess_sentence(sentence: str) -> List[str]:
-    data: List[str] = [sentence]
-    data = [entry.lower() for entry in data]
-    data = [word_tokenize(entry) for entry in data]
-    for entry in data:
-        final_words = []
-        for word, tag in pos_tag(entry):
+    word_tokens_groups: List[str] = [
+        word_tokenize(entry.lower())
+        for entry in ([sentence] if isinstance(sentence, str) else sentence)
+    ]
+    result_words = []
+    for entry in word_tokens_groups:
+        for word, _ in pos_tag(entry):
             if word not in STOPWORDS and word.isalpha():
-                final_words.append(word)
-    return final_words
+                result_words.append(word)
+    return result_words
 
 
 class SVMExpectationClassifier:
@@ -308,8 +310,15 @@ class SVMAnswerClassifier:
     def config(self) -> QuestionConfig:
         return self.instance_models().config
 
-    def find_model_for_expectation(self, expectation: int) -> svm.SVC:
-        return self.models_by_expectation_num()[expectation]
+    def find_model_for_expectation(
+        self, expectation: int, return_first_model_if_only_one=False
+    ) -> svm.SVC:
+        m_by_e = self.models_by_expectation_num()
+        return (
+            m_by_e[0]
+            if expectation >= len(m_by_e) and return_first_model_if_only_one
+            else m_by_e[expectation]
+        )
 
     def find_word2vec(self) -> Word2VecKeyedVectors:
         if not self._word2vec:
@@ -334,62 +343,46 @@ class SVMAnswerClassifier:
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = preprocess_sentence(answer.input_sentence)
-        expectations = (
-            [
-                ExpectationToEvaluate(
-                    expectation=answer.expectation,
-                    classifier=self.find_model_for_expectation(answer.expectation),
-                )
-            ]
-            if answer.expectation != -1
-            else [
-                ExpectationToEvaluate(expectation=int(k), classifier=v)
-                for k, v in self.models_by_expectation_num().items()
-            ]
-        )
+        conf = answer.config_data or self.config()
+        expectations = [
+            ExpectationToEvaluate(
+                expectation=i,
+                classifier=self.find_model_for_expectation(
+                    i, return_first_model_if_only_one=True
+                ),
+            )
+            for i in (
+                [answer.expectation]
+                if answer.expectation != -1
+                else range(len(conf.expectations))
+            )
+        ]
         result = AnswerClassifierResult(input=answer, expectation_results=[])
         word2vec = self.find_word2vec()
         index2word = set(word2vec.index2word)
-
         result.speech_acts[
             "metacognitive"
         ] = self.speech_act_classifier.check_meta_cognitive(result)
         result.speech_acts["profanity"] = self.speech_act_classifier.check_profanity(
             result
         )
-        print("resul = ", result)
-        if answer.config_data:
-            conf = answer.config_data
-            question_proc = preprocess_sentence(conf.question)
-
-            for i in range(len(conf.expectations)):
-
-                ideal = preprocess_sentence(conf.expectations[i].ideal)
-                sent_features = self.model_obj.calculate_features(
-                    question_proc, sent_proc, ideal, word2vec, index2word, [], []
+        question_proc = preprocess_sentence(conf.question)
+        for exp in expectations:
+            exp_conf = conf.expectations[exp.expectation]
+            sent_features = self.model_obj.calculate_features(
+                question_proc,
+                sent_proc,
+                preprocess_sentence(exp_conf.ideal),
+                word2vec,
+                index2word,
+                exp_conf.good_regex or [],
+                exp_conf.bad_regex or [],
+            )
+            # exp_num = expectations[i].expectation
+            # classifier = expectations[exp_num].classifier
+            result.expectation_results.append(
+                self.find_score_and_class(
+                    exp.classifier, exp.expectation, [sent_features]
                 )
-                exp_num = i
-                classifier = expectations[0].classifier
-                result.expectation_results.append(
-                    self.find_score_and_class(classifier, exp_num, [sent_features])
-                )
-        else:
-            conf2 = self.config()
-            question_proc = preprocess_sentence(conf2.question)
-
-            for i in range(len(expectations)):
-                sent_features = self.model_obj.calculate_features(
-                    question_proc,
-                    sent_proc,
-                    conf2.expectations[i].ideal,
-                    word2vec,
-                    index2word,
-                    conf2.expectations[i].good_regex,
-                    conf2.expectations[i].bad_regex,
-                )
-                exp_num = expectations[i].expectation
-                classifier = expectations[exp_num].classifier
-                result.expectation_results.append(
-                    self.find_score_and_class(classifier, exp_num, [sent_features])
-                )
+            )
         return result

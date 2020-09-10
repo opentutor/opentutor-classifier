@@ -11,11 +11,6 @@ expectations:
   good_regex:
   - \b(sam\w*|const\w*|on\w*|eq(?!uip)\w*|id\w*n\w*[ck]\w*)\b
   - \b(left|anode)\b.*\b(right|cath\w*)\b
-  ideal:
-  - current
-  - flows
-  - same
-  - direction
-  - arrow
+  ideal: current flows in the same direction as the arrow
 question: With a DC input source, does current flow in the same or the opposite direction
   of the diode arrow?

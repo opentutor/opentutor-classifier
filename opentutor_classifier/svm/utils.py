@@ -36,7 +36,7 @@ def load_instances(
 
 
 # TODO this should never return None, but code currently depends on that
-def load_question_config(config_data: dict) -> Optional[QuestionConfig]:
+def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
     return (
         QuestionConfig(
             question=config_data.get("question", ""),
