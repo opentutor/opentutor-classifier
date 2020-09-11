@@ -40,6 +40,13 @@ from .utils import load_instances
 from .word2vec import find_or_load_word2vec
 
 
+def _confidence_score(model: svm.SVC, sentence: List[List[float]]) -> float:
+    score = model.decision_function(sentence)[0]
+    x = score + model.intercept_[0]
+    sigmoid = 1 / (1 + math.exp(-3 * x))
+    return sigmoid
+
+
 def preprocess_sentence(sentence: str) -> List[str]:
     word_tokens_groups: List[str] = [
         word_tokenize(entry.lower())
@@ -57,7 +64,7 @@ class SVMExpectationClassifier:
     def __init__(self):
         self.model = None
         self.score_dictionary = defaultdict(int)
-        np.random.seed(1)
+        # np.random.seed(1)
 
     def split(self, pre_processed_dataset, target):
         train_x, test_x, train_y, test_y = model_selection.train_test_split(
@@ -238,12 +245,6 @@ class SVMExpectationClassifier:
     def predict(self, model, test_features):
         return model.predict(test_features)
 
-    def confidence_score(self, model, sentence):
-        score = model.decision_function(sentence)[0]
-        x = score + model.intercept_[0]
-        sigmoid = 1 / (1 + math.exp(-3 * x))
-        return sigmoid
-
     def combine_dataset(self, data_root):
         training_data_list = [
             fn
@@ -333,8 +334,7 @@ class SVMAnswerClassifier:
             if self.model_obj.predict(classifier, sent_features)[0] == 1
             else "Bad"
         )
-        _score = self.model_obj.confidence_score(classifier, sent_features)
-
+        _score = _confidence_score(classifier, sent_features)
         return ExpectationClassifierResult(
             expectation=exp_num_i,
             evaluation=_evaluation,
@@ -378,8 +378,6 @@ class SVMAnswerClassifier:
                 exp_conf.good_regex or [],
                 exp_conf.bad_regex or [],
             )
-            # exp_num = expectations[i].expectation
-            # classifier = expectations[exp_num].classifier
             result.expectation_results.append(
                 self.find_score_and_class(
                     exp.classifier, exp.expectation, [sent_features]

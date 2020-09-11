@@ -111,7 +111,7 @@ def test_cli_outputs_models_files(tmpdir, input_lesson, no_of_expectations):
                     expectation=0, score=0.99, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=1, score=0.50, evaluation="Bad"
+                    expectation=1, score=0.69, evaluation="Bad"
                 ),
                 ExpectationClassifierResult(
                     expectation=2, score=0.57, evaluation="Bad"

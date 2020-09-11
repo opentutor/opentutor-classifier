@@ -7,6 +7,7 @@
 from collections import defaultdict
 from datetime import datetime
 import json
+import logging
 from os import makedirs, path
 import pickle
 import shutil
@@ -139,60 +140,69 @@ class SVMAnswerClassifierTraining:
     ) -> TrainingResult:
         pd.set_option("display.max_colwidth", 1000)
         question = str(train_input.config.get("question") or "")
-        config_expectations = train_input.config.get("expectations") or []
+        conf_exps_in = train_input.config.get("expectations") or []
         if not question:
             raise ValueError("config must have a 'question'")
         train_data = (
             pd.DataFrame(
                 [
                     [i, x.get("ideal"), "good"]
-                    for i, x in enumerate(config_expectations)
+                    for i, x in enumerate(conf_exps_in)
                     if x.get("ideal")
                 ],
                 columns=["exp_num", "text", "label"],
             ).append(train_input.data, ignore_index=True)
             if add_ideal_answers_to_training_data
             else train_input.data
-        )
+        ).sort_values(by=["exp_num"], ignore_index=True)
         split_training_sets: dict = defaultdict(int)
         for i, exp_num in enumerate(train_data["exp_num"]):
+            label = str(train_data["label"][i]).lower().strip()
+            if label not in ["good", "bad"]:
+                logging.warning(
+                    f"ignoring training-data row {i} with invalid label {label}"
+                )
+                continue
             if exp_num not in split_training_sets:
                 split_training_sets[exp_num] = [[], []]
-            split_training_sets[exp_num][0].append(train_data["text"][i])
-            split_training_sets[exp_num][1].append(train_data["label"][i])
+            split_training_sets[exp_num][0].append(
+                str(train_data["text"][i]).lower().strip()
+            )
+            split_training_sets[exp_num][1].append(label)
         index2word_set: set = set(self.word2vec.index2word)
-        expectation_features_objects = []
+        conf_exps_out: List[ExpectationFeatures] = []
         expectation_results: List[ExpectationTrainingResult] = []
         expectation_models: Dict[int, svm.SVC] = {}
         for exp_num, (train_x, train_y) in split_training_sets.items():
             processed_data = _preprocess_trainx(train_x)
             processed_question = preprocess_sentence(question)
-            ia = self.model_obj.initialize_ideal_answer(processed_data)
-            good_regex = self.model_obj.get_regex(
-                exp_num, config_expectations, "good_regex"
-            )
-            bad_regex = self.model_obj.get_regex(
-                exp_num, config_expectations, "bad_regex"
-            )
-            expectation_features_objects.append(
+            ideal_answer = self.model_obj.initialize_ideal_answer(processed_data)
+            good_regex = self.model_obj.get_regex(exp_num, conf_exps_in, "good_regex")
+            bad_regex = self.model_obj.get_regex(exp_num, conf_exps_in, "bad_regex")
+            conf_exps_out.append(
                 ExpectationFeatures(
-                    ideal=ia, good_regex=good_regex, bad_regex=bad_regex
+                    ideal=conf_exps_in[exp_num].get("ideal")
+                    if len(conf_exps_in) > exp_num
+                    and conf_exps_in[exp_num].get("ideal")
+                    else " ".join(ideal_answer),
+                    good_regex=good_regex,
+                    bad_regex=bad_regex,
                 )
             )
-            features = []
-            for example in processed_data:
-                feature = np.array(
+            features = [
+                np.array(
                     self.model_obj.calculate_features(
                         processed_question,
                         example,
-                        ia,
+                        ideal_answer,
                         self.word2vec,
                         index2word_set,
                         good_regex,
                         bad_regex,
                     )
                 )
-                features.append(feature)
+                for example in processed_data
+            ]
             train_y = np.array(self.model_obj.encode_y(train_y))
             model = self.model_obj.initialize_model()
             model.fit(features, train_y)
@@ -207,9 +217,9 @@ class SVMAnswerClassifierTraining:
         _save(
             expectation_models, path.join(tmp_save_dir, "models_by_expectation_num.pkl")
         )
-        QuestionConfig(
-            question=question, expectations=expectation_features_objects
-        ).write_to(path.join(tmp_save_dir, "config.yaml"))
+        QuestionConfig(question=question, expectations=conf_exps_out).write_to(
+            path.join(tmp_save_dir, "config.yaml")
+        )
         output_dir = path.abspath(output_dir)
         archive_path = _archive_if_exists(output_dir, archive_root)
         makedirs(path.dirname(output_dir), exist_ok=True)

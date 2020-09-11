@@ -36,8 +36,8 @@ def fetch_training_data(lesson: str, url=GRAPHQL_ENDPOINT) -> TrainingInput:
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
     data = tdjson["data"]["trainingData"]
+    df = pd.read_csv(StringIO(data.get("training") or ""))
+    df.sort_values(by=["exp_num"], ignore_index=True, inplace=True)
     return TrainingInput(
-        lesson=lesson,
-        config=yaml.safe_load(data.get("config") or ""),
-        data=pd.read_csv(StringIO(data.get("training") or "")),
+        lesson=lesson, config=yaml.safe_load(data.get("config") or ""), data=df
     )

@@ -51,6 +51,9 @@ class AnswerClassifierInput:
     config_data: Optional[QuestionConfig] = None
     expectation: int = -1
 
+    def to_dict(self) -> Dict:
+        return asdict(self)
+
 
 @dataclass
 class AnswerClassifierResult:

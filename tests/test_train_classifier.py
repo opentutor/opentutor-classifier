@@ -137,7 +137,7 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             "peer pressure can change your behavior",
             [
                 ExpectationTrainingResult(accuracy=0.8),
-                ExpectationTrainingResult(accuracy=0.9),
+                ExpectationTrainingResult(accuracy=0.7),
                 ExpectationTrainingResult(accuracy=1.0),
             ],
             [
@@ -145,19 +145,19 @@ def test_outputs_models_at_specified_model_root_for_default_model(
                     evaluation="Good", score=0.99, expectation=0
                 ),
                 ExpectationClassifierResult(
-                    evaluation="Bad", score=0.50, expectation=1
+                    evaluation="Bad", score=0.69, expectation=1
                 ),
                 ExpectationClassifierResult(
                     evaluation="Bad", score=0.57, expectation=2
                 ),
             ],
         ),
-        # (
-        #     "question2",
-        #     "Current flows in the same direction as the arrow",
-        #     [ExpectationTrainingResult(accuracy=1.0)],
-        #     [ExpectationClassifierResult(evaluation="Good", score=0.96, expectation=0)],
-        # ),
+        (
+            "question2",
+            "Current flows in the same direction as the arrow",
+            [ExpectationTrainingResult(accuracy=1.0)],
+            [ExpectationClassifierResult(evaluation="Good", score=0.96, expectation=0)],
+        ),
     ],
 )
 def test_train_and_predict(
@@ -188,7 +188,7 @@ def test_train_and_predict(
             "peer pressure can change your behavior",
             [
                 ExpectationTrainingResult(accuracy=0.73),
-                ExpectationTrainingResult(accuracy=0.64),
+                ExpectationTrainingResult(accuracy=0.18),
                 ExpectationTrainingResult(accuracy=0.91),
             ],
             [
@@ -196,19 +196,29 @@ def test_train_and_predict(
                     evaluation="Good", score=0.66, expectation=0
                 ),
                 ExpectationClassifierResult(
-                    evaluation="Bad", score=0.07, expectation=1
+                    evaluation="Good", score=0.99, expectation=1
                 ),
                 ExpectationClassifierResult(
                     evaluation="Bad", score=0.46, expectation=2
                 ),
             ],
         ),
-        # (
-        #     "question2",
-        #     "Current flows in the same direction as the arrow",
-        #     [{"accuracy": 100.0}],
-        #     [{"evaluation": "Good", "score": 0.96}],
-        # )
+        (
+            "example-2",
+            "the hr team",
+            [
+                ExpectationTrainingResult(accuracy=0.88),
+                ExpectationTrainingResult(accuracy=0.73),
+            ],
+            [
+                ExpectationClassifierResult(
+                    evaluation="Good", score=1.0, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.38, expectation=1
+                ),
+            ],
+        ),
     ],
 )
 def test_train_online(
@@ -232,7 +242,6 @@ def test_train_online(
     assert_train_expectation_results(
         train_result.expectations, expected_training_result
     )
-    # assert train_result.to_dict().get("expectations") == expected_training_result
     assert path.exists(train_result.models)
     create_and_test_classifier(
         train_result.models, shared_root, evaluate_input, expected_evaluate_result

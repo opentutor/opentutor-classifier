@@ -54,11 +54,11 @@ def create_and_test_classifier(
         assert (
             round(evaluate_result.expectation_results[i].score, 2)
             == expected_evaluate_result[i].score
-        )
+        ), f"classifier expectation {i} score"
         assert (
             evaluate_result.expectation_results[i].evaluation
             == expected_evaluate_result[i].evaluation
-        )
+        ), f"{evaluate_result.expectation_results[i].evaluation} != {expected_evaluate_result[i].evaluation} for expectation {i}"
 
 
 def fixture_path(p: str) -> str:
