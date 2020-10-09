@@ -4,7 +4,16 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from pathlib import Path
+import yaml
 
-import pytest
+from .api import fetch_training_data
 
-pytest.register_assert_rewrite("tests.helpers")
+
+def sync(lesson: str, url: str, output: str):
+    data = fetch_training_data(lesson, url)
+    Path(output).mkdir(parents=True, exist_ok=True)
+    with open(f"{output}/training.csv", "w+", newline="") as file:
+        file.write(data.data.to_csv(index=False))
+    with open(f"{output}/config.yaml", "w+", newline="") as file:
+        file.write(yaml.dump(data.config))

@@ -4,7 +4,11 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-
-import pytest
-
-pytest.register_assert_rewrite("tests.helpers")
+from .predict import SVMAnswerClassifier, SVMExpectationClassifier  # noqa: F401
+from .word2vec import find_or_load_word2vec  # noqa: F401
+from .train import (  # noqa: F401
+    SVMAnswerClassifierTraining,
+    train_data_root,
+    train_online,
+    train_default_classifier,
+)
