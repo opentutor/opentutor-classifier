@@ -9,5 +9,8 @@ RUN python -m nltk.downloader punkt \
 	&& python -m nltk.downloader wordnet \
 	&& python -m nltk.downloader averaged_perceptron_tagger \
 	&& python -m nltk.downloader stopwords
+COPY opentutor_classifier_tasks .
+COPY bin/training_worker.sh .
+RUN chmod a+x training_worker.sh
 ENTRYPOINT ["opentutor_classifier"]
 CMD [ "train" ]

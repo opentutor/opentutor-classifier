@@ -4,15 +4,19 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+import os
+from typing import List
+
 import pytest
+
 from opentutor_classifier import (
     AnswerClassifierInput,
     ExpectationClassifierResult,
     SpeechActClassifierResult,
 )
-from opentutor_classifier.svm import SVMAnswerClassifier, load_config_into_objects
-from . import fixture_path
-import os
+from opentutor_classifier.svm.predict import SVMAnswerClassifier
+from opentutor_classifier.svm.utils import dict_to_config
+from .helpers import fixture_path
 
 
 @pytest.fixture(scope="module")
@@ -49,7 +53,7 @@ def test_evaluates_one_expectation_for_q1(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=load_config_into_objects(config_data),
+            config_data=dict_to_config(config_data),
             expectation=input_expectation_number,
         )
     )
@@ -65,7 +69,7 @@ def test_evaluates_one_expectation_for_q1(
     [
         (
             "they need sunlight",
-            0,
+            -1,
             {
                 "question": "how can i grow better plants?",
                 "expectations": [
@@ -84,7 +88,7 @@ def test_evaluates_one_expectation_for_q1(
         ),
         (
             "peer pressure",
-            0,
+            -1,
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
                 "expectations": [
@@ -105,7 +109,7 @@ def test_evaluates_one_expectation_for_q1(
         ),
         (
             "influence from others can change your behavior",
-            0,
+            -1,
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
                 "expectations": [
@@ -118,7 +122,7 @@ def test_evaluates_one_expectation_for_q1(
         ),
         (
             "hi",
-            0,
+            -1,
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
                 "expectations": [
@@ -131,7 +135,7 @@ def test_evaluates_one_expectation_for_q1(
         ),
         (
             "some gibberish kjlsdafhalkjfha",
-            0,
+            -1,
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
                 "expectations": [
@@ -145,19 +149,19 @@ def test_evaluates_one_expectation_for_q1(
     ],
 )
 def test_evaluates_for_default_model(
-    model_root,
-    shared_root,
-    input_answer,
-    input_expectation_number,
-    config_data,
-    expected_results,
+    model_root: str,
+    shared_root: str,
+    input_answer: str,
+    input_expectation_number: int,
+    config_data: dict,
+    expected_results: List[ExpectationClassifierResult],
 ):
     model_root = os.path.join(model_root, "default")
     classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=load_config_into_objects(config_data),
+            config_data=dict_to_config(config_data),
             expectation=input_expectation_number,
         )
     )
@@ -192,7 +196,7 @@ def test_evaluates_one_expectation_for_q2(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=load_config_into_objects(config_data),
+            config_data=dict_to_config(config_data),
             expectation=input_expectation_number,
         )
     )
@@ -237,7 +241,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=load_config_into_objects(config_data),
+            config_data=dict_to_config(config_data),
             expectation=input_expectation_number,
         )
     )
@@ -347,7 +351,7 @@ def test_evaluates_meta_cognitive_sentences(
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
-            config_data=load_config_into_objects(config_data),
+            config_data=dict_to_config(config_data),
             expectation=input_expectation_number,
         )
     )

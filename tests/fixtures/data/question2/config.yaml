@@ -5,7 +5,7 @@
 ## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 ##
 question: "With a DC input source, does current flow in the same or the opposite direction of the diode arrow?"
-expectation_features:
+expectations:
   - good_regex:
       - '\b(sam\w*|const\w*|on\w*|eq(?!uip)\w*|id\w*n\w*[ck]\w*)\b'
       - '\b(left|anode)\b.*\b(right|cath\w*)\b'

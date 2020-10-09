@@ -7,10 +7,9 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, asdict
 import pandas as pd
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 import yaml
-from gensim.models import KeyedVectors
-from gensim.models.keyedvectors import Word2VecKeyedVectors
+from opentutor_classifier.speechact import SpeechActClassifierResult
 
 
 @dataclass
@@ -22,26 +21,38 @@ class ExpectationClassifierResult:
 
 @dataclass
 class ExpectationFeatures:
-    ideal: str
+    ideal: str = ""
+    bad_regex: List[str] = field(default_factory=list)
+    good_regex: List[str] = field(default_factory=list)
 
 
 @dataclass
 class QuestionConfig:
-    question: str
-    expectation_features: List[ExpectationFeatures]
+    question: str = ""
+    expectations: List[ExpectationFeatures] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.expectations = [
+            x if isinstance(x, ExpectationFeatures) else ExpectationFeatures(**x)
+            for x in self.expectations or []
+        ]
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+    def write_to(self, file_path: str):
+        with open(file_path, "w") as config_file:
+            yaml.safe_dump(asdict(self), config_file)
 
 
 @dataclass
 class AnswerClassifierInput:
     input_sentence: str
-    config_data: QuestionConfig
+    config_data: Optional[QuestionConfig] = None
     expectation: int = -1
 
-
-@dataclass
-class SpeechActClassifierResult:
-    evaluation: str = ""
-    score: float = 0.0
+    def to_dict(self) -> Dict:
+        return asdict(self)
 
 
 @dataclass
@@ -54,18 +65,37 @@ class AnswerClassifierResult:
         return asdict(self)
 
 
+@dataclass
+class ExpectationTrainingResult:
+    accuracy: float = 0
+
+
 class AnswerClassifier(ABC):
     @abstractmethod
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         raise NotImplementedError()
 
 
+@dataclass
+class TrainingResult:
+    lesson: str = ""
+    expectations: List[ExpectationTrainingResult] = field(default_factory=list)
+    models: str = ""
+    archive: str = ""
+
+    def to_dict(self) -> dict:
+        return {k: v for k, v in asdict(self).items() if v}
+
+
+@dataclass
+class TrainingInput:
+    lesson: str = ""
+    config: dict = field(default_factory=dict)
+    data: pd.DataFrame = field(default_factory=pd.DataFrame)
+
+
 def load_data(filename: str) -> pd.DataFrame:
     return pd.read_csv(filename, encoding="latin-1")
-
-
-def load_word2vec_model(path: str) -> Word2VecKeyedVectors:
-    return KeyedVectors.load_word2vec_format(path, binary=True)
 
 
 def load_yaml(file_path: str) -> Dict[str, Any]:

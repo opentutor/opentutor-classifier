@@ -4,7 +4,21 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from dataclasses import dataclass
+from typing import Dict
 
-import pytest
+from sklearn import svm
 
-pytest.register_assert_rewrite("tests.helpers")
+from opentutor_classifier import QuestionConfig
+
+
+@dataclass
+class ExpectationToEvaluate:
+    expectation: int
+    classifier: svm.SVC
+
+
+@dataclass
+class InstanceModels:
+    models_by_expectation_num: Dict[int, svm.SVC]
+    config: QuestionConfig

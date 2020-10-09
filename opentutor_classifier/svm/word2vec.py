@@ -4,7 +4,22 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from gensim.models import KeyedVectors
+from gensim.models.keyedvectors import Word2VecKeyedVectors
+from os import path
+from typing import Dict
 
-import pytest
+WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
 
-pytest.register_assert_rewrite("tests.helpers")
+
+def find_or_load_word2vec(file_path: str) -> Word2VecKeyedVectors:
+    abs_path = path.abspath(file_path)
+    if abs_path not in WORD2VEC_MODELS:
+        WORD2VEC_MODELS[abs_path] = KeyedVectors.load_word2vec_format(
+            abs_path, binary=True
+        )
+    return WORD2VEC_MODELS[abs_path]
+
+
+def load_word2vec_model(path: str) -> Word2VecKeyedVectors:
+    return KeyedVectors.load_word2vec_format(path, binary=True)

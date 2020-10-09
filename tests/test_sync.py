@@ -8,7 +8,7 @@ import os
 import responses
 from os import path
 from opentutor_classifier.sync import sync
-from . import fixture_path
+from .helpers import fixture_path
 
 
 def __sync(tmpdir, lesson: str, url: str):
@@ -21,7 +21,7 @@ def __sync(tmpdir, lesson: str, url: str):
 def test_sync_data_from_api(tmpdir):
     responses.add(
         responses.POST,
-        "https://dev-opentutor.pal3.org/grading-api",
+        "https://dev-opentutor.pal3.org/graphql",
         json={
             "data": {
                 "trainingData": {
@@ -32,15 +32,15 @@ def test_sync_data_from_api(tmpdir):
         },
         status=200,
     )
-    output_dir = __sync(tmpdir, "q1", "https://dev-opentutor.pal3.org/grading-api")
+    output_dir = __sync(tmpdir, "q1", "https://dev-opentutor.pal3.org/graphql")
     assert path.exists(path.join(output_dir, "training.csv"))
     with open(path.join(output_dir, "training.csv")) as f:
-        assert f.read() == "exp_num,text,label\n0,peer pressure,Good"
+        assert f.read() == "exp_num,text,label\n0,peer pressure,Good\n"
     assert path.exists(path.join(output_dir, "config.yaml"))
     with open(path.join(output_dir, "config.yaml")) as f:
         assert (
             f.read()
-            == 'question: "What are the challenges to demonstrating integrity in a group?"'
+            == "question: What are the challenges to demonstrating integrity in a group?\n"
         )
 
 
@@ -50,10 +50,10 @@ def test_sync_data_from_file(tmpdir):
     )
     assert path.exists(path.join(output_dir, "training.csv"))
     with open(path.join(output_dir, "training.csv")) as f:
-        assert f.read() == "exp_num,text,label\n0,peer pressure,Good"
+        assert f.read() == "exp_num,text,label\n0,peer pressure,Good\n"
     assert path.exists(path.join(output_dir, "config.yaml"))
     with open(path.join(output_dir, "config.yaml")) as f:
         assert (
             f.read()
-            == 'question: "What are the challenges to demonstrating integrity in a group?"'
+            == "question: What are the challenges to demonstrating integrity in a group?\n"
         )
