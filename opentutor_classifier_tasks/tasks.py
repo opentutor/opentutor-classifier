@@ -33,7 +33,6 @@ SHARED_ROOT = os.environ.get("SHARED_ROOT") or "shared"
 
 @celery.task()
 def train_task(lesson: str) -> dict:
-    time.sleep(3)
     return train_online(
         lesson,
         archive_root=ARCHIVE_ROOT,
