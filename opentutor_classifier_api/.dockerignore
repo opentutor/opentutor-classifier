@@ -1,0 +1,8 @@
+
+.cov*
+.pytest_cache
+.venv
+htmlcov
+tests
+.mypy_cache
+.vscode

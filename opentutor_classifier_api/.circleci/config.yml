@@ -1,0 +1,138 @@
+version: 2.1
+aliases:
+  - &only-tagged-releases
+    tags:
+      only: /^\d+\.\d+\.\d+(-[a-z\d\-.]+)?$/
+    branches:
+      ignore: /.*/
+  - &only-untagged
+    tags:
+      ignore: /.*/
+executors:
+  python:
+    docker:
+      - image: circleci/python:3.8
+orbs:
+  docker: circleci/docker@1.2.1
+jobs:
+  test-format:
+    executor: python
+    steps:
+      - checkout
+      - run:
+          name: Test format for python
+          command: make test-format
+  test-lint:
+    executor: python
+    steps:
+      - checkout
+      - run:
+          name: Test lint for python
+          command: make test-lint
+  test-license:
+    executor: python
+    steps:
+      - checkout
+      - run:
+          name: Test license
+          command: make test-license
+  test-types:
+    executor: python
+    steps:
+      - checkout
+      - run:
+          name: Test types for python
+          command: make test-types
+  test:
+    executor: python
+    steps:
+      - checkout
+      - run:
+          name: Run tests
+          command: make test
+  build-and-push:
+    parameters:
+      is-release-tag:
+        type: boolean
+        default: false
+    executor: docker/docker
+    steps:
+      - unless:
+          condition: <<parameters.is-release-tag>>
+          steps:
+            - run: 
+                name: "set image tag to commit sha"
+                command: |
+                  echo 'export IMAGE_TAG="$CIRCLE_SHA1"' >> $BASH_ENV
+      - when:
+          condition: <<parameters.is-release-tag>>
+          steps:
+            - run: 
+                name: "override image tag to release tag"
+                command: |
+                  echo 'export IMAGE_TAG="$CIRCLE_TAG"' >> $BASH_ENV
+      - run:
+          name: report tag
+          command: echo "building tag uscictdocker/opentutor-classifier-api:${IMAGE_TAG}..."
+      - setup_remote_docker
+      - checkout
+      - docker/check
+      - docker/build:
+          image: uscictdocker/opentutor-classifier-api
+          tag: ${IMAGE_TAG}
+      - docker/push:
+          digest-path: /tmp/digest.txt
+          image: uscictdocker/opentutor-classifier-api
+          tag: ${IMAGE_TAG}
+      - run:
+          command: |
+            echo "Digest is: $(</tmp/digest.txt)"
+workflows:
+  test-build-deploy:
+    jobs:
+      - test-format:
+          filters: *only-untagged
+      - test-lint:
+          filters: *only-untagged
+      - test-license:
+          filters: *only-untagged
+      - test-types:
+          filters: *only-untagged
+      - test:
+          filters: *only-untagged
+      - approve-build-and-push:
+          filters: *only-untagged
+          type: approval
+          requires:
+            - test
+            - test-format
+            - test-lint
+            - test-license
+            - test-types
+      - build-and-push:
+          is-release-tag: false
+          filters: *only-untagged
+          requires:
+            - approve-build-and-push
+  test-build-deploy-release:
+    jobs:
+      - test-format:
+          filters: *only-tagged-releases
+      - test-lint:
+          filters: *only-tagged-releases
+      - test-license:
+          filters: *only-tagged-releases
+      - test-types:
+          filters: *only-tagged-releases
+      - test:
+          filters: *only-tagged-releases
+      - build-and-push:
+          is-release-tag: true
+          filters: *only-tagged-releases
+          requires:
+            - test
+            - test-format
+            - test-lint
+            - test-license
+            - test-types
+
