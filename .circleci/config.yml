@@ -47,6 +47,8 @@ jobs:
           docker_layer_caching: true
       - docker/check
       - docker/build:
+          docker-context: opentutor_classifier
+          path: opentutor_classifier
           image: uscictdocker/opentutor-classifier
           tag: "${IMAGE_TAG}"
       - docker/push:
@@ -56,62 +58,34 @@ jobs:
       - run:
           command: |
             echo "Digest is: $(</tmp/digest.txt)"
-  test-format:
-    executor: python
-    steps:
-      - checkout
-      - run:
-          name: Test format
-          command: make test-format
-  test-lint:
-    executor: python
-    steps:
-      - checkout
-      - run:
-          name: Test lint
-          command: make test-lint
-  test-license:
-    executor: python
-    steps:
-      - checkout
-      - run:
-          name: Test license
-          command: make test-license
-  test-types:
-    executor: python
-    steps:
-      - checkout
-      - run:
-          name: Test types
-          command: make test-types
   test:
     executor: python
     steps:
       - checkout
       - run:
-          name: Run tests
-          command: make test
+          name: Test format
+          command: cd opentutor_classifier && make test-format
+      - run:
+          name: Test lint
+          command: cd opentutor_classifier && make test-lint
+      - run:
+          name: Test license
+          command: cd opentutor_classifier && make test-license
+      - run:
+          name: Test types
+          command: cd opentutor_classifier && make test-types
+      - run:
+          name: Test behavior
+          command: cd opentutor_classifier && make test
 workflows:
   test-build-publish:
     jobs:
-      - test-format:
-          filters: *only-untagged
-      - test-lint:
-          filters: *only-untagged
-      - test-license:
-          filters: *only-untagged
-      - test-types:
-          filters: *only-untagged
       - test:
           filters: *only-untagged
       - approve-build-and-push:
           filters: *only-untagged
           type: approval
           requires:
-            - test-format
-            - test-lint
-            - test-license
-            - test-types
             - test
       - build-and-push:
           is-release-tag: false
@@ -120,22 +94,10 @@ workflows:
             - approve-build-and-push
   test-build-deploy-release:
     jobs:
-      - test-format:
-          filters: *only-tagged-releases
-      - test-lint:
-          filters: *only-tagged-releases
-      - test-license:
-          filters: *only-tagged-releases
-      - test-types:
-          filters: *only-tagged-releases
       - test:
           filters: *only-tagged-releases
       - build-and-push:
           is-release-tag: true
           filters: *only-tagged-releases
           requires:
-            - test-format
-            - test-lint
-            - test-license
-            - test-types
             - test
