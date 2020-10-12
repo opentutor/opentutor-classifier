@@ -1,7 +1,9 @@
 BLACK_EXCLUDES="/(\.venv|build)/"
 DOCKER_IMAGE?=opentutor-classifier-api
 DOCKER_IMAGE_ID=$(shell docker images -q ${DOCKER_IMAGE} 2> /dev/null)
-
+ROOT=$(shell dirname ${PWD})
+LICENSE=${ROOT}/LICENSE
+LICENSE_HEADER=${ROOT}/LICENSE_HEADER
 VENV=.venv
 VENV_PIP=$(VENV)/bin/pip
 $(VENV):
@@ -72,20 +74,20 @@ test-types: $(VENV)
 update-deps: $(VENV)
 	. $(VENV)/bin/activate && pip-upgrade requirements*
 
-LICENSE:
+$(LICENSE):
 	@echo "you must have a LICENSE file" 1>&2
 	exit 1
 
-LICENSE_HEADER:
+$(LICENSE_HEADER):
 	@echo "you must have a LICENSE_HEADER file" 1>&2
 	exit 1
 
 .PHONY: license
-license: LICENSE LICENSE_HEADER $(VENV)
-	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d src
-	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d tests
+license: $(LICENSE) $(LICENSE_HEADER) $(VENV)
+	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d src
+	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d tests
 
 .PHONY: test-license
-test-license: LICENSE LICENSE_HEADER $(VENV)
-	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d src --check
-	$(VENV)/bin/python3.8 -m licenseheaders -t LICENSE_HEADER -d tests --check
+test-license: $(LICENSE) $(LICENSE_HEADER) $(VENV)
+	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d src --check
+	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d tests --check

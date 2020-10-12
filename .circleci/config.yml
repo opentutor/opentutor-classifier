@@ -51,32 +51,44 @@ jobs:
           path: opentutor_classifier
           image: uscictdocker/opentutor-classifier
           tag: "${IMAGE_TAG}"
+      - docker/build:
+          docker-context: opentutor_classifier_api
+          path: opentutor_classifier_api
+          image: uscictdocker/opentutor-classifier-api
+          tag: "${IMAGE_TAG}"
       - docker/push:
-          digest-path: /tmp/digest.txt
+          digest-path: /tmp/digest-opentutor-classifier.txt
           image: uscictdocker/opentutor-classifier
           tag: "${IMAGE_TAG}"
       - run:
           command: |
-            echo "Digest is: $(</tmp/digest.txt)"
+            echo "opentutor-classifier digest is: $(</tmp/digest-opentutor-classifier.txt)"
+      - docker/push:
+          digest-path: /tmp/digest-opentutor-classifier-api.txt
+          image: uscictdocker/opentutor-classifier-api
+          tag: "${IMAGE_TAG}"
+      - run:
+          command: |
+            echo "opentutor-classifier-api digest is: $(</tmp/digest-opentutor-classifier-api.txt)"
   test:
     executor: python
     steps:
       - checkout
       - run:
           name: Test format
-          command: cd opentutor_classifier && make test-format
+          command: make test-format
       - run:
           name: Test lint
-          command: cd opentutor_classifier && make test-lint
+          command: make test-lint
       - run:
           name: Test license
-          command: cd opentutor_classifier && make test-license
+          command: make test-license
       - run:
           name: Test types
-          command: cd opentutor_classifier && make test-types
+          command: make test-types
       - run:
           name: Test behavior
-          command: cd opentutor_classifier && make test
+          command: make test
 workflows:
   test-build-publish:
     jobs:
