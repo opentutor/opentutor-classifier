@@ -37,10 +37,7 @@ from .predict import (  # noqa: F401
     SVMAnswerClassifier,
     SVMExpectationClassifier,
 )
-from opentutor_classifier.utils import (
-    load_data,
-    load_yaml,
-)
+from opentutor_classifier.utils import load_data, load_yaml
 from .word2vec import find_or_load_word2vec
 
 
@@ -140,9 +137,7 @@ class SVMAnswerClassifierTraining:
         archive_root: str = "archive",
         output_dir: str = "output",
     ) -> TrainingResult:
-        logging.warn(f"what is train_input.conifig? {train_input.config}")
         question = train_input.config.question or ""
-        # conf_exps_in = train_input.config.get("expectations") or []
         if not question:
             raise ValueError("config must have a 'question'")
         train_data = (
@@ -185,12 +180,7 @@ class SVMAnswerClassifierTraining:
                 ExpectationConfig(
                     ideal=train_input.config.get_expectation_ideal(exp_num)
                     or " ".join(ideal_answer),
-                    features=(
-                        dict(
-                            good=good,
-                            bad=bad,
-                        )
-                    ),
+                    features=(dict(good=good, bad=bad)),
                 )
             )
             features = [

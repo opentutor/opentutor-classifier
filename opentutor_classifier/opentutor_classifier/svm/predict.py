@@ -9,18 +9,15 @@ from glob import glob
 import json
 import math
 from os import path, makedirs
-import re
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
-import numpy as np
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
+import numpy as np
 from sklearn import model_selection, svm
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
-from scipy import spatial
-from scipy.optimize import linear_sum_assignment
 from sklearn.model_selection import LeaveOneOut
 import pandas as pd
 
@@ -31,13 +28,12 @@ from opentutor_classifier import (
     ExpectationClassifierResult,
     QuestionConfig,
 )
-from opentutor_classifier.utils import (
-    load_data,
-    load_yaml,
-)
+from opentutor_classifier.utils import load_data, load_yaml
 from opentutor_classifier.speechact import SpeechActClassifier
 from opentutor_classifier.stopwords import STOPWORDS
 from .dtos import ExpectationToEvaluate, InstanceModels
+
+from . import features
 from .utils import load_instances
 from .word2vec import find_or_load_word2vec
 
@@ -82,122 +78,6 @@ class SVMExpectationClassifier:
         train_y = encoder.fit_transform(train_y)
         return train_y
 
-    def word_overlap_feature(self, example, ideal):
-        intersection = set(ideal).intersection(set(example))
-        score = len(intersection) / len(set(ideal))
-        return score
-
-    def avg_feature_vector(
-        self,
-        words: List[str],
-        model: Word2VecKeyedVectors,
-        num_features: int,
-        index2word_set,
-    ) -> np.ndarray:
-        feature_vec = np.zeros((num_features,), dtype="float32")
-        nwords = 0
-        common_words = set(words).intersection(index2word_set)
-        for word in common_words:
-            nwords = nwords + 1
-            feature_vec = np.add(feature_vec, model[word])
-        if nwords > 0:
-            feature_vec = np.divide(feature_vec, nwords)
-        return feature_vec
-
-    def calculate_similarity(self, a: float, b: float) -> float:
-        similarity = 1 - spatial.distance.cosine(a, b)
-        return similarity if not math.isnan(similarity) else 0
-
-    def word2vec_question_similarity_feature(
-        self, word2vec: Word2VecKeyedVectors, index2word_set, example, question
-    ):
-
-        example_feature_vec = self.avg_feature_vector(
-            example, model=word2vec, num_features=300, index2word_set=index2word_set
-        )
-        question_feature_vec = self.avg_feature_vector(
-            question, model=word2vec, num_features=300, index2word_set=index2word_set
-        )
-        similarity = self.calculate_similarity(
-            example_feature_vec, question_feature_vec
-        )
-        return similarity
-
-    def word2vec_example_similarity_feature(
-        self, word2vec: Word2VecKeyedVectors, index2word_set, example, ideal
-    ) -> float:
-        example_feature_vec = self.avg_feature_vector(
-            example, model=word2vec, num_features=300, index2word_set=index2word_set
-        )
-        ia_feature_vec = self.avg_feature_vector(
-            ideal, model=word2vec, num_features=300, index2word_set=index2word_set
-        )
-        return self.calculate_similarity(example_feature_vec, ia_feature_vec)
-
-    def word_alignment_feature(self, example, ia, word2vec, index2word_set) -> float:
-        cost = []
-        n_exact_matches = len(set(ia).intersection(set(example)))
-        ia, example = (
-            list(set(ia).difference(example)),
-            list(set(example).difference(ia)),
-        )
-        if not ia:
-            return 1
-
-        for ia_i in ia:
-            inner_cost = []
-            for e in example:
-                dist = self.word2vec_example_similarity_feature(
-                    word2vec, index2word_set, [e], [ia_i]
-                )
-                inner_cost.append(dist)
-            cost.append(inner_cost)
-        row_idx, col_idx = linear_sum_assignment(cost, maximize=True)
-        score = (
-            n_exact_matches + sum([cost[r][c] for r, c in zip(row_idx, col_idx)])
-        ) / float(len(ia) + n_exact_matches)
-        return score
-
-    def length_ratio_feature(self, example: List[str], ideal: List[str]) -> float:
-        return len(example) / float(len(ideal)) if len(ideal) > 0 else 0.0
-
-    def number_of_negatives(self, example) -> Tuple[float, float]:
-        negative_regex = r"\b(?:no|never|nothing|nowhere|none|not|havent|hasnt|hadnt|cant|couldnt|shouldnt|wont|wouldnt|dont|doesnt|didnt|isnt|arent|aint)\b"
-        str_example = " ".join(example)
-        replaced_example = re.sub("[.*'.*]", "", str_example)
-        no_of_negatives = len(re.findall(negative_regex, replaced_example))
-        return (no_of_negatives, 1 if no_of_negatives % 2 == 0 else 0)
-
-    # def get_regex(self, exp_num, dict_expectation_features, regex_type):
-    #     try:
-    #         regex = dict_expectation_features[exp_num][regex_type]
-    #     except Exception:
-    #         regex = []
-
-    #     return regex
-
-    def good_regex_features(self, example: List[str], good: List[str]) -> float:
-        str_example = " ".join(example)
-        count = 0
-        for r in good:
-            if re.search(r, str_example):
-                count += 1
-        try:
-            return float(count / len(good))
-        except Exception:
-            return 0
-
-    def bad_regex_features(self, example: List[str], bad: List[str]) -> float:
-        str_example = " ".join(example)
-        count = 0
-        for r in bad:
-            if re.search(r, str_example):
-                count += 1
-        try:
-            return float(count / len(bad))
-        except Exception:
-            return 0
-
     def calculate_features(
         self,
         question: List[str],
@@ -207,36 +87,26 @@ class SVMExpectationClassifier:
         index2word_set: set,
         good: List[str],
         bad: List[str],
-    ) -> list:
-        feature_array = []
-        good_regex_score = self.good_regex_features(example, good)
-        feature_array.append(good_regex_score)
-        bad_regex_score = self.bad_regex_features(example, bad)
-        feature_array.append(bad_regex_score)
-        no_of_negatives, even_negatives = self.number_of_negatives(example)
-        feature_array.append(no_of_negatives)
-        feature_array.append(even_negatives)
-        feature_array.append(
-            self.word_alignment_feature(example, ideal, word2vec, index2word_set)
-        )
-        feature_array.append(self.length_ratio_feature(example, ideal))
-        feature_array.append(
-            self.word2vec_example_similarity_feature(
+    ) -> List[float]:
+        return [
+            features.regex_match_ratio(example, good),
+            features.regex_match_ratio(example, bad),
+            *features.number_of_negatives(example),
+            features.word_alignment_feature(example, ideal, word2vec, index2word_set),
+            features.length_ratio_feature(example, ideal),
+            features.word2vec_example_similarity(
                 word2vec, index2word_set, example, ideal
-            )
-        )
-        feature_array.append(
-            self.word2vec_question_similarity_feature(
+            ),
+            features.word2vec_question_similarity(
                 word2vec, index2word_set, example, question
-            )
-        )
-        return feature_array
+            ),
+        ]
 
-    def train(self, model, train_features, train_y):
+    def train(self, model: svm.SVC, train_features: np.ndarray, train_y: np.ndarray):
         model.fit(train_features, train_y)
         return model
 
-    def predict(self, model, test_features):
+    def predict(self, model: svm.SVC, test_features: np.ndarray) -> np.ndarray:
         return model.predict(test_features)
 
     def combine_dataset(self, data_root):

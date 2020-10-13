@@ -152,12 +152,12 @@ def test_outputs_models_at_specified_model_root_for_default_model(
                 ),
             ],
         ),
-        # (
-        #     "question2",
-        #     "Current flows in the same direction as the arrow",
-        #     [ExpectationTrainingResult(accuracy=1.0)],
-        #     [ExpectationClassifierResult(evaluation="Good", score=0.96, expectation=0)],
-        # ),
+        (
+            "question2",
+            "Current flows in the same direction as the arrow",
+            [ExpectationTrainingResult(accuracy=1.0)],
+            [ExpectationClassifierResult(evaluation="Good", score=0.96, expectation=0)],
+        ),
     ],
 )
 def test_train_and_predict(
