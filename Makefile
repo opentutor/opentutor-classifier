@@ -1,3 +1,8 @@
+.PHONY: docker-build
+docker-build:
+	cd opentutor_classifier && $(MAKE) docker-build
+	cd opentutor_classifier_api && $(MAKE) docker-build
+
 .PHONY: format
 format:
 	cd opentutor_classifier && $(MAKE) format

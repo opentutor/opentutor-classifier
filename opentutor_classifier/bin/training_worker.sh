@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-celery worker --app opentutor_classifier_tasks.tasks.celery --loglevel=info
+celery --app opentutor_classifier_tasks.tasks.celery worker --loglevel=INFO
