@@ -31,6 +31,5 @@ QuestionAnswerLog.csv
 */videos
 .ipynb_checkpoints
 models
-!tests/fixtures/models
 *.bin
 *.zip

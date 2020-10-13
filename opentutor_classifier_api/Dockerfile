@@ -4,6 +4,9 @@ RUN apt-get update && apt-get install -y git \
 ADD requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 RUN rm /tmp/requirements.txt
+COPY build /tmp/build
+RUN pip install /tmp/build/opentutor_classifier
+RUN rm -rf /tmp/build
 ENV FLASK_APP=opentutor_classifier_api
 WORKDIR /app
 COPY src .

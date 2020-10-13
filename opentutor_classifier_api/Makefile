@@ -4,6 +4,7 @@ DOCKER_IMAGE_ID=$(shell docker images -q ${DOCKER_IMAGE} 2> /dev/null)
 ROOT=$(shell dirname ${PWD})
 LICENSE=${ROOT}/LICENSE
 LICENSE_HEADER=${ROOT}/LICENSE_HEADER
+OPENTUTOR_CLASSIFIER_SRC=$(ROOT)/opentutor_classifier
 VENV=.venv
 VENV_PIP=$(VENV)/bin/pip
 $(VENV):
@@ -19,6 +20,7 @@ $(VENV)-update: $(VENV)-installed
 	$(VENV_PIP) install --upgrade pip
 	$(VENV_PIP) install -r requirements.txt
 	$(VENV_PIP) install -r requirements.test.txt
+	$(VENV_PIP) install ../opentutor_classifier
 	$(VENV)/bin/python3.8 -m nltk.downloader punkt
 	$(VENV)/bin/python3.8 -m nltk.downloader wordnet
 	$(VENV)/bin/python3.8 -m nltk.downloader averaged_perceptron_tagger
@@ -26,10 +28,20 @@ $(VENV)-update: $(VENV)-installed
 
 .PHONY clean:
 clean:
-	rm -rf .pytest_cache .mypy_cache
+	rm -rf .pytest_cache .mypy_cache build
 
+build/opentutor_classifier:
+	mkdir -p build
+	rsync -rv \
+			--exclude .venv \
+			--exclude htmlcov \
+			--exclude .pytest_cache \
+			--exclude tests \
+			--exclude __pycache__ \
+		$(OPENTUTOR_CLASSIFIER_SRC) build
+	
 .PHONY docker-build:
-docker-build:
+docker-build: clean build/opentutor_classifier
 	docker build -t $(DOCKER_IMAGE) .
 
 .PHONY docker-build:

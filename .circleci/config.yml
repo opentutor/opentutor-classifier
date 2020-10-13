@@ -42,6 +42,9 @@ jobs:
           name: report tag
           command: echo "building tag uscictdocker/opentutor-classifier:${IMAGE_TAG}..."
       - checkout
+      - run:
+          name: Install build tools
+          command: sudo apt-get update && sudo apt-get install rsync
       - setup_remote_docker:
           version: 18.09.3
           docker_layer_caching: true
@@ -51,6 +54,9 @@ jobs:
           path: opentutor_classifier
           image: uscictdocker/opentutor-classifier
           tag: "${IMAGE_TAG}"
+      - run:
+          name: setup opentutor_classifier for local install
+          command: cd opentutor_classifier_api && make build/opentutor_classifier
       - docker/build:
           docker-context: opentutor_classifier_api
           path: opentutor_classifier_api
