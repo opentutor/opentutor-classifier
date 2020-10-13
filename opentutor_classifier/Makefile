@@ -77,7 +77,7 @@ update-deps: $(VENV)
 	. $(VENV)/bin/activate && pip-upgrade requirements*
 
 virtualenv-installed:
-	tools/virtualenv_ensure_installed.sh
+	$(ROOT)/tools/virtualenv_ensure_installed.sh
 
 $(LICENSE):
 	@echo "you must have a LICENSE file" 1>&2

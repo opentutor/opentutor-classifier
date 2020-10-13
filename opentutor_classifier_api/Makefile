@@ -12,7 +12,7 @@ $(VENV):
 
 .PHONY $(VENV)-installed:
 $(VENV)-installed:
-	tools/virtualenv_ensure_installed.sh
+	$(ROOT)/tools/virtualenv_ensure_installed.sh
 
 .PHONY: $(VENV)-update
 $(VENV)-update: $(VENV)-installed
