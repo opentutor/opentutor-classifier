@@ -11,18 +11,14 @@ from celery import Celery
 from opentutor_classifier.svm import train_online
 
 config = {
-    "CELERY_BROKER_URL": os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0"),
-    "CELERY_RESULT_BACKEND": os.environ.get(
-        "CELERY_RESULT_BACKEND", "redis://redis:6379/0"
-    ),
-    "CELERY_ACCEPT_CONTENT": ["json"],
-    "CELERY_TASK_SERIALIZER": os.environ.get(
-        "CELERYCELERY_TASK_SERIALIZER_RESULT_BACKEND", "json"
-    ),
-    "CELERY_EVENT_SERIALIZER": os.environ.get("CELERY_EVENT_SERIALIZER", "json"),
-    "CELERY_RESULT_SERIALIZER": os.environ.get("CELERY_RESULT_SERIALIZER", "json"),
+    "broker_url": os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0"),
+    "result_backend": os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379/0"),
+    "accept_content": ["json"],
+    "task_serializer": os.environ.get("CELERY_TASK_SERIALIZER", "json"),
+    "event_serializer": os.environ.get("CELERY_EVENT_SERIALIZER", "json"),
+    "result_serializer": os.environ.get("CELERY_RESULT_SERIALIZER", "json"),
 }
-celery = Celery("opentutor-classifier-tasks", broker=config["CELERY_BROKER_URL"])
+celery = Celery("opentutor-classifier-tasks", broker=config["broker_url"])
 celery.conf.update(config)
 
 ARCHIVE_ROOT = os.environ.get("ARCHIVE_ROOT") or "archive"

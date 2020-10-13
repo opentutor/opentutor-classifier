@@ -11,7 +11,7 @@ import yaml
 
 from sklearn import svm
 
-from opentutor_classifier import ExpectationFeatures, QuestionConfig
+from opentutor_classifier import ExpectationConfig, QuestionConfig
 from .dtos import InstanceModels
 
 
@@ -41,7 +41,7 @@ def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
         QuestionConfig(
             question=config_data.get("question", ""),
             expectations=[
-                ExpectationFeatures(ideal=i["ideal"])
+                ExpectationConfig(ideal=i["ideal"])
                 for i in config_data.get("expectations", [])
             ],
         )
