@@ -4,14 +4,15 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from pathlib import Path
+from typing import Any, Dict
+import pandas as pd
+import yaml
 
-from .api import fetch_training_data
+
+def load_data(filename: str) -> pd.DataFrame:
+    return pd.read_csv(filename, encoding="latin-1")
 
 
-def sync(lesson: str, url: str, output: str):
-    data = fetch_training_data(lesson, url)
-    Path(output).mkdir(parents=True, exist_ok=True)
-    with open(f"{output}/training.csv", "w+", newline="") as file:
-        file.write(data.data.to_csv(index=False))
-    data.config.write_to(f"{output}/config.yaml")
+def load_yaml(file_path: str) -> Dict[str, Any]:
+    with open(file_path, "r") as yaml_file:
+        return yaml.load(yaml_file, Loader=yaml.FullLoader)

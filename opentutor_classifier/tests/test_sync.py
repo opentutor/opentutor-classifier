@@ -7,6 +7,7 @@
 import os
 import responses
 from os import path
+from opentutor_classifier import load_question_config, QuestionConfig
 from opentutor_classifier.sync import sync
 from .helpers import fixture_path
 
@@ -33,27 +34,27 @@ def test_sync_data_from_api(tmpdir):
         status=200,
     )
     output_dir = __sync(tmpdir, "q1", "https://dev-opentutor.pal3.org/graphql")
-    assert path.exists(path.join(output_dir, "training.csv"))
-    with open(path.join(output_dir, "training.csv")) as f:
+    expected_training_csv_path = path.join(output_dir, "training.csv")
+    assert path.exists(expected_training_csv_path)
+    with open(expected_training_csv_path) as f:
         assert f.read() == "exp_num,text,label\n0,peer pressure,Good\n"
-    assert path.exists(path.join(output_dir, "config.yaml"))
-    with open(path.join(output_dir, "config.yaml")) as f:
-        assert (
-            f.read()
-            == "question: What are the challenges to demonstrating integrity in a group?\n"
-        )
+    expected_config_path = path.join(output_dir, "config.yaml")
+    assert path.exists(expected_config_path)
+    assert load_question_config(expected_config_path) == QuestionConfig(
+        question="What are the challenges to demonstrating integrity in a group?"
+    )
 
 
 def test_sync_data_from_file(tmpdir):
     output_dir = __sync(
         tmpdir, "q1", fixture_path(os.path.join("graphql", "example-1.json"))
     )
-    assert path.exists(path.join(output_dir, "training.csv"))
-    with open(path.join(output_dir, "training.csv")) as f:
+    expected_training_csv_path = path.join(output_dir, "training.csv")
+    assert path.exists(expected_training_csv_path)
+    with open(expected_training_csv_path) as f:
         assert f.read() == "exp_num,text,label\n0,peer pressure,Good\n"
-    assert path.exists(path.join(output_dir, "config.yaml"))
-    with open(path.join(output_dir, "config.yaml")) as f:
-        assert (
-            f.read()
-            == "question: What are the challenges to demonstrating integrity in a group?\n"
-        )
+    expected_config_path = path.join(output_dir, "config.yaml")
+    assert path.exists(expected_config_path)
+    assert load_question_config(expected_config_path) == QuestionConfig(
+        question="What are the challenges to demonstrating integrity in a group?"
+    )

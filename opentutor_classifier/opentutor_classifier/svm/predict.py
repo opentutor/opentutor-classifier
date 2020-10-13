@@ -10,7 +10,7 @@ import json
 import math
 from os import path, makedirs
 import re
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import numpy as np
 from gensim.models.keyedvectors import Word2VecKeyedVectors
@@ -30,6 +30,8 @@ from opentutor_classifier import (
     AnswerClassifierResult,
     ExpectationClassifierResult,
     QuestionConfig,
+)
+from opentutor_classifier.utils import (
     load_data,
     load_yaml,
 )
@@ -85,7 +87,13 @@ class SVMExpectationClassifier:
         score = len(intersection) / len(set(ideal))
         return score
 
-    def avg_feature_vector(self, words, model, num_features, index2word_set):
+    def avg_feature_vector(
+        self,
+        words: List[str],
+        model: Word2VecKeyedVectors,
+        num_features: int,
+        index2word_set,
+    ) -> np.ndarray:
         feature_vec = np.zeros((num_features,), dtype="float32")
         nwords = 0
         common_words = set(words).intersection(index2word_set)
@@ -96,11 +104,9 @@ class SVMExpectationClassifier:
             feature_vec = np.divide(feature_vec, nwords)
         return feature_vec
 
-    def calculate_similarity(self, a, b):
+    def calculate_similarity(self, a: float, b: float) -> float:
         similarity = 1 - spatial.distance.cosine(a, b)
-        if math.isnan(similarity):
-            similarity = 0
-        return similarity
+        return similarity if not math.isnan(similarity) else 0
 
     def word2vec_question_similarity_feature(
         self, word2vec: Word2VecKeyedVectors, index2word_set, example, question
@@ -119,17 +125,16 @@ class SVMExpectationClassifier:
 
     def word2vec_example_similarity_feature(
         self, word2vec: Word2VecKeyedVectors, index2word_set, example, ideal
-    ):
+    ) -> float:
         example_feature_vec = self.avg_feature_vector(
             example, model=word2vec, num_features=300, index2word_set=index2word_set
         )
         ia_feature_vec = self.avg_feature_vector(
             ideal, model=word2vec, num_features=300, index2word_set=index2word_set
         )
-        similarity = self.calculate_similarity(example_feature_vec, ia_feature_vec)
-        return similarity
+        return self.calculate_similarity(example_feature_vec, ia_feature_vec)
 
-    def word_alignment_feature(self, example, ia, word2vec, index2word_set):
+    def word_alignment_feature(self, example, ia, word2vec, index2word_set) -> float:
         cost = []
         n_exact_matches = len(set(ia).intersection(set(example)))
         ia, example = (
@@ -153,48 +158,43 @@ class SVMExpectationClassifier:
         ) / float(len(ia) + n_exact_matches)
         return score
 
-    def length_ratio_feature(self, example, ideal):
-        return len(example) / len(ideal)
+    def length_ratio_feature(self, example: List[str], ideal: List[str]) -> float:
+        return len(example) / float(len(ideal)) if len(ideal) > 0 else 0.0
 
-    def number_of_negatives(self, example):
+    def number_of_negatives(self, example) -> Tuple[float, float]:
         negative_regex = r"\b(?:no|never|nothing|nowhere|none|not|havent|hasnt|hadnt|cant|couldnt|shouldnt|wont|wouldnt|dont|doesnt|didnt|isnt|arent|aint)\b"
         str_example = " ".join(example)
         replaced_example = re.sub("[.*'.*]", "", str_example)
         no_of_negatives = len(re.findall(negative_regex, replaced_example))
-        if no_of_negatives % 2 == 0:
-            even_negatives = 1
-        else:
-            even_negatives = 0
-        return no_of_negatives, even_negatives
+        return (no_of_negatives, 1 if no_of_negatives % 2 == 0 else 0)
 
-    def get_regex(self, exp_num, dict_expectation_features, regex_type):
-        try:
-            regex = dict_expectation_features[exp_num][regex_type]
-        except Exception:
-            regex = []
+    # def get_regex(self, exp_num, dict_expectation_features, regex_type):
+    #     try:
+    #         regex = dict_expectation_features[exp_num][regex_type]
+    #     except Exception:
+    #         regex = []
 
-        return regex
+    #     return regex
 
-    def good_regex_features(self, example, good_regex):
+    def good_regex_features(self, example: List[str], good: List[str]) -> float:
         str_example = " ".join(example)
         count = 0
-
-        for r in good_regex:
+        for r in good:
             if re.search(r, str_example):
                 count += 1
         try:
-            return float(count / len(good_regex))
+            return float(count / len(good))
         except Exception:
             return 0
 
-    def bad_regex_features(self, example, bad_regex):
+    def bad_regex_features(self, example: List[str], bad: List[str]) -> float:
         str_example = " ".join(example)
         count = 0
-        for r in bad_regex:
+        for r in bad:
             if re.search(r, str_example):
                 count += 1
         try:
-            return float(count / len(bad_regex))
+            return float(count / len(bad))
         except Exception:
             return 0
 
@@ -205,27 +205,21 @@ class SVMExpectationClassifier:
         ideal: List[str],
         word2vec: Word2VecKeyedVectors,
         index2word_set: set,
-        good_regex: List[str],
-        bad_regex: List[str],
-    ):
+        good: List[str],
+        bad: List[str],
+    ) -> list:
         feature_array = []
-
-        good_regex_score = self.good_regex_features(example, good_regex)
+        good_regex_score = self.good_regex_features(example, good)
         feature_array.append(good_regex_score)
-
-        bad_regex_score = self.bad_regex_features(example, bad_regex)
+        bad_regex_score = self.bad_regex_features(example, bad)
         feature_array.append(bad_regex_score)
-
         no_of_negatives, even_negatives = self.number_of_negatives(example)
         feature_array.append(no_of_negatives)
         feature_array.append(even_negatives)
-
         feature_array.append(
             self.word_alignment_feature(example, ideal, word2vec, index2word_set)
         )
-
         feature_array.append(self.length_ratio_feature(example, ideal))
-
         feature_array.append(
             self.word2vec_example_similarity_feature(
                 word2vec, index2word_set, example, ideal
@@ -375,8 +369,8 @@ class SVMAnswerClassifier:
                 preprocess_sentence(exp_conf.ideal),
                 word2vec,
                 index2word,
-                exp_conf.good_regex or [],
-                exp_conf.bad_regex or [],
+                exp_conf.features.get("good") or [],
+                exp_conf.features.get("bad") or [],
             )
             result.expectation_results.append(
                 self.find_score_and_class(

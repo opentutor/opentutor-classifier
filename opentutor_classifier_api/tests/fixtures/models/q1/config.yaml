@@ -4,33 +4,23 @@
 ##
 ## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 ##
-expectations:
-- bad_regex:
-  - \brule\w*\b.*\bdiffer\w*\b
-  good_regex:
-  - \b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b
-  ideal:
-  - peer
-  - pressure
-  - cause
-  - allow
-  - inappropriate
-  - behavior
-- bad_regex:
-  - \b(lov\w*|lik\w*|car)\b
-  good_regex:
-  - \b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b
-  ideal:
-  - may
-  - get
-  - trouble
-- bad_regex:
-  - \b(super\w*|bette\w*)\b
-  good_regex:
-  - \b(unpop\w*|hate\w*|unlik\w*|not\040popular)\b
-  ideal:
-  - enforcing
-  - rule
-  - make
-  - unpopular
 question: What are the challenges to demonstrating integrity in a group?
+expectations:
+- ideal: peer pressure cause allow inappropriate behavior
+  features:
+    bad:
+      - \brule\w*\b.*\bdiffer\w*\b
+    good:
+      - \b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b
+- ideal: may get trouble
+  features:
+    bad:
+      - \b(lov\w*|lik\w*|car)\b
+    good:
+      - \b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b
+- ideal: enforcing rule make unpopular
+  features:
+    bad:
+      - \b(super\w*|bette\w*)\b
+    good:
+      - \b(unpop\w*|hate\w*|unlik\w*|not\040popular)\b

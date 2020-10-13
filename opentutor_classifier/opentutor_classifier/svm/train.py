@@ -23,9 +23,7 @@ from sklearn import model_selection, svm
 from sklearn.model_selection import LeaveOneOut
 
 from opentutor_classifier import (
-    load_data,
-    load_yaml,
-    ExpectationFeatures,
+    ExpectationConfig,
     ExpectationTrainingResult,
     QuestionConfig,
     TrainingInput,
@@ -38,6 +36,10 @@ from .predict import (  # noqa: F401
     preprocess_sentence,
     SVMAnswerClassifier,
     SVMExpectationClassifier,
+)
+from opentutor_classifier.utils import (
+    load_data,
+    load_yaml,
 )
 from .word2vec import find_or_load_word2vec
 
@@ -138,17 +140,17 @@ class SVMAnswerClassifierTraining:
         archive_root: str = "archive",
         output_dir: str = "output",
     ) -> TrainingResult:
-        pd.set_option("display.max_colwidth", 1000)
-        question = str(train_input.config.get("question") or "")
-        conf_exps_in = train_input.config.get("expectations") or []
+        logging.warn(f"what is train_input.conifig? {train_input.config}")
+        question = train_input.config.question or ""
+        # conf_exps_in = train_input.config.get("expectations") or []
         if not question:
             raise ValueError("config must have a 'question'")
         train_data = (
             pd.DataFrame(
                 [
-                    [i, x.get("ideal"), "good"]
-                    for i, x in enumerate(conf_exps_in)
-                    if x.get("ideal")
+                    [i, x.ideal, "good"]
+                    for i, x in enumerate(train_input.config.expectations)
+                    if x.ideal
                 ],
                 columns=["exp_num", "text", "label"],
             ).append(train_input.data, ignore_index=True)
@@ -170,23 +172,25 @@ class SVMAnswerClassifierTraining:
             )
             split_training_sets[exp_num][1].append(label)
         index2word_set: set = set(self.word2vec.index2word)
-        conf_exps_out: List[ExpectationFeatures] = []
+        conf_exps_out: List[ExpectationConfig] = []
         expectation_results: List[ExpectationTrainingResult] = []
         expectation_models: Dict[int, svm.SVC] = {}
         for exp_num, (train_x, train_y) in split_training_sets.items():
             processed_data = _preprocess_trainx(train_x)
             processed_question = preprocess_sentence(question)
             ideal_answer = self.model_obj.initialize_ideal_answer(processed_data)
-            good_regex = self.model_obj.get_regex(exp_num, conf_exps_in, "good_regex")
-            bad_regex = self.model_obj.get_regex(exp_num, conf_exps_in, "bad_regex")
+            good = train_input.config.get_expectation_feature(exp_num, "good", [])
+            bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
             conf_exps_out.append(
-                ExpectationFeatures(
-                    ideal=conf_exps_in[exp_num].get("ideal")
-                    if len(conf_exps_in) > exp_num
-                    and conf_exps_in[exp_num].get("ideal")
-                    else " ".join(ideal_answer),
-                    good_regex=good_regex,
-                    bad_regex=bad_regex,
+                ExpectationConfig(
+                    ideal=train_input.config.get_expectation_ideal(exp_num)
+                    or " ".join(ideal_answer),
+                    features=(
+                        dict(
+                            good=good,
+                            bad=bad,
+                        )
+                    ),
                 )
             )
             features = [
@@ -197,8 +201,8 @@ class SVMAnswerClassifierTraining:
                         ideal_answer,
                         self.word2vec,
                         index2word_set,
-                        good_regex,
-                        bad_regex,
+                        good,
+                        bad,
                     )
                 )
                 for example in processed_data
@@ -243,7 +247,7 @@ def train_data_root(
 ):
     return SVMAnswerClassifierTraining(shared_root=shared_root).train(
         TrainingInput(
-            config=load_yaml(path.join(data_root, "config.yaml")),
+            config=QuestionConfig(**load_yaml(path.join(data_root, "config.yaml"))),
             data=load_data(path.join(data_root, "training.csv")),
         ),
         archive_root=archive_root,

@@ -20,29 +20,44 @@ class ExpectationClassifierResult:
 
 
 @dataclass
-class ExpectationFeatures:
+class ExpectationConfig:
     ideal: str = ""
-    bad_regex: List[str] = field(default_factory=list)
-    good_regex: List[str] = field(default_factory=list)
+    features: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
 class QuestionConfig:
     question: str = ""
-    expectations: List[ExpectationFeatures] = field(default_factory=list)
+    expectations: List[ExpectationConfig] = field(default_factory=list)
 
     def __post_init__(self):
         self.expectations = [
-            x if isinstance(x, ExpectationFeatures) else ExpectationFeatures(**x)
+            x if isinstance(x, ExpectationConfig) else ExpectationConfig(**x)
             for x in self.expectations or []
         ]
+
+    def get_expectation_feature(
+        self, exp: int, feature_name: str, dft: Any = None
+    ) -> Any:
+        return (
+            self.expectations[exp].features.get(feature_name, dft)
+            if exp >= 0 and exp < len(self.expectations)
+            else dft
+        )
+
+    def get_expectation_ideal(self, exp: int) -> Any:
+        return (
+            self.expectations[exp].ideal
+            if exp >= 0 and exp < len(self.expectations)
+            else ""
+        )
 
     def to_dict(self) -> dict:
         return asdict(self)
 
     def write_to(self, file_path: str):
         with open(file_path, "w") as config_file:
-            yaml.safe_dump(asdict(self), config_file)
+            yaml.safe_dump(self.to_dict(), config_file)
 
 
 @dataclass
@@ -90,14 +105,15 @@ class TrainingResult:
 @dataclass
 class TrainingInput:
     lesson: str = ""
-    config: dict = field(default_factory=dict)
+    config: QuestionConfig = field(default_factory=QuestionConfig)
     data: pd.DataFrame = field(default_factory=pd.DataFrame)
 
+    def __post_init__(self):
+        if isinstance(self.config, dict):
+            self.config = QuestionConfig(**self.config)
 
-def load_data(filename: str) -> pd.DataFrame:
-    return pd.read_csv(filename, encoding="latin-1")
 
-
-def load_yaml(file_path: str) -> Dict[str, Any]:
-    with open(file_path, "r") as yaml_file:
-        return yaml.load(yaml_file, Loader=yaml.FullLoader)
+def load_question_config(f: str) -> QuestionConfig:
+    with open(f, "r") as yaml_file:
+        d = yaml.load(yaml_file, Loader=yaml.FullLoader)
+        return QuestionConfig(**d)
