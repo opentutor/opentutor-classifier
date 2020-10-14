@@ -4,6 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from os import environ
 from flask import Blueprint, jsonify, request
 
 import opentutor_classifier_tasks
@@ -11,6 +12,10 @@ import opentutor_classifier_tasks.tasks
 
 
 train_blueprint = Blueprint("train", __name__)
+
+
+def _to_status_url(root: str, id: str) -> str:
+    return f"{request.url_root.replace('http://', 'https://', 1) if (environ.get('STATUS_URL_FORCE_HTTPS') or '').lower() in ('1', 'y', 'true', 'on') and str.startswith(request.url_root,'http://') else request.url_root}classifier/train/status/{id}"
 
 
 @train_blueprint.route("/", methods=["POST"])
@@ -23,7 +28,7 @@ def train():
             "data": {
                 "id": t.id,
                 "lesson": lesson,
-                "statusUrl": f"{request.url_root}classifier/train/status/{t.id}",
+                "statusUrl": _to_status_url(request.url_root, t.id),
             }
         }
     )

@@ -1,4 +1,5 @@
 FROM python:3.8-slim
+ENV STATUS_URL_FORCE_HTTPS=false
 RUN apt-get update && apt-get install -y git \
     && rm -rf /var/lib/apt/lists/*
 ADD requirements.txt /tmp/requirements.txt
