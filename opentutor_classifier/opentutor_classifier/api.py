@@ -38,6 +38,10 @@ def fetch_training_data(lesson: str, url=GRAPHQL_ENDPOINT) -> TrainingInput:
     data = tdjson["data"]["trainingData"]
     df = pd.read_csv(StringIO(data.get("training") or ""))
     df.sort_values(by=["exp_num"], ignore_index=True, inplace=True)
+    import logging
+
+    qc = yaml.safe_load(data.get("config")) or ""
+    logging.warn(f"what is qc? {qc}")
     return TrainingInput(
         lesson=lesson,
         config=QuestionConfig(**yaml.safe_load(data.get("config") or "")),
