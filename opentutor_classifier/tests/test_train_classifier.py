@@ -179,6 +179,33 @@ def test_train_and_predict(
     )
 
 
+def _test_train_online(
+    lesson: str,
+    evaluate_input: str,
+    expected_training_result: List[Dict],
+    expected_evaluate_result: List[ExpectationClassifierResult],
+    data_root: str,
+    shared_root: str,
+    tmpdir,
+):
+    lesson = environ.get("LESSON_OVERRIDE") or lesson
+    add_graphql_response(lesson)
+    output_dir, archive_root = output_and_archive_for_test(tmpdir, lesson)
+    train_result = train_online(
+        lesson,
+        archive_root=archive_root,
+        output_dir=output_dir,
+        shared_root=shared_root,
+    )
+    assert_train_expectation_results(
+        train_result.expectations, expected_training_result
+    )
+    assert path.exists(train_result.models)
+    create_and_test_classifier(
+        train_result.models, shared_root, evaluate_input, expected_evaluate_result
+    )
+
+
 @responses.activate
 @pytest.mark.parametrize(
     "lesson,evaluate_input,expected_training_result,expected_evaluate_result",
@@ -230,21 +257,60 @@ def test_train_online(
     shared_root: str,
     tmpdir,
 ):
-    lesson = environ.get("LESSON_OVERRIDE") or lesson
-    add_graphql_response(lesson)
-    output_dir, archive_root = output_and_archive_for_test(tmpdir, lesson)
-    train_result = train_online(
+    _test_train_online(
         lesson,
-        archive_root=archive_root,
-        output_dir=output_dir,
-        shared_root=shared_root,
+        evaluate_input,
+        expected_training_result,
+        expected_evaluate_result,
+        data_root,
+        shared_root,
+        tmpdir,
     )
-    assert_train_expectation_results(
-        train_result.expectations, expected_training_result
-    )
-    assert path.exists(train_result.models)
-    create_and_test_classifier(
-        train_result.models, shared_root, evaluate_input, expected_evaluate_result
+
+
+@responses.activate
+@pytest.mark.parametrize(
+    "lesson,evaluate_input,expected_training_result,expected_evaluate_result",
+    [
+        (
+            "question1-with-unknown-props-in-config",
+            "peer pressure can change your behavior",
+            [
+                ExpectationTrainingResult(accuracy=0.73),
+                ExpectationTrainingResult(accuracy=0.18),
+                ExpectationTrainingResult(accuracy=0.91),
+            ],
+            [
+                ExpectationClassifierResult(
+                    evaluation="Good", score=0.66, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Good", score=0.99, expectation=1
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.46, expectation=2
+                ),
+            ],
+        )
+    ],
+)
+def test_train_online_works_if_config_has_unknown_props(
+    lesson: str,
+    evaluate_input: str,
+    expected_training_result: List[Dict],
+    expected_evaluate_result: List[ExpectationClassifierResult],
+    data_root: str,
+    shared_root: str,
+    tmpdir,
+):
+    _test_train_online(
+        lesson,
+        evaluate_input,
+        expected_training_result,
+        expected_evaluate_result,
+        data_root,
+        shared_root,
+        tmpdir,
     )
 
 

@@ -113,7 +113,18 @@ class TrainingInput:
             self.config = QuestionConfig(**self.config)
 
 
+def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
+    return QuestionConfig(
+        question=d.get("question") or "",
+        expectations=[
+            ExpectationConfig(
+                ideal=x.get("ideal") or "", features=x.get("features") or {}
+            )
+            for x in d.get("expectations") or []
+        ],
+    )
+
+
 def load_question_config(f: str) -> QuestionConfig:
     with open(f, "r") as yaml_file:
-        d = yaml.load(yaml_file, Loader=yaml.FullLoader)
-        return QuestionConfig(**d)
+        return dict_to_question_config(yaml.load(yaml_file, Loader=yaml.FullLoader))
