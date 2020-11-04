@@ -1,8 +1,8 @@
-name: Build and publish opentutor-classifier-api docker release from main
+name: api - build/pub release
 on:
   push:
-    branches: main
-
+    branches: 
+      - main
 jobs:
   test:
     runs-on: ubuntu-latest

@@ -1,4 +1,4 @@
-name: Test
+name: classifier - test commit
 on: [pull_request]
 jobs:
   test:

@@ -1,4 +1,4 @@
-name: Build and publish opentutor-classifier docker release candidates from tagged releases
+name: classifier - build/pub candidate
 on:
   push:
     tags:
