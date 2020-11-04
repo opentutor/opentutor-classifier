@@ -2,7 +2,7 @@ name: Test
 on: [pull_request]
 jobs:
   test:
-    name: Run tests
+    name: Run opentutor classifier api tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

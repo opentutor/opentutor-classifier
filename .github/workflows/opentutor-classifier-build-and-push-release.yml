@@ -1,17 +1,12 @@
-name: Build and publish tagged docker release
+name: Build and publish opentutor-classifier docker release from main
 on:
   push:
-    tags:
-      - "[0-9]+.[0-9]+.[0-9]"
-      - "[0-9]+.[0-9]+.[0-9]+-alpha.[0-9]+"
+    branches: main
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Reject forked repositories
-        if: github.repository != 'ICTLearningSciences/opentutor-classifier'
-        run: exit 1
       - uses: actions/checkout@v2
       - name: Set up Python 
         uses: actions/setup-python@v2
@@ -33,22 +28,18 @@ jobs:
     name: Push docker image to docker hub
     runs-on: ubuntu-latest
     steps:
-      - name: Reject forked repositories
-        if: github.repository != 'ICTLearningSciences/opentutor-classifier'
-        run: exit 1
       - uses: actions/checkout@v2
-
       - name: Docker tag
         id: tag
         run: |
-          IMAGE_TAG=${GITHUB_REF#refs/tags/}
+          IMAGE_TAG=${GITHUB_SHA::8}
           echo ::set-output name=image_tag::${IMAGE_TAG}
-
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKER_LOGIN }} -p ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Docker build
         run: cd opentutor_classifier && docker build -t uscictdocker/opentutor-classifier:${{ steps.tag.outputs.image_tag }} .
-
+      - name: Docker tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: docker tag "uscictdocker/opentutor-classifier:${{ steps.tag.outputs.image_tag }}" "uscictdocker/opentutor-classifier:${GITHUB_REF#refs/tags/}"
       - name: Docker push
         run: docker push uscictdocker/opentutor-classifier
