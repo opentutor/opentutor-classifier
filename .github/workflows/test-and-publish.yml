@@ -1,0 +1,90 @@
+name: test commit
+on: push
+jobs:
+  test-classifier:
+    name: test classifier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: python env setup
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: test format
+        run: cd opentutor_classifier && make test-format
+      - name: test lint
+        run: cd opentutor_classifier && make test-lint
+      - name: test types
+        run: cd opentutor_classifier && make test-types
+      - name: test licenses
+        run: cd opentutor_classifier && make test-license
+      - name: test behaviors
+        run: cd opentutor_classifier && make test
+  test-api:
+    name: test api
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: test format
+        run: cd opentutor_classifier_api && make test-format
+      - name: test lint
+        run: cd opentutor_classifier_api && make test-lint
+      - name: test types
+        run: cd opentutor_classifier_api && make test-types
+      - name: Run license test
+        run: cd opentutor_classifier_api && make test-license
+      - name: test behaviors
+        run: cd opentutor_classifier_api && make test
+  publish-check:
+    name: publish check
+    needs:
+      - test-classifier
+      - test-api
+    runs-on: ubuntu-latest
+    outputs:
+      is_release: ${{ steps.is_release.outputs.is_release }}
+    steps:
+      - id: is_release
+        run: |
+          if [[ ${{ github.event.ref }} =~ ^refs/tags/[0-9]+\.[0-9]+\.[0-9]+-[a-z0-9.]*$ ]]; then
+              echo ::set-output name=is_release::true
+          fi
+  build-and-publish:
+    name: build + push docker image
+    runs-on: ubuntu-latest
+    needs:
+      - publish-check
+      - test-classifier
+      - test-api
+    if: needs.publish-check.outputs.is_release || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v2
+      - name: docker tag
+        id: tag
+        run: |
+          IMAGE_TAG=${GITHUB_SHA::8}
+          echo ::set-output name=image_tag::${IMAGE_TAG}
+      - name: docker login
+        run: docker login -u ${{ secrets.DOCKER_LOGIN }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: docker build classifier
+        run: cd opentutor_classifier && DOCKER_IMAGE=uscictdocker/opentutor-classifier:${{ steps.tag.outputs.image_tag }} make docker-build
+      - name: docker build api
+        run: cd opentutor_classifier_api && DOCKER_IMAGE=uscictdocker/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }} make docker-build
+      - name: docker tag release as version
+        if: needs.publish-check.outputs.is_release == 'true'
+        run: |
+          docker tag "uscictdocker/opentutor-classifier:${{ steps.tag.outputs.image_tag }}" "uscictdocker/opentutor-classifier:${GITHUB_REF#refs/tags/}"
+          docker tag "uscictdocker/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }}" "uscictdocker/opentutor-classifier-api:${GITHUB_REF#refs/tags/}"
+      - name: docker tag main as latest
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker tag "uscictdocker/opentutor-classifier:${{ steps.tag.outputs.image_tag }}" "uscictdocker/opentutor-classifier:latest"
+          docker tag "uscictdocker/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }}" "uscictdocker/opentutor-classifier-api:latest"
+      - name: docker push classifier
+        run: docker push uscictdocker/opentutor-classifier
+      - name: docker push api
+        run: docker push uscictdocker/opentutor-classifier-api
