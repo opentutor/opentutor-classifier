@@ -6,7 +6,7 @@
 #
 import json
 from os import environ, path
-from typing import List
+from typing import List, Tuple
 
 import responses
 
@@ -65,9 +65,9 @@ def fixture_path(p: str) -> str:
     return path.abspath(path.join(".", "tests", "fixtures", p))
 
 
-def output_and_archive_for_test(tmpdir, data_root: str) -> [str, str]:
+def output_and_archive_for_test(tmpdir, data_root: str) -> Tuple[str, str]:
     testdir = tmpdir.mkdir("test")
-    return [
+    return (
         path.join(testdir, "model_root", path.basename(path.normpath(data_root))),
         path.join(testdir, "archive"),
-    ]
+    )

@@ -2,8 +2,6 @@ BLACK_EXCLUDES="/(\.venv|build)/"
 DOCKER_IMAGE?=opentutor-classifier-api
 DOCKER_IMAGE_ID=$(shell docker images -q ${DOCKER_IMAGE} 2> /dev/null)
 ROOT=$(shell dirname ${PWD})
-LICENSE=${ROOT}/LICENSE
-LICENSE_HEADER=${ROOT}/LICENSE_HEADER
 OPENTUTOR_CLASSIFIER_SRC=$(ROOT)/opentutor_classifier
 VENV=.venv
 VENV_PIP=$(VENV)/bin/pip
@@ -54,10 +52,15 @@ docker-run:
 
 .PHONY: format
 format: $(VENV)
-	$(VENV)/bin/black --exclude $(BLACK_EXCLUDES) .
+	cd $(ROOT) && $(MAKE) format
+
+.PHONY: license
+license:
+	cd $(ROOT) && make license
 
 .PHONY: test
 test: $(VENV)
+	cd $(ROOT)/word2vec/ && $(MAKE) word2vec.bin
 	. $(VENV)/bin/activate \
 		&& export PYTHONPATH=$${PYTHONPATH}:$(PWD)/src \
 		&& py.test -vv $(args)
@@ -72,34 +75,20 @@ test-all:
 
 .PHONY: test-format
 test-format: $(VENV)
-	$(VENV)/bin/black --check --exclude $(BLACK_EXCLUDES) .
+	cd $(ROOT) && $(MAKE) test-format
 
+.PHONY: test-license
+test-license:
+	cd $(ROOT) && make test-license
+	
 .PHONY: test-lint
 test-lint: $(VENV)
-	$(VENV)/bin/flake8 .
+	cd $(ROOT) && $(MAKE) test-lint
 
 .PHONY: test-types
 test-types: $(VENV)
-	. $(VENV)/bin/activate && mypy src
+	cd $(ROOT) && $(MAKE) test-types
 
 .PHONY: update-deps
 update-deps: $(VENV)
 	. $(VENV)/bin/activate && pip-upgrade requirements*
-
-$(LICENSE):
-	@echo "you must have a LICENSE file" 1>&2
-	exit 1
-
-$(LICENSE_HEADER):
-	@echo "you must have a LICENSE_HEADER file" 1>&2
-	exit 1
-
-.PHONY: license
-license: $(LICENSE) $(LICENSE_HEADER) $(VENV)
-	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d src
-	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d tests
-
-.PHONY: test-license
-test-license: $(LICENSE) $(LICENSE_HEADER) $(VENV)
-	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d src --check
-	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d tests --check

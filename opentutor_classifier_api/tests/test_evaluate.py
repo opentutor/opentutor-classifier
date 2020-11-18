@@ -5,17 +5,23 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import json
+import os
 
 import pytest
 
-from opentutor_classifier import ExpectationClassifierResult, SpeechActClassifierResult
+from opentutor_classifier import ExpectationClassifierResult, SpeechActClassifierResult  # type: ignore
 from . import fixture_path
 
 
+@pytest.fixture(scope="module")
+def shared_root(word2vec) -> str:
+    return os.path.dirname(word2vec)
+
+
 @pytest.fixture(autouse=True)
-def python_path_env(monkeypatch):
+def python_path_env(monkeypatch, shared_root):
     monkeypatch.setenv("MODEL_ROOT", fixture_path("models"))
-    monkeypatch.setenv("SHARED_ROOT", fixture_path("shared"))
+    monkeypatch.setenv("SHARED_ROOT", shared_root)
 
 
 def test_returns_400_response_when_lesson_not_set(client):

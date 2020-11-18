@@ -1,8 +1,8 @@
 name: test commit
 on: push
 jobs:
-  test-classifier:
-    name: test classifier
+  test:
+    name: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -11,39 +11,21 @@ jobs:
         with:
           python-version: 3.8
       - name: test format
-        run: cd opentutor_classifier && make test-format
+        run: make test-format
       - name: test lint
-        run: cd opentutor_classifier && make test-lint
+        run: make test-lint
       - name: test types
-        run: cd opentutor_classifier && make test-types
+        run: make test-types
       - name: test licenses
-        run: cd opentutor_classifier && make test-license
-      - name: test behaviors
+        run: make test-license
+      - name: test classifier
         run: cd opentutor_classifier && make test
-  test-api:
-    name: test api
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: test format
-        run: cd opentutor_classifier_api && make test-format
-      - name: test lint
-        run: cd opentutor_classifier_api && make test-lint
-      - name: test types
-        run: cd opentutor_classifier_api && make test-types
-      - name: Run license test
-        run: cd opentutor_classifier_api && make test-license
-      - name: test behaviors
+      - name: test classifier api
         run: cd opentutor_classifier_api && make test
   publish-check:
     name: publish check
     needs:
-      - test-classifier
-      - test-api
+      - test
     runs-on: ubuntu-latest
     outputs:
       is_release: ${{ steps.is_release.outputs.is_release }}
@@ -58,8 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - publish-check
-      - test-classifier
-      - test-api
+      - test
     if: needs.publish-check.outputs.is_release || github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v2

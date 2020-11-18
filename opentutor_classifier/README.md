@@ -13,6 +13,8 @@ A short answer classifier service focused on cold-start performance
 Any changes made to this repo should be covered by tests. To run the existing tests:
 
 ```
+# NOTE: the first time you run this will take a few minutes
+# because it downloads the 300+MB word2vec file one time
 make test
 ```
 

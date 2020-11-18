@@ -5,5 +5,3 @@ Flask-Cors==3.0.9
 gunicorn==20.0.4
 redis==3.5.3
 werkzeug==1.0.1
-#opentutor_classifier @ git+https://github.com/ictlearningsciences/opentutor-classifier.git@1.1.0-alpha.13#egg=opentutor_classifier
-licenseheaders @ git+git://github.com/kycarr/licenseheaders.git@master#egg=licenseheaders

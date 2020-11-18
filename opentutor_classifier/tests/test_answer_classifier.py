@@ -25,8 +25,8 @@ def model_root() -> str:
 
 
 @pytest.fixture(scope="module")
-def shared_root() -> str:
-    return fixture_path("shared")
+def shared_root(word2vec) -> str:
+    return os.path.dirname(word2vec)
 
 
 @pytest.mark.parametrize(
