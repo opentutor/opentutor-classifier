@@ -1,7 +1,5 @@
 DOCKER_IMAGE?=opentutor-classifier
 ROOT=$(shell dirname ${PWD})
-LICENSE=${ROOT}/LICENSE
-LICENSE_HEADER=${ROOT}/LICENSE_HEADER
 VENV=.venv
 $(VENV):
 	$(MAKE) $(VENV)-update
@@ -15,9 +13,6 @@ $(VENV)-update: virtualenv-installed
 	$(VENV)/bin/python3.8 -m nltk.downloader wordnet
 	$(VENV)/bin/python3.8 -m nltk.downloader averaged_perceptron_tagger
 	$(VENV)/bin/python3.8 -m nltk.downloader stopwords
-
-.PHONY: test-all
-test-all: test-format test-lint test-types test-license test
 
 .PHONY clean:
 clean:
@@ -54,23 +49,35 @@ docker-train-default:
 
 .PHONY: format
 format: $(VENV)
-	$(VENV)/bin/black .
+	cd $(ROOT) && $(MAKE) format
+
+.PHONY: license
+license:
+	cd $(ROOT) && make license
 
 PHONY: test
 test: $(VENV)
+	cd $(ROOT)/word2vec/ && $(MAKE) word2vec.bin
 	$(VENV)/bin/py.test -vv $(args)
+
+.PHONY: test-all
+test-all: test-format test-lint test-types test-license test
 
 .PHONY: test-format
 test-format: $(VENV)
-	$(VENV)/bin/black --check .
+	cd $(ROOT) && $(MAKE) test-format
+
+.PHONY: test-license
+test-license: $(LICENSE) $(LICENSE_HEADER) $(VENV)
+	cd $(ROOT) && $(MAKE) test-license
 
 .PHONY: test-lint
 test-lint: $(VENV)
-	$(VENV)/bin/flake8 .
+	cd $(ROOT) && $(MAKE) test-lint
 
 .PHONY: test-types
 test-types: $(VENV)
-	. $(VENV)/bin/activate && mypy opentutor_classifier
+	cd $(ROOT) && $(MAKE) test-types
 
 .PHONY: update-deps
 update-deps: $(VENV)
@@ -78,21 +85,3 @@ update-deps: $(VENV)
 
 virtualenv-installed:
 	$(ROOT)/tools/virtualenv_ensure_installed.sh
-
-$(LICENSE):
-	@echo "you must have a LICENSE file" 1>&2
-	exit 1
-
-$(LICENSE_HEADER):
-	@echo "you must have a LICENSE_HEADER file" 1>&2
-	exit 1
-
-.PHONY: license
-license: $(LICENSE) $(LICENSE_HEADER) $(VENV)
-	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d src
-	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d tests
-
-.PHONY: test-license
-test-license: $(LICENSE) $(LICENSE_HEADER) $(VENV)
-	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d src --check
-	$(VENV)/bin/python3.8 -m licenseheaders -t $(LICENSE_HEADER) -d tests --check

@@ -8,7 +8,7 @@ import os
 from os import path
 import subprocess
 import re
-from typing import List
+from typing import List, Tuple
 
 import pytest
 
@@ -26,13 +26,20 @@ def python_path_env(monkeypatch):
     monkeypatch.setenv("PYTHONPATH", ".")
 
 
+@pytest.fixture(scope="module")
+def shared_root(word2vec) -> str:
+    return os.path.dirname(word2vec)
+
+
 def capture(command):
     proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate()
     return out, err, proc.returncode
 
 
-def __train_model(tmpdir, question_id: str, shared_root: str) -> str:
+def __train_model(
+    tmpdir, question_id: str, shared_root: str
+) -> Tuple[str, str, str, str]:
     training_data_path = os.path.join(fixture_path("data"), question_id)
     output_dir, _ = output_and_archive_for_test(tmpdir, question_id)
     command = [
@@ -50,7 +57,7 @@ def __train_model(tmpdir, question_id: str, shared_root: str) -> str:
     return out, err, exitcode, output_dir
 
 
-def __sync(tmpdir, lesson: str, url: str) -> str:
+def __sync(tmpdir, lesson: str, url: str) -> Tuple[str, str, str, str]:
     test_root = tmpdir.mkdir("test")
     output_dir = os.path.join(test_root, lesson)
     command = [
@@ -83,8 +90,9 @@ def test_cli_syncs_training_data(tmpdir):
 @pytest.mark.parametrize(
     "input_lesson,no_of_expectations", [("question1", 3), ("question2", 1)]
 )
-def test_cli_outputs_models_files(tmpdir, input_lesson, no_of_expectations):
-    shared_root = fixture_path("shared")
+def test_cli_outputs_models_files(
+    tmpdir, input_lesson, no_of_expectations, shared_root
+):
     out, err, exit_code, model_root = __train_model(tmpdir, input_lesson, shared_root)
     assert exit_code == 0
     assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
@@ -130,8 +138,8 @@ def test_cli_trained_models_usable_for_inference(
     input_answer: str,
     expected_results: List[ExpectationClassifierResult],
     tmpdir,
+    shared_root,
 ):
-    shared_root = fixture_path("shared")
     _, _, _, model_root = __train_model(tmpdir, input_lesson, shared_root)
     assert os.path.exists(model_root)
     create_and_test_classifier(model_root, shared_root, input_answer, expected_results)

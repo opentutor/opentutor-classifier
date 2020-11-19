@@ -1,5 +1,5 @@
 from os import path
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages  # type: ignore
 
 
 this_directory = path.abspath(path.dirname(__file__))

@@ -80,7 +80,7 @@ class SVMAnswerClassifierTraining:
 
     def default_train_all(
         self, data_root: str = "data", output_dir: str = "output"
-    ) -> Dict:
+    ) -> float:
         try:
             training_data = load_data(path.join(data_root, "default", "training.csv"))
         except Exception:
@@ -259,7 +259,7 @@ def train_online(
 
 def train_default_classifier(
     data_root="data", output_dir: str = "out", shared_root="shared"
-):
+) -> float:
     svm_answer_classifier_training = SVMAnswerClassifierTraining(
         shared_root=shared_root
     )

@@ -6,7 +6,7 @@
 #
 from os import environ, path, makedirs
 import shutil
-from typing import Dict, List, Tuple
+from typing import List, Tuple
 
 from freezegun import freeze_time
 import pytest
@@ -40,13 +40,13 @@ def data_root() -> str:
 
 
 @pytest.fixture(scope="module")
-def shared_root() -> str:
-    return fixture_path("shared")
+def shared_root(word2vec) -> str:
+    return path.dirname(word2vec)
 
 
 def __train_default_model(
     tmpdir, data_root: str, shared_root: str
-) -> Tuple[str, Dict[int, int]]:
+) -> Tuple[str, float]:
     output_dir = path.join(
         tmpdir.mkdir("test"), "model_root", path.basename(path.normpath(data_root))
     )
@@ -163,7 +163,7 @@ def test_outputs_models_at_specified_model_root_for_default_model(
 def test_train_and_predict(
     lesson: str,
     evaluate_input: str,
-    expected_training_result: List[Dict],
+    expected_training_result: List[ExpectationTrainingResult],
     expected_evaluate_result: List[ExpectationClassifierResult],
     tmpdir,
     data_root: str,
@@ -182,7 +182,7 @@ def test_train_and_predict(
 def _test_train_online(
     lesson: str,
     evaluate_input: str,
-    expected_training_result: List[Dict],
+    expected_training_result: List[ExpectationTrainingResult],
     expected_evaluate_result: List[ExpectationClassifierResult],
     data_root: str,
     shared_root: str,
@@ -251,7 +251,7 @@ def _test_train_online(
 def test_train_online(
     lesson: str,
     evaluate_input: str,
-    expected_training_result: List[Dict],
+    expected_training_result: List[ExpectationTrainingResult],
     expected_evaluate_result: List[ExpectationClassifierResult],
     data_root: str,
     shared_root: str,
@@ -297,7 +297,7 @@ def test_train_online(
 def test_train_online_works_if_config_has_unknown_props(
     lesson: str,
     evaluate_input: str,
-    expected_training_result: List[Dict],
+    expected_training_result: List[ExpectationTrainingResult],
     expected_evaluate_result: List[ExpectationClassifierResult],
     data_root: str,
     shared_root: str,
