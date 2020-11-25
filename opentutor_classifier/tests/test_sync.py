@@ -25,9 +25,11 @@ def test_sync_data_from_api(tmpdir):
         "https://dev-opentutor.pal3.org/graphql",
         json={
             "data": {
-                "trainingData": {
-                    "config": 'question: "What are the challenges to demonstrating integrity in a group?"',
-                    "training": "exp_num,text,label\n0,peer pressure,Good",
+                "me": {
+                    "trainingData": {
+                        "config": 'question: "What are the challenges to demonstrating integrity in a group?"',
+                        "training": "exp_num,text,label\n0,peer pressure,Good",
+                    }
                 }
             }
         },
