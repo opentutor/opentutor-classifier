@@ -1,4 +1,4 @@
-name: test commit
+name: test/build/push
 on: push
 jobs:
   test:

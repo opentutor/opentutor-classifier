@@ -16,7 +16,6 @@ $(VENV)-installed:
 $(VENV)-update: $(VENV)-installed
 	[ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
 	$(VENV_PIP) install --upgrade pip
-	$(VENV_PIP) install -r requirements.txt
 	$(VENV_PIP) install -r requirements.test.txt
 	$(VENV_PIP) install ../opentutor_classifier
 	$(VENV)/bin/python3.8 -m nltk.downloader punkt
@@ -63,7 +62,7 @@ test: $(VENV)
 	cd $(ROOT)/word2vec/ && $(MAKE) word2vec.bin
 	. $(VENV)/bin/activate \
 		&& export PYTHONPATH=$${PYTHONPATH}:$(PWD)/src \
-		&& py.test -vv $(args)
+		&& coverage run -m py.test -vv $(args)
 
 .PHONY: test-all
 test-all:
