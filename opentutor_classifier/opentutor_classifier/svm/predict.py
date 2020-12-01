@@ -62,7 +62,6 @@ class SVMExpectationClassifier:
     def __init__(self):
         self.model = None
         self.score_dictionary = defaultdict(int)
-        # np.random.seed(1)
 
     def split(self, pre_processed_dataset, target):
         train_x, test_x, train_y, test_y = model_selection.train_test_split(
