@@ -30,12 +30,10 @@ def add_graphql_response(name: str):
 def assert_train_expectation_results(
     observed: List[ExpectationTrainingResult],
     expected: List[ExpectationTrainingResult],
-    precision=2,
+    epsilon=0.03,
 ):
-    assert [
-        ExpectationTrainingResult(accuracy=round(x.accuracy, precision))
-        for x in observed
-    ] == expected
+    for o, e in zip(observed, expected):
+        assert abs(o.accuracy - e.accuracy) <= epsilon
 
 
 def create_and_test_classifier(
