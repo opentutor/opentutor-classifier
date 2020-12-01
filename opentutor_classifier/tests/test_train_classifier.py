@@ -246,6 +246,44 @@ def _test_train_online(
                 ),
             ],
         ),
+        (
+            "question1",
+            "peer pressure can change your behavior",
+            [
+                ExpectationTrainingResult(accuracy=0.73),
+                ExpectationTrainingResult(accuracy=0.18),
+                ExpectationTrainingResult(accuracy=0.91),
+            ],
+            [
+                ExpectationClassifierResult(
+                    evaluation="Good", score=0.66, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Good", score=0.99, expectation=1
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.46, expectation=2
+                ),
+            ],
+        ),
+        (
+            "ies-television",
+            "percentages represent a ratio of parts per 100",
+            [
+                ExpectationTrainingResult(accuracy=0.67),
+                ExpectationTrainingResult(accuracy=0.67),
+                ExpectationTrainingResult(accuracy=0.89),
+            ],
+            [
+                ExpectationClassifierResult(
+                    evaluation="Good", score=1.0, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Good", score=0.65, expectation=1
+                ),
+                ExpectationClassifierResult(evaluation="Bad", score=0.0, expectation=2),
+            ],
+        ),
     ],
 )
 def test_train_online(
