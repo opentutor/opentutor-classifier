@@ -30,7 +30,7 @@ def add_graphql_response(name: str):
 def assert_train_expectation_results(
     observed: List[ExpectationTrainingResult],
     expected: List[ExpectationTrainingResult],
-    epsilon=0.03,
+    epsilon=0.01,
 ):
     for o, e in zip(observed, expected):
         assert abs(o.accuracy - e.accuracy) <= epsilon
