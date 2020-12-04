@@ -271,7 +271,7 @@ def _test_train_online(
             "percentages represent a ratio of parts per 100",
             [
                 ExpectationTrainingResult(accuracy=0.67),
-                ExpectationTrainingResult(accuracy=0.67),
+                ExpectationTrainingResult(accuracy=0.66),
                 ExpectationTrainingResult(accuracy=0.89),
             ],
             [
