@@ -14,6 +14,7 @@ from typing import Dict, List
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
+from num2words import num2words
 import numpy as np
 from sklearn import model_selection, svm
 from sklearn.model_selection import GridSearchCV
@@ -53,7 +54,9 @@ def preprocess_sentence(sentence: str) -> List[str]:
     result_words = []
     for entry in word_tokens_groups:
         for word, _ in pos_tag(entry):
-            if word not in STOPWORDS and word.isalpha():
+            if word.isdecimal():
+                result_words.append(num2words(word))
+            elif word not in STOPWORDS and word.isalpha():
                 result_words.append(word)
     return result_words
 
