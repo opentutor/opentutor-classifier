@@ -16,6 +16,7 @@ from typing import Dict, List
 
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
+from num2words import num2words
 import numpy as np
 import pandas as pd
 
@@ -61,7 +62,9 @@ def _preprocess_trainx(data):
     for entry in data:
         final_words = []
         for word, tag in pos_tag(entry):
-            if word not in STOPWORDS and word.isalpha():
+            if word.isdecimal():
+                final_words.append(num2words(word))
+            elif word not in STOPWORDS and word.isalpha():
                 final_words.append(word)
         pre_processed_dataset.append(final_words)
     return pre_processed_dataset
