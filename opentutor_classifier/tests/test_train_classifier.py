@@ -161,7 +161,7 @@ def test_outputs_models_at_specified_model_root_for_default_model(
         (
             "question3",
             "37 by 40",
-            [ExpectationTrainingResult(accuracy=0.75)],           
+            [ExpectationTrainingResult(accuracy=0.75)],
             [ExpectationClassifierResult(evaluation="Good", score=0.77, expectation=0)],
         ),
     ],
@@ -287,7 +287,9 @@ def _test_train_online(
                 ExpectationClassifierResult(
                     evaluation="Bad", score=0.26, expectation=1
                 ),
-                ExpectationClassifierResult(evaluation="Bad", score=0.08, expectation=2),
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.08, expectation=2
+                ),
             ],
         ),
     ],
