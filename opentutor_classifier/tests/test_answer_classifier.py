@@ -172,8 +172,6 @@ def test_evaluates_for_default_model(
         assert res.evaluation == res_expected.evaluation
 
 
-
-
 @pytest.mark.parametrize(
     "input_answer,input_expectation_number,config_data,expected_results",
     [
