@@ -14,7 +14,6 @@ from typing import Dict, List
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
-from num2words import num2words
 import numpy as np
 from sklearn import model_selection, svm
 from sklearn.model_selection import GridSearchCV
@@ -54,9 +53,7 @@ def preprocess_sentence(sentence: str) -> List[str]:
     result_words = []
     for entry in word_tokens_groups:
         for word, _ in pos_tag(entry):
-            if word.isdecimal():
-                result_words.append(num2words(word))
-            elif word not in STOPWORDS and word.isalpha():
+            if word not in STOPWORDS and word.isalpha():
                 result_words.append(word)
     return result_words
 
@@ -83,6 +80,7 @@ class SVMExpectationClassifier:
     def calculate_features(
         self,
         question: List[str],
+        raw_example: List[str],
         example: List[str],
         ideal: List[str],
         word2vec: Word2VecKeyedVectors,
@@ -91,8 +89,8 @@ class SVMExpectationClassifier:
         bad: List[str],
     ) -> List[float]:
         return [
-            features.regex_match_ratio(example, good),
-            features.regex_match_ratio(example, bad),
+            features.regex_match_ratio(raw_example, good),
+            features.regex_match_ratio(raw_example, bad),
             *features.number_of_negatives(example),
             features.word_alignment_feature(example, ideal, word2vec, index2word_set),
             features.length_ratio_feature(example, ideal),
@@ -237,6 +235,7 @@ class SVMAnswerClassifier:
             exp_conf = conf.expectations[exp.expectation]
             sent_features = self.model_obj.calculate_features(
                 question_proc,
+                answer.input_sentence,
                 sent_proc,
                 preprocess_sentence(exp_conf.ideal),
                 word2vec,
