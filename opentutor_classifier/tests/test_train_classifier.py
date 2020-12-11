@@ -161,8 +161,14 @@ def test_outputs_models_at_specified_model_root_for_default_model(
         (
             "question3",
             "37 by 40",
-            [ExpectationTrainingResult(accuracy=0.75)],
-            [ExpectationClassifierResult(evaluation="Good", score=0.77, expectation=0)],
+            [ExpectationTrainingResult(accuracy=1.0)],
+            [ExpectationClassifierResult(evaluation="Good", score=0.92, expectation=0)],
+        ),
+        (
+            "question3",
+            "38 by 39",
+            [ExpectationTrainingResult(accuracy=1.0)],
+            [ExpectationClassifierResult(evaluation="Bad", score=0.97, expectation=0)],
         ),
     ],
 )
@@ -277,18 +283,18 @@ def _test_train_online(
             "percentages represent a ratio of parts per 100",
             [
                 ExpectationTrainingResult(accuracy=0.67),
-                ExpectationTrainingResult(accuracy=0.56),
-                ExpectationTrainingResult(accuracy=0.86),
+                ExpectationTrainingResult(accuracy=0.66),
+                ExpectationTrainingResult(accuracy=0.89),
             ],
             [
                 ExpectationClassifierResult(
                     evaluation="Good", score=1.0, expectation=0
                 ),
                 ExpectationClassifierResult(
-                    evaluation="Bad", score=0.26, expectation=1
+                    evaluation="Good", score=0.65, expectation=1
                 ),
                 ExpectationClassifierResult(
-                    evaluation="Bad", score=0.08, expectation=2
+                    evaluation="Bad", score=0.0, expectation=2
                 ),
             ],
         ),
