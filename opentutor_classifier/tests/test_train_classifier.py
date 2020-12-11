@@ -170,6 +170,12 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             [ExpectationTrainingResult(accuracy=1.0)],
             [ExpectationClassifierResult(evaluation="Bad", score=0.97, expectation=0)],
         ),
+        (
+            "question3",
+            "7 by 10",
+            [ExpectationTrainingResult(accuracy=1.0)],
+            [ExpectationClassifierResult(evaluation="Bad", score=0.98, expectation=0)],
+        ),
     ],
 )
 def test_train_and_predict(
