@@ -197,7 +197,7 @@ class SVMAnswerClassifierTraining:
                         bad,
                     )
                 )
-                for raw_example,example in zip(train_x,processed_data)
+                for raw_example, example in zip(train_x, processed_data)
             ]
             train_y = np.array(self.model_obj.encode_y(train_y))
             model = self.model_obj.initialize_model()
