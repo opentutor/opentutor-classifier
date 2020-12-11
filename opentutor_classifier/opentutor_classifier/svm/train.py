@@ -16,7 +16,6 @@ from typing import Dict, List
 
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
-from num2words import num2words
 import numpy as np
 import pandas as pd
 
@@ -62,9 +61,7 @@ def _preprocess_trainx(data):
     for entry in data:
         final_words = []
         for word, tag in pos_tag(entry):
-            if word.isdecimal():
-                final_words.append(num2words(word))
-            elif word not in STOPWORDS and word.isalpha():
+            if word not in STOPWORDS and word.isalpha():
                 final_words.append(word)
         pre_processed_dataset.append(final_words)
     return pre_processed_dataset
@@ -101,6 +98,7 @@ class SVMAnswerClassifierTraining:
 
             features_list = self.model_obj.calculate_features(
                 processed_question,
+                input_sentence,
                 processed_input_sentence,
                 processed_ia,
                 self.word2vec,
@@ -190,6 +188,7 @@ class SVMAnswerClassifierTraining:
                 np.array(
                     self.model_obj.calculate_features(
                         processed_question,
+                        raw_example,
                         example,
                         ideal_answer,
                         self.word2vec,
@@ -198,7 +197,7 @@ class SVMAnswerClassifierTraining:
                         bad,
                     )
                 )
-                for example in processed_data
+                for raw_example,example in zip(train_x,processed_data)
             ]
             train_y = np.array(self.model_obj.encode_y(train_y))
             model = self.model_obj.initialize_model()
