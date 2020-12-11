@@ -172,44 +172,6 @@ def test_evaluates_for_default_model(
         assert res.evaluation == res_expected.evaluation
 
 
-@pytest.mark.parametrize(
-    "input_answers,config_data,expected_results",
-    [
-        (
-            ["four"],
-            {
-                "question": "What is 2+2?",
-                "expectations": [{"ideal": "4"}],
-            },
-            [
-                ExpectationClassifierResult(
-                    expectation=0, evaluation="Good", score=1.0
-                ),
-            ],
-        ),
-    ],
-)
-def test_evaluates_multiple_inputs_for_default_model(
-    model_root: str,
-    shared_root: str,
-    input_answers: List[str],
-    config_data: dict,
-    expected_results: List[ExpectationClassifierResult],
-):
-    model_root = os.path.join(model_root, "default")
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
-    for input_answer, res_expected in zip(input_answers, expected_results):
-        result = classifier.evaluate(
-            AnswerClassifierInput(
-                input_sentence=input_answer,
-                config_data=dict_to_config(config_data),
-                expectation=0,
-            )
-        )
-        assert len(result.expectation_results) == 1
-        res = result.expectation_results[0]
-        assert round(res.score, 2) == res_expected.score
-        assert res.evaluation == res_expected.evaluation
 
 
 @pytest.mark.parametrize(
