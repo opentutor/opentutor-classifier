@@ -80,7 +80,7 @@ class SVMExpectationClassifier:
     def calculate_features(
         self,
         question: List[str],
-        raw_example: List[str],
+        raw_example: str,
         example: List[str],
         ideal: List[str],
         word2vec: Word2VecKeyedVectors,
