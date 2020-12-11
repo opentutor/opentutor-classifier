@@ -293,9 +293,7 @@ def _test_train_online(
                 ExpectationClassifierResult(
                     evaluation="Good", score=0.65, expectation=1
                 ),
-                ExpectationClassifierResult(
-                    evaluation="Bad", score=0.0, expectation=2
-                ),
+                ExpectationClassifierResult(evaluation="Bad", score=0.0, expectation=2),
             ],
         ),
     ],
