@@ -4,5 +4,10 @@
 ##
 ## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 ##
-question: "The dimensions of four rectangles are given above. Which rectangle do you think looks most like a square? Explain your reasoning."
-
+question: "The dimensions of four rectangles are given above. Which rectangle do you think looks most like a square?"
+expectations:
+  - features:
+      good:
+        - "37\\s*(feet|ft)?\\s*(x|by)?\\s*40"
+      bad:
+        - "7\\s*(feet|ft)?\\s*(x|by)?\\s*10"
