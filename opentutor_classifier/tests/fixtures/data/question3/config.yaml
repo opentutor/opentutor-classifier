@@ -8,6 +8,4 @@ question: "The dimensions of four rectangles are given above. Which rectangle do
 expectations:
   - features:
       good:
-        - "37\\s*(feet|ft)?\\s*(x|by)?\\s*40"
-      bad:
-        - "7\\s*(feet|ft)?\\s*(x|by)?\\s*10"
+        - "37|40"
