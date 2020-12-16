@@ -179,6 +179,53 @@ def test_train_and_predict(
     )
 
 
+@pytest.mark.parametrize(
+    "lesson,evaluate_input_list,expected_training_result,expected_evaluate_result",
+    [
+        (
+            "question3",
+            ["7 by 10", "38 by 39", "37x40", "12x23", "45 x 67"],
+            [ExpectationTrainingResult(accuracy=1.0)],
+            [
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.97, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.97, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Good", score=0.93, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.97, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.97, expectation=0
+                ),
+            ],
+        ),
+    ],
+)
+def test_train_and_single_expectation_predict(
+    lesson: str,
+    evaluate_input_list: List[str],
+    expected_training_result: List[ExpectationTrainingResult],
+    expected_evaluate_result: List[ExpectationClassifierResult],
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+):
+    train_result = __train_classifier(tmpdir, path.join(data_root, lesson), shared_root)
+    assert path.exists(train_result.models)
+    assert_train_expectation_results(
+        train_result.expectations, expected_training_result
+    )
+    for evaluate_input, ans in zip(evaluate_input_list, expected_evaluate_result):
+        create_and_test_classifier(
+            train_result.models, shared_root, evaluate_input, [ans]
+        )
+
+
 def _test_train_online(
     lesson: str,
     evaluate_input: str,
@@ -244,6 +291,44 @@ def _test_train_online(
                 ExpectationClassifierResult(
                     evaluation="Bad", score=0.38, expectation=1
                 ),
+            ],
+        ),
+        (
+            "question1",
+            "peer pressure can change your behavior",
+            [
+                ExpectationTrainingResult(accuracy=0.73),
+                ExpectationTrainingResult(accuracy=0.18),
+                ExpectationTrainingResult(accuracy=0.91),
+            ],
+            [
+                ExpectationClassifierResult(
+                    evaluation="Good", score=0.66, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Good", score=0.99, expectation=1
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.46, expectation=2
+                ),
+            ],
+        ),
+        (
+            "ies-television",
+            "percentages represent a ratio of parts per 100",
+            [
+                ExpectationTrainingResult(accuracy=0.67),
+                ExpectationTrainingResult(accuracy=0.66),
+                ExpectationTrainingResult(accuracy=0.89),
+            ],
+            [
+                ExpectationClassifierResult(
+                    evaluation="Good", score=1.0, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Good", score=0.65, expectation=1
+                ),
+                ExpectationClassifierResult(evaluation="Bad", score=0.0, expectation=2),
             ],
         ),
     ],

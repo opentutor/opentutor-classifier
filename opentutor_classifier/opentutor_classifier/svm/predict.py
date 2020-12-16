@@ -62,7 +62,6 @@ class SVMExpectationClassifier:
     def __init__(self):
         self.model = None
         self.score_dictionary = defaultdict(int)
-        # np.random.seed(1)
 
     def split(self, pre_processed_dataset, target):
         train_x, test_x, train_y, test_y = model_selection.train_test_split(
@@ -81,6 +80,7 @@ class SVMExpectationClassifier:
     def calculate_features(
         self,
         question: List[str],
+        raw_example: str,
         example: List[str],
         ideal: List[str],
         word2vec: Word2VecKeyedVectors,
@@ -89,8 +89,8 @@ class SVMExpectationClassifier:
         bad: List[str],
     ) -> List[float]:
         return [
-            features.regex_match_ratio(example, good),
-            features.regex_match_ratio(example, bad),
+            features.regex_match_ratio(raw_example, good),
+            features.regex_match_ratio(raw_example, bad),
             *features.number_of_negatives(example),
             features.word_alignment_feature(example, ideal, word2vec, index2word_set),
             features.length_ratio_feature(example, ideal),
@@ -235,6 +235,7 @@ class SVMAnswerClassifier:
             exp_conf = conf.expectations[exp.expectation]
             sent_features = self.model_obj.calculate_features(
                 question_proc,
+                answer.input_sentence,
                 sent_proc,
                 preprocess_sentence(exp_conf.ideal),
                 word2vec,

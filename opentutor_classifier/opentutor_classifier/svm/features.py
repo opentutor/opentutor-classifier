@@ -49,10 +49,9 @@ def number_of_negatives(example) -> Tuple[float, float]:
     return (no_of_negatives, 1 if no_of_negatives % 2 == 0 else 0)
 
 
-def regex_match_ratio(example: List[str], regexes: List[str]) -> float:
+def regex_match_ratio(str_example: str, regexes: List[str]) -> float:
     if len(regexes) == 0:
         return 0
-    str_example = " ".join(example)
     count = 0
     for r in regexes:
         if re.search(r, str_example):
