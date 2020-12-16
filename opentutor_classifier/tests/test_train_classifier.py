@@ -158,24 +158,6 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             [ExpectationTrainingResult(accuracy=1.0)],
             [ExpectationClassifierResult(evaluation="Good", score=0.96, expectation=0)],
         ),
-        (
-            "question3",
-            "37 by 40",
-            [ExpectationTrainingResult(accuracy=1.0)],
-            [ExpectationClassifierResult(evaluation="Good", score=0.92, expectation=0)],
-        ),
-        (
-            "question3",
-            "38 by 39",
-            [ExpectationTrainingResult(accuracy=1.0)],
-            [ExpectationClassifierResult(evaluation="Bad", score=0.97, expectation=0)],
-        ),
-        (
-            "question3",
-            "7 by 10",
-            [ExpectationTrainingResult(accuracy=1.0)],
-            [ExpectationClassifierResult(evaluation="Bad", score=0.98, expectation=0)],
-        ),
     ],
 )
 def test_train_and_predict(
@@ -195,6 +177,53 @@ def test_train_and_predict(
     create_and_test_classifier(
         train_result.models, shared_root, evaluate_input, expected_evaluate_result
     )
+
+
+@pytest.mark.parametrize(
+    "lesson,evaluate_input_list,expected_training_result,expected_evaluate_result",
+    [
+        (
+            "question3",
+            ["7 by 10", "38 by 39", "37x40", "12x23", "45 x 67"],
+            [ExpectationTrainingResult(accuracy=1.0)],
+            [
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.97, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.97, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Good", score=0.93, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.97, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Bad", score=0.97, expectation=0
+                ),
+            ],
+        ),
+    ],
+)
+def test_train_and_single_expectation_predict(
+    lesson: str,
+    evaluate_input_list: List[str],
+    expected_training_result: List[ExpectationTrainingResult],
+    expected_evaluate_result: List[ExpectationClassifierResult],
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+):
+    train_result = __train_classifier(tmpdir, path.join(data_root, lesson), shared_root)
+    assert path.exists(train_result.models)
+    assert_train_expectation_results(
+        train_result.expectations, expected_training_result
+    )
+    for evaluate_input, ans in zip(evaluate_input_list, expected_evaluate_result):
+        create_and_test_classifier(
+            train_result.models, shared_root, evaluate_input, [ans]
+        )
 
 
 def _test_train_online(
