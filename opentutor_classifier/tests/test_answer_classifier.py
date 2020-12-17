@@ -5,7 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import os
-from typing import List
+from typing import Iterable, List
 
 import pytest
 
@@ -20,8 +20,8 @@ from .helpers import fixture_path
 
 
 @pytest.fixture(scope="module")
-def model_root() -> str:
-    return fixture_path("models")
+def model_roots() -> Iterable[str]:
+    return [fixture_path("models"), fixture_path("models_deployed")]
 
 
 @pytest.fixture(scope="module")
@@ -41,15 +41,16 @@ def shared_root(word2vec) -> str:
     ],
 )
 def test_evaluates_one_expectation_for_q1(
-    model_root,
+    model_roots,
     shared_root,
     input_answer,
     input_expectation_number,
     config_data,
     expected_results,
 ):
-    model_root = os.path.join(model_root, "question1")
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
+    classifier = SVMAnswerClassifier(
+        "question1", model_roots=model_roots, shared_root=shared_root
+    )
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
@@ -149,15 +150,16 @@ def test_evaluates_one_expectation_for_q1(
     ],
 )
 def test_evaluates_for_default_model(
-    model_root: str,
+    model_roots: Iterable[str],
     shared_root: str,
     input_answer: str,
     input_expectation_number: int,
     config_data: dict,
     expected_results: List[ExpectationClassifierResult],
 ):
-    model_root = os.path.join(model_root, "default")
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
+    classifier = SVMAnswerClassifier(
+        "default", model_roots=model_roots, shared_root=shared_root
+    )
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
@@ -184,15 +186,16 @@ def test_evaluates_for_default_model(
     ],
 )
 def test_evaluates_one_expectation_for_q2(
-    model_root,
+    model_roots,
     shared_root,
     input_answer,
     input_expectation_number,
     config_data,
     expected_results,
 ):
-    model_root = os.path.join(model_root, "question2")
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
+    classifier = SVMAnswerClassifier(
+        "question2", model_roots=model_roots, shared_root=shared_root
+    )
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
@@ -229,15 +232,16 @@ def test_evaluates_one_expectation_for_q2(
     ],
 )
 def test_evaluates_with_no_input_expectation_number_for_q1(
-    model_root,
+    model_roots,
     shared_root,
     input_answer,
     input_expectation_number,
     config_data,
     expected_results,
 ):
-    model_root = os.path.join(model_root, "question1")
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
+    classifier = SVMAnswerClassifier(
+        "question1", model_roots=model_roots, shared_root=shared_root
+    )
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
@@ -338,7 +342,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
     ],
 )
 def test_evaluates_meta_cognitive_sentences(
-    model_root,
+    model_roots,
     shared_root,
     input_answer,
     input_expectation_number,
@@ -346,8 +350,9 @@ def test_evaluates_meta_cognitive_sentences(
     expected_results,
     expected_sa_results,
 ):
-    model_root = os.path.join(model_root, "question1")
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
+    classifier = SVMAnswerClassifier(
+        "question1", model_roots=model_roots, shared_root=shared_root
+    )
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
@@ -371,7 +376,6 @@ def test_evaluates_meta_cognitive_sentences(
     assert (
         expected_sa_results["profanity"].score == result.speech_acts["profanity"].score
     )
-
     for res, res_expected in zip(result.expectation_results, expected_results):
         assert res.expectation == res_expected.expectation
         assert round(res.score, 2) == res_expected.score
