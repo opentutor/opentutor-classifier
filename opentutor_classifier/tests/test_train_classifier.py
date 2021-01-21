@@ -331,6 +331,24 @@ def _test_train_online(
                 ExpectationClassifierResult(evaluation="Bad", score=0.0, expectation=2),
             ],
         ),
+        (
+            "ies-rectangle",
+            "is 37 by 40. As the ratio gets closer to 1, the rectangle looks more square. This is because the difference of 3 units matters less as the rectangle gets bigger. ",
+            [
+                ExpectationTrainingResult(accuracy=0.94),
+                ExpectationTrainingResult(accuracy=0.95),
+                ExpectationTrainingResult(accuracy=0.94),
+            ],
+            [
+                ExpectationClassifierResult(
+                    evaluation="Good", score=1.0, expectation=0
+                ),
+                ExpectationClassifierResult(
+                    evaluation="Good", score=0.65, expectation=1
+                ),
+                ExpectationClassifierResult(evaluation="Good", score=0.65, expectation=2),
+            ],
+        ),
     ],
 )
 def test_train_online(
