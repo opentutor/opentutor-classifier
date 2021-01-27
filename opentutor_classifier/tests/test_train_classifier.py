@@ -333,7 +333,7 @@ def _test_train_online(
         ),
         (
             "ies-rectangle",
-            "is 37 by 40. As the ratio gets closer to 1, the rectangle looks more square. This is because the difference of 3 units matters less as the rectangle gets bigger. ",
+            "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square. The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides. The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
             [
                 ExpectationTrainingResult(accuracy=0.94),
                 ExpectationTrainingResult(accuracy=0.95),
