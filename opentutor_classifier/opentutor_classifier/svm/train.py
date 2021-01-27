@@ -171,7 +171,17 @@ class SVMAnswerClassifierTraining:
         conf_exps_out: List[ExpectationConfig] = []
         expectation_results: List[ExpectationTrainingResult] = []
         expectation_models: Dict[int, svm.SVC] = {}
+        supergoodanswer = ""
+        for exp_num in split_training_sets.keys():
+            ideal = train_input.config.get_expectation_ideal(exp_num)
+            if ideal:
+                supergoodanswer = supergoodanswer + ideal
+            else:
+                supergoodanswer = supergoodanswer + split_training_sets[exp_num][0][0]
         for exp_num, (train_x, train_y) in split_training_sets.items():
+
+            train_x.append(supergoodanswer)
+            train_y.append("good")
             processed_data = _preprocess_trainx(train_x)
             processed_question = preprocess_sentence(question)
             ideal_answer = self.model_obj.initialize_ideal_answer(processed_data)
