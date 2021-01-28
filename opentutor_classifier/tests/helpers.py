@@ -52,7 +52,7 @@ def create_and_test_classifier(
         assert (
             round(evaluate_result.expectation_results[i].score, 2)
             == expected_evaluate_result[i].score
-        ), f"classifier expectation {i} score"
+        ), f"classifier expectation {i} score on input {evaluate_input}"
         assert (
             evaluate_result.expectation_results[i].evaluation
             == expected_evaluate_result[i].evaluation
