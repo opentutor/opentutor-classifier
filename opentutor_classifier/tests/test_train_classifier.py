@@ -225,6 +225,66 @@ def test_train_and_single_expectation_predict(
             train_result.models, shared_root, evaluate_input, [ans]
         )
 
+@responses.activate
+@pytest.mark.parametrize(
+    "lesson,evaluate_inputs,expected_training_result,expected_evaluate_results",
+    [
+        (
+            "ies-rectangle",
+            [
+                "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square. The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides. The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
+                "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",
+                "The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides.",
+                "The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
+            ],
+            [
+                ExpectationTrainingResult(accuracy=0.93),
+                ExpectationTrainingResult(accuracy=0.96),
+                ExpectationTrainingResult(accuracy=0.96),
+            ],
+            [
+                [
+                ExpectationClassifierResult(evaluation="Good", score=0.09, expectation=0),
+                ExpectationClassifierResult(evaluation="Good", score=0.92, expectation=1),
+                ExpectationClassifierResult(evaluation="Good", score=0.9, expectation=2),
+                ],
+                [
+                ExpectationClassifierResult(evaluation="Good", score=0.14, expectation=0),
+                ExpectationClassifierResult(evaluation="Bad", score=0.94, expectation=1),
+                ExpectationClassifierResult(evaluation="Bad", score=0.98, expectation=2),
+                ],
+                [
+                ExpectationClassifierResult(evaluation="Bad", score=1.0, expectation=0),
+                ExpectationClassifierResult(evaluation="Good", score=0.91, expectation=1),
+                ExpectationClassifierResult(evaluation="Bad", score=0.98, expectation=2),
+                ],
+                [
+                ExpectationClassifierResult(evaluation="Bad", score=1.0, expectation=0),
+                ExpectationClassifierResult(evaluation="Bad", score=0.94, expectation=1),
+                ExpectationClassifierResult(evaluation="Good", score=0.9, expectation=2),
+                ],
+            ],
+        ),
+    ],
+)
+def test_train_and_predict_multiple(
+    lesson: str,
+    evaluate_inputs: List[str],
+    expected_training_result: List[ExpectationTrainingResult],
+    expected_evaluate_results: List[List[ExpectationClassifierResult]],
+    data_root: str,
+    shared_root: str,
+    tmpdir,
+):
+    train_result = __train_classifier(tmpdir, path.join(data_root, lesson), shared_root)
+    assert path.exists(train_result.models)
+    assert_train_expectation_results(
+        train_result.expectations, expected_training_result
+    )
+    for evaluate_input, expected_evaluate_result in zip(evaluate_inputs,expected_evaluate_results):
+        create_and_test_classifier(
+            train_result.models, shared_root, evaluate_input, expected_evaluate_result
+        )
 
 def _test_train_online(
     lesson: str,
