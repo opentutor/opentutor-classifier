@@ -9,7 +9,7 @@ from glob import glob
 import json
 import math
 from os import path, makedirs
-from typing import Dict, List
+from typing import Dict, Iterable, List, Optional
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
@@ -34,7 +34,7 @@ from opentutor_classifier.stopwords import STOPWORDS
 from .dtos import ExpectationToEvaluate, InstanceModels
 
 from . import features
-from .utils import load_instances
+from .utils import load_models
 from .word2vec import find_or_load_word2vec
 
 
@@ -156,17 +156,25 @@ class SVMExpectationClassifier:
 
 
 class SVMAnswerClassifier:
-    def __init__(self, model_root="models", shared_root="shared"):
-        self.model_root = model_root
+    def __init__(
+        self,
+        model_name: str,
+        model_roots: Iterable[str] = ["models", "models_deployed"],
+        shared_root="shared",
+    ):
+        self.model_name = model_name
+        self.model_roots = model_roots
         self.shared_root = shared_root
         self.model_obj = SVMExpectationClassifier()
         self._word2vec = None
-        self._instance_models = None
+        self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
 
     def instance_models(self) -> InstanceModels:
         if not self._instance_models:
-            self._instance_models = load_instances(model_root=self.model_root)
+            self._instance_models = load_models(
+                self.model_name, model_roots=self.model_roots
+            )
         return self._instance_models
 
     def models_by_expectation_num(self) -> Dict[int, svm.SVC]:

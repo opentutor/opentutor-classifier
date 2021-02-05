@@ -37,12 +37,15 @@ def assert_train_expectation_results(
 
 
 def create_and_test_classifier(
-    model_root: str,
+    model_path: str,
     shared_root: str,
     evaluate_input: str,
     expected_evaluate_result: List[ExpectationClassifierResult],
 ):
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
+    model_root, model_name = path.split(model_path)
+    classifier = SVMAnswerClassifier(
+        model_name, model_roots=[model_root], shared_root=shared_root
+    )
     evaluate_result = classifier.evaluate(
         AnswerClassifierInput(input_sentence=evaluate_input)
     )

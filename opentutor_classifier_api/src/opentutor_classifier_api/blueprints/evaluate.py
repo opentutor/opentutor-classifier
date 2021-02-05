@@ -11,7 +11,7 @@ from cerberus import Validator
 
 from opentutor_classifier import AnswerClassifierInput
 from opentutor_classifier.svm import SVMAnswerClassifier
-from opentutor_classifier.svm.utils import dict_to_config
+from opentutor_classifier.svm.utils import dict_to_config, find_model_dir
 
 import json
 import re
@@ -59,12 +59,16 @@ def evaluate():
     if not validator(request.json or {}):
         return jsonify(validator.errors), 400
     args = validator.document
-    model_root = os.environ.get("MODEL_ROOT") or "models"
-    question_models = os.path.join(model_root, args.get("lesson"))
+    model_name = args.get("lesson")
+    model_roots = [
+        os.environ.get("MODEL_ROOT") or "models",
+        os.environ.get("MODEL_DEPLOYED_ROOT") or "models_deployed",
+    ]
+    question_models = find_model_dir(model_name, model_roots=model_roots)
     config_data = {}
     input_sentence = args.get("input")
     exp_num = int(args.get("expectation", -1))
-    if not os.path.isdir(question_models):
+    if not question_models:
         if not args.get("config"):
             return (
                 jsonify(
@@ -75,7 +79,8 @@ def evaluate():
                 404,
             )
         else:
-            question_models = os.path.join(model_root, "default")
+            model_name = "default"
+            question_models = find_model_dir(model_name, model_roots=model_roots)
             config_data = args.get("config")
     version_path = os.path.join(question_models, "build_version.json")
     version = None
@@ -84,7 +89,7 @@ def evaluate():
             version = json.load(f)
     shared_root = os.environ.get("SHARED_ROOT") or "shared"
     classifier = SVMAnswerClassifier(
-        model_root=question_models, shared_root=shared_root
+        model_name, model_roots=model_roots, shared_root=shared_root
     )
     _model_op = classifier.evaluate(
         AnswerClassifierInput(

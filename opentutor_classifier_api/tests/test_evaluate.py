@@ -21,6 +21,7 @@ def shared_root(word2vec) -> str:
 @pytest.fixture(autouse=True)
 def python_path_env(monkeypatch, shared_root):
     monkeypatch.setenv("MODEL_ROOT", fixture_path("models"))
+    monkeypatch.setenv("MODEL_DEPLOYED_ROOT", fixture_path("models_deployed"))
     monkeypatch.setenv("SHARED_ROOT", shared_root)
 
 

@@ -411,7 +411,8 @@ def test_trained_default_model_usable_for_inference(
             {"ideal": "Peer pressure can cause you to allow inappropriate behavior"}
         ],
     }
-    classifier = SVMAnswerClassifier(model_root=output_dir, shared_root=shared_root)
+    model_root, model_name = path.split(output_dir)
+    classifier = SVMAnswerClassifier(model_name, [model_root], shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="peer pressure can change your behavior",
