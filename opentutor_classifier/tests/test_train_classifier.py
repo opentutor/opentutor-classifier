@@ -14,7 +14,6 @@ import responses
 
 from opentutor_classifier import (
     AnswerClassifierInput,
-    ExpectationClassifierResult,
     ExpectationTrainingResult,
     TrainingResult,
 )
@@ -31,6 +30,7 @@ from .helpers import (
     create_and_test_classifier,
     fixture_path,
     output_and_archive_for_test,
+    _TestExpectationClassifierResult,
 )
 
 
@@ -138,25 +138,29 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             [
                 ExpectationTrainingResult(accuracy=0.8),
                 ExpectationTrainingResult(accuracy=0.7),
-                ExpectationTrainingResult(accuracy=1.0),
+                ExpectationTrainingResult(accuracy=0.98),
             ],
             [
-                ExpectationClassifierResult(
-                    evaluation="Good", score=0.99, expectation=0
+                _TestExpectationClassifierResult(
+                    evaluation="Good", score=0.98, expectation=0
                 ),
-                ExpectationClassifierResult(
-                    evaluation="Bad", score=0.69, expectation=1
+                _TestExpectationClassifierResult(
+                    evaluation="Bad", score=0.68, expectation=1
                 ),
-                ExpectationClassifierResult(
-                    evaluation="Bad", score=0.57, expectation=2
+                _TestExpectationClassifierResult(
+                    evaluation="Bad", score=0.56, expectation=2
                 ),
             ],
         ),
         (
             "question2",
             "Current flows in the same direction as the arrow",
-            [ExpectationTrainingResult(accuracy=1.0)],
-            [ExpectationClassifierResult(evaluation="Good", score=0.96, expectation=0)],
+            [ExpectationTrainingResult(accuracy=0.98)],
+            [
+                _TestExpectationClassifierResult(
+                    evaluation="Good", score=0.95, expectation=0
+                )
+            ],
         ),
     ],
 )
@@ -164,7 +168,7 @@ def test_train_and_predict(
     lesson: str,
     evaluate_input: str,
     expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_result: List[ExpectationClassifierResult],
+    expected_evaluate_result: List[_TestExpectationClassifierResult],
     tmpdir,
     data_root: str,
     shared_root: str,
@@ -185,22 +189,22 @@ def test_train_and_predict(
         (
             "question3",
             ["7 by 10", "38 by 39", "37x40", "12x23", "45 x 67"],
-            [ExpectationTrainingResult(accuracy=1.0)],
+            [ExpectationTrainingResult(accuracy=0.98)],
             [
-                ExpectationClassifierResult(
-                    evaluation="Bad", score=0.97, expectation=0
+                _TestExpectationClassifierResult(
+                    evaluation="Bad", score=0.95, expectation=0
                 ),
-                ExpectationClassifierResult(
-                    evaluation="Bad", score=0.97, expectation=0
+                _TestExpectationClassifierResult(
+                    evaluation="Bad", score=0.95, expectation=0
                 ),
-                ExpectationClassifierResult(
-                    evaluation="Good", score=0.93, expectation=0
+                _TestExpectationClassifierResult(
+                    evaluation="Good", score=0.92, expectation=0
                 ),
-                ExpectationClassifierResult(
-                    evaluation="Bad", score=0.97, expectation=0
+                _TestExpectationClassifierResult(
+                    evaluation="Bad", score=0.95, expectation=0
                 ),
-                ExpectationClassifierResult(
-                    evaluation="Bad", score=0.97, expectation=0
+                _TestExpectationClassifierResult(
+                    evaluation="Bad", score=0.95, expectation=0
                 ),
             ],
         ),
@@ -210,7 +214,7 @@ def test_train_and_single_expectation_predict(
     lesson: str,
     evaluate_input_list: List[str],
     expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_result: List[ExpectationClassifierResult],
+    expected_evaluate_result: List[_TestExpectationClassifierResult],
     tmpdir,
     data_root: str,
     shared_root: str,
@@ -230,7 +234,7 @@ def _test_train_online(
     lesson: str,
     evaluate_input: str,
     expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_result: List[ExpectationClassifierResult],
+    expected_evaluate_result: List[_TestExpectationClassifierResult],
     data_root: str,
     shared_root: str,
     tmpdir,
@@ -261,18 +265,18 @@ def _test_train_online(
             "question1",
             "peer pressure can change your behavior",
             [
-                ExpectationTrainingResult(accuracy=0.73),
+                ExpectationTrainingResult(accuracy=0.72),
                 ExpectationTrainingResult(accuracy=0.18),
-                ExpectationTrainingResult(accuracy=0.91),
+                ExpectationTrainingResult(accuracy=0.90),
             ],
             [
-                ExpectationClassifierResult(
-                    evaluation="Good", score=0.66, expectation=0
+                _TestExpectationClassifierResult(
+                    evaluation="Good", score=0.65, expectation=0
                 ),
-                ExpectationClassifierResult(
-                    evaluation="Good", score=0.99, expectation=1
+                _TestExpectationClassifierResult(
+                    evaluation="Good", score=0.98, expectation=1
                 ),
-                ExpectationClassifierResult(
+                _TestExpectationClassifierResult(
                     evaluation="Bad", score=0.46, expectation=2
                 ),
             ],
@@ -281,14 +285,14 @@ def _test_train_online(
             "example-2",
             "the hr team",
             [
-                ExpectationTrainingResult(accuracy=0.88),
-                ExpectationTrainingResult(accuracy=0.73),
+                ExpectationTrainingResult(accuracy=0.87),
+                ExpectationTrainingResult(accuracy=0.72),
             ],
             [
-                ExpectationClassifierResult(
-                    evaluation="Good", score=1.0, expectation=0
+                _TestExpectationClassifierResult(
+                    evaluation="Good", score=0.98, expectation=0
                 ),
-                ExpectationClassifierResult(
+                _TestExpectationClassifierResult(
                     evaluation="Bad", score=0.38, expectation=1
                 ),
             ],
@@ -297,18 +301,18 @@ def _test_train_online(
             "question1",
             "peer pressure can change your behavior",
             [
-                ExpectationTrainingResult(accuracy=0.73),
+                ExpectationTrainingResult(accuracy=0.72),
                 ExpectationTrainingResult(accuracy=0.18),
-                ExpectationTrainingResult(accuracy=0.91),
+                ExpectationTrainingResult(accuracy=0.90),
             ],
             [
-                ExpectationClassifierResult(
-                    evaluation="Good", score=0.66, expectation=0
+                _TestExpectationClassifierResult(
+                    evaluation="Good", score=0.65, expectation=0
                 ),
-                ExpectationClassifierResult(
-                    evaluation="Good", score=0.99, expectation=1
+                _TestExpectationClassifierResult(
+                    evaluation="Good", score=0.98, expectation=1
                 ),
-                ExpectationClassifierResult(
+                _TestExpectationClassifierResult(
                     evaluation="Bad", score=0.46, expectation=2
                 ),
             ],
@@ -318,17 +322,19 @@ def _test_train_online(
             "percentages represent a ratio of parts per 100",
             [
                 ExpectationTrainingResult(accuracy=0.67),
-                ExpectationTrainingResult(accuracy=0.66),
+                ExpectationTrainingResult(accuracy=0.65),
                 ExpectationTrainingResult(accuracy=0.89),
             ],
             [
-                ExpectationClassifierResult(
-                    evaluation="Good", score=1.0, expectation=0
+                _TestExpectationClassifierResult(
+                    evaluation="Good", score=0.98, expectation=0
                 ),
-                ExpectationClassifierResult(
-                    evaluation="Good", score=0.65, expectation=1
+                _TestExpectationClassifierResult(
+                    evaluation="Good", score=0.64, expectation=1
                 ),
-                ExpectationClassifierResult(evaluation="Bad", score=0.0, expectation=2),
+                _TestExpectationClassifierResult(
+                    evaluation="Bad", score=0.0, expectation=2
+                ),
             ],
         ),
     ],
@@ -337,7 +343,7 @@ def test_train_online(
     lesson: str,
     evaluate_input: str,
     expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_result: List[ExpectationClassifierResult],
+    expected_evaluate_result: List[_TestExpectationClassifierResult],
     data_root: str,
     shared_root: str,
     tmpdir,
@@ -361,18 +367,18 @@ def test_train_online(
             "question1-with-unknown-props-in-config",
             "peer pressure can change your behavior",
             [
-                ExpectationTrainingResult(accuracy=0.73),
+                ExpectationTrainingResult(accuracy=0.72),
                 ExpectationTrainingResult(accuracy=0.18),
-                ExpectationTrainingResult(accuracy=0.91),
+                ExpectationTrainingResult(accuracy=0.90),
             ],
             [
-                ExpectationClassifierResult(
+                _TestExpectationClassifierResult(
                     evaluation="Good", score=0.66, expectation=0
                 ),
-                ExpectationClassifierResult(
-                    evaluation="Good", score=0.99, expectation=1
+                _TestExpectationClassifierResult(
+                    evaluation="Good", score=0.98, expectation=1
                 ),
-                ExpectationClassifierResult(
+                _TestExpectationClassifierResult(
                     evaluation="Bad", score=0.46, expectation=2
                 ),
             ],
@@ -383,7 +389,7 @@ def test_train_online_works_if_config_has_unknown_props(
     lesson: str,
     evaluate_input: str,
     expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_result: List[ExpectationClassifierResult],
+    expected_evaluate_result: List[_TestExpectationClassifierResult],
     data_root: str,
     shared_root: str,
     tmpdir,

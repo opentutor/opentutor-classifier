@@ -4,6 +4,8 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from dataclasses import dataclass
+from enum import Enum
 import json
 from os import environ, path
 from typing import List, Tuple
@@ -12,11 +14,30 @@ import responses
 
 from opentutor_classifier import (
     AnswerClassifierInput,
+    AnswerClassifierResult,
     ExpectationClassifierResult,
     ExpectationTrainingResult,
 )
 from opentutor_classifier.api import GRAPHQL_ENDPOINT
 from opentutor_classifier.svm.predict import SVMAnswerClassifier
+
+
+class ComparisonType(Enum):
+    EQ = 0
+    GTE = 1
+    LTE = 2
+
+
+@dataclass
+class _TestExpectationClassifierResult(ExpectationClassifierResult):
+    comparison: ComparisonType = ComparisonType.GTE
+    epsilon: float = 0.01  # used only for eq
+
+
+@dataclass
+class _TestClassifierExample:
+    input: AnswerClassifierInput
+    expected_result: List[_TestExpectationClassifierResult]
 
 
 def add_graphql_response(name: str):
@@ -28,38 +49,67 @@ def add_graphql_response(name: str):
 
 
 def assert_train_expectation_results(
-    observed: List[ExpectationTrainingResult],
-    expected: List[ExpectationTrainingResult],
-    epsilon=0.01,
+    observed: List[ExpectationTrainingResult], expected: List[ExpectationTrainingResult]
 ):
     for o, e in zip(observed, expected):
-        assert abs(o.accuracy - e.accuracy) <= epsilon
+        assert o.accuracy >= e.accuracy
+
+
+def assert_classifier_evaluate(
+    observed: AnswerClassifierResult, expected: List[_TestExpectationClassifierResult]
+):
+    assert len(observed.expectation_results) == len(expected)
+    for i in range(len(expected)):
+        assert (
+            observed.expectation_results[i].expectation == expected[i].expectation
+            if expected[i].expectation != -1
+            else i
+        )
+        if expected[i].comparison == ComparisonType.GTE:
+            assert (
+                observed.expectation_results[i].score >= expected[i].score
+            ), f"classifier expectation {i} score"
+        elif expected[i].comparison == ComparisonType.LTE:
+            assert (
+                observed.expectation_results[i].score <= expected[i].score
+            ), f"classifier expectation {i} score"
+        else:
+            assert (
+                abs(observed.expectation_results[i].score - expected[i].score)
+                <= expected[i].epsilon
+            ), f"classifier expectation {i} score"
+        assert (
+            observed.expectation_results[i].evaluation == expected[i].evaluation
+        ), f"{observed.expectation_results[i].evaluation} != {expected[i].evaluation} for expectation {i}"
+
+
+def run_classifier_tests(
+    model_path: str, shared_root: str, examples: List[_TestClassifierExample]
+):
+    model_root, model_name = path.split(model_path)
+    classifier = SVMAnswerClassifier(
+        model_name, model_roots=[model_root], shared_root=shared_root
+    )
+    for ex in examples:
+        assert_classifier_evaluate(classifier.evaluate(ex.input), ex.expected_result)
 
 
 def create_and_test_classifier(
     model_path: str,
     shared_root: str,
     evaluate_input: str,
-    expected_evaluate_result: List[ExpectationClassifierResult],
+    expected_evaluate_result: List[_TestExpectationClassifierResult],
 ):
-    model_root, model_name = path.split(model_path)
-    classifier = SVMAnswerClassifier(
-        model_name, model_roots=[model_root], shared_root=shared_root
+    run_classifier_tests(
+        model_path,
+        shared_root,
+        [
+            _TestClassifierExample(
+                input=AnswerClassifierInput(input_sentence=evaluate_input),
+                expected_result=expected_evaluate_result,
+            )
+        ],
     )
-    evaluate_result = classifier.evaluate(
-        AnswerClassifierInput(input_sentence=evaluate_input)
-    )
-    assert len(evaluate_result.expectation_results) == len(expected_evaluate_result)
-    for i in range(len(expected_evaluate_result)):
-        assert evaluate_result.expectation_results[i].expectation == i
-        assert (
-            round(evaluate_result.expectation_results[i].score, 2)
-            == expected_evaluate_result[i].score
-        ), f"classifier expectation {i} score"
-        assert (
-            evaluate_result.expectation_results[i].evaluation
-            == expected_evaluate_result[i].evaluation
-        ), f"{evaluate_result.expectation_results[i].evaluation} != {expected_evaluate_result[i].evaluation} for expectation {i}"
 
 
 def fixture_path(p: str) -> str:
