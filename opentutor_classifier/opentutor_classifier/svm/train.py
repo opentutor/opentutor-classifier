@@ -98,6 +98,7 @@ class SVMAnswerClassifierTraining:
 
             features_list = self.model_obj.calculate_features(
                 processed_question,
+                input_sentence,
                 processed_input_sentence,
                 processed_ia,
                 self.word2vec,
@@ -187,6 +188,7 @@ class SVMAnswerClassifierTraining:
                 np.array(
                     self.model_obj.calculate_features(
                         processed_question,
+                        raw_example,
                         example,
                         ideal_answer,
                         self.word2vec,
@@ -195,7 +197,7 @@ class SVMAnswerClassifierTraining:
                         bad,
                     )
                 )
-                for example in processed_data
+                for raw_example, example in zip(train_x, processed_data)
             ]
             train_y = np.array(self.model_obj.encode_y(train_y))
             model = self.model_obj.initialize_model()

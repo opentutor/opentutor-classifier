@@ -6,7 +6,7 @@
 #
 from os import path
 import pickle
-from typing import Dict, Optional
+from typing import Dict, Iterable, Optional
 import yaml
 
 from sklearn import svm
@@ -20,17 +20,27 @@ def load_config(config_file: str) -> QuestionConfig:
         return QuestionConfig(**yaml.load(f, Loader=yaml.FullLoader))
 
 
-def load_instances(
-    model_root="./models",
+def find_model_dir(model_name: str, model_roots: Iterable[str]) -> str:
+    for m in model_roots:
+        d = path.join(m, model_name)
+        if path.isdir(d):
+            return d
+    return ""
+
+
+def load_models(
+    model_name: str,
+    model_roots: Iterable[str] = ["./models", "./models_deployed"],
     models_by_expectation_num_filename="models_by_expectation_num.pkl",
     config_filename="config.yaml",
 ) -> InstanceModels:
+    model_dir = find_model_dir(model_name, model_roots)
     with open(
-        path.join(model_root, models_by_expectation_num_filename), "rb"
+        path.join(model_dir, models_by_expectation_num_filename), "rb"
     ) as models_file:
         models_by_expectation_num: Dict[int, svm.SVC] = pickle.load(models_file)
         return InstanceModels(
-            config=load_config(path.join(model_root, config_filename)),
+            config=load_config(path.join(model_dir, config_filename)),
             models_by_expectation_num=models_by_expectation_num,
         )
 

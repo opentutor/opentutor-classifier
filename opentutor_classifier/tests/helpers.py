@@ -30,21 +30,22 @@ def add_graphql_response(name: str):
 def assert_train_expectation_results(
     observed: List[ExpectationTrainingResult],
     expected: List[ExpectationTrainingResult],
-    precision=2,
+    epsilon=0.01,
 ):
-    assert [
-        ExpectationTrainingResult(accuracy=round(x.accuracy, precision))
-        for x in observed
-    ] == expected
+    for o, e in zip(observed, expected):
+        assert abs(o.accuracy - e.accuracy) <= epsilon
 
 
 def create_and_test_classifier(
-    model_root: str,
+    model_path: str,
     shared_root: str,
     evaluate_input: str,
     expected_evaluate_result: List[ExpectationClassifierResult],
 ):
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
+    model_root, model_name = path.split(model_path)
+    classifier = SVMAnswerClassifier(
+        model_name, model_roots=[model_root], shared_root=shared_root
+    )
     evaluate_result = classifier.evaluate(
         AnswerClassifierInput(input_sentence=evaluate_input)
     )
