@@ -1,0 +1,6 @@
+exp_num,text,label
+0,a good response for exp 0,good
+0,a bad response for exp 0,bad
+0,a neutral response for exp 0,neutral
+0,no label is also neutral in a test set,
+1,a good response for exp 1,good
