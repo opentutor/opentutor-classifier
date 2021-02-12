@@ -169,6 +169,10 @@ def fixture_path(p: str) -> str:
     return path.abspath(path.join(".", "tests", "fixtures", p))
 
 
+def example_testset_path(example: str, testset_name="test.csv") -> str:
+    return fixture_path(path.join("data", example, testset_name))
+
+
 def output_and_archive_for_test(tmpdir, data_root: str) -> Tuple[str, str]:
     testdir = tmpdir.mkdir("test")
     return (
@@ -223,3 +227,15 @@ def read_test_set_from_csv(csv_path: str, confidence_threshold=-1.0) -> _TestSet
             )
         )
     return testset
+
+
+def read_example_testset(
+    example: str, confidence_threshold=-1.0, testset_name="test.csv"
+) -> _TestSet:
+    return read_test_set_from_csv(
+        example_testset_path(
+            example,
+            testset_name=testset_name,
+        ),
+        confidence_threshold=confidence_threshold,
+    )

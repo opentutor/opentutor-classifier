@@ -20,7 +20,7 @@ from .utils import (
     assert_classifier_evaluate,
     assert_testset_accuracy,
     fixture_path,
-    read_test_set_from_csv,
+    read_example_testset,
 )
 from .types import _TestExpectation
 
@@ -52,10 +52,7 @@ def test_evaluate(
     confidence_threshold: float,
     expected_accuracy: float,
 ):
-    testset = read_test_set_from_csv(
-        fixture_path(os.path.join("data", example, "test.csv")),
-        confidence_threshold=confidence_threshold,
-    )
+    testset = read_example_testset(example, confidence_threshold=confidence_threshold)
     assert_testset_accuracy(os.path.join(model_roots[0], example), shared_root, testset)
 
 
