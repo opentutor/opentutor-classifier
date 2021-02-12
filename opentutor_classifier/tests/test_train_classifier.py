@@ -274,7 +274,9 @@ def _test_train_online(
         train_result.expectations, expected_training_result
     )
     assert path.exists(train_result.models)
-    for evaluate_input, expected_evaluate_result in zip(evaluate_inputs,expected_evaluate_results):
+    for evaluate_input, expected_evaluate_result in zip(
+        evaluate_inputs, expected_evaluate_results
+    ):
         create_and_test_classifier(
             train_result.models, shared_root, evaluate_input, expected_evaluate_result
         )
@@ -351,13 +353,14 @@ def test_train_online(
 ):
     _test_train_online(
         lesson,
-        [ evaluate_input ],
+        [evaluate_input],
         expected_training_result,
-        [ expected_evaluate_result ],
+        [expected_evaluate_result],
         data_root,
         shared_root,
         tmpdir,
     )
+
 
 @responses.activate
 @pytest.mark.parametrize(
@@ -378,24 +381,24 @@ def test_train_online(
             ],
             [
                 [
-                _TestExpectation(evaluation="Good", score=0, expectation=0),
-                _TestExpectation(evaluation="Good", score=0.921, expectation=1),
-                _TestExpectation(evaluation="Good", score=0, expectation=2),
+                    _TestExpectation(evaluation="Good", score=0, expectation=0),
+                    _TestExpectation(evaluation="Good", score=0.921, expectation=1),
+                    _TestExpectation(evaluation="Good", score=0, expectation=2),
                 ],
                 [
-                _TestExpectation(evaluation="Good", score=0.14, expectation=0),
-                _TestExpectation(evaluation="Bad", score=0.919, expectation=1),
-                _TestExpectation(evaluation="Bad", score=0.987, expectation=2),
+                    _TestExpectation(evaluation="Good", score=0.14, expectation=0),
+                    _TestExpectation(evaluation="Bad", score=0.919, expectation=1),
+                    _TestExpectation(evaluation="Bad", score=0.987, expectation=2),
                 ],
                 [
-                _TestExpectation(evaluation="Bad", score=0.999, expectation=0),
-                _TestExpectation(evaluation="Good", score=0.919, expectation=1),
-                _TestExpectation(evaluation="Bad", score=0.988, expectation=2),
+                    _TestExpectation(evaluation="Bad", score=0.999, expectation=0),
+                    _TestExpectation(evaluation="Good", score=0.919, expectation=1),
+                    _TestExpectation(evaluation="Bad", score=0.988, expectation=2),
                 ],
                 [
-                _TestExpectation(evaluation="Bad", score=0.999, expectation=0),
-                _TestExpectation(evaluation="Bad", score=0.92, expectation=1),
-                _TestExpectation(evaluation="Good", score=0.79, expectation=2),
+                    _TestExpectation(evaluation="Bad", score=0.999, expectation=0),
+                    _TestExpectation(evaluation="Bad", score=0.92, expectation=1),
+                    _TestExpectation(evaluation="Good", score=0.79, expectation=2),
                 ],
             ],
         ),
@@ -419,6 +422,8 @@ def test_multiple_train_online(
         shared_root,
         tmpdir,
     )
+
+
 @responses.activate
 @pytest.mark.parametrize(
     "lesson,evaluate_input,expected_training_result,expected_evaluate_result",
@@ -450,9 +455,9 @@ def test_train_online_works_if_config_has_unknown_props(
 ):
     _test_train_online(
         lesson,
-        [ evaluate_input ],
+        [evaluate_input],
         expected_training_result,
-        [ expected_evaluate_result ],
+        [expected_evaluate_result],
         data_root,
         shared_root,
         tmpdir,
