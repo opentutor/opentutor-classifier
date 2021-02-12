@@ -150,6 +150,7 @@ def test_train_and_predict(
         train_result.models, shared_root, evaluate_input, expected_evaluate_result
     )
 
+
 @responses.activate
 @pytest.mark.parametrize(
     "lesson,evaluate_inputs,expected_training_result,expected_evaluate_results",
@@ -169,48 +170,24 @@ def test_train_and_predict(
             ],
             [
                 [
-                    _TestExpectation(
-                        evaluation="Good", score=0.09, expectation=0
-                    ),
-                    _TestExpectation(
-                        evaluation="Good", score=0.92, expectation=1
-                    ),
-                    _TestExpectation(
-                        evaluation="Good", score=0.9, expectation=2
-                    ),
+                    _TestExpectation(evaluation="Good", score=0.09, expectation=0),
+                    _TestExpectation(evaluation="Good", score=0.92, expectation=1),
+                    _TestExpectation(evaluation="Good", score=0.9, expectation=2),
                 ],
                 [
-                    _TestExpectation(
-                        evaluation="Good", score=0.14, expectation=0
-                    ),
-                    _TestExpectation(
-                        evaluation="Bad", score=0.939, expectation=1
-                    ),
-                    _TestExpectation(
-                        evaluation="Bad", score=0.976, expectation=2
-                    ),
+                    _TestExpectation(evaluation="Good", score=0.14, expectation=0),
+                    _TestExpectation(evaluation="Bad", score=0.939, expectation=1),
+                    _TestExpectation(evaluation="Bad", score=0.976, expectation=2),
                 ],
                 [
-                    _TestExpectation(
-                        evaluation="Bad", score=0.999, expectation=0
-                    ),
-                    _TestExpectation(
-                        evaluation="Good", score=0.907, expectation=1
-                    ),
-                    _TestExpectation(
-                        evaluation="Bad", score=0.976, expectation=2
-                    ),
+                    _TestExpectation(evaluation="Bad", score=0.999, expectation=0),
+                    _TestExpectation(evaluation="Good", score=0.907, expectation=1),
+                    _TestExpectation(evaluation="Bad", score=0.976, expectation=2),
                 ],
                 [
-                    _TestExpectation(
-                        evaluation="Bad", score=0.999, expectation=0
-                    ),
-                    _TestExpectation(
-                        evaluation="Bad", score=0.936, expectation=1
-                    ),
-                    _TestExpectation(
-                        evaluation="Good", score=0.899, expectation=2
-                    ),
+                    _TestExpectation(evaluation="Bad", score=0.999, expectation=0),
+                    _TestExpectation(evaluation="Bad", score=0.936, expectation=1),
+                    _TestExpectation(evaluation="Good", score=0.899, expectation=2),
                 ],
             ],
         ),
@@ -236,6 +213,8 @@ def test_train_and_predict_multiple(
         create_and_test_classifier(
             train_result.models, shared_root, evaluate_input, expected_evaluate_result
         )
+
+
 @pytest.mark.parametrize(
     "lesson,evaluate_input_list,expected_training_result,expected_evaluate_result",
     [
