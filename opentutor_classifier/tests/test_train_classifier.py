@@ -254,9 +254,9 @@ def test_train_and_single_expectation_predict(
 
 def _test_train_online(
     lesson: str,
-    evaluate_input: str,
+    evaluate_inputs: List[str],
     expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_result: List[_TestExpectation],
+    expected_evaluate_results: List[List[_TestExpectation]],
     data_root: str,
     shared_root: str,
     tmpdir,
@@ -274,9 +274,10 @@ def _test_train_online(
         train_result.expectations, expected_training_result
     )
     assert path.exists(train_result.models)
-    create_and_test_classifier(
-        train_result.models, shared_root, evaluate_input, expected_evaluate_result
-    )
+    for evaluate_input, expected_evaluate_result in zip(evaluate_inputs,expected_evaluate_results):
+        create_and_test_classifier(
+            train_result.models, shared_root, evaluate_input, expected_evaluate_result
+        )
 
 
 @responses.activate
@@ -350,15 +351,74 @@ def test_train_online(
 ):
     _test_train_online(
         lesson,
-        evaluate_input,
+        [ evaluate_input ],
         expected_training_result,
-        expected_evaluate_result,
+        [ expected_evaluate_result ],
         data_root,
         shared_root,
         tmpdir,
     )
 
-
+@responses.activate
+@pytest.mark.parametrize(
+    "lesson,evaluate_inputs,expected_training_result,expected_evaluate_results",
+    [
+        (
+            "ies-rectangle",
+            [
+                "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square. The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides. The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
+                "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",
+                "The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides.",
+                "The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
+            ],
+            [
+                ExpectationTrainingResult(accuracy=0.929),
+                ExpectationTrainingResult(accuracy=0.956),
+                ExpectationTrainingResult(accuracy=0.96),
+            ],
+            [
+                [
+                _TestExpectation(evaluation="Good", score=0, expectation=0),
+                _TestExpectation(evaluation="Good", score=0.921, expectation=1),
+                _TestExpectation(evaluation="Good", score=0, expectation=2),
+                ],
+                [
+                _TestExpectation(evaluation="Good", score=0.14, expectation=0),
+                _TestExpectation(evaluation="Bad", score=0.919, expectation=1),
+                _TestExpectation(evaluation="Bad", score=0.987, expectation=2),
+                ],
+                [
+                _TestExpectation(evaluation="Bad", score=0.999, expectation=0),
+                _TestExpectation(evaluation="Good", score=0.919, expectation=1),
+                _TestExpectation(evaluation="Bad", score=0.988, expectation=2),
+                ],
+                [
+                _TestExpectation(evaluation="Bad", score=0.999, expectation=0),
+                _TestExpectation(evaluation="Bad", score=0.92, expectation=1),
+                _TestExpectation(evaluation="Good", score=0.79, expectation=2),
+                ],
+            ],
+        ),
+    ],
+)
+def test_multiple_train_online(
+    lesson: str,
+    evaluate_inputs: List[str],
+    expected_training_result: List[ExpectationTrainingResult],
+    expected_evaluate_results: List[List[_TestExpectation]],
+    data_root: str,
+    shared_root: str,
+    tmpdir,
+):
+    _test_train_online(
+        lesson,
+        evaluate_inputs,
+        expected_training_result,
+        expected_evaluate_results,
+        data_root,
+        shared_root,
+        tmpdir,
+    )
 @responses.activate
 @pytest.mark.parametrize(
     "lesson,evaluate_input,expected_training_result,expected_evaluate_result",
@@ -390,9 +450,9 @@ def test_train_online_works_if_config_has_unknown_props(
 ):
     _test_train_online(
         lesson,
-        evaluate_input,
+        [ evaluate_input ],
         expected_training_result,
-        expected_evaluate_result,
+        [ expected_evaluate_result ],
         data_root,
         shared_root,
         tmpdir,
