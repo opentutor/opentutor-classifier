@@ -66,6 +66,6 @@ jobs:
           docker tag "uscictdocker/opentutor-classifier:${{ steps.tag.outputs.image_tag }}" "uscictdocker/opentutor-classifier:latest"
           docker tag "uscictdocker/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }}" "uscictdocker/opentutor-classifier-api:latest"
       - name: docker push classifier
-        run: docker push uscictdocker/opentutor-classifier
+        run: docker push --all-tags uscictdocker/opentutor-classifier
       - name: docker push api
         run: docker push --all-tags uscictdocker/opentutor-classifier-api
