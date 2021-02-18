@@ -1,0 +1,484 @@
+exp_num,text,label
+0,"They are not proportional. Because they were lit at different times, the ratio will not be uniform throughout",Bad
+1,"They are not proportional. Because they were lit at different times, the ratio will not be uniform throughout",Bad
+2,"They are not proportional. Because they were lit at different times, the ratio will not be uniform throughout",Good
+3,"They are not proportional. Because they were lit at different times, the ratio will not be uniform throughout",Good
+0,It is proportional because the rates of each dont change,Good
+1,It is proportional because the rates of each dont change,Bad
+2,It is proportional because the rates of each dont change,Bad
+3,It is proportional because the rates of each dont change,Bad
+0,They are not proportional,Bad
+1,They are not proportional,Bad
+2,They are not proportional,Bad
+3,They are not proportional,Good
+0,The rates change as time goes on,Bad
+1,The rates change as time goes on,Bad
+2,The rates change as time goes on,Bad
+3,The rates change as time goes on,Bad
+0,Each candle stays the same,Good
+1,Each candle stays the same,Bad
+2,Each candle stays the same,Bad
+3,Each candle stays the same,Bad
+0,It also increases,Bad
+1,It also increases,Good
+2,It also increases,Bad
+3,It also increases,Bad
+0,The ratio between the two changes,Bad
+1,The ratio between the two changes,Bad
+2,The ratio between the two changes,Good
+3,The ratio between the two changes,Bad
+0,Not proportional. The Candles are different at each point,Bad
+1,Not proportional. The Candles are different at each point,Bad
+3,Not proportional. The Candles are different at each point,Good
+0,They are proportional. The candles are always the same,Bad
+1,They are proportional. The candles are always the same,Bad
+2,They are proportional. The candles are always the same,Bad
+3,They are proportional. The candles are always the same,Bad
+0,The rate of each candle is different,Bad
+1,The rate of each candle is different,Bad
+2,The rate of each candle is different,Bad
+3,The rate of each candle is different,Bad
+0,They decrease,Bad
+1,They decrease,Bad
+2,They decrease,Bad
+3,They decrease,Bad
+0,They aren't connected,Bad
+1,They aren't connected,Bad
+2,They aren't connected,Bad
+3,They aren't connected,Bad
+0,"They burn independently, so there isnt a relationship",Bad
+1,"They burn independently, so there isnt a relationship",Bad
+2,"They burn independently, so there isnt a relationship",Bad
+0,Its proportional,Bad
+1,Its proportional,Bad
+2,Its proportional,Bad
+3,Its proportional,Bad
+0,The rates are always the same,Good
+1,The rates are always the same,Bad
+2,The rates are always the same,Bad
+3,The rates are always the same,Bad
+0,They burn the same throughout,Good
+1,They burn the same throughout,Bad
+2,They burn the same throughout,Bad
+3,They burn the same throughout,Bad
+0,It also burns,Bad
+2,It also burns,Bad
+3,It also burns,Bad
+0,They both go up together,Bad
+1,They both go up together,Good
+2,They both go up together,Bad
+3,They both go up together,Bad
+0,All of the unit rates are the same,Bad
+1,All of the unit rates are the same,Bad
+2,All of the unit rates are the same,Bad
+3,All of the unit rates are the same,Bad
+0,It is constant,Bad
+1,It is constant,Bad
+2,It is constant,Bad
+3,It is constant,Bad
+0,It is not proportional,Bad
+1,It is not proportional,Bad
+2,It is not proportional,Bad
+3,It is not proportional,Good
+0,"They are not of the proportional relationship. Because they are not lit at the same time, the ratio of their lengths are not invariant.",Bad
+1,"They are not of the proportional relationship. Because they are not lit at the same time, the ratio of their lengths are not invariant.",Bad
+2,"They are not of the proportional relationship. Because they are not lit at the same time, the ratio of their lengths are not invariant.",Good
+3,"They are not of the proportional relationship. Because they are not lit at the same time, the ratio of their lengths are not invariant.",Good
+0,"No, because the candles start burning at different times. The candles are identical and burn at the same rate.",Good
+1,"No, because the candles start burning at different times. The candles are identical and burn at the same rate.",Bad
+2,"No, because the candles start burning at different times. The candles are identical and burn at the same rate.",Bad
+3,"No, because the candles start burning at different times. The candles are identical and burn at the same rate.",Good
+0,ratio isn't constant,Bad
+1,ratio isn't constant,Bad
+2,ratio isn't constant,Good
+3,ratio isn't constant,Bad
+0,ratio is constant,Bad
+1,ratio is constant,Bad
+2,ratio is constant,Bad
+3,ratio is constant,Bad
+0,covary,Bad
+1,covary,Bad
+2,covary,Bad
+3,covary,Bad
+0,constant,Bad
+1,constant,Bad
+2,constant,Bad
+3,constant,Bad
+0,the ratio is constant,Bad
+1,the ratio is constant,Bad
+2,the ratio is constant,Bad
+3,the ratio is constant,Bad
+0,is proportional,Bad
+1,is proportional,Bad
+2,is proportional,Bad
+3,is proportional,Bad
+0,each candle is proportional,Bad
+1,each candle is proportional,Bad
+2,each candle is proportional,Bad
+3,each candle is proportional,Bad
+0,the ratio between candles in proportional,Bad
+1,the ratio between candles in proportional,Bad
+2,the ratio between candles in proportional,Bad
+3,the ratio between candles in proportional,Bad
+0,the ratio between candles is not proportional,Bad
+1,the ratio between candles is not proportional,Bad
+2,the ratio between candles is not proportional,Bad
+3,the ratio between candles is not proportional,Good
+0,No they are not proportional because they are not lit at the same time. ,Bad
+1,No they are not proportional because they are not lit at the same time. ,Bad
+2,No they are not proportional because they are not lit at the same time. ,Bad
+3,No they are not proportional because they are not lit at the same time. ,Good
+0,"It is not a proportional relationship. Since the start times are different, the quotient between the rates will not be uniform",Bad
+1,"It is not a proportional relationship. Since the start times are different, the quotient between the rates will not be uniform",Bad
+2,"It is not a proportional relationship. Since the start times are different, the quotient between the rates will not be uniform",Good
+3,"It is not a proportional relationship. Since the start times are different, the quotient between the rates will not be uniform",Good
+0,They are proportional. The rates are going to be the same the whole time,Good
+1,They are proportional. The rates are going to be the same the whole time,Bad
+2,They are proportional. The rates are going to be the same the whole time,Bad
+3,They are proportional. The rates are going to be the same the whole time,Bad
+0,They are uniform,Good
+1,They are uniform,Bad
+2,They are uniform,Bad
+3,They are uniform,Bad
+0,"No, it always burns at the same pace",Good
+1,"No, it always burns at the same pace",Bad
+2,"No, it always burns at the same pace",Bad
+3,"No, it always burns at the same pace",Bad
+0,"It is not a proportional relationship. Since the start times are different, the quotient between the rates will not be uniform",Bad
+1,"It is not a proportional relationship. Since the start times are different, the quotient between the rates will not be uniform",Bad
+2,"It is not a proportional relationship. Since the start times are different, the quotient between the rates will not be uniform",Good
+3,"It is not a proportional relationship. Since the start times are different, the quotient between the rates will not be uniform",Good
+0,They are proportional. The rates are going to be the same the whole time,Good
+1,They are proportional. The rates are going to be the same the whole time,Bad
+2,They are proportional. The rates are going to be the same the whole time,Bad
+3,They are proportional. The rates are going to be the same the whole time,Bad
+0,They are uniform,Good
+1,They are uniform,Bad
+2,They are uniform,Bad
+3,They are uniform,Bad
+0,"No, it always burns at the same pace",Good
+1,"No, it always burns at the same pace",Bad
+2,"No, it always burns at the same pace",Bad
+3,"No, it always burns at the same pace",Bad
+0,"To determine if a relationship between quantities is proportional, it must have three properties:",Bad
+1,"To determine if a relationship between quantities is proportional, it must have three properties:",Bad
+2,"To determine if a relationship between quantities is proportional, it must have three properties:",Bad
+3,"To determine if a relationship between quantities is proportional, it must have three properties:",Bad
+0,"No, it always burns at the same pace",Good
+1,"No, it always burns at the same pace",Bad
+2,"No, it always burns at the same pace",Bad
+3,"No, it always burns at the same pace",Bad
+0,They are proportional. The rates are going to be the same the whole time,Good
+1,They are proportional. The rates are going to be the same the whole time,Bad
+2,They are proportional. The rates are going to be the same the whole time,Bad
+3,They are proportional. The rates are going to be the same the whole time,Bad
+0,They are uniform,Good
+1,They are uniform,Bad
+2,They are uniform,Bad
+3,They are uniform,Bad
+0,"No, it always burns at the same pace",Good
+1,"No, it always burns at the same pace",Bad
+2,"No, it always burns at the same pace",Bad
+3,"No, it always burns at the same pace",Bad
+0,"Each candle is identical and burning at a constant rate, which indicates uniformity.",Good
+1,"Each candle is identical and burning at a constant rate, which indicates uniformity.",Bad
+2,"Each candle is identical and burning at a constant rate, which indicates uniformity.",Bad
+3,"Each candle is identical and burning at a constant rate, which indicates uniformity.",Bad
+0,"Each candle is identical and burning at a constant rate, which indicates uniformity.",Good
+1,"Each candle is identical and burning at a constant rate, which indicates uniformity.",Bad
+2,"Each candle is identical and burning at a constant rate, which indicates uniformity.",Bad
+3,"Each candle is identical and burning at a constant rate, which indicates uniformity.",Bad
+0,The length that Candle A has burned and the length that Candle B has burned are variable quantities and change together.,Bad
+1,The length that Candle A has burned and the length that Candle B has burned are variable quantities and change together.,Good
+2,The length that Candle A has burned and the length that Candle B has burned are variable quantities and change together.,Bad
+3,The length that Candle A has burned and the length that Candle B has burned are variable quantities and change together.,Bad
+0,"The length that Candle A has burned and the length that Candle B has burned are variable quantities and change together.
+",Bad
+1,"The length that Candle A has burned and the length that Candle B has burned are variable quantities and change together.
+",Good
+2,"The length that Candle A has burned and the length that Candle B has burned are variable quantities and change together.
+",Bad
+3,"The length that Candle A has burned and the length that Candle B has burned are variable quantities and change together.
+",Bad
+0,"The ratio of the length that Candle A has burned to the length that Candle B has burned is not constant.
+",Bad
+1,"The ratio of the length that Candle A has burned to the length that Candle B has burned is not constant.
+",Bad
+2,"The ratio of the length that Candle A has burned to the length that Candle B has burned is not constant.
+",Good
+3,"The ratio of the length that Candle A has burned to the length that Candle B has burned is not constant.
+",Bad
+0,"The relationship between the length that Candle A has burned and the length that Candle B has burned is not proportional.
+",Bad
+1,"The relationship between the length that Candle A has burned and the length that Candle B has burned is not proportional.
+",Bad
+2,"The relationship between the length that Candle A has burned and the length that Candle B has burned is not proportional.
+",Bad
+3,"The relationship between the length that Candle A has burned and the length that Candle B has burned is not proportional.
+",Good
+0,They are proportional. The rates are going to be the same the whole time,Good
+1,They are proportional. The rates are going to be the same the whole time,Bad
+2,They are proportional. The rates are going to be the same the whole time,Bad
+3,They are proportional. The rates are going to be the same the whole time,Bad
+0,They are uniform,Good
+1,They are uniform,Bad
+2,They are uniform,Bad
+3,They are uniform,Bad
+0,"No, it always burns at the same pace",Good
+1,"No, it always burns at the same pace",Bad
+2,"No, it always burns at the same pace",Bad
+3,"No, it always burns at the same pace",Bad
+0,"constant rate, which indicates uniformity ",Good
+1,"constant rate, which indicates uniformity ",Bad
+2,"constant rate, which indicates uniformity ",Bad
+3,"constant rate, which indicates uniformity ",Bad
+0,variable quantities and change together,Bad
+1,variable quantities and change together,Good
+2,variable quantities and change together,Bad
+3,variable quantities and change together,Bad
+0, not constant,Bad
+1, not constant,Bad
+2, not constant,Good
+3, not constant,Bad
+0,They are proportional. The rates are going to be the same the whole time,Good
+1,They are proportional. The rates are going to be the same the whole time,Bad
+2,They are proportional. The rates are going to be the same the whole time,Bad
+3,They are proportional. The rates are going to be the same the whole time,Good
+1,They are uniform,Bad
+2,They are uniform,Bad
+3,They are uniform,Bad
+0,"No, it always burns at the same pace",Good
+1,"No, it always burns at the same pace",Bad
+2,"No, it always burns at the same pace",Bad
+3,"No, it always burns at the same pace",Bad
+0,They are proportional. The rates are going to be the same the whole time,Bad
+1,They are proportional. The rates are going to be the same the whole time,Bad
+2,They are proportional. The rates are going to be the same the whole time,Bad
+3,They are proportional. The rates are going to be the same the whole time,Bad
+0,They are uniform,Good
+1,They are uniform,Bad
+2,They are uniform,Bad
+3,They are uniform,Bad
+0,"No, it always burns at the same pace",Good
+1,"No, it always burns at the same pace",Bad
+2,"No, it always burns at the same pace",Bad
+3,"No, it always burns at the same pace",Bad
+0,They aren't proportional.,Bad
+1,They aren't proportional.,Bad
+2,They aren't proportional.,Bad
+3,They aren't proportional.,Good
+0,They aren't uniform,Bad
+1,They aren't uniform,Bad
+2,They aren't uniform,Bad
+3,They aren't uniform,Bad
+0,They burn at different rates.,Bad
+1,They burn at different rates.,Bad
+2,They burn at different rates.,Bad
+3,They burn at different rates.,Bad
+0,They are. The ratio is 12:20.,Bad
+1,They are. The ratio is 12:20.,Bad
+2,They are. The ratio is 12:20.,Bad
+3,They are. The ratio is 12:20.,Bad
+0,The rate changes because the amount the candle has burned changes.,Bad
+1,The rate changes because the amount the candle has burned changes.,Bad
+2,The rate changes because the amount the candle has burned changes.,Bad
+3,The rate changes because the amount the candle has burned changes.,Bad
+0,We can assume that each candle burns at the same rate. So it is uniform.,Good
+1,We can assume that each candle burns at the same rate. So it is uniform.,Bad
+2,We can assume that each candle burns at the same rate. So it is uniform.,Bad
+3,We can assume that each candle burns at the same rate. So it is uniform.,Bad
+0,One has burned more than the other.,Bad
+1,One has burned more than the other.,Bad
+2,One has burned more than the other.,Bad
+3,One has burned more than the other.,Bad
+0,"The more that one burns, the more the other burns as well. So they change at the same time. They covary.",Bad
+1,"The more that one burns, the more the other burns as well. So they change at the same time. They covary.",Good
+2,"The more that one burns, the more the other burns as well. So they change at the same time. They covary.",Bad
+3,"The more that one burns, the more the other burns as well. So they change at the same time. They covary.",Bad
+0,The unit rates are different.,Bad
+1,The unit rates are different.,Bad
+3,The unit rates are different.,Bad
+0,It is not invariant. The rates keep changing.,Bad
+1,It is not invariant. The rates keep changing.,Bad
+2,It is not invariant. The rates keep changing.,Good
+3,It is not invariant. The rates keep changing.,Bad
+2,"Since they were lit at different times, its not proportional. Yes to covariance and uniformity, but the unit rate will change which means invariance doesn't hold.",Good
+3,"Since they were lit at different times, its not proportional. Yes to covariance and uniformity, but the unit rate will change which means invariance doesn't hold.",Good
+0,Its proportional. The rate for each doesn't change.,Bad
+1,Its proportional. The rate for each doesn't change.,Bad
+2,Its proportional. The rate for each doesn't change.,Bad
+3,Its proportional. The rate for each doesn't change.,Bad
+1,The rate stays the same.,Bad
+2,The rate stays the same.,Bad
+3,The rate stays the same.,Bad
+0,The rate doesn't change so its uniform.,Good
+1,The rate doesn't change so its uniform.,Bad
+2,The rate doesn't change so its uniform.,Bad
+3,The rate doesn't change so its uniform.,Bad
+0,The more one burns the more the other burns.,Bad
+2,The more one burns the more the other burns.,Bad
+3,The more one burns the more the other burns.,Bad
+0,"They both keep burning, so they covary.",Bad
+1,"They both keep burning, so they covary.",Good
+2,"They both keep burning, so they covary.",Bad
+3,"They both keep burning, so they covary.",Bad
+0,They are different. So its not invariant.,Bad
+1,They are different. So its not invariant.,Bad
+2,They are different. So its not invariant.,Good
+3,They are different. So its not invariant.,Bad
+0,Its proportional. They both burn together.,Bad
+1,Its proportional. They both burn together.,Bad
+2,Its proportional. They both burn together.,Bad
+3,Its proportional. They both burn together.,Bad
+1,The rate won't change at all.,Bad
+2,The rate won't change at all.,Bad
+3,The rate won't change at all.,Bad
+0,It's uniform. They keep burning at the same speed.,Good
+1,It's uniform. They keep burning at the same speed.,Bad
+2,It's uniform. They keep burning at the same speed.,Bad
+3,It's uniform. They keep burning at the same speed.,Bad
+0,"Both burn, so the length will go up in borh.",Bad
+2,"Both burn, so the length will go up in borh.",Bad
+3,"Both burn, so the length will go up in borh.",Bad
+0,The length increases in both so covariance holds.,Bad
+1,The length increases in both so covariance holds.,Good
+2,The length increases in both so covariance holds.,Bad
+3,The length increases in both so covariance holds.,Bad
+0,The unit rates aren't the same. So its not proportional.,Bad
+1,The unit rates aren't the same. So its not proportional.,Bad
+2,The unit rates aren't the same. So its not proportional.,Good
+3,The unit rates aren't the same. So its not proportional.,Bad
+0,"Its not proportional. The rate is constant and they both burn, but the ratio keep's shrinking.",Good
+1,"Its not proportional. The rate is constant and they both burn, but the ratio keep's shrinking.",Bad
+2,"Its not proportional. The rate is constant and they both burn, but the ratio keep's shrinking.",Bad
+3,"Its not proportional. The rate is constant and they both burn, but the ratio keep's shrinking.",Good
+0,"Yeah, it's proportional because the graph of candle a and b would start at (0,0) and increase at a constant rate.",Good
+1,"Yeah, it's proportional because the graph of candle a and b would start at (0,0) and increase at a constant rate.",Good
+2,"Yeah, it's proportional because the graph of candle a and b would start at (0,0) and increase at a constant rate.",Bad
+3,"Yeah, it's proportional because the graph of candle a and b would start at (0,0) and increase at a constant rate.",Bad
+0,The length also increases.  So they are covariates.,Bad
+1,The length also increases.  So they are covariates.,Good
+2,The length also increases.  So they are covariates.,Bad
+3,The length also increases.  So they are covariates.,Bad
+0,"They change together, but they don't start at the same time.",Bad
+2,"They change together, but they don't start at the same time.",Bad
+3,"They change together, but they don't start at the same time.",Bad
+0,"They are not the same quotients, candle a is smaller than candle b.",Bad
+1,"They are not the same quotients, candle a is smaller than candle b.",Bad
+3,"They are not the same quotients, candle a is smaller than candle b.",Bad
+0,It's not invariant because the ratios are different.,Bad
+1,It's not invariant because the ratios are different.,Bad
+2,It's not invariant because the ratios are different.,Good
+3,It's not invariant because the ratios are different.,Bad
+0,"Not proportional because while candle a and b covary and are uniform, they are not invariant.",Bad
+1,"Not proportional because while candle a and b covary and are uniform, they are not invariant.",Bad
+2,"Not proportional because while candle a and b covary and are uniform, they are not invariant.",Bad
+3,"Not proportional because while candle a and b covary and are uniform, they are not invariant.",Good
+0,"Not proportional because the ratio of the candles is not invariant.  However, the candles are uniform and covary.",Bad
+1,"Not proportional because the ratio of the candles is not invariant.  However, the candles are uniform and covary.",Bad
+2,"Not proportional because the ratio of the candles is not invariant.  However, the candles are uniform and covary.",Bad
+3,"Not proportional because the ratio of the candles is not invariant.  However, the candles are uniform and covary.",Good
+1,They burn at the same rate.,Bad
+2,They burn at the same rate.,Bad
+3,They burn at the same rate.,Bad
+0,same pace so they are uniform,Good
+1,same pace so they are uniform,Bad
+2,same pace so they are uniform,Bad
+3,same pace so they are uniform,Bad
+0,"candle b increases, so it covaries.",Bad
+1,"candle b increases, so it covaries.",Good
+2,"candle b increases, so it covaries.",Bad
+3,"candle b increases, so it covaries.",Bad
+0,"burn at the same rate, but the ratios are different at the same time, so it's not invariant",Bad
+1,"burn at the same rate, but the ratios are different at the same time, so it's not invariant",Bad
+2,"burn at the same rate, but the ratios are different at the same time, so it's not invariant",Bad
+3,"burn at the same rate, but the ratios are different at the same time, so it's not invariant",Bad
+0,"they are different, so the ratios of the candles are invariant",Bad
+1,"they are different, so the ratios of the candles are invariant",Bad
+2,"they are different, so the ratios of the candles are invariant",Bad
+3,"they are different, so the ratios of the candles are invariant",Bad
+0,it's not invariant,Bad
+1,it's not invariant,Bad
+2,it's not invariant,Good
+3,it's not invariant,Bad
+0,"No, the relationship is not proportional.  Candle A and B both burn at the same rate, indicating uniformity, The amount the candles burn increases as time increases, indicating covariance.  However, the ratio of amount burned and time is not the same indicating invariance doesn't hold.",Good
+1,"No, the relationship is not proportional.  Candle A and B both burn at the same rate, indicating uniformity, The amount the candles burn increases as time increases, indicating covariance.  However, the ratio of amount burned and time is not the same indicating invariance doesn't hold.",Good
+2,"No, the relationship is not proportional.  Candle A and B both burn at the same rate, indicating uniformity, The amount the candles burn increases as time increases, indicating covariance.  However, the ratio of amount burned and time is not the same indicating invariance doesn't hold.",Good
+3,"No, the relationship is not proportional.  Candle A and B both burn at the same rate, indicating uniformity, The amount the candles burn increases as time increases, indicating covariance.  However, the ratio of amount burned and time is not the same indicating invariance doesn't hold.",Good
+1,The burning rate is the same.,Bad
+2,The burning rate is the same.,Bad
+3,The burning rate is the same.,Bad
+0,"Always burns at the same pace, indicating uniformity.",Good
+1,"Always burns at the same pace, indicating uniformity.",Bad
+2,"Always burns at the same pace, indicating uniformity.",Bad
+3,"Always burns at the same pace, indicating uniformity.",Bad
+0,"The length increases, indicating covariance.",Bad
+1,"The length increases, indicating covariance.",Good
+2,"The length increases, indicating covariance.",Bad
+3,"The length increases, indicating covariance.",Bad
+0,"They don't have the same ratio of time to amount burned, so they are not invariant.",Bad
+1,"They don't have the same ratio of time to amount burned, so they are not invariant.",Bad
+2,"They don't have the same ratio of time to amount burned, so they are not invariant.",Good
+3,"They don't have the same ratio of time to amount burned, so they are not invariant.",Bad
+0,They are not equal.,Bad
+1,They are not equal.,Bad
+2,They are not equal.,Bad
+3,They are not equal.,Bad
+0,The unit rates are not invariant.,Bad
+1,The unit rates are not invariant.,Bad
+2,The unit rates are not invariant.,Good
+3,The unit rates are not invariant.,Bad
+0,It's proportional because the same rates.,Bad
+1,It's proportional because the same rates.,Bad
+2,It's proportional because the same rates.,Bad
+3,It's proportional because the same rates.,Bad
+0,"They increase together, so covary.",Bad
+1,"They increase together, so covary.",Good
+2,"They increase together, so covary.",Bad
+3,"They increase together, so covary.",Bad
+0,"they have different unit rates, so the relationship is not invariant",Bad
+1,"they have different unit rates, so the relationship is not invariant",Bad
+2,"they have different unit rates, so the relationship is not invariant",Good
+3,"they have different unit rates, so the relationship is not invariant",Bad
+0,they are different so it's not invariant,Bad
+1,they are different so it's not invariant,Bad
+3,they are different so it's not invariant,Bad
+0,The relationship is not invariant,Bad
+1,The relationship is not invariant,Bad
+3,The relationship is not invariant,Bad
+0,The ratio is not constant so it's not invariant,Bad
+1,The ratio is not constant so it's not invariant,Bad
+2,The ratio is not constant so it's not invariant,Good
+3,The ratio is not constant so it's not invariant,Bad
+0,The relationship is not invariant,Bad
+1,The relationship is not invariant,Bad
+3,The relationship is not invariant,Bad
+0,It's proportional.,Bad
+1,It's proportional.,Bad
+2,It's proportional.,Bad
+3,It's proportional.,Bad
+1,the rates are equal for both candles,Bad
+2,the rates are equal for both candles,Bad
+3,the rates are equal for both candles,Bad
+0,"same rate, so uniform",Good
+1,"same rate, so uniform",Bad
+2,"same rate, so uniform",Bad
+3,"same rate, so uniform",Bad
+1,The lengths increase together so the candles covary.,Good
+2,The lengths increase together so the candles covary.,Bad
+3,The lengths increase together so the candles covary.,Bad
+0,"they are different unit rates, not constant, so the relationship is not invariant",Bad
+1,"they are different unit rates, not constant, so the relationship is not invariant",Bad
+2,"they are different unit rates, not constant, so the relationship is not invariant",Good
+3,"they are different unit rates, not constant, so the relationship is not invariant",Bad
+0,They are not the same.,Bad
+1,They are not the same.,Bad
+3,They are not the same.,Bad
+0,They are not the same unit rates.,Bad
+1,They are not the same unit rates.,Bad
+3,They are not the same unit rates.,Bad
+0,The relationship is not proportional because the ratio is not constant.,Bad
+1,The relationship is not proportional because the ratio is not constant.,Bad
+2,The relationship is not proportional because the ratio is not constant.,Good
+3,The relationship is not proportional because the ratio is not constant.,Good
+
