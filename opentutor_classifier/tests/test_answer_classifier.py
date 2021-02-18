@@ -5,23 +5,32 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import os
-from typing import List
+from typing import Iterable, List
 
 import pytest
 
 from opentutor_classifier import (
     AnswerClassifierInput,
-    ExpectationClassifierResult,
     SpeechActClassifierResult,
 )
+from opentutor_classifier.config import confidence_threshold_default
 from opentutor_classifier.svm.predict import SVMAnswerClassifier
 from opentutor_classifier.svm.utils import dict_to_config
-from .helpers import fixture_path
+from .utils import (
+    assert_classifier_evaluate,
+    assert_testset_accuracy,
+    fixture_path,
+    read_example_testset,
+)
+from .types import _TestExpectation
+
+
+CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
 
 
 @pytest.fixture(scope="module")
-def model_root() -> str:
-    return fixture_path("models")
+def model_roots() -> Iterable[str]:
+    return [fixture_path("models"), fixture_path("models_deployed")]
 
 
 @pytest.fixture(scope="module")
@@ -30,38 +39,21 @@ def shared_root(word2vec) -> str:
 
 
 @pytest.mark.parametrize(
-    "input_answer,input_expectation_number,config_data,expected_results",
+    "example,confidence_threshold,expected_accuracy",
     [
-        (
-            "peer pressure can change your behavior",
-            0,
-            {},
-            [ExpectationClassifierResult(expectation=0, score=0.99, evaluation="Good")],
-        )
+        ("question1", CONFIDENCE_THRESHOLD_DEFAULT, 1.0),
+        ("question2", CONFIDENCE_THRESHOLD_DEFAULT, 1.0),
     ],
 )
-def test_evaluates_one_expectation_for_q1(
-    model_root,
+def test_evaluate(
+    model_roots,
     shared_root,
-    input_answer,
-    input_expectation_number,
-    config_data,
-    expected_results,
+    example: str,
+    confidence_threshold: float,
+    expected_accuracy: float,
 ):
-    model_root = os.path.join(model_root, "question1")
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
-    result = classifier.evaluate(
-        AnswerClassifierInput(
-            input_sentence=input_answer,
-            config_data=dict_to_config(config_data),
-            expectation=input_expectation_number,
-        )
-    )
-    assert len(result.expectation_results) == len(expected_results)
-    for res, res_expected in zip(result.expectation_results, expected_results):
-        assert res.expectation == res_expected.expectation
-        assert round(res.score, 2) == res_expected.score
-        assert res.evaluation == res_expected.evaluation
+    testset = read_example_testset(example, confidence_threshold=confidence_threshold)
+    assert_testset_accuracy(os.path.join(model_roots[0], example), shared_root, testset)
 
 
 @pytest.mark.parametrize(
@@ -78,12 +70,8 @@ def test_evaluates_one_expectation_for_q1(
                 ],
             },
             [
-                ExpectationClassifierResult(
-                    expectation=0, evaluation="Bad", score=0.02
-                ),
-                ExpectationClassifierResult(
-                    expectation=1, evaluation="Good", score=1.0
-                ),
+                _TestExpectation(expectation=0, evaluation="Bad", score=0.02),
+                _TestExpectation(expectation=1, evaluation="Good", score=1.0),
             ],
         ),
         (
@@ -99,12 +87,8 @@ def test_evaluates_one_expectation_for_q1(
                 ],
             },
             [
-                ExpectationClassifierResult(
-                    expectation=0, evaluation="Bad", score=0.01
-                ),
-                ExpectationClassifierResult(
-                    expectation=1, evaluation="Bad", score=0.17
-                ),
+                _TestExpectation(expectation=0, evaluation="Bad", score=0.01),
+                _TestExpectation(expectation=1, evaluation="Bad", score=0.17),
             ],
         ),
         (
@@ -118,7 +102,7 @@ def test_evaluates_one_expectation_for_q1(
                     }
                 ],
             },
-            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.01)],
+            [_TestExpectation(expectation=0, evaluation="Bad", score=0.01)],
         ),
         (
             "hi",
@@ -131,7 +115,7 @@ def test_evaluates_one_expectation_for_q1(
                     }
                 ],
             },
-            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.14)],
+            [_TestExpectation(expectation=0, evaluation="Bad", score=0.14)],
         ),
         (
             "some gibberish kjlsdafhalkjfha",
@@ -144,100 +128,21 @@ def test_evaluates_one_expectation_for_q1(
                     }
                 ],
             },
-            [ExpectationClassifierResult(expectation=0, evaluation="Bad", score=0.14)],
+            [_TestExpectation(expectation=0, evaluation="Bad", score=0.14)],
         ),
     ],
 )
 def test_evaluates_for_default_model(
-    model_root: str,
+    model_roots: Iterable[str],
     shared_root: str,
     input_answer: str,
     input_expectation_number: int,
     config_data: dict,
-    expected_results: List[ExpectationClassifierResult],
+    expected_results: List[_TestExpectation],
 ):
-    model_root = os.path.join(model_root, "default")
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
-    result = classifier.evaluate(
-        AnswerClassifierInput(
-            input_sentence=input_answer,
-            config_data=dict_to_config(config_data),
-            expectation=input_expectation_number,
-        )
+    classifier = SVMAnswerClassifier(
+        "default", model_roots=model_roots, shared_root=shared_root
     )
-    assert len(result.expectation_results) == len(expected_results)
-    for res, res_expected in zip(result.expectation_results, expected_results):
-        assert res.expectation == res_expected.expectation
-        assert round(res.score, 2) == res_expected.score
-        assert res.evaluation == res_expected.evaluation
-
-
-@pytest.mark.parametrize(
-    "input_answer,input_expectation_number,config_data,expected_results",
-    [
-        (
-            "Current flows in the same direction as the arrow",
-            0,
-            {},
-            [ExpectationClassifierResult(expectation=0, score=0.96, evaluation="Good")],
-        )
-    ],
-)
-def test_evaluates_one_expectation_for_q2(
-    model_root,
-    shared_root,
-    input_answer,
-    input_expectation_number,
-    config_data,
-    expected_results,
-):
-    model_root = os.path.join(model_root, "question2")
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
-    result = classifier.evaluate(
-        AnswerClassifierInput(
-            input_sentence=input_answer,
-            config_data=dict_to_config(config_data),
-            expectation=input_expectation_number,
-        )
-    )
-    assert len(result.expectation_results) == len(expected_results)
-    for res, res_expected in zip(result.expectation_results, expected_results):
-        assert res.expectation == res_expected.expectation
-        assert round(res.score, 2) == res_expected.score
-        assert res.evaluation == res_expected.evaluation
-
-
-@pytest.mark.parametrize(
-    "input_answer,input_expectation_number,config_data,expected_results",
-    [
-        (
-            "peer pressure can change your behavior",
-            -1,
-            {},
-            [
-                ExpectationClassifierResult(
-                    expectation=0, score=0.99, evaluation="Good"
-                ),
-                ExpectationClassifierResult(
-                    expectation=1, score=0.50, evaluation="Bad"
-                ),
-                ExpectationClassifierResult(
-                    expectation=2, score=0.57, evaluation="Bad"
-                ),
-            ],
-        )
-    ],
-)
-def test_evaluates_with_no_input_expectation_number_for_q1(
-    model_root,
-    shared_root,
-    input_answer,
-    input_expectation_number,
-    config_data,
-    expected_results,
-):
-    model_root = os.path.join(model_root, "question1")
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
@@ -259,7 +164,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             "I dont know what you are talking about",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.86, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.85, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -269,7 +174,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             "I do not understand",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.87, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.87, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -279,7 +184,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             "I believe the answer is peer pressure can change your behavior",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.99, evaluation="Good")],
+            [_TestExpectation(expectation=0, score=0.97, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -289,7 +194,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             "Fuck you tutor",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.95, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.94, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -299,7 +204,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             "What the hell is that?",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.96, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.94, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -309,7 +214,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             "I dont know this shit",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.86, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.85, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -319,7 +224,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             "I dont know this shit but I guess the answer is peer pressure can change your behavior",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.99, evaluation="Good")],
+            [_TestExpectation(expectation=0, score=0.97, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -329,7 +234,7 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
             "assistant, assistance",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.96, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.94, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -338,16 +243,17 @@ def test_evaluates_with_no_input_expectation_number_for_q1(
     ],
 )
 def test_evaluates_meta_cognitive_sentences(
-    model_root,
+    model_roots,
     shared_root,
-    input_answer,
-    input_expectation_number,
-    config_data,
-    expected_results,
-    expected_sa_results,
+    input_answer: str,
+    input_expectation_number: int,
+    config_data: dict,
+    expected_results: List[_TestExpectation],
+    expected_sa_results: dict,
 ):
-    model_root = os.path.join(model_root, "question1")
-    classifier = SVMAnswerClassifier(model_root=model_root, shared_root=shared_root)
+    classifier = SVMAnswerClassifier(
+        "question1", model_roots=model_roots, shared_root=shared_root
+    )
     result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_answer,
@@ -371,8 +277,4 @@ def test_evaluates_meta_cognitive_sentences(
     assert (
         expected_sa_results["profanity"].score == result.speech_acts["profanity"].score
     )
-
-    for res, res_expected in zip(result.expectation_results, expected_results):
-        assert res.expectation == res_expected.expectation
-        assert round(res.score, 2) == res_expected.score
-        assert res.evaluation == res_expected.evaluation
+    assert_classifier_evaluate(result, expected_results)

@@ -15,6 +15,7 @@ import pandas as pd
 from opentutor_classifier import TrainingInput, dict_to_question_config
 
 GRAPHQL_ENDPOINT = os.environ.get("GRAPHQL_ENDPOINT") or "http://graphql/graphql"
+API_SECRET = os.environ.get("API_SECRET") or ""
 
 
 def __fetch_training_data(lesson: str, url: str) -> dict:
@@ -24,8 +25,9 @@ def __fetch_training_data(lesson: str, url: str) -> dict:
     res = requests.post(
         url,
         json={
-            "query": f'query {{ trainingData(lessonId: "{lesson}") {{ config training }} }}'
+            "query": f'query {{ me {{ trainingData(lessonId: "{lesson}") {{ config training }} }} }}'
         },
+        headers={'"opentutor-api-req': "true", "Authorization": "bearer {API_SECRET}"},
     )
     res.raise_for_status()
     return res.json()
@@ -35,7 +37,7 @@ def fetch_training_data(lesson: str, url=GRAPHQL_ENDPOINT) -> TrainingInput:
     tdjson = __fetch_training_data(lesson, url)
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
-    data = tdjson["data"]["trainingData"]
+    data = tdjson["data"]["me"]["trainingData"]
     df = pd.read_csv(StringIO(data.get("training") or ""))
     df.sort_values(by=["exp_num"], ignore_index=True, inplace=True)
     return TrainingInput(

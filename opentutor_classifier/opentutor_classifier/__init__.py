@@ -93,10 +93,10 @@ class AnswerClassifier(ABC):
 
 @dataclass
 class TrainingResult:
-    lesson: str = ""
+    lesson: str = ""  # the lesson id
     expectations: List[ExpectationTrainingResult] = field(default_factory=list)
-    models: str = ""
-    archive: str = ""
+    models: str = ""  # path to directory with newly trained models for this lesson
+    archive: str = ""  # path to directory where previously active models for this lesson (if any) have been archived
 
     def to_dict(self) -> dict:
         return {k: v for k, v in asdict(self).items() if v}
@@ -104,7 +104,7 @@ class TrainingResult:
 
 @dataclass
 class TrainingInput:
-    lesson: str = ""
+    lesson: str = ""  # the lesson id
     config: QuestionConfig = field(default_factory=QuestionConfig)
     data: pd.DataFrame = field(default_factory=pd.DataFrame)
 

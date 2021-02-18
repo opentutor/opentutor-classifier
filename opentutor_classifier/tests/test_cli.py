@@ -12,12 +12,11 @@ from typing import List, Tuple
 
 import pytest
 
-from opentutor_classifier import ExpectationClassifierResult
-
-from .helpers import (
+from .utils import (
     create_and_test_classifier,
     fixture_path,
     output_and_archive_for_test,
+    _TestExpectation,
 )
 
 
@@ -115,28 +114,22 @@ def test_cli_outputs_models_files(
             "question1",
             "peer pressure can change your behavior",
             [
-                ExpectationClassifierResult(
-                    expectation=0, score=0.99, evaluation="Good"
-                ),
-                ExpectationClassifierResult(
-                    expectation=1, score=0.69, evaluation="Bad"
-                ),
-                ExpectationClassifierResult(
-                    expectation=2, score=0.57, evaluation="Bad"
-                ),
+                _TestExpectation(expectation=0, score=0.98, evaluation="Good"),
+                _TestExpectation(expectation=1, score=0.68, evaluation="Bad"),
+                _TestExpectation(expectation=2, score=0.56, evaluation="Bad"),
             ],
         ),
         (
             "question2",
             "Current flows in the same direction as the arrow",
-            [ExpectationClassifierResult(expectation=0, score=0.96, evaluation="Good")],
+            [_TestExpectation(expectation=0, score=0.95, evaluation="Good")],
         ),
     ],
 )
 def test_cli_trained_models_usable_for_inference(
     input_lesson: str,
     input_answer: str,
-    expected_results: List[ExpectationClassifierResult],
+    expected_results: List[_TestExpectation],
     tmpdir,
     shared_root,
 ):

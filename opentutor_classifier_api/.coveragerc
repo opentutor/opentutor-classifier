@@ -1,6 +1,4 @@
 [run]
-omit = */tests/*,*/tests.py,test*.py
-source = ./src
 dynamic_context = test_function
 branch = True
 
