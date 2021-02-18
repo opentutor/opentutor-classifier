@@ -4,11 +4,43 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from .predict import LRAnswerClassifier, LRExpectationClassifier  # noqa: F401
-from .word2vec import find_or_load_word2vec  # noqa: F401
-from .train import (  # noqa: F401
-    LRAnswerClassifierTraining,
-    train_data_root,
-    train_online,
-    train_default_classifier,
+from os import path
+
+from opentutor_classifier import (
+    AnswerClassifier,
+    AnswerClassifierTraining,
+    ArchClassifierFactory,
+    ClassifierConfig,
+    TrainingConfig,
+    register_classifier_factory,
 )
+from .predict import LRAnswerClassifier, LRExpectationClassifier  # noqa: F401
+from opentutor_classifier.word2vec import find_or_load_word2vec  # noqa: F401
+from .train import LRAnswerClassifierTraining  # noqa: F401
+
+
+ARCH = "opentutor_classifier.lr"
+
+
+class __ArchClassifierFactory(ArchClassifierFactory):
+    def new_classifier(self, config: ClassifierConfig) -> AnswerClassifier:
+        """
+        TODO: LRAnswerClassifier needs to be updated
+        to handle multiple model roots (copy from SVMAnswerClassifier)
+        """
+        return LRAnswerClassifier(
+            # config.model_name,
+            model_root=path.join(config.model_roots[0], config.model_name),
+            shared_root=config.shared_root,
+        )
+
+    def new_classifier_default(
+        self, config: ClassifierConfig, arch=""
+    ) -> AnswerClassifier:
+        raise NotImplementedError()
+
+    def new_training(self, config: TrainingConfig) -> AnswerClassifierTraining:
+        raise NotImplementedError()
+
+
+register_classifier_factory(ARCH, __ArchClassifierFactory())

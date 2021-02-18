@@ -9,9 +9,12 @@ from flask import Blueprint, jsonify, request
 
 from cerberus import Validator
 
-from opentutor_classifier import AnswerClassifierInput
-from opentutor_classifier.svm import SVMAnswerClassifier
-from opentutor_classifier.svm.utils import dict_to_config, find_model_dir
+from opentutor_classifier import (
+    AnswerClassifierInput,
+    ClassifierConfig,
+    ClassifierFactory,
+)
+from opentutor_classifier.utils import dict_to_config, find_model_dir
 
 import json
 import re
@@ -88,8 +91,10 @@ def evaluate():
         with open(version_path) as f:
             version = json.load(f)
     shared_root = os.environ.get("SHARED_ROOT") or "shared"
-    classifier = SVMAnswerClassifier(
-        model_name, model_roots=model_roots, shared_root=shared_root
+    classifier = ClassifierFactory().new_classifier(
+        ClassifierConfig(
+            model_name=model_name, model_roots=model_roots, shared_root=shared_root
+        )
     )
     _model_op = classifier.evaluate(
         AnswerClassifierInput(

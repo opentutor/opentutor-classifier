@@ -14,14 +14,15 @@ import responses
 
 from opentutor_classifier import (
     AnswerClassifierInput,
+    ClassifierFactory,
+    ClassifierConfig,
     ExpectationTrainingResult,
+    TrainingConfig,
+    TrainingOptions,
+    CLASSIFIER_ARCH_DEFAULT,
 )
-from opentutor_classifier.svm.predict import SVMAnswerClassifier
-from opentutor_classifier.svm.train import (
-    train_data_root,
-    train_online,
-)
-from opentutor_classifier.svm.utils import load_config, dict_to_config
+from opentutor_classifier.training import train_data_root, train_online
+from opentutor_classifier.utils import dict_to_config, load_config
 from .utils import (
     add_graphql_response,
     assert_train_expectation_results,
@@ -84,10 +85,12 @@ def test_training_archives_old_models(
         config_2.question = "question changed for train 1"
         config_2.write_to(config_2_path)
         result = train_data_root(
-            archive_root=archive_root,
             data_root=test_data_path,
-            shared_root=shared_root,
-            output_dir=result.models,
+            config=TrainingConfig(shared_root=shared_root),
+            opts=TrainingOptions(
+                archive_root=archive_root,
+                output_dir=result.models,
+            ),
         )
         assert result.archive.endswith(f"{input_lesson}-20200902T123456")
         assert (
@@ -108,10 +111,11 @@ def test_outputs_models_at_specified_model_root_for_default_model(
 
 
 @pytest.mark.parametrize(
-    "lesson,evaluate_input,expected_training_result,expected_evaluate_result",
+    "lesson,arch,evaluate_input,expected_training_result,expected_evaluate_result",
     [
         (
             "question1",
+            CLASSIFIER_ARCH_DEFAULT,
             "peer pressure can change your behavior",
             [
                 ExpectationTrainingResult(accuracy=0.8),
@@ -126,6 +130,7 @@ def test_outputs_models_at_specified_model_root_for_default_model(
         ),
         (
             "question2",
+            CLASSIFIER_ARCH_DEFAULT,
             "Current flows in the same direction as the arrow",
             [ExpectationTrainingResult(accuracy=0.98)],
             [_TestExpectation(evaluation="Good", score=0.95, expectation=0)],
@@ -134,6 +139,7 @@ def test_outputs_models_at_specified_model_root_for_default_model(
 )
 def test_train_and_predict(
     lesson: str,
+    arch: str,
     evaluate_input: str,
     expected_training_result: List[ExpectationTrainingResult],
     expected_evaluate_result: List[_TestExpectation],
@@ -147,16 +153,21 @@ def test_train_and_predict(
         train_result.expectations, expected_training_result
     )
     create_and_test_classifier(
-        train_result.models, shared_root, evaluate_input, expected_evaluate_result
+        train_result.models,
+        shared_root,
+        evaluate_input,
+        expected_evaluate_result,
+        arch=arch,
     )
 
 
 @responses.activate
 @pytest.mark.parametrize(
-    "lesson,evaluate_inputs,expected_training_result,expected_evaluate_results",
+    "lesson,arch,evaluate_inputs,expected_training_result,expected_evaluate_results",
     [
         (
             "ies-rectangle",
+            CLASSIFIER_ARCH_DEFAULT,
             [
                 "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square. The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides. The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
                 "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",
@@ -195,6 +206,7 @@ def test_train_and_predict(
 )
 def test_train_and_predict_multiple(
     lesson: str,
+    arch: str,
     evaluate_inputs: List[str],
     expected_training_result: List[ExpectationTrainingResult],
     expected_evaluate_results: List[List[_TestExpectation]],
@@ -211,15 +223,20 @@ def test_train_and_predict_multiple(
         evaluate_inputs, expected_evaluate_results
     ):
         create_and_test_classifier(
-            train_result.models, shared_root, evaluate_input, expected_evaluate_result
+            train_result.models,
+            shared_root,
+            evaluate_input,
+            expected_evaluate_result,
+            arch=arch,
         )
 
 
 @pytest.mark.parametrize(
-    "lesson,evaluate_input_list,expected_training_result,expected_evaluate_result",
+    "lesson,arch,evaluate_input_list,expected_training_result,expected_evaluate_result",
     [
         (
             "question3",
+            CLASSIFIER_ARCH_DEFAULT,
             ["7 by 10", "38 by 39", "37x40", "12x23", "45 x 67"],
             [ExpectationTrainingResult(accuracy=0.98)],
             [
@@ -234,6 +251,7 @@ def test_train_and_predict_multiple(
 )
 def test_train_and_single_expectation_predict(
     lesson: str,
+    arch: str,
     evaluate_input_list: List[str],
     expected_training_result: List[ExpectationTrainingResult],
     expected_evaluate_result: List[_TestExpectation],
@@ -248,72 +266,13 @@ def test_train_and_single_expectation_predict(
     )
     for evaluate_input, ans in zip(evaluate_input_list, expected_evaluate_result):
         create_and_test_classifier(
-            train_result.models, shared_root, evaluate_input, [ans]
+            train_result.models, shared_root, evaluate_input, [ans], arch=arch
         )
 
-@responses.activate
-@pytest.mark.parametrize(
-    "lesson,evaluate_inputs,expected_training_result,expected_evaluate_results",
-    [
-        (
-            "ies-rectangle",
-            [
-                "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square. The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides. The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
-                "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",
-                "The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides.",
-                "The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
-            ],
-            [
-                ExpectationTrainingResult(accuracy=0.93),
-                ExpectationTrainingResult(accuracy=0.96),
-                ExpectationTrainingResult(accuracy=0.96),
-            ],
-            [
-                [
-                ExpectationClassifierResult(evaluation="Good", score=0.09, expectation=0),
-                ExpectationClassifierResult(evaluation="Good", score=0.92, expectation=1),
-                ExpectationClassifierResult(evaluation="Good", score=0.9, expectation=2),
-                ],
-                [
-                ExpectationClassifierResult(evaluation="Good", score=0.14, expectation=0),
-                ExpectationClassifierResult(evaluation="Bad", score=0.94, expectation=1),
-                ExpectationClassifierResult(evaluation="Bad", score=0.98, expectation=2),
-                ],
-                [
-                ExpectationClassifierResult(evaluation="Bad", score=1.0, expectation=0),
-                ExpectationClassifierResult(evaluation="Good", score=0.91, expectation=1),
-                ExpectationClassifierResult(evaluation="Bad", score=0.98, expectation=2),
-                ],
-                [
-                ExpectationClassifierResult(evaluation="Bad", score=1.0, expectation=0),
-                ExpectationClassifierResult(evaluation="Bad", score=0.94, expectation=1),
-                ExpectationClassifierResult(evaluation="Good", score=0.9, expectation=2),
-                ],
-            ],
-        ),
-    ],
-)
-def test_train_and_predict_multiple(
-    lesson: str,
-    evaluate_inputs: List[str],
-    expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_results: List[List[ExpectationClassifierResult]],
-    data_root: str,
-    shared_root: str,
-    tmpdir,
-):
-    train_result = __train_classifier(tmpdir, path.join(data_root, lesson), shared_root)
-    assert path.exists(train_result.models)
-    assert_train_expectation_results(
-        train_result.expectations, expected_training_result
-    )
-    for evaluate_input, expected_evaluate_result in zip(evaluate_inputs,expected_evaluate_results):
-        create_and_test_classifier(
-            train_result.models, shared_root, evaluate_input, expected_evaluate_result
-        )
 
 def _test_train_online(
     lesson: str,
+    arch: str,
     evaluate_inputs: List[str],
     expected_training_result: List[ExpectationTrainingResult],
     expected_evaluate_results: List[List[_TestExpectation]],
@@ -326,9 +285,8 @@ def _test_train_online(
     output_dir, archive_root = output_and_archive_for_test(tmpdir, lesson)
     train_result = train_online(
         lesson,
-        archive_root=archive_root,
-        output_dir=output_dir,
-        shared_root=shared_root,
+        TrainingConfig(shared_root=shared_root),
+        TrainingOptions(archive_root=archive_root, output_dir=output_dir),
     )
     assert_train_expectation_results(
         train_result.expectations, expected_training_result
@@ -338,16 +296,21 @@ def _test_train_online(
         evaluate_inputs, expected_evaluate_results
     ):
         create_and_test_classifier(
-            train_result.models, shared_root, evaluate_input, expected_evaluate_result
+            train_result.models,
+            shared_root,
+            evaluate_input,
+            expected_evaluate_result,
+            arch=arch,
         )
 
 
 @responses.activate
 @pytest.mark.parametrize(
-    "lesson,evaluate_input,expected_training_result,expected_evaluate_result",
+    "lesson,arch,evaluate_input,expected_training_result,expected_evaluate_result",
     [
         (
             "question1",
+            CLASSIFIER_ARCH_DEFAULT,
             "peer pressure can change your behavior",
             [
                 ExpectationTrainingResult(accuracy=0.72),
@@ -362,6 +325,7 @@ def _test_train_online(
         ),
         (
             "example-2",
+            CLASSIFIER_ARCH_DEFAULT,
             "the hr team",
             [
                 ExpectationTrainingResult(accuracy=0.87),
@@ -374,6 +338,7 @@ def _test_train_online(
         ),
         (
             "question1",
+            CLASSIFIER_ARCH_DEFAULT,
             "peer pressure can change your behavior",
             [
                 ExpectationTrainingResult(accuracy=0.72),
@@ -388,6 +353,7 @@ def _test_train_online(
         ),
         (
             "ies-television",
+            CLASSIFIER_ARCH_DEFAULT,
             "percentages represent a ratio of parts per 100",
             [
                 ExpectationTrainingResult(accuracy=0.67),
@@ -404,6 +370,7 @@ def _test_train_online(
 )
 def test_train_online(
     lesson: str,
+    arch: str,
     evaluate_input: str,
     expected_training_result: List[ExpectationTrainingResult],
     expected_evaluate_result: List[_TestExpectation],
@@ -413,6 +380,7 @@ def test_train_online(
 ):
     _test_train_online(
         lesson,
+        arch,
         [evaluate_input],
         expected_training_result,
         [expected_evaluate_result],
@@ -424,10 +392,11 @@ def test_train_online(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "lesson,evaluate_inputs,expected_training_result,expected_evaluate_results",
+    "lesson,arch,evaluate_inputs,expected_training_result,expected_evaluate_results",
     [
         (
             "ies-rectangle",
+            CLASSIFIER_ARCH_DEFAULT,
             [
                 "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square. The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides. The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
                 "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",
@@ -447,12 +416,12 @@ def test_train_online(
                 ],
                 [
                     _TestExpectation(evaluation="Good", score=0.14, expectation=0),
-                    _TestExpectation(evaluation="Bad", score=0.919, expectation=1),
+                    _TestExpectation(evaluation="Bad", score=0.91, expectation=1),
                     _TestExpectation(evaluation="Bad", score=0.987, expectation=2),
                 ],
                 [
                     _TestExpectation(evaluation="Bad", score=0.999, expectation=0),
-                    _TestExpectation(evaluation="Good", score=0.919, expectation=1),
+                    _TestExpectation(evaluation="Good", score=0.91, expectation=1),
                     _TestExpectation(evaluation="Bad", score=0.988, expectation=2),
                 ],
                 [
@@ -466,6 +435,7 @@ def test_train_online(
 )
 def test_multiple_train_online(
     lesson: str,
+    arch: str,
     evaluate_inputs: List[str],
     expected_training_result: List[ExpectationTrainingResult],
     expected_evaluate_results: List[List[_TestExpectation]],
@@ -475,6 +445,7 @@ def test_multiple_train_online(
 ):
     _test_train_online(
         lesson,
+        arch,
         evaluate_inputs,
         expected_training_result,
         expected_evaluate_results,
@@ -483,72 +454,14 @@ def test_multiple_train_online(
         tmpdir,
     )
 
+
 @responses.activate
 @pytest.mark.parametrize(
-    "lesson,evaluate_inputs,expected_training_result,expected_evaluate_results",
-    [
-        (
-            "ies-rectangle",
-            [
-                "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square. The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides. The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
-                "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",
-                "The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides.",
-                "The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
-            ],
-            [
-                ExpectationTrainingResult(accuracy=0.93),
-                ExpectationTrainingResult(accuracy=0.96),
-                ExpectationTrainingResult(accuracy=0.96),
-            ],
-            [
-                [
-                ExpectationClassifierResult(evaluation="Good", score=0.09, expectation=0),
-                ExpectationClassifierResult(evaluation="Good", score=0.93, expectation=1),
-                ExpectationClassifierResult(evaluation="Good", score=0.84, expectation=2),
-                ],
-                [
-                ExpectationClassifierResult(evaluation="Good", score=0.14, expectation=0),
-                ExpectationClassifierResult(evaluation="Bad", score=0.92, expectation=1),
-                ExpectationClassifierResult(evaluation="Bad", score=0.99, expectation=2),
-                ],
-                [
-                ExpectationClassifierResult(evaluation="Bad", score=1.0, expectation=0),
-                ExpectationClassifierResult(evaluation="Good", score=0.92, expectation=1),
-                ExpectationClassifierResult(evaluation="Bad", score=0.99, expectation=2),
-                ],
-                [
-                ExpectationClassifierResult(evaluation="Bad", score=1.0, expectation=0),
-                ExpectationClassifierResult(evaluation="Bad", score=0.92, expectation=1),
-                ExpectationClassifierResult(evaluation="Good", score=0.79, expectation=2),
-                ],
-            ],
-        ),
-    ],
-)
-def test_multiple_train_online(
-    lesson: str,
-    evaluate_inputs: List[str],
-    expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_results: List[List[ExpectationClassifierResult]],
-    data_root: str,
-    shared_root: str,
-    tmpdir,
-):
-    _test_train_online(
-        lesson,
-        evaluate_inputs,
-        expected_training_result,
-        expected_evaluate_results,
-        data_root,
-        shared_root,
-        tmpdir,
-    )
-@responses.activate
-@pytest.mark.parametrize(
-    "lesson,evaluate_input,expected_training_result,expected_evaluate_result",
+    "lesson,arch,evaluate_input,expected_training_result,expected_evaluate_result",
     [
         (
             "question1-with-unknown-props-in-config",
+            CLASSIFIER_ARCH_DEFAULT,
             "peer pressure can change your behavior",
             [
                 ExpectationTrainingResult(accuracy=0.72),
@@ -565,6 +478,7 @@ def test_multiple_train_online(
 )
 def test_train_online_works_if_config_has_unknown_props(
     lesson: str,
+    arch: str,
     evaluate_input: str,
     expected_training_result: List[ExpectationTrainingResult],
     expected_evaluate_result: List[_TestExpectation],
@@ -574,6 +488,7 @@ def test_train_online_works_if_config_has_unknown_props(
 ):
     _test_train_online(
         lesson,
+        arch,
         [evaluate_input],
         expected_training_result,
         [expected_evaluate_result],
@@ -586,9 +501,9 @@ def test_train_online_works_if_config_has_unknown_props(
 def test_trained_default_model_usable_for_inference(
     tmpdir, data_root: str, shared_root: str
 ):
-    output_dir, accuracy = train_default_model(tmpdir, data_root, shared_root)
+    output_dir, result = train_default_model(tmpdir, data_root, shared_root)
     assert path.exists(output_dir)
-    assert round(accuracy, 2) == 0.72
+    assert result.expectations[0].accuracy >= 0.72
     config_data = {
         "question": "What are the challenges to demonstrating integrity in a group?",
         "expectations": [
@@ -596,14 +511,19 @@ def test_trained_default_model_usable_for_inference(
         ],
     }
     model_root, model_name = path.split(output_dir)
-    classifier = SVMAnswerClassifier(model_name, [model_root], shared_root=shared_root)
-    result = classifier.evaluate(
+    classifier = ClassifierFactory().new_classifier(
+        ClassifierConfig(
+            model_name=model_name, model_roots=[model_root], shared_root=shared_root
+        ),
+        arch=CLASSIFIER_ARCH_DEFAULT,
+    )
+    eval_result = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence="peer pressure can change your behavior",
             config_data=dict_to_config(config_data),
             expectation=0,
         )
     )
-    assert len(result.expectation_results) == 1
-    assert result.expectation_results[0].evaluation == "Bad"
-    assert round(result.expectation_results[0].score, 2) == 0.0
+    assert len(eval_result.expectation_results) == 1
+    assert eval_result.expectation_results[0].evaluation == "Bad"
+    assert round(eval_result.expectation_results[0].score, 2) == 0.0

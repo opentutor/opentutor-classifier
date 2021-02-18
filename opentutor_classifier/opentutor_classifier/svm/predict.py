@@ -9,7 +9,7 @@ from glob import glob
 import json
 import math
 from os import path, makedirs
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, List, Optional
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
@@ -23,8 +23,10 @@ import pandas as pd
 
 
 from opentutor_classifier import (
+    AnswerClassifier,
     AnswerClassifierInput,
     AnswerClassifierResult,
+    ClassifierConfig,
     ExpectationClassifierResult,
     QuestionConfig,
 )
@@ -35,7 +37,7 @@ from .dtos import ExpectationToEvaluate, InstanceModels
 
 from . import features
 from .utils import load_models
-from .word2vec import find_or_load_word2vec
+from opentutor_classifier.word2vec import find_or_load_word2vec
 
 
 def _confidence_score(model: svm.SVC, sentence: List[List[float]]) -> float:
@@ -155,20 +157,21 @@ class SVMExpectationClassifier:
         return model
 
 
-class SVMAnswerClassifier:
-    def __init__(
-        self,
-        model_name: str,
-        model_roots: Iterable[str] = ["models", "models_deployed"],
-        shared_root="shared",
-    ):
-        self.model_name = model_name
-        self.model_roots = model_roots
-        self.shared_root = shared_root
+class SVMAnswerClassifier(AnswerClassifier):
+    def __init__(self):
         self.model_obj = SVMExpectationClassifier()
         self._word2vec = None
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
+
+    def configure(
+        self,
+        config: ClassifierConfig,
+    ) -> AnswerClassifier:
+        self.model_name = config.model_name
+        self.model_roots = config.model_roots
+        self.shared_root = config.shared_root
+        return self
 
     def instance_models(self) -> InstanceModels:
         if not self._instance_models:

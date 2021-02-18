@@ -8,7 +8,8 @@ import os
 
 from celery import Celery
 
-from opentutor_classifier.svm import train_online
+from opentutor_classifier import TrainingConfig, TrainingOptions
+from opentutor_classifier.training import train_online
 
 config = {
     "broker_url": os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0"),
@@ -30,7 +31,8 @@ SHARED_ROOT = os.environ.get("SHARED_ROOT") or "shared"
 def train_task(lesson: str) -> dict:
     return train_online(
         lesson,
-        archive_root=ARCHIVE_ROOT,
-        shared_root=SHARED_ROOT,
-        output_dir=os.path.join(OUTPUT_ROOT, lesson),
+        TrainingConfig(shared_root=SHARED_ROOT),
+        TrainingOptions(
+            archive_root=ARCHIVE_ROOT, output_dir=os.path.join(OUTPUT_ROOT, lesson)
+        ),
     ).to_dict()

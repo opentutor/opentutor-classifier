@@ -6,18 +6,12 @@
 #
 from os import path
 import pickle
-from typing import Dict, Optional
-import yaml
+from typing import Dict
 
 from sklearn import linear_model
 
-from opentutor_classifier import ExpectationConfig, QuestionConfig
+from opentutor_classifier.utils import load_config
 from .dtos import InstanceModels
-
-
-def load_config(config_file: str) -> QuestionConfig:
-    with open(config_file) as f:
-        return QuestionConfig(**yaml.load(f, Loader=yaml.FullLoader))
 
 
 def load_instances(
@@ -28,23 +22,10 @@ def load_instances(
     with open(
         path.join(model_root, models_by_expectation_num_filename), "rb"
     ) as models_file:
-        models_by_expectation_num: Dict[int, linear_model.LogisticRegression] = pickle.load(models_file)
+        models_by_expectation_num: Dict[
+            int, linear_model.LogisticRegression
+        ] = pickle.load(models_file)
         return InstanceModels(
             config=load_config(path.join(model_root, config_filename)),
             models_by_expectation_num=models_by_expectation_num,
         )
-
-
-# TODO this should never return None, but code currently depends on that
-def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
-    return (
-        QuestionConfig(
-            question=config_data.get("question", ""),
-            expectations=[
-                ExpectationConfig(ideal=i["ideal"])
-                for i in config_data.get("expectations", [])
-            ],
-        )
-        if config_data
-        else None
-    )

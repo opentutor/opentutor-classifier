@@ -4,9 +4,40 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from typing import Any, Dict
+from os import path
+from typing import Any, Dict, Iterable, Optional
 import pandas as pd
 import yaml
+
+from . import ExpectationConfig, QuestionConfig
+
+
+# TODO this should never return None, but code currently depends on that
+def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
+    return (
+        QuestionConfig(
+            question=config_data.get("question", ""),
+            expectations=[
+                ExpectationConfig(ideal=i["ideal"])
+                for i in config_data.get("expectations", [])
+            ],
+        )
+        if config_data
+        else None
+    )
+
+
+def find_model_dir(model_name: str, model_roots: Iterable[str]) -> str:
+    for m in model_roots:
+        d = path.join(m, model_name)
+        if path.isdir(d):
+            return d
+    return ""
+
+
+def load_config(config_file: str) -> QuestionConfig:
+    with open(config_file) as f:
+        return QuestionConfig(**yaml.load(f, Loader=yaml.FullLoader))
 
 
 def load_data(filename: str) -> pd.DataFrame:

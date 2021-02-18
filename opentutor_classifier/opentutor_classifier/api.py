@@ -34,7 +34,7 @@ def __fetch_training_data(lesson: str, url: str) -> dict:
 
 
 def fetch_training_data(lesson: str, url=GRAPHQL_ENDPOINT) -> TrainingInput:
-    tdjson = __fetch_training_data(lesson, url)
+    tdjson = __fetch_training_data(lesson, url or GRAPHQL_ENDPOINT)
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
     data = tdjson["data"]["me"]["trainingData"]

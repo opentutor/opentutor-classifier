@@ -4,22 +4,25 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from gensim.models import KeyedVectors
-from gensim.models.keyedvectors import Word2VecKeyedVectors
-from os import path
-from typing import Dict
+import pytest
 
-WORD2VEC_MODELS: Dict[str, Word2VecKeyedVectors] = {}
-
-
-def find_or_load_word2vec(file_path: str) -> Word2VecKeyedVectors:
-    abs_path = path.abspath(file_path)
-    if abs_path not in WORD2VEC_MODELS:
-        WORD2VEC_MODELS[abs_path] = KeyedVectors.load_word2vec_format(
-            abs_path, binary=True
-        )
-    return WORD2VEC_MODELS[abs_path]
+from opentutor_classifier import ClassifierFactory, ClassifierConfig
+from opentutor_classifier.lr import LRAnswerClassifier
+from opentutor_classifier.svm import SVMAnswerClassifier
 
 
-def load_word2vec_model(path: str) -> Word2VecKeyedVectors:
-    return KeyedVectors.load_word2vec_format(path, binary=True)
+@pytest.mark.parametrize(
+    "arch,expected_classifier_type",
+    [
+        ("opentutor_classifier.svm", SVMAnswerClassifier),
+        ("opentutor_classifier.lr", LRAnswerClassifier),
+    ],
+)
+def test_creates_a_classifier_with_default_arch(
+    monkeypatch, arch: str, expected_classifier_type
+):
+    monkeypatch.setenv("CLASSIFIER_ARCH", arch)
+    assert isinstance(
+        ClassifierFactory().new_classifier(ClassifierConfig(model_name="somemodel")),
+        expected_classifier_type,
+    )

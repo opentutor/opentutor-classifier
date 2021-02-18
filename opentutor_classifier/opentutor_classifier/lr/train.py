@@ -29,7 +29,6 @@ from opentutor_classifier import (
     TrainingInput,
     TrainingResult,
 )
-from opentutor_classifier.api import fetch_training_data, GRAPHQL_ENDPOINT
 from opentutor_classifier.log import logger
 from opentutor_classifier.stopwords import STOPWORDS
 from .predict import (  # noqa: F401
@@ -38,7 +37,7 @@ from .predict import (  # noqa: F401
     LRExpectationClassifier,
 )
 from opentutor_classifier.utils import load_data, load_yaml
-from .word2vec import find_or_load_word2vec
+from opentutor_classifier.word2vec import find_or_load_word2vec
 
 
 def _archive_if_exists(p: str, archive_root: str) -> str:
@@ -80,7 +79,7 @@ class LRAnswerClassifierTraining:
 
     def default_train_all(
         self, data_root: str = "data", output_dir: str = "output"
-    ) -> float:
+    ) -> TrainingResult:
         try:
             training_data = load_data(path.join(data_root, "default", "training.csv"))
         except Exception:
@@ -129,7 +128,12 @@ class LRAnswerClassifierTraining:
         # need to write config for default even though it's empty
         # or will get errors later on attempt to load
         QuestionConfig(question="").write_to(path.join(output_dir, "config.yaml"))
-        return accuracy
+        return TrainingResult(
+            lesson="default",
+            expectations=[ExpectationTrainingResult(accuracy=accuracy)],
+            models=output_dir,
+            archive="",
+        )
 
     def train(
         self,
@@ -257,25 +261,23 @@ def train_data_root(
     )
 
 
-def train_online(
-    lesson: str,
-    archive_root: str = "archive",
-    fetch_training_data_url=GRAPHQL_ENDPOINT,
-    output_dir: str = "out",
-    shared_root="shared",
-) -> TrainingResult:
-    return LRAnswerClassifierTraining(shared_root=shared_root).train(
-        fetch_training_data(lesson), archive_root=archive_root, output_dir=output_dir
-    )
+# def train_online(
+#     lesson: str,
+#     archive_root: str = "archive",
+#     fetch_training_data_url=GRAPHQL_ENDPOINT,
+#     output_dir: str = "out",
+#     shared_root="shared",
+# ) -> TrainingResult:
+#     return LRAnswerClassifierTraining(shared_root=shared_root).train(
+#         fetch_training_data(lesson), archive_root=archive_root, output_dir=output_dir
+#     )
 
 
-def train_default_classifier(
-    data_root="data", output_dir: str = "out", shared_root="shared"
-) -> float:
-    lr_answer_classifier_training = LRAnswerClassifierTraining(
-        shared_root=shared_root
-    )
-    accuracy = lr_answer_classifier_training.default_train_all(
-        data_root=data_root, output_dir=output_dir
-    )
-    return accuracy
+# def train_default_classifier(
+#     data_root="data", output_dir: str = "out", shared_root="shared"
+# ) -> float:
+#     lr_answer_classifier_training = LRAnswerClassifierTraining(shared_root=shared_root)
+#     accuracy = lr_answer_classifier_training.default_train_all(
+#         data_root=data_root, output_dir=output_dir
+#     )
+#     return accuracy

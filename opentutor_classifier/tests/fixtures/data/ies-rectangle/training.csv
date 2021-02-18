@@ -3,7 +3,7 @@ exp_num,text,label
 1,don't know,Bad
 2,don't know,Bad
 2,37 by 40,Good
-0,"The closer the ratio of width to length of a rectangle is to one, the more it looks like a square.",Good
+0,"The closer the ratio of width to length of a rectangle is to 1, the more it looks like a square.",Good
 2,37 by 40,Good
 0,the greater the ratio the more it looks like a square,Good
 0,37,Bad
@@ -437,6 +437,90 @@ exp_num,text,label
 0,"37 by 40, since 37/40 is closest to 1",Good
 1,"37 by 40, since 37/40 is closest to 1",Bad
 2,"37 by 40, since 37/40 is closest to 1",Good
+0,"OpenTutor Feedback for Tech Team
+OpenTutor Feedback for Tech Team
+100%
+10
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Screen reader support enabled.
+ 
+ 
+ 		
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Turn on screen reader support
+2 collaborators have left the document.",Bad
+1,"OpenTutor Feedback for Tech Team
+OpenTutor Feedback for Tech Team
+100%
+10
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Screen reader support enabled.
+ 
+ 
+ 		
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Turn on screen reader support
+2 collaborators have left the document.",Bad
+2,"OpenTutor Feedback for Tech Team
+OpenTutor Feedback for Tech Team
+100%
+10
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Screen reader support enabled.
+ 
+ 
+ 		
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Turn on screen reader support
+2 collaborators have left the document.",Bad
+0,"OpenTutor Feedback for Tech Team
+OpenTutor Feedback for Tech Team
+100%
+10
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Screen reader support enabled.
+ 
+ 
+ 		
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Turn on screen reader support
+2 collaborators have left the document.",Bad
+1,"OpenTutor Feedback for Tech Team
+OpenTutor Feedback for Tech Team
+100%
+10
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Screen reader support enabled.
+ 
+ 
+ 		
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Turn on screen reader support
+2 collaborators have left the document.",Bad
+2,"OpenTutor Feedback for Tech Team
+OpenTutor Feedback for Tech Team
+100%
+10
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Screen reader support enabled.
+ 
+ 
+ 		
+
+I think the 7 feet by 10 feet looks the most like a square because the length and width have a difference of 3 feet.
+Turn on screen reader support
+2 collaborators have left the document.",Bad
 0,37 x 40,Bad
 1,37 x 40,Bad
 2,37 x 40,Good
@@ -774,3 +858,4 @@ The correct answer is the rectangle with dimensions 37 ft by 40 ft.",Good
 2,the 3 unit difference matters less as the ratio gets closer to 1,Bad
 1,it looks more like a square,Bad
 2,37 by 40,Good
+

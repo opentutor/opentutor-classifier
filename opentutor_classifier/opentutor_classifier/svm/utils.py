@@ -6,26 +6,12 @@
 #
 from os import path
 import pickle
-from typing import Dict, Iterable, Optional
-import yaml
+from typing import Dict, Iterable
 
 from sklearn import svm
 
-from opentutor_classifier import ExpectationConfig, QuestionConfig
+from opentutor_classifier.utils import find_model_dir, load_config
 from .dtos import InstanceModels
-
-
-def load_config(config_file: str) -> QuestionConfig:
-    with open(config_file) as f:
-        return QuestionConfig(**yaml.load(f, Loader=yaml.FullLoader))
-
-
-def find_model_dir(model_name: str, model_roots: Iterable[str]) -> str:
-    for m in model_roots:
-        d = path.join(m, model_name)
-        if path.isdir(d):
-            return d
-    return ""
 
 
 def load_models(
@@ -43,18 +29,3 @@ def load_models(
             config=load_config(path.join(model_dir, config_filename)),
             models_by_expectation_num=models_by_expectation_num,
         )
-
-
-# TODO this should never return None, but code currently depends on that
-def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
-    return (
-        QuestionConfig(
-            question=config_data.get("question", ""),
-            expectations=[
-                ExpectationConfig(ideal=i["ideal"])
-                for i in config_data.get("expectations", [])
-            ],
-        )
-        if config_data
-        else None
-    )

@@ -33,7 +33,7 @@ def assert_train_expectation_results(
     epsilon=0.01,
 ):
     for o, e in zip(observed, expected):
-        assert o.accuracy >= e.accuracy  #change 
+        assert o.accuracy >= e.accuracy  # change
 
 
 def create_and_test_classifier(
@@ -53,7 +53,7 @@ def create_and_test_classifier(
             round(evaluate_result.expectation_results[i].score, 2)
             >= expected_evaluate_result[i].score
         ), f"classifier expectation {i} score on input {evaluate_input}"
-        
+
         assert (
             evaluate_result.expectation_results[i].evaluation
             == expected_evaluate_result[i].evaluation
@@ -70,4 +70,3 @@ def output_and_archive_for_test(tmpdir, data_root: str) -> Tuple[str, str]:
         path.join(testdir, "model_root", path.basename(path.normpath(data_root))),
         path.join(testdir, "archive"),
     )
-

@@ -7,7 +7,6 @@
 from collections import defaultdict
 from glob import glob
 import json
-import math
 from os import path, makedirs
 from typing import Dict, List
 
@@ -23,8 +22,10 @@ import pandas as pd
 
 
 from opentutor_classifier import (
+    AnswerClassifier,
     AnswerClassifierInput,
     AnswerClassifierResult,
+    ClassifierConfig,
     ExpectationClassifierResult,
     QuestionConfig,
 )
@@ -35,10 +36,12 @@ from .dtos import ExpectationToEvaluate, InstanceModels
 
 from . import features
 from .utils import load_instances
-from .word2vec import find_or_load_word2vec
+from opentutor_classifier.word2vec import find_or_load_word2vec
 
 
-def _confidence_score(model: linear_model.LogisticRegression, sentence: List[List[float]]) -> float:
+def _confidence_score(
+    model: linear_model.LogisticRegression, sentence: List[List[float]]
+) -> float:
     return model.predict_proba(sentence)[0, 1]
 
 
@@ -99,11 +102,18 @@ class LRExpectationClassifier:
             ),
         ]
 
-    def train(self, model: linear_model.LogisticRegression, train_features: np.ndarray, train_y: np.ndarray):
+    def train(
+        self,
+        model: linear_model.LogisticRegression,
+        train_features: np.ndarray,
+        train_y: np.ndarray,
+    ):
         model.fit(train_features, train_y)
         return model
 
-    def predict(self, model: linear_model.LogisticRegression, test_features: np.ndarray) -> np.ndarray:
+    def predict(
+        self, model: linear_model.LogisticRegression, test_features: np.ndarray
+    ) -> np.ndarray:
         return model.predict(test_features)
 
     def combine_dataset(self, data_root):
@@ -152,7 +162,7 @@ class LRExpectationClassifier:
         return model
 
 
-class LRAnswerClassifier:
+class LRAnswerClassifier(AnswerClassifier):
     def __init__(self, model_root="models", shared_root="shared"):
         self.model_root = model_root
         self.shared_root = shared_root
@@ -160,6 +170,14 @@ class LRAnswerClassifier:
         self._word2vec = None
         self._instance_models = None
         self.speech_act_classifier = SpeechActClassifier()
+
+    def configure(self, config: ClassifierConfig) -> AnswerClassifier:
+        """
+        TODO: fix below to handle list of model roots as SVMAnswerClassifier does
+        """
+        self.model_root = config.model_roots[0]
+        self.shared_root = config.shared_root
+        return self
 
     def instance_models(self) -> InstanceModels:
         if not self._instance_models:
