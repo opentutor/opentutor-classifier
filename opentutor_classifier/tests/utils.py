@@ -192,7 +192,9 @@ def output_and_archive_for_test(tmpdir, data_root: str) -> Tuple[str, str]:
     )
 
 
-def train_classifier(tmpdir, data_root: str, shared_root: str) -> TrainingResult:
+def train_classifier(
+    tmpdir, data_root: str, shared_root: str, arch=""
+) -> TrainingResult:
     output_dir, archive_root = output_and_archive_for_test(tmpdir, data_root)
     return train_data_root(
         data_root=data_root,
@@ -201,17 +203,19 @@ def train_classifier(tmpdir, data_root: str, shared_root: str) -> TrainingResult
             archive_root=archive_root,
             output_dir=output_dir,
         ),
+        arch=arch,
     )
 
 
 def train_default_model(
-    tmpdir, data_root: str, shared_root: str
+    tmpdir, data_root: str, shared_root: str, arch=""
 ) -> Tuple[str, TrainingResult]:
     output_dir = path.join(
         tmpdir.mkdir("test"), "model_root", path.basename(path.normpath(data_root))
     )
     result = train_default(
         data_root=data_root,
+        arch=arch,
         config=TrainingConfig(shared_root=shared_root),
         opts=TrainingOptions(output_dir=output_dir),
     )

@@ -151,7 +151,9 @@ def test_train_and_predict(
     data_root: str,
     shared_root: str,
 ):
-    train_result = train_classifier(tmpdir, path.join(data_root, example), shared_root)
+    train_result = train_classifier(
+        tmpdir, path.join(data_root, example), shared_root, arch=arch
+    )
     assert path.exists(train_result.models)
     assert_train_expectation_results(
         train_result.expectations, expected_training_result
