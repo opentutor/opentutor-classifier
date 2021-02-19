@@ -19,7 +19,7 @@ from opentutor_classifier import (
     ExpectationTrainingResult,
     TrainingConfig,
     TrainingOptions,
-    CLASSIFIER_ARCH_DEFAULT,
+    ARCH_DEFAULT,
 )
 from opentutor_classifier.training import train_data_root, train_online
 from opentutor_classifier.utils import dict_to_config, load_config
@@ -115,7 +115,7 @@ def test_outputs_models_at_specified_model_root_for_default_model(
     [
         (
             "question1",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             "peer pressure can change your behavior",
             [
                 ExpectationTrainingResult(accuracy=0.8),
@@ -130,7 +130,7 @@ def test_outputs_models_at_specified_model_root_for_default_model(
         ),
         (
             "question2",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             "Current flows in the same direction as the arrow",
             [ExpectationTrainingResult(accuracy=0.98)],
             [_TestExpectation(evaluation="Good", score=0.95, expectation=0)],
@@ -167,7 +167,7 @@ def test_train_and_predict(
     [
         (
             "ies-rectangle",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             [
                 "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square. The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides. The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
                 "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",
@@ -236,7 +236,7 @@ def test_train_and_predict_multiple(
     [
         (
             "question3",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             ["7 by 10", "38 by 39", "37x40", "12x23", "45 x 67"],
             [ExpectationTrainingResult(accuracy=0.98)],
             [
@@ -310,7 +310,7 @@ def _test_train_online(
     [
         (
             "question1",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             "peer pressure can change your behavior",
             [
                 ExpectationTrainingResult(accuracy=0.72),
@@ -325,7 +325,7 @@ def _test_train_online(
         ),
         (
             "example-2",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             "the hr team",
             [
                 ExpectationTrainingResult(accuracy=0.87),
@@ -338,7 +338,7 @@ def _test_train_online(
         ),
         (
             "question1",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             "peer pressure can change your behavior",
             [
                 ExpectationTrainingResult(accuracy=0.72),
@@ -353,7 +353,7 @@ def _test_train_online(
         ),
         (
             "ies-television",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             "percentages represent a ratio of parts per 100",
             [
                 ExpectationTrainingResult(accuracy=0.67),
@@ -396,7 +396,7 @@ def test_train_online(
     [
         (
             "ies-rectangle",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             [
                 "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square. The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides. The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
                 "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",
@@ -461,7 +461,7 @@ def test_multiple_train_online(
     [
         (
             "question1-with-unknown-props-in-config",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             "peer pressure can change your behavior",
             [
                 ExpectationTrainingResult(accuracy=0.72),
@@ -515,7 +515,7 @@ def test_trained_default_model_usable_for_inference(
         ClassifierConfig(
             model_name=model_name, model_roots=[model_root], shared_root=shared_root
         ),
-        arch=CLASSIFIER_ARCH_DEFAULT,
+        arch=ARCH_DEFAULT,
     )
     eval_result = classifier.evaluate(
         AnswerClassifierInput(

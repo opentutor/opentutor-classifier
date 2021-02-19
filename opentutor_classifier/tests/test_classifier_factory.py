@@ -6,7 +6,12 @@
 #
 import pytest
 
-from opentutor_classifier import ClassifierFactory, ClassifierConfig
+from opentutor_classifier import (
+    ARCH_SVM_CLASSIFIER,
+    ARCH_LR_CLASSIFIER,
+    ClassifierFactory,
+    ClassifierConfig,
+)
 from opentutor_classifier.lr import LRAnswerClassifier
 from opentutor_classifier.svm import SVMAnswerClassifier
 
@@ -14,8 +19,8 @@ from opentutor_classifier.svm import SVMAnswerClassifier
 @pytest.mark.parametrize(
     "arch,expected_classifier_type",
     [
-        ("opentutor_classifier.svm", SVMAnswerClassifier),
-        ("opentutor_classifier.lr", LRAnswerClassifier),
+        (ARCH_SVM_CLASSIFIER, SVMAnswerClassifier),
+        (ARCH_LR_CLASSIFIER, LRAnswerClassifier),
     ],
 )
 def test_creates_a_classifier_with_default_arch(

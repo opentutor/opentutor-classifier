@@ -10,6 +10,7 @@ from typing import List
 import pytest
 
 from opentutor_classifier import (
+    ARCH_SVM_CLASSIFIER,
     AnswerClassifierInput,
     ClassifierConfig,
     ClassifierFactory,
@@ -39,14 +40,11 @@ def shared_root(word2vec) -> str:
     return os.path.dirname(word2vec)
 
 
-ARCH_SVM = "opentutor_classifier.svm"
-
-
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_accuracy",
     [
-        ("question1", ARCH_SVM, CONFIDENCE_THRESHOLD_DEFAULT, 1.0),
-        ("question2", ARCH_SVM, CONFIDENCE_THRESHOLD_DEFAULT, 1.0),
+        ("question1", ARCH_SVM_CLASSIFIER, CONFIDENCE_THRESHOLD_DEFAULT, 1.0),
+        ("question2", ARCH_SVM_CLASSIFIER, CONFIDENCE_THRESHOLD_DEFAULT, 1.0),
     ],
 )
 def test_evaluate(

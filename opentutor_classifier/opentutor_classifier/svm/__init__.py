@@ -5,8 +5,10 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from opentutor_classifier import (
+    ARCH_SVM_CLASSIFIER,
     AnswerClassifier,
     ArchClassifierFactory,
+    AnswerClassifierTraining,
     ClassifierConfig,
     TrainingConfig,
     register_classifier_factory,
@@ -16,8 +18,6 @@ from opentutor_classifier.word2vec import find_or_load_word2vec  # noqa: F401
 from .train import (  # noqa: F401
     SVMAnswerClassifierTraining,
 )
-
-ARCH = "opentutor_classifier.svm"
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):
@@ -29,8 +29,8 @@ class __ArchClassifierFactory(ArchClassifierFactory):
             raise Exception("model name for default classifier must be default")
         return SVMAnswerClassifier().configure(config)
 
-    def new_training(self, config: TrainingConfig):
+    def new_training(self, config: TrainingConfig) -> AnswerClassifierTraining:
         return SVMAnswerClassifierTraining().configure(config)
 
 
-register_classifier_factory(ARCH, __ArchClassifierFactory())
+register_classifier_factory(ARCH_SVM_CLASSIFIER, __ArchClassifierFactory())

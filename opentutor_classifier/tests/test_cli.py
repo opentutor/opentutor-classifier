@@ -12,7 +12,7 @@ from typing import List, Tuple
 
 import pytest
 
-from opentutor_classifier import CLASSIFIER_ARCH_DEFAULT
+from opentutor_classifier import ARCH_DEFAULT
 from .utils import (
     create_and_test_classifier,
     fixture_path,
@@ -114,7 +114,7 @@ def test_cli_outputs_models_files(
         (
             "question1",
             "peer pressure can change your behavior",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             [
                 _TestExpectation(expectation=0, score=0.98, evaluation="Good"),
                 _TestExpectation(expectation=1, score=0.68, evaluation="Bad"),
@@ -124,7 +124,7 @@ def test_cli_outputs_models_files(
         (
             "question2",
             "Current flows in the same direction as the arrow",
-            CLASSIFIER_ARCH_DEFAULT,
+            ARCH_DEFAULT,
             [_TestExpectation(expectation=0, score=0.95, evaluation="Good")],
         ),
     ],

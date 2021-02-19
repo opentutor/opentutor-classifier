@@ -199,12 +199,14 @@ def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
     _factories_by_arch[arch] = fac
 
 
-CLASSIFIER_ARCH_DEFAULT = "opentutor_classifier.svm"
+ARCH_SVM_CLASSIFIER = "opentutor_classifier.svm"
+ARCH_LR_CLASSIFIER = "opentutor_classifier.lr"
+ARCH_DEFAULT = "opentutor_classifier.svm"
 
 
 class ClassifierFactory:
     def _find_arch_fac(self, arch: str) -> ArchClassifierFactory:
-        arch = arch or environ.get("CLASSIFIER_ARCH") or CLASSIFIER_ARCH_DEFAULT
+        arch = arch or environ.get("CLASSIFIER_ARCH") or ARCH_DEFAULT
         if arch not in _factories_by_arch:
             import_module(arch)
         f = _factories_by_arch[arch]
