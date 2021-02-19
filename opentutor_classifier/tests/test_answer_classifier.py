@@ -47,7 +47,7 @@ def shared_root(word2vec) -> str:
         ("question2", ARCH_SVM_CLASSIFIER, CONFIDENCE_THRESHOLD_DEFAULT, 1.0),
     ],
 )
-def test_evaluate(
+def test_evaluate_example(
     model_roots,
     shared_root,
     example: str,
