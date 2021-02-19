@@ -23,10 +23,13 @@ from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
 
 from opentutor_classifier import (
+    AnswerClassifierTraining,
     ExpectationConfig,
     ExpectationTrainingResult,
     QuestionConfig,
+    TrainingConfig,
     TrainingInput,
+    TrainingOptions,
     TrainingResult,
 )
 from opentutor_classifier.log import logger
@@ -36,7 +39,7 @@ from .predict import (  # noqa: F401
     LRAnswerClassifier,
     LRExpectationClassifier,
 )
-from opentutor_classifier.utils import load_data, load_yaml
+from opentutor_classifier.utils import load_data
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
 
@@ -71,14 +74,22 @@ def _save(model_instances, filename):
     pickle.dump(model_instances, open(filename, "wb"))
 
 
-class LRAnswerClassifierTraining:
-    def __init__(self, shared_root: str = "shared"):
-        self.word2vec = find_or_load_word2vec(path.join(shared_root, "word2vec.bin"))
+class LRAnswerClassifierTraining(AnswerClassifierTraining):
+    def __init__(self):
         self.model_obj = LRExpectationClassifier()
         self.accuracy: Dict[int, int] = {}
 
-    def default_train_all(
-        self, data_root: str = "data", output_dir: str = "output"
+    def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
+        self.word2vec = find_or_load_word2vec(
+            path.join(config.shared_root, "word2vec.bin")
+        )
+        return self
+
+    def train_default(
+        self,
+        data_root: str = "data",
+        config: TrainingConfig = None,
+        opts: TrainingOptions = None,
     ) -> TrainingResult:
         try:
             training_data = load_data(path.join(data_root, "default", "training.csv"))
@@ -86,7 +97,7 @@ class LRAnswerClassifierTraining:
             training_data = self.model_obj.combine_dataset(data_root)
         model = self.model_obj.initialize_model()
         index2word_set = set(self.word2vec.index2word)
-        output_dir = path.abspath(output_dir)
+        output_dir = path.abspath((opts or TrainingOptions()).output_dir)
         makedirs(output_dir, exist_ok=True)
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
 
@@ -136,11 +147,7 @@ class LRAnswerClassifierTraining:
         )
 
     def train(
-        self,
-        train_input: TrainingInput,
-        add_ideal_answers_to_training_data=True,
-        archive_root: str = "archive",
-        output_dir: str = "output",
+        self, train_input: TrainingInput, config: TrainingOptions
     ) -> TrainingResult:
         question = train_input.config.question or ""
         if not question:
@@ -154,7 +161,7 @@ class LRAnswerClassifierTraining:
                 ],
                 columns=["exp_num", "text", "label"],
             ).append(train_input.data, ignore_index=True)
-            if add_ideal_answers_to_training_data
+            if config.add_ideal_answers_to_training_data
             else train_input.data
         ).sort_values(by=["exp_num"], ignore_index=True)
         split_training_sets: dict = defaultdict(int)
@@ -230,8 +237,8 @@ class LRAnswerClassifierTraining:
         QuestionConfig(question=question, expectations=conf_exps_out).write_to(
             path.join(tmp_save_dir, "config.yaml")
         )
-        output_dir = path.abspath(output_dir)
-        archive_path = _archive_if_exists(output_dir, archive_root)
+        output_dir = path.abspath(config.output_dir)
+        archive_path = _archive_if_exists(output_dir, config.archive_root)
         makedirs(path.dirname(output_dir), exist_ok=True)
         logger.debug(f"copying results from {tmp_save_dir} to {output_dir}")
         # can't use rename here because target is likely a network mount (e.g. S3 bucket)
@@ -243,41 +250,3 @@ class LRAnswerClassifierTraining:
             lesson=train_input.lesson,
             models=output_dir,
         )
-
-
-def train_data_root(
-    archive_root: str = "archive",
-    data_root="data",
-    output_dir: str = "out",
-    shared_root="shared",
-):
-    return LRAnswerClassifierTraining(shared_root=shared_root).train(
-        TrainingInput(
-            config=QuestionConfig(**load_yaml(path.join(data_root, "config.yaml"))),
-            data=load_data(path.join(data_root, "training.csv")),
-        ),
-        archive_root=archive_root,
-        output_dir=output_dir,
-    )
-
-
-# def train_online(
-#     lesson: str,
-#     archive_root: str = "archive",
-#     fetch_training_data_url=GRAPHQL_ENDPOINT,
-#     output_dir: str = "out",
-#     shared_root="shared",
-# ) -> TrainingResult:
-#     return LRAnswerClassifierTraining(shared_root=shared_root).train(
-#         fetch_training_data(lesson), archive_root=archive_root, output_dir=output_dir
-#     )
-
-
-# def train_default_classifier(
-#     data_root="data", output_dir: str = "out", shared_root="shared"
-# ) -> float:
-#     lr_answer_classifier_training = LRAnswerClassifierTraining(shared_root=shared_root)
-#     accuracy = lr_answer_classifier_training.default_train_all(
-#         data_root=data_root, output_dir=output_dir
-#     )
-#     return accuracy
