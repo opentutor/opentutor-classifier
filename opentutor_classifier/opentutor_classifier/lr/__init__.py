@@ -7,6 +7,7 @@
 from os import path
 
 from opentutor_classifier import (
+    ARCH_LR_CLASSIFIER,
     AnswerClassifier,
     AnswerClassifierTraining,
     ArchClassifierFactory,
@@ -17,9 +18,6 @@ from opentutor_classifier import (
 from .predict import LRAnswerClassifier, LRExpectationClassifier  # noqa: F401
 from opentutor_classifier.word2vec import find_or_load_word2vec  # noqa: F401
 from .train import LRAnswerClassifierTraining  # noqa: F401
-
-
-ARCH = "opentutor_classifier.lr"
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):
@@ -43,4 +41,4 @@ class __ArchClassifierFactory(ArchClassifierFactory):
         raise NotImplementedError()
 
 
-register_classifier_factory(ARCH, __ArchClassifierFactory())
+register_classifier_factory(ARCH_LR_CLASSIFIER, __ArchClassifierFactory())
