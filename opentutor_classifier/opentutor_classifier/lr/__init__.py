@@ -30,4 +30,5 @@ class __ArchClassifierFactory(ArchClassifierFactory):
     def new_training(self, config: TrainingConfig) -> AnswerClassifierTraining:
         return LRAnswerClassifierTraining().configure(config)
 
+
 register_classifier_factory(ARCH_LR_CLASSIFIER, __ArchClassifierFactory())

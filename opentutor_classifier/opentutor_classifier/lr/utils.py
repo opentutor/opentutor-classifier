@@ -24,7 +24,9 @@ def load_models(
     with open(
         path.join(model_dir, models_by_expectation_num_filename), "rb"
     ) as models_file:
-        models_by_expectation_num: Dict[int, linear_model.LogisticRegression] = pickle.load(models_file)
+        models_by_expectation_num: Dict[
+            int, linear_model.LogisticRegression
+        ] = pickle.load(models_file)
         return InstanceModels(
             config=load_config(path.join(model_dir, config_filename)),
             models_by_expectation_num=models_by_expectation_num,

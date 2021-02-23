@@ -40,8 +40,10 @@ from .utils import load_models
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
 
-def _confidence_score(model: linear_model.LogisticRegression, sentence: List[List[float]]) -> float:
-    return model.predict_proba(sentence)[0,1]
+def _confidence_score(
+    model: linear_model.LogisticRegression, sentence: List[List[float]]
+) -> float:
+    return model.predict_proba(sentence)[0, 1]
 
 
 def preprocess_sentence(sentence: str) -> List[str]:
@@ -101,11 +103,18 @@ class LRExpectationClassifier:
             ),
         ]
 
-    def train(self, model: linear_model.LogisticRegression, train_features: np.ndarray, train_y: np.ndarray):
+    def train(
+        self,
+        model: linear_model.LogisticRegression,
+        train_features: np.ndarray,
+        train_y: np.ndarray,
+    ):
         model.fit(train_features, train_y)
         return model
 
-    def predict(self, model: linear_model.LogisticRegression, test_features: np.ndarray) -> np.ndarray:
+    def predict(
+        self, model: linear_model.LogisticRegression, test_features: np.ndarray
+    ) -> np.ndarray:
         return model.predict(test_features)
 
     def combine_dataset(self, data_root):
