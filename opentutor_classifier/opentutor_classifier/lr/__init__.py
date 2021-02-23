@@ -4,8 +4,6 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from os import path
-
 from opentutor_classifier import (
     ARCH_LR_CLASSIFIER,
     AnswerClassifier,
@@ -22,23 +20,15 @@ from .train import LRAnswerClassifierTraining  # noqa: F401
 
 class __ArchClassifierFactory(ArchClassifierFactory):
     def new_classifier(self, config: ClassifierConfig) -> AnswerClassifier:
-        """
-        TODO: LRAnswerClassifier needs to be updated
-        to handle multiple model roots (copy from SVMAnswerClassifier)
-        """
-        return LRAnswerClassifier(
-            # config.model_name,
-            model_root=path.join(config.model_roots[0], config.model_name),
-            shared_root=config.shared_root,
-        )
+        return LRAnswerClassifier().configure(config)
 
-    def new_classifier_default(
-        self, config: ClassifierConfig, arch=""
-    ) -> AnswerClassifier:
-        raise NotImplementedError()
+    def new_classifier_default(self, config: ClassifierConfig) -> AnswerClassifier:
+        if config.model_name != "default":
+            raise Exception("model name for default classifier must be default")
+        return LRAnswerClassifier().configure(config)
 
     def new_training(self, config: TrainingConfig) -> AnswerClassifierTraining:
-        raise NotImplementedError()
+        return LRAnswerClassifierTraining().configure(config)
 
 
 register_classifier_factory(ARCH_LR_CLASSIFIER, __ArchClassifierFactory())

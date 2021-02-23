@@ -8,7 +8,7 @@ from collections import defaultdict
 from glob import glob
 import json
 from os import path, makedirs
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
@@ -35,7 +35,7 @@ from opentutor_classifier.stopwords import STOPWORDS
 from .dtos import ExpectationToEvaluate, InstanceModels
 
 from . import features
-from .utils import load_instances
+from .utils import load_models
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
 
@@ -153,7 +153,7 @@ class LRExpectationClassifier:
         return result
 
     def initialize_model(self):
-        return linear_model.LogisticRegression(tol=1e-4, C=1.0)
+        return linear_model.LogisticRegression(tol=0.0001, C=1.0)
 
     def tune_hyper_parameters(self, model, parameters):
         model = GridSearchCV(
@@ -163,25 +163,26 @@ class LRExpectationClassifier:
 
 
 class LRAnswerClassifier(AnswerClassifier):
-    def __init__(self, model_root="models", shared_root="shared"):
-        self.model_root = model_root
-        self.shared_root = shared_root
+    def __init__(self):
         self.model_obj = LRExpectationClassifier()
         self._word2vec = None
-        self._instance_models = None
+        self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
 
-    def configure(self, config: ClassifierConfig) -> AnswerClassifier:
-        """
-        TODO: fix below to handle list of model roots as SVMAnswerClassifier does
-        """
-        self.model_root = config.model_roots[0]
+    def configure(
+        self,
+        config: ClassifierConfig,
+    ) -> AnswerClassifier:
+        self.model_name = config.model_name
+        self.model_roots = config.model_roots
         self.shared_root = config.shared_root
         return self
 
     def instance_models(self) -> InstanceModels:
         if not self._instance_models:
-            self._instance_models = load_instances(model_root=self.model_root)
+            self._instance_models = load_models(
+                self.model_name, model_roots=self.model_roots
+            )
         return self._instance_models
 
     def models_by_expectation_num(self) -> Dict[int, linear_model.LogisticRegression]:

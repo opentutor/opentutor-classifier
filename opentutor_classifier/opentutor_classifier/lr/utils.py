@@ -6,26 +6,28 @@
 #
 from os import path
 import pickle
-from typing import Dict
+from typing import Dict, Iterable
 
 from sklearn import linear_model
 
-from opentutor_classifier.utils import load_config
+from opentutor_classifier.utils import find_model_dir, load_config
 from .dtos import InstanceModels
 
 
-def load_instances(
-    model_root="./models",
+def load_models(
+    model_name: str,
+    model_roots: Iterable[str] = ["./models", "./models_deployed"],
     models_by_expectation_num_filename="models_by_expectation_num.pkl",
     config_filename="config.yaml",
 ) -> InstanceModels:
+    model_dir = find_model_dir(model_name, model_roots)
     with open(
-        path.join(model_root, models_by_expectation_num_filename), "rb"
+        path.join(model_dir, models_by_expectation_num_filename), "rb"
     ) as models_file:
         models_by_expectation_num: Dict[
             int, linear_model.LogisticRegression
         ] = pickle.load(models_file)
         return InstanceModels(
-            config=load_config(path.join(model_root, config_filename)),
+            config=load_config(path.join(model_dir, config_filename)),
             models_by_expectation_num=models_by_expectation_num,
         )
