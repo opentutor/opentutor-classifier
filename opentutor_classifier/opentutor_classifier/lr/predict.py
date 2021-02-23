@@ -7,7 +7,6 @@
 from collections import defaultdict
 from glob import glob
 import json
-import math
 from os import path, makedirs
 from typing import Dict, List, Optional
 
