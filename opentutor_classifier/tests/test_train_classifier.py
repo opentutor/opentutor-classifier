@@ -168,7 +168,6 @@ def test_train_and_predict(
         expected_accuracy=expected_accuracy,
     )
 
-
 @responses.activate
 @pytest.mark.parametrize(
     "lesson,arch,evaluate_inputs,expected_training_result,expected_evaluate_results",
@@ -181,6 +180,7 @@ def test_train_and_predict(
                 "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",
                 "The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides.",
                 "The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
+                "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square. some irrelevant gibberish i am adding here just to make sure I get a high confidence."
             ],
             [
                 ExpectationTrainingResult(accuracy=0.92),
@@ -194,7 +194,7 @@ def test_train_and_predict(
                     _TestExpectation(evaluation="Good", score=0.9, expectation=2),
                 ],
                 [
-                    _TestExpectation(evaluation="Good", score=0.13, expectation=0), #problem
+                    _TestExpectation(evaluation="Good", score=0.95, expectation=0),
                     _TestExpectation(evaluation="Bad", score=0.935, expectation=1),
                     _TestExpectation(evaluation="Bad", score=0.93, expectation=2),
                 ],
@@ -208,6 +208,11 @@ def test_train_and_predict(
                     _TestExpectation(evaluation="Bad", score=0.93, expectation=1),
                     _TestExpectation(evaluation="Good", score=0.92, expectation=2),
                 ],
+                [
+                    _TestExpectation(evaluation="Good", score=0.92, expectation=0),
+                    _TestExpectation(evaluation="Bad", score=0.91, expectation=1),
+                    _TestExpectation(evaluation="Bad", score=0.92, expectation=2),
+                ],
             ],
         ),
         (
@@ -218,6 +223,8 @@ def test_train_and_predict(
                 "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",
                 "The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides.",
                 "The correct answer is the rectangle with dimensions 37 ft by 40 ft.",
+                "The closer a ratio of the sides in a rectangle is to one, the more it looks like a square. some irrelevant gibberish i am adding here just to make sure I get a high confidence."
+
             ],
             [
                 ExpectationTrainingResult(accuracy=0.93),
@@ -231,7 +238,7 @@ def test_train_and_predict(
                     _TestExpectation(evaluation="Good", score=0.9, expectation=2),
                 ],
                 [
-                    _TestExpectation(evaluation="Good", score=0.13, expectation=0), #problem
+                    _TestExpectation(evaluation="Good", score=0.14, expectation=0), #problem
                     _TestExpectation(evaluation="Bad", score=0.939, expectation=1),
                     _TestExpectation(evaluation="Bad", score=0.976, expectation=2),
                 ],
@@ -245,87 +252,68 @@ def test_train_and_predict(
                     _TestExpectation(evaluation="Bad", score=0.936, expectation=1),
                     _TestExpectation(evaluation="Good", score=0.899, expectation=2),
                 ],
+                [
+                    _TestExpectation(evaluation="Good", score=0.21, expectation=0), #problem
+                    _TestExpectation(evaluation="Bad", score=0.935, expectation=1),
+                    _TestExpectation(evaluation="Bad", score=0.93, expectation=2),
+                ],
             ],
         ),
-    ],
-)
-def test_train_and_predict_multiple(
-    lesson: str,
-    arch: str,
-    evaluate_inputs: List[str],
-    expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_results: List[List[_TestExpectation]],
-    data_root: str,
-    shared_root: str,
-    tmpdir,
-):
-    train_result = train_classifier(tmpdir, path.join(data_root, lesson), shared_root, arch)
-    assert path.exists(train_result.models)
-    assert_train_expectation_results(
-        train_result.expectations, expected_training_result
-    )
-    for evaluate_input, expected_evaluate_result in zip(
-        evaluate_inputs, expected_evaluate_results
-    ):
-        create_and_test_classifier(
-            train_result.models,
-            shared_root,
-            evaluate_input,
-            expected_evaluate_result,
-            arch=arch,
-        )
-
-@responses.activate
-@pytest.mark.parametrize(
-    "lesson,arch,evaluate_inputs,expected_training_result,expected_evaluate_results",
-    [
-        # (
-        #     "candles",
-        #     ARCH_LR_CLASSIFIER,
-        #     [
-        #         "I am not familier with these concepts.",
-        #         "there is an uniformity and each candle is burning at constant rate.",
-        #         "ratio of length that candle A had burned to Candle B had burned is not fixed.",
-        #         "each candle is burns at constant rate, the ratio of length that has been burned in candle A and candle B is not constant because length that candle A has burned and the length candle B has burned in not proportional."
-        #     ],
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.82),
-        #         ExpectationTrainingResult(accuracy=0.85),
-        #         ExpectationTrainingResult(accuracy=0.82),
-        #         ExpectationTrainingResult(accuracy=0.95),                
-        #     ],
-        #     [
-        #         [
-        #             _TestExpectation(evaluation="Bad", score=0.94, expectation=0),
-        #             _TestExpectation(evaluation="Bad", score=0.97, expectation=1),
-        #             _TestExpectation(evaluation="Bad", score=0.72, expectation=2),
-        #             _TestExpectation(evaluation="Bad", score=0.97, expectation=3),
-        #         ],
-        #         [
-        #             _TestExpectation(evaluation="Good", score=0.69, expectation=0), #problem
-        #             _TestExpectation(evaluation="Bad", score=0.83, expectation=1),
-        #             _TestExpectation(evaluation="Bad", score=0.9, expectation=2),
-        #             _TestExpectation(evaluation="Bad", score=0.91, expectation=3)
-        #         ],
-        #         [
-        #             _TestExpectation(evaluation="Bad", score=0.8, expectation=0),
-        #             _TestExpectation(evaluation="Bad", score=0.89, expectation=1), 
-        #             _TestExpectation(evaluation="Good", score=0.63, expectation=2), #problem
-        #             _TestExpectation(evaluation="Bad", score=0.9, expectation=3),
-        #         ],
-        #         [
-        #             _TestExpectation(evaluation="Good", score=0.62, expectation=0),
-        #             _TestExpectation(evaluation="Bad", score=0.62, expectation=1), 
-        #             _TestExpectation(evaluation="Good", score=0.82, expectation=2),
-        #             _TestExpectation(evaluation="Good", score=0.84, expectation=3),
-        #         ]
-        #     ],
-        # ),
+        (
+            "candles",
+            ARCH_LR_CLASSIFIER,
+            [
+                "I am not familier with these concepts.",
+                "the unit rate is constant and the proportion is highly stable and the rates of increase for both candles are constant and covarying",
+                "there is an uniformity and each candle is burning at constant rate.",
+                "ratio of length that candle A had burned to Candle B had burned is not fixed.",
+                "each candle is burns at constant rate, the ratio of length that has been burned in candle A and candle B is not constant because length that candle A has burned and the length candle B has burned in not proportional."
+            ],
+            [
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.85),
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.95),                
+            ],
+            [
+                [
+                    _TestExpectation(evaluation="Bad", score=0.94, expectation=0),
+                    _TestExpectation(evaluation="Bad", score=0.97, expectation=1),
+                    _TestExpectation(evaluation="Bad", score=0.72, expectation=2),
+                    _TestExpectation(evaluation="Bad", score=0.97, expectation=3),
+                ],
+                [
+                    _TestExpectation(evaluation="Good", score=0.81, expectation=0),
+                    _TestExpectation(evaluation="Good", score=0.67, expectation=1),
+                    _TestExpectation(evaluation="Bad", score=0.9, expectation=2),
+                    _TestExpectation(evaluation="Bad", score=0.9, expectation=3),
+                ],
+                [
+                    _TestExpectation(evaluation="Good", score=0.69, expectation=0), #problem
+                    _TestExpectation(evaluation="Bad", score=0.83, expectation=1),
+                    _TestExpectation(evaluation="Bad", score=0.9, expectation=2),
+                    _TestExpectation(evaluation="Bad", score=0.91, expectation=3)
+                ],
+                [
+                    _TestExpectation(evaluation="Bad", score=0.8, expectation=0),
+                    _TestExpectation(evaluation="Bad", score=0.89, expectation=1), 
+                    _TestExpectation(evaluation="Good", score=0.63, expectation=2), #problem
+                    _TestExpectation(evaluation="Bad", score=0.9, expectation=3),
+                ],
+                [
+                    _TestExpectation(evaluation="Good", score=0.62, expectation=0),
+                    _TestExpectation(evaluation="Bad", score=0.62, expectation=1), 
+                    _TestExpectation(evaluation="Good", score=0.82, expectation=2),
+                    _TestExpectation(evaluation="Good", score=0.84, expectation=3),
+                ]
+            ],
+        ),
         (
             "candles",
             ARCH_SVM_CLASSIFIER,
             [
                 "I am not familier with these concepts.",
+                "the unit rate is constant and the proportion is highly stable and the rates of increase for both candles are constant and covarying",
                 "there is an uniformity and each candle is burning at constant rate.",
                 "ratio of length that candle A had burned to Candle B had burned is not fixed.",
                 "each candle is burns at constant rate, the ratio of length that has been burned in candle A and candle B is not constant because length that candle A has burned and the length candle B has burned in not proportional."
@@ -344,6 +332,12 @@ def test_train_and_predict_multiple(
                     _TestExpectation(evaluation="Bad", score=0.80, expectation=3),
                 ],
                 [
+                    _TestExpectation(evaluation="Good", score=0.79, expectation=0),
+                    _TestExpectation(evaluation="Good", score=0.24, expectation=1),
+                    _TestExpectation(evaluation="Bad", score=0.9, expectation=2),
+                    _TestExpectation(evaluation="Bad", score=0.86, expectation=3),
+                ],
+                [
                     _TestExpectation(evaluation="Good", score=0.80, expectation=0),
                     _TestExpectation(evaluation="Bad", score=0.83, expectation=1),
                     _TestExpectation(evaluation="Bad", score=0.9, expectation=2),
@@ -356,10 +350,10 @@ def test_train_and_predict_multiple(
                     _TestExpectation(evaluation="Bad", score=0.88, expectation=3),
                 ],
                 [
-                    _TestExpectation(evaluation="Bad", score=0.62, expectation=0),  #problem
+                    _TestExpectation(evaluation="Bad", score=0.90, expectation=0),  #problem
                     _TestExpectation(evaluation="Good", score=0.30, expectation=1), #problem
-                    _TestExpectation(evaluation="Good", score=0.82, expectation=2),
-                    _TestExpectation(evaluation="Good", score=0.84, expectation=3),
+                    _TestExpectation(evaluation="Good", score=0.90, expectation=2),
+                    _TestExpectation(evaluation="Good", score=0.90, expectation=3),
                 ]
             ],
         )
@@ -420,7 +414,7 @@ def test_train_and_single_expectation_predict(
     data_root: str,
     shared_root: str,
 ):
-    train_result = train_classifier(tmpdir, path.join(data_root, lesson), shared_root)
+    train_result = train_classifier(tmpdir, path.join(data_root, lesson), shared_root, arch)
     assert path.exists(train_result.models)
     assert_train_expectation_results(
         train_result.expectations, expected_training_result
