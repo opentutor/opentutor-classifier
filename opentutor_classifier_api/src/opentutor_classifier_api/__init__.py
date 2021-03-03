@@ -42,4 +42,8 @@ def create_app():
     from opentutor_classifier_api.blueprints.train import train_blueprint
 
     app.register_blueprint(train_blueprint, url_prefix="/classifier/train")
+
+    from opentutor_classifier_api.blueprints.train_default import train_default_blueprint
+    app.register_blueprint(train_default_blueprint, url_prefix="/classifier/train_default")
+    
     return app
