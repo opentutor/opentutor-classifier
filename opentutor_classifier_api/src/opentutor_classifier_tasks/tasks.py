@@ -23,3 +23,8 @@ celery.conf.update(config)
 @celery.task()
 def train_task(lesson):
     pass
+
+
+@celery.task()
+def train_default_task(data_root):
+    pass
