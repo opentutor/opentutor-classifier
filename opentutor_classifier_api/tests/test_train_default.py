@@ -20,9 +20,9 @@ from . import Bunch
     ],
 )
 @patch("opentutor_classifier_tasks.tasks.train_default_task")
-def test_train_default(mock_train_task, classifier_domain, fake_task_id, client):
+def test_train_default(mock_train_default_task, classifier_domain, fake_task_id, client):
     mock_task = Bunch(id=fake_task_id)
-    mock_train_task.apply_async.return_value = mock_task
+    mock_train_default_task.apply_async.return_value = mock_task
     res = client.post(
         f"{classifier_domain}/classifier/train_default/",
         data=json.dumps({}),
@@ -57,12 +57,12 @@ def test_train_default(mock_train_task, classifier_domain, fake_task_id, client)
         ),
     ],
 )
-@patch("opentutor_classifier_tasks.tasks.train_task")
+@patch("opentutor_classifier_tasks.tasks.train_default_task")
 def test_it_returns_status_for_a_train_default_job(
-    mock_train_task, task_id, state, status, info, expected_info, client
+    mock_train_default_task, task_id, state, status, info, expected_info, client
 ):
     mock_task = Bunch(id=task_id, state=state, status=status, info=info)
-    mock_train_task.AsyncResult.return_value = mock_task
+    mock_train_default_task.AsyncResult.return_value = mock_task
     res = client.get(f"/classifier/train_default/status/{task_id}")
     assert res.status_code == 200
     assert res.json == {

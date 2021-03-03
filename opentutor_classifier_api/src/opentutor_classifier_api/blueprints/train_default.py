@@ -20,7 +20,7 @@ def _to_status_url(root: str, id: str) -> str:
 
 @train_default_blueprint.route("/", methods=["POST"])
 @train_default_blueprint.route("", methods=["POST"])
-def train():
+def train_default():
     t = opentutor_classifier_tasks.tasks.train_default_task.apply_async(args=[])
     return jsonify(
         {
@@ -34,7 +34,7 @@ def train():
 
 @train_default_blueprint.route("/status/<task_id>/", methods=["GET"])
 @train_default_blueprint.route("/status/<task_id>", methods=["GET"])
-def train_status(task_id: str):
+def train_default_status(task_id: str):
     t = opentutor_classifier_tasks.tasks.train_default_task.AsyncResult(task_id)
     return jsonify(
         {
