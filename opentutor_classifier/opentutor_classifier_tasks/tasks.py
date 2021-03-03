@@ -26,6 +26,7 @@ ARCHIVE_ROOT = os.environ.get("ARCHIVE_ROOT") or "archive"
 OUTPUT_ROOT = os.environ.get("OUTPUT_ROOT") or "models"
 SHARED_ROOT = os.environ.get("SHARED_ROOT") or "shared"
 
+
 @celery.task()
 def train_task(lesson: str) -> dict:
     return train_online(
@@ -38,11 +39,11 @@ def train_task(lesson: str) -> dict:
 
 
 @celery.task()
-def train_default_task(data_root:str) -> dict:
+def train_default_task(data_root: str) -> dict:
     return train_default(
         data_root=data_root,
         config=TrainingConfig(shared_root=SHARED_ROOT),
-        opts=TrainingOptions(archive_root=ARCHIVE_ROOT, output_dir=os.path.join(OUTPUT_ROOT, "default"))
+        opts=TrainingOptions(
+            archive_root=ARCHIVE_ROOT, output_dir=os.path.join(OUTPUT_ROOT, "default")
+        ),
     ).to_dict()
-
-    )

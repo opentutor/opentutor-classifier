@@ -20,7 +20,9 @@ from . import Bunch
     ],
 )
 @patch("opentutor_classifier_tasks.tasks.train_default_task")
-def test_train_default(mock_train_default_task, classifier_domain, fake_task_id, client):
+def test_train_default(
+    mock_train_default_task, classifier_domain, fake_task_id, client
+):
     mock_task = Bunch(id=fake_task_id)
     mock_train_default_task.apply_async.return_value = mock_task
     res = client.post(
@@ -35,6 +37,7 @@ def test_train_default(mock_train_default_task, classifier_domain, fake_task_id,
             "statusUrl": f"{classifier_domain}/classifier/train_default/status/{fake_task_id}",
         }
     }
+
 
 @pytest.mark.parametrize(
     "task_id,state,status,info,expected_info",
