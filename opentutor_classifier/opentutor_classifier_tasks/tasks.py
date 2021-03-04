@@ -39,9 +39,8 @@ def train_task(lesson: str) -> dict:
 
 
 @celery.task()
-def train_default_task(data_root: str) -> dict:
+def train_default_task() -> dict:
     return train_default(
-        data_root=data_root,
         config=TrainingConfig(shared_root=SHARED_ROOT),
         opts=TrainingOptions(
             archive_root=ARCHIVE_ROOT, output_dir=os.path.join(OUTPUT_ROOT, "default")

@@ -26,5 +26,5 @@ def train_task(lesson):
 
 
 @celery.task()
-def train_default_task(data_root):
+def train_default_task():
     pass
