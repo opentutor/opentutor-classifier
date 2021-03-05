@@ -164,7 +164,7 @@ class AnswerClassifierTraining(ABC):
     def train_default_online(
         self,
         train_input: TrainingInput,
-        config: TrainingInput = None,
+        config: TrainingConfig = None,
         opts: TrainingOptions = None,
     ) -> TrainingResult:
         raise NotImplementedError()

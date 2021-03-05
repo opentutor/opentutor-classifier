@@ -485,7 +485,15 @@ def test_train_online_works_if_config_has_unknown_props(
 
 
 @responses.activate
+@pytest.mark.parametrize(
+    "arch",
+    [
+        ARCH_SVM_CLASSIFIER,
+        ARCH_LR_CLASSIFIER,
+    ],
+)
 def test_train_default_online(
+    arch: str,
     shared_root: str,
     tmpdir,
 ):
@@ -494,6 +502,7 @@ def test_train_default_online(
     train_default_online(
         TrainingConfig(shared_root=shared_root),
         TrainingOptions(archive_root=archive_root, output_dir=output_dir),
+        arch,
     )
 
 
