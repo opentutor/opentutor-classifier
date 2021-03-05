@@ -9,7 +9,7 @@ import os
 from celery import Celery
 
 from opentutor_classifier import TrainingConfig, TrainingOptions
-from opentutor_classifier.training import train_online, train_default
+from opentutor_classifier.training import train_online, train_default_online
 
 config = {
     "broker_url": os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0"),
@@ -40,7 +40,7 @@ def train_task(lesson: str) -> dict:
 
 @celery.task()
 def train_default_task() -> dict:
-    return train_default(
+    return train_default_online(
         config=TrainingConfig(shared_root=SHARED_ROOT),
         opts=TrainingOptions(
             archive_root=ARCHIVE_ROOT, output_dir=os.path.join(OUTPUT_ROOT, "default")

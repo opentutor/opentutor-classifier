@@ -23,7 +23,11 @@ from opentutor_classifier import (
     ARCH_LR_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
-from opentutor_classifier.training import train_data_root, train_online
+from opentutor_classifier.training import (
+    train_data_root,
+    train_online,
+    train_default_online,
+)
 from opentutor_classifier.utils import dict_to_config, load_config
 from .utils import (
     add_graphql_response,
@@ -477,6 +481,19 @@ def test_train_online_works_if_config_has_unknown_props(
         data_root,
         shared_root,
         tmpdir,
+    )
+
+
+@responses.activate
+def test_train_default_online(
+    shared_root: str,
+    tmpdir,
+):
+    add_graphql_response("default")
+    output_dir, archive_root = output_and_archive_for_test(tmpdir, "default")
+    train_default_online(
+        TrainingConfig(shared_root=shared_root),
+        TrainingOptions(archive_root=archive_root, output_dir=output_dir),
     )
 
 

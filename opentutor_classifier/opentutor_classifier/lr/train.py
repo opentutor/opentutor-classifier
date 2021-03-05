@@ -85,16 +85,12 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         )
         return self
 
-    def train_default(
+    def _train_default(
         self,
-        data_root: str = "data",
+        training_data: pd.DataFrame,
         config: TrainingConfig = None,
         opts: TrainingOptions = None,
     ) -> TrainingResult:
-        try:
-            training_data = load_data(path.join(data_root, "default", "training.csv"))
-        except Exception:
-            training_data = self.model_obj.combine_dataset(data_root)
         model = self.model_obj.initialize_model()
         index2word_set = set(self.word2vec.index2word)
         output_dir = path.abspath((opts or TrainingOptions()).output_dir)
@@ -144,6 +140,30 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             expectations=[ExpectationTrainingResult(accuracy=accuracy)],
             models=output_dir,
             archive="",
+        )
+
+    def train_default(
+        self,
+        data_root: str = "data",
+        config: TrainingConfig = None,
+        opts: TrainingOptions = None,
+    ) -> TrainingResult:
+        try:
+            training_data = load_data(path.join(data_root, "default", "training.csv"))
+        except Exception:
+            training_data = self.model_obj.combine_dataset(data_root)
+        return self._train_default(
+            training_data=training_data, config=config, opts=opts
+        )
+
+    def train_default_online(
+        self,
+        train_input: TrainingInput,
+        config: TrainingConfig = None,
+        opts: TrainingOptions = None,
+    ) -> TrainingResult:
+        return self._train_default(
+            training_data=train_input.data, config=config, opts=opts
         )
 
     def train(

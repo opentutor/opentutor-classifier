@@ -160,6 +160,15 @@ class AnswerClassifierTraining(ABC):
     ) -> TrainingResult:
         raise NotImplementedError()
 
+    @abstractmethod
+    def train_default_online(
+        self,
+        train_input: TrainingInput,
+        config: TrainingInput = None,
+        opts: TrainingOptions = None,
+    ) -> TrainingResult:
+        raise NotImplementedError()
+
 
 def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
     return QuestionConfig(
