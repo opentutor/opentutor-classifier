@@ -4,27 +4,30 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import os
+import pytest
 
-from celery import Celery
-
-config = {
-    "broker_url": os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0"),
-    "result_backend": os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379/0"),
-    "accept_content": ["json"],
-    "task_serializer": os.environ.get("CELERY_TASK_SERIALIZER", "json"),
-    "event_serializer": os.environ.get("CELERY_EVENT_SERIALIZER", "json"),
-    "result_serializer": os.environ.get("CELERY_RESULT_SERIALIZER", "json"),
-}
-celery = Celery("opentutor-classifier-tasks", broker=config["broker_url"])
-celery.conf.update(config)
+from opentutor_classifier import (
+    ARCH_SVM_CLASSIFIER,
+    ARCH_LR_CLASSIFIER,
+    ClassifierFactory,
+    ClassifierConfig,
+)
+from opentutor_classifier.lr import LRAnswerClassifier
+from opentutor_classifier.svm import SVMAnswerClassifier
 
 
-@celery.task()
-def train_task(lesson):
-    pass
-
-
-@celery.task()
-def train_default_task():
-    pass
+@pytest.mark.parametrize(
+    "arch,expected_classifier_type",
+    [
+        (ARCH_SVM_CLASSIFIER, SVMAnswerClassifier),
+        (ARCH_LR_CLASSIFIER, LRAnswerClassifier),
+    ],
+)
+def test_creates_a_classifier_with_default_arch(
+    monkeypatch, arch: str, expected_classifier_type
+):
+    monkeypatch.setenv("CLASSIFIER_ARCH", arch)
+    assert isinstance(
+        ClassifierFactory().new_classifier(ClassifierConfig(model_name="somemodel")),
+        expected_classifier_type,
+    )

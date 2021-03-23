@@ -16,10 +16,15 @@ import responses
 from opentutor_classifier import (
     AnswerClassifierInput,
     AnswerClassifierResult,
+    ClassifierFactory,
+    ClassifierConfig,
     ExpectationClassifierResult,
     ExpectationTrainingResult,
+    TrainingConfig,
+    TrainingOptions,
     TrainingResult,
 )
+from opentutor_classifier.training import train_data_root, train_default
 from opentutor_classifier.api import GRAPHQL_ENDPOINT
 from opentutor_classifier.config import (
     LABEL_BAD,
@@ -27,12 +32,6 @@ from opentutor_classifier.config import (
     LABEL_NEUTRAL,
     confidence_threshold_default,
 )
-from opentutor_classifier.svm.predict import SVMAnswerClassifier
-from opentutor_classifier.svm.train import (
-    train_data_root,
-    train_default_classifier,
-)
-
 from .types import (
     ComparisonType,
     _TestExample,
@@ -113,22 +112,28 @@ def assert_classifier_evaluate(
 
 
 def run_classifier_tests(
-    model_path: str, shared_root: str, examples: List[_TestExample]
+    arch: str, model_path: str, shared_root: str, examples: List[_TestExample]
 ):
     model_root, model_name = path.split(model_path)
-    classifier = SVMAnswerClassifier(
-        model_name, model_roots=[model_root], shared_root=shared_root
+    classifier = ClassifierFactory().new_classifier(
+        ClassifierConfig(
+            model_name=model_name, model_roots=[model_root], shared_root=shared_root
+        ),
+        arch=arch,
     )
     for ex in examples:
         assert_classifier_evaluate(classifier.evaluate(ex.input), ex.expectations)
 
 
 def run_classifier_testset(
-    model_path: str, shared_root: str, testset: _TestSet
+    arch: str, model_path: str, shared_root: str, testset: _TestSet
 ) -> _TestSetResult:
     model_root, model_name = path.split(model_path)
-    classifier = SVMAnswerClassifier(
-        model_name, model_roots=[model_root], shared_root=shared_root
+    classifier = ClassifierFactory().new_classifier(
+        ClassifierConfig(
+            model_name=model_name, model_roots=[model_root], shared_root=shared_root
+        ),
+        arch=arch,
     )
     result = _TestSetResult(testset=testset)
     for ex in testset.examples:
@@ -137,9 +142,13 @@ def run_classifier_testset(
 
 
 def assert_testset_accuracy(
-    model_path: str, shared_root: str, testset: _TestSet, expected_accuracy=1.0
+    arch: str,
+    model_path: str,
+    shared_root: str,
+    testset: _TestSet,
+    expected_accuracy=1.0,
 ) -> None:
-    result = run_classifier_testset(model_path, shared_root, testset)
+    result = run_classifier_testset(arch, model_path, shared_root, testset)
     metrics = result.metrics()
     if metrics.accuracy >= expected_accuracy:
         return
@@ -152,8 +161,10 @@ def create_and_test_classifier(
     shared_root: str,
     evaluate_input: str,
     expected_evaluate_result: List[_TestExpectation],
+    arch: str = "",
 ):
     run_classifier_tests(
+        arch,
         model_path,
         shared_root,
         [
@@ -181,24 +192,34 @@ def output_and_archive_for_test(tmpdir, data_root: str) -> Tuple[str, str]:
     )
 
 
-def train_classifier(tmpdir, data_root: str, shared_root: str) -> TrainingResult:
+def train_classifier(
+    tmpdir, data_root: str, shared_root: str, arch=""
+) -> TrainingResult:
     output_dir, archive_root = output_and_archive_for_test(tmpdir, data_root)
     return train_data_root(
-        archive_root=archive_root,
         data_root=data_root,
-        shared_root=shared_root,
-        output_dir=output_dir,
+        config=TrainingConfig(shared_root=shared_root),
+        opts=TrainingOptions(
+            archive_root=archive_root,
+            output_dir=output_dir,
+        ),
+        arch=arch,
     )
 
 
-def train_default_model(tmpdir, data_root: str, shared_root: str) -> Tuple[str, float]:
+def train_default_model(
+    tmpdir, data_root: str, shared_root: str, arch=""
+) -> Tuple[str, TrainingResult]:
     output_dir = path.join(
         tmpdir.mkdir("test"), "model_root", path.basename(path.normpath(data_root))
     )
-    accuracy = train_default_classifier(
-        data_root=data_root, shared_root=shared_root, output_dir=output_dir
+    result = train_default(
+        data_root=data_root,
+        arch=arch,
+        config=TrainingConfig(shared_root=shared_root),
+        opts=TrainingOptions(output_dir=output_dir),
     )
-    return output_dir, accuracy
+    return output_dir, result
 
 
 def read_test_set_from_csv(csv_path: str, confidence_threshold=-1.0) -> _TestSet:

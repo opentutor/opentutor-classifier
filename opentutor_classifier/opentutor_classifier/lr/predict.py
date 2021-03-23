@@ -7,7 +7,6 @@
 from collections import defaultdict
 from glob import glob
 import json
-import math
 from os import path, makedirs
 from typing import Dict, List, Optional
 
@@ -15,7 +14,7 @@ from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 import numpy as np
-from sklearn import model_selection, svm
+from sklearn import model_selection, linear_model
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import LeaveOneOut
@@ -40,11 +39,10 @@ from .utils import load_models
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
 
-def _confidence_score(model: svm.SVC, sentence: List[List[float]]) -> float:
-    score = model.decision_function(sentence)[0]
-    x = score + model.intercept_[0]
-    sigmoid = 1 / (1 + math.exp(-3 * x))
-    return sigmoid
+def _confidence_score(
+    model: linear_model.LogisticRegression, sentence: List[List[float]]
+) -> float:
+    return model.predict_proba(sentence)[0, 1]
 
 
 def preprocess_sentence(sentence: str) -> List[str]:
@@ -60,7 +58,7 @@ def preprocess_sentence(sentence: str) -> List[str]:
     return result_words
 
 
-class SVMExpectationClassifier:
+class LRExpectationClassifier:
     def __init__(self):
         self.model = None
         self.score_dictionary = defaultdict(int)
@@ -104,11 +102,18 @@ class SVMExpectationClassifier:
             ),
         ]
 
-    def train(self, model: svm.SVC, train_features: np.ndarray, train_y: np.ndarray):
+    def train(
+        self,
+        model: linear_model.LogisticRegression,
+        train_features: np.ndarray,
+        train_y: np.ndarray,
+    ):
         model.fit(train_features, train_y)
         return model
 
-    def predict(self, model: svm.SVC, test_features: np.ndarray) -> np.ndarray:
+    def predict(
+        self, model: linear_model.LogisticRegression, test_features: np.ndarray
+    ) -> np.ndarray:
         return model.predict(test_features)
 
     def combine_dataset(self, data_root):
@@ -148,7 +153,7 @@ class SVMExpectationClassifier:
         return result
 
     def initialize_model(self):
-        return svm.SVC(kernel="rbf", C=10, gamma="auto")
+        return linear_model.LogisticRegression(tol=0.0001, C=1.0)
 
     def tune_hyper_parameters(self, model, parameters):
         model = GridSearchCV(
@@ -157,9 +162,9 @@ class SVMExpectationClassifier:
         return model
 
 
-class SVMAnswerClassifier(AnswerClassifier):
+class LRAnswerClassifier(AnswerClassifier):
     def __init__(self):
-        self.model_obj = SVMExpectationClassifier()
+        self.model_obj = LRExpectationClassifier()
         self._word2vec = None
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
@@ -180,7 +185,7 @@ class SVMAnswerClassifier(AnswerClassifier):
             )
         return self._instance_models
 
-    def models_by_expectation_num(self) -> Dict[int, svm.SVC]:
+    def models_by_expectation_num(self) -> Dict[int, linear_model.LogisticRegression]:
         return self.instance_models().models_by_expectation_num
 
     def config(self) -> QuestionConfig:
@@ -188,7 +193,7 @@ class SVMAnswerClassifier(AnswerClassifier):
 
     def find_model_for_expectation(
         self, expectation: int, return_first_model_if_only_one=False
-    ) -> svm.SVC:
+    ) -> linear_model.LogisticRegression:
         m_by_e = self.models_by_expectation_num()
         return (
             m_by_e[0]

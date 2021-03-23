@@ -1,0 +1,32 @@
+##
+## This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved. 
+## Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
+##
+## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
+##
+question: "Two identical candles, Candle A and Candle B, are lit at different times and each is burning at the same constant rate. When Candle A has burned 20 $$$mm|||millimeters$$$, Candle B has burned 12 $$$mm|||millimeters$$$. Do you think that the relationship between the length that Candle A has burned and the length that Candle B has burned is proportional? Also, explain why or why not."
+expectations:
+  - ideal: Each candle is identical and burning at a constant rate, which indicates uniformity.
+    features:        
+      bad:        
+        - different|differ|unequal|(\b(isn't|not)\b.*(same|equal))
+      good:        
+        - constant|same|identical|equal|uniform
+  - ideal: The length that Candle A has burned and the length that Candle B has burned are variable quantities and change together.
+    features: 
+      bad:        
+        - \b(not|isn't|no|without)\b.*\b(related|relationship|change)\b
+      good:
+        - (covary|covariance|co-variance|co-vary)|\b(same|equal|together)\b.*\b(change|increase|up|grow|vary|rate)\b|(increase|change|grow|up|vary|rate).*(same|together|equal)
+  - ideal: The ratio of the length that Candle A has burned to the length that Candle B has burned is not constant, so it is not invariant.
+    features:
+      bad:        
+        - multiples
+      good:
+        - (\b(not|isn't|no|without)\b.*(fixed|constant|same).*(ratio|rate|multiple))|((ratio|rate|multiple).*\b(not|isn't|no|without)\b.*(fixed|constant|same))
+  - ideal: The relationship between the length that Candle A has burned and the length that Candle B has burned is not proportional.
+    features:
+      bad:
+        - proportion
+      good:
+        - \b(no|not|isn't|hasn't|never|without)\b.*proportion

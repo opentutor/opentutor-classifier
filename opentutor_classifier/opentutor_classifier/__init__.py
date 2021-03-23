@@ -6,6 +6,8 @@
 #
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, asdict
+from importlib import import_module
+from os import environ
 import pandas as pd
 from typing import Any, Dict, List, Optional
 import yaml
@@ -85,7 +87,20 @@ class ExpectationTrainingResult:
     accuracy: float = 0
 
 
+@dataclass
+class ClassifierConfig:
+    model_name: str
+    shared_root: str = "shared"
+    model_roots: List[str] = field(
+        default_factory=lambda: ["models", "models_deployed"]
+    )
+
+
 class AnswerClassifier(ABC):
+    @abstractmethod
+    def configure(self, answer: ClassifierConfig) -> "AnswerClassifier":
+        raise NotImplementedError()
+
     @abstractmethod
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         raise NotImplementedError()
@@ -103,6 +118,13 @@ class TrainingResult:
 
 
 @dataclass
+class TrainingOptions:
+    add_ideal_answers_to_training_data: bool = True
+    archive_root: str = "archive"
+    output_dir: str = "output"
+
+
+@dataclass
 class TrainingInput:
     lesson: str = ""  # the lesson id
     config: QuestionConfig = field(default_factory=QuestionConfig)
@@ -111,6 +133,41 @@ class TrainingInput:
     def __post_init__(self):
         if isinstance(self.config, dict):
             self.config = QuestionConfig(**self.config)
+
+
+@dataclass
+class TrainingConfig:
+    shared_root: str = "shared"
+
+
+class AnswerClassifierTraining(ABC):
+    @abstractmethod
+    def configure(self, config: TrainingConfig) -> "AnswerClassifierTraining":
+        raise NotImplementedError()
+
+    @abstractmethod
+    def train(
+        self, train_input: TrainingInput, config: TrainingOptions
+    ) -> TrainingResult:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def train_default(
+        self,
+        data_root: str = "data",
+        config: TrainingConfig = None,
+        opts: TrainingOptions = None,
+    ) -> TrainingResult:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def train_default_online(
+        self,
+        train_input: TrainingInput,
+        config: TrainingConfig = None,
+        opts: TrainingOptions = None,
+    ) -> TrainingResult:
+        raise NotImplementedError()
 
 
 def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
@@ -128,3 +185,49 @@ def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
 def load_question_config(f: str) -> QuestionConfig:
     with open(f, "r") as yaml_file:
         return dict_to_question_config(yaml.load(yaml_file, Loader=yaml.FullLoader))
+
+
+class ArchClassifierFactory(ABC):
+    @abstractmethod
+    def new_classifier(self, config: ClassifierConfig) -> AnswerClassifier:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def new_classifier_default(self, config: ClassifierConfig) -> AnswerClassifier:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def new_training(self, config: TrainingConfig) -> AnswerClassifierTraining:
+        raise NotImplementedError()
+
+
+_factories_by_arch: Dict[str, ArchClassifierFactory] = {}
+
+
+def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
+    _factories_by_arch[arch] = fac
+
+
+ARCH_SVM_CLASSIFIER = "opentutor_classifier.svm"
+ARCH_LR_CLASSIFIER = "opentutor_classifier.lr"
+ARCH_DEFAULT = "opentutor_classifier.svm"
+
+
+class ClassifierFactory:
+    def _find_arch_fac(self, arch: str) -> ArchClassifierFactory:
+        arch = arch or environ.get("CLASSIFIER_ARCH") or ARCH_DEFAULT
+        if arch not in _factories_by_arch:
+            import_module(arch)
+        f = _factories_by_arch[arch]
+        return f
+
+    def new_classifier(self, config: ClassifierConfig, arch="") -> AnswerClassifier:
+        return self._find_arch_fac(arch).new_classifier(config)
+
+    def new_classifier_default(
+        self, config: ClassifierConfig, arch=""
+    ) -> AnswerClassifier:
+        return self._find_arch_fac(arch).new_classifier_default(config)
+
+    def new_training(self, config: TrainingConfig, arch="") -> AnswerClassifierTraining:
+        return self._find_arch_fac(arch).new_training(config)

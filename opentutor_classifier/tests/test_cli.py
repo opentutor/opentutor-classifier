@@ -12,6 +12,7 @@ from typing import List, Tuple
 
 import pytest
 
+from opentutor_classifier import ARCH_DEFAULT
 from .utils import (
     create_and_test_classifier,
     fixture_path,
@@ -108,11 +109,12 @@ def test_cli_outputs_models_files(
 
 
 @pytest.mark.parametrize(
-    "input_lesson,input_answer,expected_results",
+    "input_lesson,input_answer,arch,expected_results",
     [
         (
             "question1",
             "peer pressure can change your behavior",
+            ARCH_DEFAULT,
             [
                 _TestExpectation(expectation=0, score=0.98, evaluation="Good"),
                 _TestExpectation(expectation=1, score=0.68, evaluation="Bad"),
@@ -122,6 +124,7 @@ def test_cli_outputs_models_files(
         (
             "question2",
             "Current flows in the same direction as the arrow",
+            ARCH_DEFAULT,
             [_TestExpectation(expectation=0, score=0.95, evaluation="Good")],
         ),
     ],
@@ -129,10 +132,13 @@ def test_cli_outputs_models_files(
 def test_cli_trained_models_usable_for_inference(
     input_lesson: str,
     input_answer: str,
+    arch: str,
     expected_results: List[_TestExpectation],
     tmpdir,
     shared_root,
 ):
     _, _, _, model_root = __train_model(tmpdir, input_lesson, shared_root)
     assert os.path.exists(model_root)
-    create_and_test_classifier(model_root, shared_root, input_answer, expected_results)
+    create_and_test_classifier(
+        model_root, shared_root, input_answer, expected_results, arch=arch
+    )

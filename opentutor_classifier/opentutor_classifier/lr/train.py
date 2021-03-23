@@ -19,7 +19,7 @@ from nltk.tokenize import word_tokenize
 import numpy as np
 import pandas as pd
 
-from sklearn import model_selection, svm
+from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
 
 from opentutor_classifier import (
@@ -36,8 +36,8 @@ from opentutor_classifier.log import logger
 from opentutor_classifier.stopwords import STOPWORDS
 from .predict import (  # noqa: F401
     preprocess_sentence,
-    SVMAnswerClassifier,
-    SVMExpectationClassifier,
+    LRAnswerClassifier,
+    LRExpectationClassifier,
 )
 from opentutor_classifier.utils import load_data
 from opentutor_classifier.word2vec import find_or_load_word2vec
@@ -74,9 +74,9 @@ def _save(model_instances, filename):
     pickle.dump(model_instances, open(filename, "wb"))
 
 
-class SVMAnswerClassifierTraining(AnswerClassifierTraining):
+class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
-        self.model_obj = SVMExpectationClassifier()
+        self.model_obj = LRExpectationClassifier()
         self.accuracy: Dict[int, int] = {}
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
@@ -91,12 +91,11 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
         config: TrainingConfig = None,
         opts: TrainingOptions = None,
     ) -> TrainingResult:
-
         model = self.model_obj.initialize_model()
         index2word_set = set(self.word2vec.index2word)
         output_dir = path.abspath((opts or TrainingOptions()).output_dir)
         makedirs(output_dir, exist_ok=True)
-        expectation_models: Dict[int, svm.SVC] = {}
+        expectation_models: Dict[int, linear_model.LogisticRegression] = {}
 
         def process_features(features, input_sentence, index2word_set):
             processed_input_sentence = preprocess_sentence(input_sentence)
@@ -202,7 +201,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
         index2word_set: set = set(self.word2vec.index2word)
         conf_exps_out: List[ExpectationConfig] = []
         expectation_results: List[ExpectationTrainingResult] = []
-        expectation_models: Dict[int, svm.SVC] = {}
+        expectation_models: Dict[int, linear_model.LogisticRegression] = {}
         supergoodanswer = ""
         for exp_num in split_training_sets.keys():
             ideal = train_input.config.get_expectation_ideal(exp_num)

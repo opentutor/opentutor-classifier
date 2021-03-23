@@ -5,32 +5,30 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from opentutor_classifier import (
-    ARCH_SVM_CLASSIFIER,
+    ARCH_LR_CLASSIFIER,
     AnswerClassifier,
-    ArchClassifierFactory,
     AnswerClassifierTraining,
+    ArchClassifierFactory,
     ClassifierConfig,
     TrainingConfig,
     register_classifier_factory,
 )
-from .predict import SVMAnswerClassifier, SVMExpectationClassifier  # noqa: F401
+from .predict import LRAnswerClassifier, LRExpectationClassifier  # noqa: F401
 from opentutor_classifier.word2vec import find_or_load_word2vec  # noqa: F401
-from .train import (  # noqa: F401
-    SVMAnswerClassifierTraining,
-)
+from .train import LRAnswerClassifierTraining  # noqa: F401
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):
     def new_classifier(self, config: ClassifierConfig) -> AnswerClassifier:
-        return SVMAnswerClassifier().configure(config)
+        return LRAnswerClassifier().configure(config)
 
     def new_classifier_default(self, config: ClassifierConfig) -> AnswerClassifier:
         if config.model_name != "default":
             raise Exception("model name for default classifier must be default")
-        return SVMAnswerClassifier().configure(config)
+        return LRAnswerClassifier().configure(config)
 
     def new_training(self, config: TrainingConfig) -> AnswerClassifierTraining:
-        return SVMAnswerClassifierTraining().configure(config)
+        return LRAnswerClassifierTraining().configure(config)
 
 
-register_classifier_factory(ARCH_SVM_CLASSIFIER, __ArchClassifierFactory())
+register_classifier_factory(ARCH_LR_CLASSIFIER, __ArchClassifierFactory())

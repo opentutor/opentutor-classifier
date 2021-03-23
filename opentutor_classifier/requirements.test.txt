@@ -3,6 +3,7 @@ coverage==5.4
 freezegun==1.1.0
 pip-upgrader
 pytest==6.2.2
+pytest-env==0.6.2
 pytest-mock==3.5.1
 pytest-env==0.6.2
 pytest-flask==1.1.0
