@@ -2,7 +2,7 @@ celery==5.0.5
 click==7.1.2
 gensim==3.8.3
 pandas==1.1.5
-PyYAML==5.3.1
+PyYAML==5.4
 nltk==3.5
 redis==3.5.3
 requests==2.25.1
