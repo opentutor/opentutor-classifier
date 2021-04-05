@@ -71,3 +71,7 @@ test-types: $(VENV)
 
 virtualenv-installed:
 	tools/virtualenv_ensure_installed.sh
+
+.PHONY: update-deps
+update-deps: $(VENV)
+	. $(VENV)/bin/activate && pip-upgrade requirements*
