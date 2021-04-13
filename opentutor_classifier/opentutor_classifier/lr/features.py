@@ -14,7 +14,6 @@ import numpy as np
 from scipy import spatial
 from scipy.optimize import linear_sum_assignment
 
-
 def _avg_feature_vector(
     words: List[str],
     model: Word2VecKeyedVectors,
