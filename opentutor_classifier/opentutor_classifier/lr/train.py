@@ -22,6 +22,10 @@ import pandas as pd
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
 
+from text_to_num import alpha2digit
+
+import re
+
 from opentutor_classifier import (
     AnswerClassifierTraining,
     ExpectationConfig,
@@ -38,6 +42,7 @@ from .predict import (  # noqa: F401
     preprocess_sentence,
     LRAnswerClassifier,
     LRExpectationClassifier,
+    preprocess_punctuations
 )
 from opentutor_classifier.utils import load_data
 from opentutor_classifier.word2vec import find_or_load_word2vec
@@ -55,19 +60,19 @@ def _archive_if_exists(p: str, archive_root: str) -> str:
     shutil.rmtree(p)
     return archive_path
 
-
 def _preprocess_trainx(data):
     pre_processed_dataset = []
-    data = [entry.lower() for entry in data]
-    data = [word_tokenize(entry) for entry in data]
+    data = [ entry.lower() for entry in data]
+    data = [ preprocess_punctuations(entry) for entry in data ] #[ re.sub(r'[^\w\s]', '', entry) for entry in data ]
+    data = [ alpha2digit(entry, 'en') for entry in data ]
+    data = [ word_tokenize(entry) for entry in data ]
     for entry in data:
         final_words = []
         for word, tag in pos_tag(entry):
-            if word not in STOPWORDS and word.isalpha():
+            if word not in STOPWORDS:
                 final_words.append(word)
-        pre_processed_dataset.append(final_words)
+        pre_processed_dataset.append(tuple(final_words))
     return pre_processed_dataset
-
 
 def _save(model_instances, filename):
     logger.info(f"saving models to {filename}")

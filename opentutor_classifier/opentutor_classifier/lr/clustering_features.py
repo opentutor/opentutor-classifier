@@ -49,7 +49,7 @@ def get_best_candidate( sentence_cluster, word2vec, index2word_set):
 
 def generate_patterns_from_candidates( data, best_targets ):
     useful_pattern_for_each_cluster = { 'good':[], 'bad':[] }
-    for label, best_target in best_targets.items():
+    for label, best_target in best_targets:
         words = set()
         for word in best_target:
           if number_of_negatives([word])[0] > 0: words.add('[NEG]')
@@ -69,22 +69,38 @@ def generate_patterns_from_candidates( data, best_targets ):
                 data[" + ".join(comb)] = 1
                 for word in comb: data[" + ".join(comb)]*=data[word]
                 total_patterns.append( " + ".join(comb) )
-        useful_pattern_for_each_cluster[label].append( total_patterns )
+        useful_pattern_for_each_cluster[label].extend( total_patterns )
     return data, useful_pattern_for_each_cluster
 
 def generate_feature_candidates(good_answers, bad_answers, word2vec, index2word_set ):
     good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
     good_labels, bad_labels = get_clusters(good_answers, bad_answers, word2vec, index2word_set )
 
-    best_candidates = { 'good':[], 'bad':[] }
-
-    best_candidates['good'].append( get_best_candidate( good_answers[ good_labels == 0 ], word2vec, index2word_set  ) )
-    best_candidates['good'].append( get_best_candidate( good_answers[ good_labels == 1 ], word2vec, index2word_set  ) )
-    best_candidates['bad'].append( get_best_candidate( bad_answers[ bad_labels == 0 ], word2vec, index2word_set  ) )
-    best_candidates['bad'].append( get_best_candidate( bad_answers[ bad_labels == 1 ], word2vec, index2word_set  ) )
-    print(best_candidates)
+    best_candidates = []
+    best_candidates.append( ('good', get_best_candidate( good_answers[ good_labels == 0 ], word2vec, index2word_set) ) )
+    best_candidates.append( ('good', get_best_candidate( good_answers[ good_labels == 1 ], word2vec, index2word_set) ) )
+    best_candidates.append( ('bad', get_best_candidate( bad_answers[ bad_labels == 0 ], word2vec, index2word_set) ) )
+    best_candidates.append( ('bad', get_best_candidate( bad_answers[ bad_labels == 1 ], word2vec, index2word_set) ) )
 
     data = pd.DataFrame( {"[SENTENCES]": list(good_answers)+list(bad_answers), '[LABELS]':[1]*len(good_answers) + [0]*len(bad_answers) } )
     
-    data, patterns = generate_patterns_from_candidates( data,  best_candidates)
-    return data, patterns
+    data, candidates = generate_patterns_from_candidates( data,  best_candidates)
+    return data, candidates
+
+def select_feature_candidates( data, candidates, fpr_cuttoff = 0.98 ):
+    useful_features = []
+    for label in ("good", "bad"):
+        good, bad, patterns = [], [], []
+        for candidate in candidates[label]:
+            good.append( np.sum( data[candidate]*data['[LABELS]']  ) )
+            bad.append( np.sum( data[candidate]*(1-data['[LABELS]']) ) )
+            patterns.append( candidate )
+        good, bad, patterns = np.array(good), np.array(bad), np.array(patterns)
+        one_fpr = None
+        if label=='good': one_fpr = 1 - (bad / np.sum(1 - data['[LABELS]']))  #np.array(good)/(np.array(good)+np.array(bad)+1e-10)
+        else: one_fpr = 1 - (good / np.sum(data['[LABELS]']) )
+
+        patterns = patterns[ one_fpr > fpr_cuttoff ]
+        one_fpr = one_fpr[ one_fpr > fpr_cuttoff ]
+        useful_features.extend( list( patterns ) )
+    return useful_features

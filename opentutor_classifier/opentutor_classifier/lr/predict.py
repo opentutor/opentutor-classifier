@@ -19,6 +19,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import LeaveOneOut
 import pandas as pd
+import re
 
 
 from opentutor_classifier import (
@@ -38,14 +39,26 @@ from . import features
 from .utils import load_models
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
+from text2num import alpha2digit
 
 def _confidence_score(
     model: linear_model.LogisticRegression, sentence: List[List[float]]
 ) -> float:
     return model.predict_proba(sentence)[0, 1]
 
+word_mapper = {
+    "n't" : 'not',
+}
+
+def preprocess_punctuations(sentence):
+  sentence = re.sub(r'["\-"]', ' - ', sentence)
+  sentence = re.sub(r'["."]', ' . ', sentence)
+  sentence = re.sub(r'["%"]', ' percent ', sentence)
+  return re.sub( r'["(", ")", "~", "!", "^", ",", "?", " "]', ' ', sentence )
 
 def preprocess_sentence(sentence: str) -> List[str]:
+    sentence = preprocess_punctuations(sentence)
+    sentence = alpha2digit(sentence, 'en')
     word_tokens_groups: List[str] = [
         word_tokenize(entry.lower())
         for entry in ([sentence] if isinstance(sentence, str) else sentence)
@@ -53,10 +66,10 @@ def preprocess_sentence(sentence: str) -> List[str]:
     result_words = []
     for entry in word_tokens_groups:
         for word, _ in pos_tag(entry):
-            if word not in STOPWORDS and word.isalpha():
+            if word not in STOPWORDS:
                 result_words.append(word)
-    return result_words
-
+    result_words = [ word_mapper.get(word, word) for word in result_words if len(word) != 1 or word.isnumeric() ]
+    return tuple(result_words)
 
 class LRExpectationClassifier:
     def __init__(self):
@@ -88,6 +101,7 @@ class LRExpectationClassifier:
         good: List[str],
         bad: List[str],
     ) -> List[float]:
+        raw_example = alpha2digit(raw_example, 'en')
         return [
             features.regex_match_ratio(raw_example, good),
             features.regex_match_ratio(raw_example, bad),
@@ -265,3 +279,4 @@ class LRAnswerClassifier(AnswerClassifier):
                 )
             )
         return result
+        
