@@ -42,11 +42,16 @@ from .predict import (  # noqa: F401
     preprocess_sentence,
     LRAnswerClassifier,
     LRExpectationClassifier,
-    preprocess_punctuations
+    preprocess_punctuations,
+    checkIsPatternMatch
 )
 from opentutor_classifier.utils import load_data
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
+from .clustering_features import (
+    generate_feature_candidates,
+    select_feature_candidates
+)
 
 def _archive_if_exists(p: str, archive_root: str) -> str:
     if not path.exists(p):
@@ -203,6 +208,11 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             ideal_answer = self.model_obj.initialize_ideal_answer(processed_data)
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
+
+            data, candidates = generate_feature_candidates( np.array(train_x)[np.array(train_y) == 'good'], 
+                            np.array(train_x)[np.array(train_y) == 'bad'], self.word2vec, index2word_set)
+            patterns = select_feature_candidates( data, candidates )
+
             conf_exps_out.append(
                 ExpectationConfig(
                     ideal=train_input.config.get_expectation_ideal(exp_num)
@@ -221,6 +231,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         index2word_set,
                         good,
                         bad,
+                        patterns
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)

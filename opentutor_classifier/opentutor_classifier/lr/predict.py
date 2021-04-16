@@ -71,6 +71,21 @@ def preprocess_sentence(sentence: str) -> List[str]:
     result_words = [ word_mapper.get(word, word) for word in result_words if len(word) != 1 or word.isnumeric() ]
     return tuple(result_words)
 
+def checkIsPatternMatch( sentence, pattern ):
+    words = preprocess_sentence(sentence) #sentence should be preprocessed
+    keywords = pattern.split('+')
+    is_there = True
+    for keyword in keywords:
+        keyword = keyword.strip()
+        if keyword == '[NEG]' and features.number_of_negatives(words)[0]==0:
+            is_there = False
+            break
+        elif keyword != '[NEG]' and keyword not in words:
+            is_there = False
+            break
+    if is_there: return 1
+    else: return 0
+    
 class LRExpectationClassifier:
     def __init__(self):
         self.model = None
@@ -100,9 +115,10 @@ class LRExpectationClassifier:
         index2word_set: set,
         good: List[str],
         bad: List[str],
+        patterns
     ) -> List[float]:
         raw_example = alpha2digit(raw_example, 'en')
-        return [
+        feat = [
             features.regex_match_ratio(raw_example, good),
             features.regex_match_ratio(raw_example, bad),
             *features.number_of_negatives(example),
@@ -115,6 +131,9 @@ class LRExpectationClassifier:
                 word2vec, index2word_set, example, question
             ),
         ]
+        for pattern in patterns:
+            feat.extend( checkIsPatternMatch( raw_example, pattern ) )
+        return feat        
 
     def train(
         self,
