@@ -22,8 +22,6 @@ import pandas as pd
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
 
-from text_to_num import alpha2digit
-
 import re
 
 from opentutor_classifier import (
@@ -47,6 +45,8 @@ from .predict import (  # noqa: F401
 )
 from opentutor_classifier.utils import load_data
 from opentutor_classifier.word2vec import find_or_load_word2vec
+
+from text_to_num import alpha2digit
 
 from .clustering_features import (
     generate_feature_candidates,

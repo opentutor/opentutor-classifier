@@ -39,7 +39,7 @@ from . import features
 from .utils import load_models
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
-from text2num import alpha2digit
+from text_to_num import alpha2digit
 
 def _confidence_score(
     model: linear_model.LogisticRegression, sentence: List[List[float]]
@@ -132,7 +132,7 @@ class LRExpectationClassifier:
             ),
         ]
         for pattern in patterns:
-            feat.extend( checkIsPatternMatch( raw_example, pattern ) )
+            feat.append( checkIsPatternMatch( raw_example, pattern ) )
         return feat        
 
     def train(
@@ -291,6 +291,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 index2word,
                 exp_conf.features.get("good") or [],
                 exp_conf.features.get("bad") or [],
+                
             )
             result.expectation_results.append(
                 self.find_score_and_class(
