@@ -164,10 +164,10 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.80),
+                ExpectationTrainingResult(accuracy=0.8),
                 ExpectationTrainingResult(accuracy=0.85),
                 ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.95),
+                ExpectationTrainingResult(accuracy=0.93),
             ],
             0.9,
         ),

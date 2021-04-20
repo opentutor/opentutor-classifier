@@ -12,7 +12,7 @@ from os import makedirs, path
 import pickle
 import shutil
 import tempfile
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
@@ -65,7 +65,7 @@ def _archive_if_exists(p: str, archive_root: str) -> str:
     shutil.rmtree(p)
     return archive_path
 
-def _preprocess_trainx(data):
+def _preprocess_trainx(data: List[str]) -> List[Tuple[str]]:
     pre_processed_dataset = []
     data = [ entry.lower() for entry in data]
     data = [ preprocess_punctuations(entry) for entry in data ] #[ re.sub(r'[^\w\s]', '', entry) for entry in data ]
@@ -217,7 +217,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 ExpectationConfig(
                     ideal=train_input.config.get_expectation_ideal(exp_num)
                     or " ".join(ideal_answer),
-                    features=(dict(good=good, bad=bad)),
+                    features=(dict(good=good, bad=bad, patterns=" | ".join(patterns) ) ),
                 )
             )
             features = [

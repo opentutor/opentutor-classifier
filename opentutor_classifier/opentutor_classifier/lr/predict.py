@@ -8,7 +8,7 @@ from collections import defaultdict
 from glob import glob
 import json
 from os import path, makedirs
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
@@ -50,13 +50,13 @@ word_mapper = {
     "n't" : 'not',
 }
 
-def preprocess_punctuations(sentence):
+def preprocess_punctuations(sentence: str) -> str:
   sentence = re.sub(r'["\-"]', ' - ', sentence)
   sentence = re.sub(r'["."]', ' . ', sentence)
   sentence = re.sub(r'["%"]', ' percent ', sentence)
   return re.sub( r'["(", ")", "~", "!", "^", ",", "?", " "]', ' ', sentence )
 
-def preprocess_sentence(sentence: str) -> List[str]:
+def preprocess_sentence(sentence: str) -> Tuple[str]:
     sentence = preprocess_punctuations(sentence)
     sentence = alpha2digit(sentence, 'en')
     word_tokens_groups: List[str] = [
@@ -71,7 +71,7 @@ def preprocess_sentence(sentence: str) -> List[str]:
     result_words = [ word_mapper.get(word, word) for word in result_words if len(word) != 1 or word.isnumeric() ]
     return tuple(result_words)
 
-def checkIsPatternMatch( sentence, pattern ):
+def checkIsPatternMatch( sentence: str, pattern: str ) -> int:
     words = preprocess_sentence(sentence) #sentence should be preprocessed
     keywords = pattern.split('+')
     is_there = True
@@ -291,7 +291,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 index2word,
                 exp_conf.features.get("good") or [],
                 exp_conf.features.get("bad") or [],
-                
+                exp_conf.features.get("patterns").split(" | ") or []
             )
             result.expectation_results.append(
                 self.find_score_and_class(
