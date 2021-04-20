@@ -291,7 +291,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 index2word,
                 exp_conf.features.get("good") or [],
                 exp_conf.features.get("bad") or [],
-                exp_conf.features.get("patterns").split(" | ") or []
+                exp_conf.features.get("patterns") or []
             )
             result.expectation_results.append(
                 self.find_score_and_class(

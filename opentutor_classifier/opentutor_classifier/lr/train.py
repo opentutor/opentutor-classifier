@@ -217,7 +217,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 ExpectationConfig(
                     ideal=train_input.config.get_expectation_ideal(exp_num)
                     or " ".join(ideal_answer),
-                    features=(dict(good=good, bad=bad, patterns=" | ".join(patterns) ) ),
+                    features=(dict(good=good, bad=bad, patterns=patterns ) ),
                 )
             )
             features = [
