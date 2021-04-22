@@ -18,6 +18,7 @@ from sklearn import model_selection, linear_model
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import LeaveOneOut
+from text_to_num import alpha2digit
 import pandas as pd
 import re
 
@@ -38,8 +39,6 @@ from .dtos import ExpectationToEvaluate, InstanceModels
 from . import features
 from .utils import load_models
 from opentutor_classifier.word2vec import find_or_load_word2vec
-
-from text_to_num import alpha2digit
 
 
 def _confidence_score(

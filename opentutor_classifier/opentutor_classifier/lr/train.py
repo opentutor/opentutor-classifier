@@ -18,9 +18,9 @@ from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 import numpy as np
 import pandas as pd
-
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
+from text_to_num import alpha2digit
 
 from opentutor_classifier import (
     AnswerClassifierTraining,
@@ -40,10 +40,7 @@ from .predict import (  # noqa: F401
     LRExpectationClassifier,
     preprocess_punctuations,
 )
-from opentutor_classifier.utils import load_data
 from opentutor_classifier.word2vec import find_or_load_word2vec
-
-from text_to_num import alpha2digit
 
 from .clustering_features import generate_feature_candidates, select_feature_candidates
 
@@ -94,16 +91,12 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         )
         return self
 
-    def train_default(
+    def _train_default(
         self,
-        data_root: str = "data",
+        training_data: pd.DataFrame,
         config: TrainingConfig = None,
         opts: TrainingOptions = None,
     ) -> TrainingResult:
-        try:
-            training_data = load_data(path.join(data_root, "default", "training.csv"))
-        except Exception:
-            training_data = self.model_obj.combine_dataset(data_root)
         model = self.model_obj.initialize_model()
         index2word_set = set(self.word2vec.index2word)
         output_dir = path.abspath((opts or TrainingOptions()).output_dir)
@@ -207,7 +200,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             ideal_answer = self.model_obj.initialize_ideal_answer(processed_data)
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
-
             data, candidates = generate_feature_candidates(
                 np.array(train_x)[np.array(train_y) == "good"],
                 np.array(train_x)[np.array(train_y) == "bad"],

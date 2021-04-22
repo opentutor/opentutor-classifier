@@ -23,7 +23,11 @@ from opentutor_classifier import (
     ARCH_LR_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
-from opentutor_classifier.training import train_data_root, train_online
+from opentutor_classifier.training import (
+    train_data_root,
+    train_online,
+    train_default_online,
+)
 from opentutor_classifier.utils import dict_to_config, load_config
 from .utils import (
     add_graphql_response,
@@ -164,12 +168,24 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.80),
+                ExpectationTrainingResult(accuracy=0.82),
                 ExpectationTrainingResult(accuracy=0.85),
                 ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.93),
+                ExpectationTrainingResult(accuracy=0.95),
             ],
-            0.85,
+            0.9,
+        ),
+        (
+            "candles",
+            ARCH_SVM_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.85),
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.95),
+            ],
+            0.8,
         ),
         # (
         #     "candles",
@@ -477,6 +493,28 @@ def test_train_online_works_if_config_has_unknown_props(
         data_root,
         shared_root,
         tmpdir,
+    )
+
+
+@responses.activate
+@pytest.mark.parametrize(
+    "arch",
+    [
+        ARCH_SVM_CLASSIFIER,
+        ARCH_LR_CLASSIFIER,
+    ],
+)
+def test_train_default_online(
+    arch: str,
+    shared_root: str,
+    tmpdir,
+):
+    add_graphql_response("default")
+    output_dir, archive_root = output_and_archive_for_test(tmpdir, "default")
+    train_default_online(
+        TrainingConfig(shared_root=shared_root),
+        TrainingOptions(archive_root=archive_root, output_dir=output_dir),
+        arch,
     )
 
 

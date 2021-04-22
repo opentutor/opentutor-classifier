@@ -8,7 +8,7 @@ from . import (
     TrainingOptions,
     TrainingResult,
 )
-from .api import fetch_training_data
+from .api import fetch_training_data, fetch_all_training_data
 from .utils import load_data, load_yaml
 
 
@@ -56,6 +56,23 @@ def train_online(
         .new_training(config, arch=arch)
         .train(
             fetch_training_data(lesson, url=fetch_training_data_url),
+            opts,
+        )
+    )
+
+
+def train_default_online(
+    config: TrainingConfig,
+    opts: TrainingOptions,
+    arch="",
+    fetch_training_data_url="",
+) -> TrainingResult:
+    return (
+        ClassifierFactory()
+        .new_training(config, arch=arch)
+        .train_default_online(
+            fetch_all_training_data(url=fetch_training_data_url),
+            config,
             opts,
         )
     )

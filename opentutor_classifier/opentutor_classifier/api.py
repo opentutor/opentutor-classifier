@@ -45,3 +45,30 @@ def fetch_training_data(lesson: str, url=GRAPHQL_ENDPOINT) -> TrainingInput:
         config=dict_to_question_config(yaml.safe_load(data.get("config") or "")),
         data=df,
     )
+
+
+def __fetch_all_training_data(url: str) -> dict:
+    if not url.startswith("http"):
+        with open(url) as f:
+            return json.load(f)
+    res = requests.post(
+        url,
+        json={"query": "query {{ me {{ allTrainingData {{ config training }} }} }}"},
+        headers={'"opentutor-api-req': "true", "Authorization": "bearer {API_SECRET}"},
+    )
+    res.raise_for_status()
+    return res.json()
+
+
+def fetch_all_training_data(url=GRAPHQL_ENDPOINT) -> TrainingInput:
+    tdjson = __fetch_all_training_data(url or GRAPHQL_ENDPOINT)
+    if "errors" in tdjson:
+        raise Exception(json.dumps(tdjson.get("errors")))
+    data = tdjson["data"]["me"]["allTrainingData"]
+    df = pd.read_csv(StringIO(data.get("training") or ""))
+    df.sort_values(by=["exp_num"], ignore_index=True, inplace=True)
+    return TrainingInput(
+        lesson="default",
+        config=dict_to_question_config(yaml.safe_load(data.get("config") or "")),
+        data=df,
+    )
