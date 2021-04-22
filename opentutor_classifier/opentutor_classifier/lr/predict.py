@@ -8,7 +8,7 @@ from collections import defaultdict
 from glob import glob
 import json
 from os import path, makedirs
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
@@ -41,24 +41,28 @@ from opentutor_classifier.word2vec import find_or_load_word2vec
 
 from text_to_num import alpha2digit
 
+
 def _confidence_score(
     model: linear_model.LogisticRegression, sentence: List[List[float]]
 ) -> float:
     return model.predict_proba(sentence)[0, 1]
 
+
 word_mapper = {
-    "n't" : 'not',
+    "n't": "not",
 }
 
-def preprocess_punctuations(sentence: str) -> str:
-  sentence = re.sub(r'["\-"]', ' - ', sentence)
-  sentence = re.sub(r'["."]', ' . ', sentence)
-  sentence = re.sub(r'["%"]', ' percent ', sentence)
-  return re.sub( r'["(", ")", "~", "!", "^", ",", "?", " "]', ' ', sentence )
 
-def preprocess_sentence(sentence: str) -> Tuple[str]:
+def preprocess_punctuations(sentence: str) -> str:
+    sentence = re.sub(r'["\-"]', " - ", sentence)
+    sentence = re.sub(r'["."]', " . ", sentence)
+    sentence = re.sub(r'["%"]', " percent ", sentence)
+    return re.sub(r'["(", ")", "~", "!", "^", ",", "?", " "]', " ", sentence)
+
+
+def preprocess_sentence(sentence: str) -> Tuple[Any, ...]:
     sentence = preprocess_punctuations(sentence)
-    sentence = alpha2digit(sentence, 'en')
+    sentence = alpha2digit(sentence, "en")
     word_tokens_groups: List[str] = [
         word_tokenize(entry.lower())
         for entry in ([sentence] if isinstance(sentence, str) else sentence)
@@ -68,24 +72,32 @@ def preprocess_sentence(sentence: str) -> Tuple[str]:
         for word, _ in pos_tag(entry):
             if word not in STOPWORDS:
                 result_words.append(word)
-    result_words = [ word_mapper.get(word, word) for word in result_words if len(word) != 1 or word.isnumeric() ]
+    result_words = [
+        word_mapper.get(word, word)
+        for word in result_words
+        if len(word) != 1 or word.isnumeric()
+    ]
     return tuple(result_words)
 
-def checkIsPatternMatch( sentence: str, pattern: str ) -> int:
-    words = preprocess_sentence(sentence) #sentence should be preprocessed
-    keywords = pattern.split('+')
+
+def check_is_pattern_match(sentence: str, pattern: str) -> int:
+    words = preprocess_sentence(sentence)  # sentence should be preprocessed
+    keywords = pattern.split("+")
     is_there = True
     for keyword in keywords:
         keyword = keyword.strip()
-        if keyword == '[NEG]' and features.number_of_negatives(words)[0]==0:
+        if keyword == "[NEG]" and features.number_of_negatives(words)[0] == 0:
             is_there = False
             break
-        elif keyword != '[NEG]' and keyword not in words:
+        elif keyword != "[NEG]" and keyword not in words:
             is_there = False
             break
-    if is_there: return 1
-    else: return 0
-    
+    if is_there:
+        return 1
+    else:
+        return 0
+
+
 class LRExpectationClassifier:
     def __init__(self):
         self.model = None
@@ -115,9 +127,9 @@ class LRExpectationClassifier:
         index2word_set: set,
         good: List[str],
         bad: List[str],
-        patterns
+        patterns,
     ) -> List[float]:
-        raw_example = alpha2digit(raw_example, 'en')
+        raw_example = alpha2digit(raw_example, "en")
         feat = [
             features.regex_match_ratio(raw_example, good),
             features.regex_match_ratio(raw_example, bad),
@@ -132,8 +144,8 @@ class LRExpectationClassifier:
             ),
         ]
         for pattern in patterns:
-            feat.append( checkIsPatternMatch( raw_example, pattern ) )
-        return feat        
+            feat.append(check_is_pattern_match(raw_example, pattern))
+        return feat
 
     def train(
         self,
@@ -291,7 +303,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 index2word,
                 exp_conf.features.get("good") or [],
                 exp_conf.features.get("bad") or [],
-                exp_conf.features.get("patterns") or []
+                exp_conf.features.get("patterns") or [],
             )
             result.expectation_results.append(
                 self.find_score_and_class(
@@ -299,4 +311,3 @@ class LRAnswerClassifier(AnswerClassifier):
                 )
             )
         return result
-        

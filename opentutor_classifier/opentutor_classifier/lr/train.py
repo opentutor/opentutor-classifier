@@ -12,7 +12,7 @@ from os import makedirs, path
 import pickle
 import shutil
 import tempfile
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
@@ -21,8 +21,6 @@ import pandas as pd
 
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
-
-import re
 
 from opentutor_classifier import (
     AnswerClassifierTraining,
@@ -41,17 +39,14 @@ from .predict import (  # noqa: F401
     LRAnswerClassifier,
     LRExpectationClassifier,
     preprocess_punctuations,
-    checkIsPatternMatch
 )
 from opentutor_classifier.utils import load_data
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
 from text_to_num import alpha2digit
 
-from .clustering_features import (
-    generate_feature_candidates,
-    select_feature_candidates
-)
+from .clustering_features import generate_feature_candidates, select_feature_candidates
+
 
 def _archive_if_exists(p: str, archive_root: str) -> str:
     if not path.exists(p):
@@ -65,12 +60,15 @@ def _archive_if_exists(p: str, archive_root: str) -> str:
     shutil.rmtree(p)
     return archive_path
 
-def _preprocess_trainx(data: List[str]) -> List[Tuple[str]]:
+
+def _preprocess_trainx(data: List[str]) -> List[Tuple[Any, ...]]:
     pre_processed_dataset = []
-    data = [ entry.lower() for entry in data]
-    data = [ preprocess_punctuations(entry) for entry in data ] #[ re.sub(r'[^\w\s]', '', entry) for entry in data ]
-    data = [ alpha2digit(entry, 'en') for entry in data ]
-    data = [ word_tokenize(entry) for entry in data ]
+    data = [entry.lower() for entry in data]
+    data = [
+        preprocess_punctuations(entry) for entry in data
+    ]  # [ re.sub(r'[^\w\s]', '', entry) for entry in data ]
+    data = [alpha2digit(entry, "en") for entry in data]
+    data = [word_tokenize(entry) for entry in data]
     for entry in data:
         final_words = []
         for word, tag in pos_tag(entry):
@@ -78,6 +76,7 @@ def _preprocess_trainx(data: List[str]) -> List[Tuple[str]]:
                 final_words.append(word)
         pre_processed_dataset.append(tuple(final_words))
     return pre_processed_dataset
+
 
 def _save(model_instances, filename):
     logger.info(f"saving models to {filename}")
@@ -209,15 +208,19 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
-            data, candidates = generate_feature_candidates( np.array(train_x)[np.array(train_y) == 'good'], 
-                            np.array(train_x)[np.array(train_y) == 'bad'], self.word2vec, index2word_set)
-            patterns = select_feature_candidates( data, candidates )
+            data, candidates = generate_feature_candidates(
+                np.array(train_x)[np.array(train_y) == "good"],
+                np.array(train_x)[np.array(train_y) == "bad"],
+                self.word2vec,
+                index2word_set,
+            )
+            patterns = select_feature_candidates(data, candidates)
 
             conf_exps_out.append(
                 ExpectationConfig(
                     ideal=train_input.config.get_expectation_ideal(exp_num)
                     or " ".join(ideal_answer),
-                    features=(dict(good=good, bad=bad, patterns=patterns ) ),
+                    features=(dict(good=good, bad=bad, patterns=patterns)),
                 )
             )
             features = [
@@ -231,7 +234,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         index2word_set,
                         good,
                         bad,
-                        patterns
+                        patterns,
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)

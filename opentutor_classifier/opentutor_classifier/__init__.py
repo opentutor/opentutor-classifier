@@ -30,7 +30,7 @@ class ExpectationConfig:
 @dataclass
 class QuestionConfig:
     question: str = ""
-    expectations: List[ExpectationConfig] = field(default_factory=list),
+    expectations: List[ExpectationConfig] = field(default_factory=list)
 
     def __post_init__(self):
         self.expectations = [
