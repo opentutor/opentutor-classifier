@@ -111,8 +111,8 @@ def generate_patterns_from_candidates(
         total_patterns = list(words)
         for i in range(2, min(len(words) + 1, 4)):
             combs = combinations(words, i)
-            for comb in combs:
-                comb = sorted(list(comb))
+            for comb_ in combs:
+                comb = sorted(list(comb_))
                 data[" + ".join(comb)] = 1
                 for word in comb:
                     data[" + ".join(comb)] *= data[word]

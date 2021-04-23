@@ -168,7 +168,7 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.81),
                 ExpectationTrainingResult(accuracy=0.85),
                 ExpectationTrainingResult(accuracy=0.82),
                 ExpectationTrainingResult(accuracy=0.95),
@@ -398,7 +398,7 @@ def _test_train_online(
             ],
             [
                 _TestExpectation(evaluation="Good", score=0.98, expectation=0),
-                _TestExpectation(evaluation="Good", score=0.64, expectation=1),
+                _TestExpectation(evaluation="Good", score=0.3, expectation=1),
                 _TestExpectation(evaluation="Bad", score=0.0, expectation=2),
             ],
         ),
