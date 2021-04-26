@@ -40,6 +40,8 @@ from .predict import (  # noqa: F401
     LRExpectationClassifier,
     preprocess_punctuations,
 )
+
+from opentutor_classifier.utils import load_data
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
 from .clustering_features import generate_feature_candidates, select_feature_candidates
@@ -146,6 +148,30 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             expectations=[ExpectationTrainingResult(accuracy=accuracy)],
             models=output_dir,
             archive="",
+        )
+
+    def train_default(
+        self,
+        data_root: str = "data",
+        config: TrainingConfig = None,
+        opts: TrainingOptions = None,
+    ) -> TrainingResult:
+        try:
+            training_data = load_data(path.join(data_root, "default", "training.csv"))
+        except Exception:
+            training_data = self.model_obj.combine_dataset(data_root)
+        return self._train_default(
+            training_data=training_data, config=config, opts=opts
+        )
+
+    def train_default_online(
+        self,
+        train_input: TrainingInput,
+        config: TrainingConfig = None,
+        opts: TrainingOptions = None,
+    ) -> TrainingResult:
+        return self._train_default(
+            training_data=train_input.data, config=config, opts=opts
         )
 
     def train(
