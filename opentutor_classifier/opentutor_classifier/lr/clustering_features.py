@@ -9,6 +9,7 @@ import pandas as pd
 from itertools import combinations
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 
+import logging
 
 class CustomAgglomerativeClustering:
     def __init__(self, word2vec: Word2VecKeyedVectors, index2word_set):
@@ -92,9 +93,10 @@ def generate_patterns_from_candidates(
         "good": list(),
         "bad": list(),
     }
+        
     for label, best_target in best_targets:
         words = set()
-        for word in best_target:
+        for word in best_target.split(' '):
             if number_of_negatives([word])[0] > 0:
                 words.add("[NEG]")
             else:
@@ -118,6 +120,7 @@ def generate_patterns_from_candidates(
                     data[" + ".join(comb)] *= data[word]
                 total_patterns.append(" + ".join(comb))
         useful_pattern_for_each_cluster[label].extend(total_patterns)
+
     return data, useful_pattern_for_each_cluster
 
 
@@ -132,7 +135,6 @@ def generate_feature_candidates(
     good_labels, bad_labels = get_clusters(
         good_answers, bad_answers, word2vec, index2word_set
     )
-
     best_candidates = []
     best_candidates.append(
         (

@@ -142,7 +142,7 @@ class LRExpectationClassifier:
                 word2vec, index2word_set, example, question
             ),
         ]
-        if patterns != None:
+        if patterns:
             for pattern in patterns:
                 feat.append(check_is_pattern_match(raw_example, pattern))
         return feat

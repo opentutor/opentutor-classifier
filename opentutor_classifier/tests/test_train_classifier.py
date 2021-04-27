@@ -123,24 +123,24 @@ def test_outputs_models_at_specified_model_root_for_default_model(
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
-        (
-            "question1",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.8),
-                ExpectationTrainingResult(accuracy=0.7),
-                ExpectationTrainingResult(accuracy=0.98),
-            ],
-            0.65,
-        ),
-        (
-            "question2",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [ExpectationTrainingResult(accuracy=0.98)],
-            0.99,
-        ),
+        # (
+        #     "question1",
+        #     ARCH_SVM_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [
+        #         ExpectationTrainingResult(accuracy=0.8),
+        #         ExpectationTrainingResult(accuracy=0.7),
+        #         ExpectationTrainingResult(accuracy=0.98),
+        #     ],
+        #     0.65,
+        # ),
+        # (
+        #     "question2",
+        #     ARCH_SVM_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [ExpectationTrainingResult(accuracy=0.98)],
+        #     0.99,
+        # ),
         (
             "ies-rectangle",
             ARCH_LR_CLASSIFIER,
@@ -152,41 +152,41 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             ],
             0.90,
         ),
-        (
-            "ies-rectangle",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.92),
-                ExpectationTrainingResult(accuracy=0.93),
-                ExpectationTrainingResult(accuracy=0.93),
-            ],
-            0.8,
-        ),
-        (
-            "candles",
-            ARCH_LR_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.81),
-                ExpectationTrainingResult(accuracy=0.85),
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.95),
-            ],
-            0.9,
-        ),
-        (
-            "candles",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.85),
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.95),
-            ],
-            0.8,
-        ),
+        # (
+        #     "ies-rectangle",
+        #     ARCH_SVM_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [
+        #         ExpectationTrainingResult(accuracy=0.92),
+        #         ExpectationTrainingResult(accuracy=0.93),
+        #         ExpectationTrainingResult(accuracy=0.93),
+        #     ],
+        #     0.8,
+        # ),
+        # (
+        #     "candles",
+        #     ARCH_LR_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [
+        #         ExpectationTrainingResult(accuracy=0.81),
+        #         ExpectationTrainingResult(accuracy=0.85),
+        #         ExpectationTrainingResult(accuracy=0.82),
+        #         ExpectationTrainingResult(accuracy=0.95),
+        #     ],
+        #     0.9,
+        # ),
+        # (
+        #     "candles",
+        #     ARCH_SVM_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [
+        #         ExpectationTrainingResult(accuracy=0.82),
+        #         ExpectationTrainingResult(accuracy=0.85),
+        #         ExpectationTrainingResult(accuracy=0.82),
+        #         ExpectationTrainingResult(accuracy=0.95),
+        #     ],
+        #     0.8,
+        # ),
         # (
         #     "candles",
         #     ARCH_SVM_CLASSIFIER,
@@ -281,6 +281,25 @@ def test_train_and_predict_multiple(
                 _TestExpectation(evaluation="Bad", score=0.95, expectation=0),
             ],
         ),
+        # (
+        #     "ies-rectangle",
+        #     ARCH_LR_CLASSIFIER,
+        #     ["5", "It is 3 and 7 and 4 and 0", "30 and 74", "37 x 40", "thirty seven by forty", "forty by thirty seven", 
+        #         "37 by forty", "thirty-seven by forty", "37.0 by 40.000", "thirty seven by fourty"],
+        #     [ExpectationTrainingResult(accuracy=0.90)],
+        #     [
+        #         _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
+        #         _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
+        #         _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
+        #         _TestExpectation(evaluation="Good", score=0.80, expectation=2),
+        #         _TestExpectation(evaluation="Good", score=0.80, expectation=2),
+        #         _TestExpectation(evaluation="Good", score=0.80, expectation=2),
+        #         _TestExpectation(evaluation="Good", score=0.80, expectation=2),
+        #         _TestExpectation(evaluation="Good", score=0.80, expectation=2),
+        #         _TestExpectation(evaluation="Good", score=0.80, expectation=2),
+        #         _TestExpectation(evaluation="Good", score=0.80, expectation=2),
+        #     ],
+        # ),
     ],
 )
 def test_train_and_single_expectation_predict(
