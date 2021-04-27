@@ -163,18 +163,18 @@ def test_outputs_models_at_specified_model_root_for_default_model(
         #     ],
         #     0.8,
         # ),
-        # (
-        #     "candles",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.81),
-        #         ExpectationTrainingResult(accuracy=0.85),
-        #         ExpectationTrainingResult(accuracy=0.82),
-        #         ExpectationTrainingResult(accuracy=0.95),
-        #     ],
-        #     0.9,
-        # ),
+        (
+            "candles",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.81),
+                ExpectationTrainingResult(accuracy=0.85),
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.95),
+            ],
+            0.9,
+        ),
         # (
         #     "candles",
         #     ARCH_SVM_CLASSIFIER,
@@ -284,7 +284,7 @@ def test_train_and_predict_multiple(
         # (
         #     "ies-rectangle",
         #     ARCH_LR_CLASSIFIER,
-        #     ["5", "It is 3 and 7 and 4 and 0", "30 and 74", "37 x 40", "thirty seven by forty", "forty by thirty seven", 
+        #     ["5", "It is 3 and 7 and 4 and 0", "30 and 74", "37 x 40", "thirty seven by forty", "forty by thirty seven",
         #         "37 by forty", "thirty-seven by forty", "37.0 by 40.000", "thirty seven by fourty"],
         #     [ExpectationTrainingResult(accuracy=0.90)],
         #     [

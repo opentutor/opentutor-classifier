@@ -11,6 +11,7 @@ from gensim.models.keyedvectors import Word2VecKeyedVectors
 
 import logging
 
+
 class CustomAgglomerativeClustering:
     def __init__(self, word2vec: Word2VecKeyedVectors, index2word_set):
         self.word2vec = word2vec
@@ -93,10 +94,10 @@ def generate_patterns_from_candidates(
         "good": list(),
         "bad": list(),
     }
-        
+
     for label, best_target in best_targets:
         words = set()
-        for word in best_target.split(' '):
+        for word in best_target.split(" "):
             if number_of_negatives([word])[0] > 0:
                 words.add("[NEG]")
             else:

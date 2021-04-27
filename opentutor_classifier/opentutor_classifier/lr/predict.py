@@ -126,7 +126,7 @@ class LRExpectationClassifier:
         index2word_set: set,
         good: List[str],
         bad: List[str],
-        patterns : List[str] = None,
+        patterns: List[str] = None,
     ) -> List[float]:
         raw_example = alpha2digit(raw_example, "en")
         feat = [

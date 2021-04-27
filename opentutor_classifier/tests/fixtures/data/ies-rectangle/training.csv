@@ -115,3 +115,101 @@ exp_num,text,label
 2,The ratio is closer to 100% it's more like a square,Bad
 0,The ratio gets closer to 1,Good
 1,The ratio gets closer to 1,Bad
+2,The ratio gets closer to 1,Bad
+0,less,Bad
+1,less,Bad
+2,less,Bad
+0,"the larger one, 37x40",Bad
+1,"the larger one, 37x40",Bad
+2,"the larger one, 37x40",Good
+0,37x40,Bad
+1,37x40,Bad
+2,37x40,Good
+0,37 by 40 feel looks most like a square,Bad
+1,37 by 40 feel looks most like a square,Bad
+2,37 by 40 feel looks most like a square,Good
+0,sdfhjfdgds,Bad
+1,sdfhjfdgds,Bad
+2,sdfhjfdgds,Bad
+0,The rectangle with 37 by 40 will look more like a square becasue its ratio is the closest to 1. ,Good
+1,The rectangle with 37 by 40 will look more like a square becasue its ratio is the closest to 1. ,Bad
+2,The rectangle with 37 by 40 will look more like a square becasue its ratio is the closest to 1. ,Good
+0,It affects less and less,Bad
+1,It affects less and less,Bad
+2,It affects less and less,Bad
+0,37 by 40,Bad
+1,37 by 40,Bad
+2,37 by 40,Good
+0,37 by 40. ,Bad
+1,37 by 40. ,Bad
+2,37 by 40. ,Good
+0,37x40,Bad
+1,37x40,Bad
+2,37x40,Good
+0,It changes a little. ,Bad
+1,It changes a little. ,Bad
+2,It changes a little. ,Bad
+0,the bigger one ,Bad
+1,the bigger one ,Bad
+2,the bigger one ,Bad
+0,makes it closer to 1 ,Good
+1,makes it closer to 1 ,Bad
+2,makes it closer to 1 ,Bad
+0,37 feet by 40 feet,Bad
+1,37 feet by 40 feet,Bad
+2,37 feet by 40 feet,Good
+0, the one with the bigger sides ,Bad
+1, the one with the bigger sides ,Bad
+2, the one with the bigger sides ,Bad
+0,that one,Bad
+1,that one,Bad
+2,that one,Bad
+0,37 by 40,Bad
+1,37 by 40,Bad
+2,37 by 40,Good
+0,the effect is less,Bad
+2,the effect is less,Bad
+0,"the more it looks like a square, the greater the area",Bad
+2,"the more it looks like a square, the greater the area",Bad
+0,the 37 by 40 rectangle,Bad
+1,the 37 by 40 rectangle,Bad
+2,the 37 by 40 rectangle,Good
+0,37 by 40,Bad
+1,37 by 40,Bad
+2,37 by 40,Good
+0,37 / 40,Bad
+1,37 / 40,Bad
+2,37 / 40,Good
+0,kjwedkjbwef,Bad
+1,kjwedkjbwef,Bad
+2,kjwedkjbwef,Bad
+0,ertwetweretert,Bad
+1,ertwetweretert,Bad
+2,ertwetweretert,Bad
+0,dfgdsfs,Bad
+1,dfgdsfs,Bad
+2,dfgdsfs,Bad
+0,sdfgsdgds,Bad
+1,sdfgsdgds,Bad
+2,sdfgsdgds,Bad
+0,sdfbsdfbsdbdsb,Bad
+1,sdfbsdfbsdbdsb,Bad
+2,sdfbsdfbsdbdsb,Bad
+0,trntnwrntnwntrnt,Bad
+1,trntnwrntnwntrnt,Bad
+2,trntnwrntnwntrnt,Bad
+0,jhsdjfbasdf,Bad
+1,jhsdjfbasdf,Bad
+2,jhsdjfbasdf,Bad
+0,dgsdfgf,Bad
+1,dgsdfgf,Bad
+2,dgsdfgf,Bad
+0,sfgsdfgsdgfdsg,Bad
+1,sfgsdfgsdgfdsg,Bad
+2,sfgsdfgsdgfdsg,Bad
+0,dfsgsdfgsdgdsg,Bad
+1,dfsgsdfgsdgdsg,Bad
+2,dfsgsdfgsdgdsg,Bad
+0,dsfgfgfdssdfgfsdgsdfggfds,Bad
+1,dsfgfgfdssdfgfsdgsdfggfds,Bad
+2,dsfgfgfdssdfgfsdgsdfggfds,Bad

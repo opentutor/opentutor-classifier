@@ -232,15 +232,22 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 self.word2vec,
                 index2word_set,
             )
-            patterns = select_feature_candidates(data, candidates)
+            pattern = list(select_feature_candidates(data, candidates))
+            pattern = ['lessens', 'it + lessens', '40.', '37 + 40.', '40. + by', '37 + 40. + by', 'dgsdfgf']
+
+
+            logging.warning(f"patterns: {pattern}")
 
             conf_exps_out.append(
                 ExpectationConfig(
                     ideal=train_input.config.get_expectation_ideal(exp_num)
                     or " ".join(ideal_answer),
-                    features=(dict(good=good, bad=bad, patterns=patterns)),
+                    features=(dict(good=good, bad=bad, patterns=pattern)),
                 )
             )
+
+            logging.warning(f"exp num: {conf_exps_out[-1]}")
+
             features = [
                 np.array(
                     self.model_obj.calculate_features(
@@ -252,7 +259,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         index2word_set,
                         good,
                         bad,
-                        patterns,
+                        pattern,
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)
