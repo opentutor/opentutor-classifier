@@ -233,10 +233,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 index2word_set,
             )
             pattern = list(select_feature_candidates(data, candidates))
-            pattern = ['lessens', 'it + lessens', '40.', '37 + 40.', '40. + by', '37 + 40. + by', 'dgsdfgf']
-
-
-            logging.warning(f"patterns: {pattern}")
 
             conf_exps_out.append(
                 ExpectationConfig(
@@ -245,8 +241,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                     features=(dict(good=good, bad=bad, patterns=pattern)),
                 )
             )
-
-            logging.warning(f"exp num: {conf_exps_out[-1]}")
 
             features = [
                 np.array(

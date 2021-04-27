@@ -186,8 +186,8 @@ def select_feature_candidates(
         for candidate in candidates[label]:
             good.append(np.sum(data[candidate] * data["[LABELS]"]))
             bad.append(np.sum(data[candidate] * (1 - data["[LABELS]"])))
-            patterns.append(candidate)
-        good, bad, patterns = np.array(good), np.array(bad), np.array(patterns)
+            patterns.append(str(candidate))
+        good, bad = np.array(good), np.array(bad)
         one_fpr = None
         if label == "good":
             one_fpr = 1 - (
@@ -196,7 +196,9 @@ def select_feature_candidates(
         else:
             one_fpr = 1 - (good / np.sum(data["[LABELS]"]))
 
-        patterns = patterns[one_fpr > fpr_cuttoff]
-        one_fpr = one_fpr[one_fpr > fpr_cuttoff]
-        useful_features.extend(list(patterns))
+        # patterns = patterns[one_fpr > fpr_cuttoff]
+        # one_fpr = one_fpr[one_fpr > fpr_cuttoff]
+        useful_features.extend(
+            [item for i, item in enumerate(patterns) if one_fpr[i] > fpr_cuttoff]
+        )
     return useful_features
