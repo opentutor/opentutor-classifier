@@ -120,6 +120,7 @@ def test_outputs_models_at_specified_model_root_for_default_model(
     assert path.exists(path.join(output_dir, "models_by_expectation_num.pkl"))
 
 
+@pytest.mark.only
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
@@ -163,18 +164,18 @@ def test_outputs_models_at_specified_model_root_for_default_model(
         #     ],
         #     0.8,
         # ),
-        (
-            "candles",
-            ARCH_LR_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.81),
-                ExpectationTrainingResult(accuracy=0.85),
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.95),
-            ],
-            0.9,
-        ),
+        # (
+        #     "candles",
+        #     ARCH_LR_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [
+        #         ExpectationTrainingResult(accuracy=0.81),
+        #         ExpectationTrainingResult(accuracy=0.85),
+        #         ExpectationTrainingResult(accuracy=0.82),
+        #         ExpectationTrainingResult(accuracy=0.95),
+        #     ],
+        #     0.9,
+        # ),
         # (
         #     "candles",
         #     ARCH_SVM_CLASSIFIER,
