@@ -126,7 +126,7 @@ class LRExpectationClassifier:
         index2word_set: set,
         good: List[str],
         bad: List[str],
-        patterns : List[str] = None,
+        patterns: List[str] = None,
     ) -> List[float]:
         raw_example = alpha2digit(raw_example, "en")
         feat = [
@@ -142,7 +142,7 @@ class LRExpectationClassifier:
                 word2vec, index2word_set, example, question
             ),
         ]
-        if patterns != None:
+        if patterns:
             for pattern in patterns:
                 feat.append(check_is_pattern_match(raw_example, pattern))
         return feat
