@@ -176,7 +176,7 @@ def generate_feature_candidates(
 
 
 def select_feature_candidates(
-    data: pd.DataFrame, candidates: List[str], fpr_cuttoff: float = 0.98
+    data: pd.DataFrame, candidates: Dict[str,List[str]], fpr_cuttoff: float = 0.98
 ) -> List[str]:
     useful_features = []
     for label in ("good", "bad"):
