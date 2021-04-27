@@ -9,8 +9,6 @@ import pandas as pd
 from itertools import combinations
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 
-import logging
-
 
 class CustomAgglomerativeClustering:
     def __init__(self, word2vec: Word2VecKeyedVectors, index2word_set):
