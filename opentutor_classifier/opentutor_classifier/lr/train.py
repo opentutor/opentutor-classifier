@@ -235,12 +235,19 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
 
             pattern = select_feature_candidates(data, candidates)
-            logging.warning(pattern)
+
             conf_exps_out.append(
                 ExpectationConfig(
                     ideal=train_input.config.get_expectation_ideal(exp_num)
                     or " ".join(ideal_answer),
-                    features=(dict(good=good, bad=bad, patterns=pattern)),
+                    features=(
+                        dict(
+                            good=good,
+                            bad=bad,
+                            patterns_good=pattern["good"],
+                            patterns_bad=pattern["bad"],
+                        )
+                    ),
                 )
             )
 
@@ -255,7 +262,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         index2word_set,
                         good,
                         bad,
-                        pattern,
+                        pattern["good"] + pattern["bad"],
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)
@@ -278,6 +285,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             path.join(tmp_save_dir, "config.yaml")
         )
         output_dir = path.abspath(config.output_dir)
+        # logging.warning(f"{tmp_save_dir}   {output_dir}" )
         archive_path = _archive_if_exists(output_dir, config.archive_root)
         makedirs(path.dirname(output_dir), exist_ok=True)
         logger.debug(f"copying results from {tmp_save_dir} to {output_dir}")

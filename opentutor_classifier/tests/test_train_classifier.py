@@ -168,12 +168,12 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.85),
-                ExpectationTrainingResult(accuracy=0.9),
                 ExpectationTrainingResult(accuracy=0.86),
-                ExpectationTrainingResult(accuracy=0.92),
+                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.87),
+                ExpectationTrainingResult(accuracy=0.89),
             ],
-            0.85,
+            0.8,
         ),
         (
             "candles",

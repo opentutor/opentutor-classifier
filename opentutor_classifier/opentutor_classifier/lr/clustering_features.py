@@ -93,24 +93,24 @@ def generate_patterns_from_candidates(
         "bad": list(),
     }
 
-    data["[NEG]"] = data["[SENTENCES]"].apply(
-        lambda x: 1 * (number_of_negatives(x)[0] > 0)
-    )
-
     for label, best_target in best_targets:
         words = set()
         for word in best_target:
             if number_of_negatives([word])[0] > 0:
-                pass
+                words.add("[NEG]")
             else:
                 words.add(word)
 
         for word in words:
             data[word] = data["[SENTENCES]"].apply(lambda x: 1 * (word in x))
 
+        data["[NEG]"] = data["[SENTENCES]"].apply(
+            lambda x: 1 * (number_of_negatives(x)[0] > 0)
+        )
+
         # maximum pattern length will be 4
         total_patterns = list(words)
-        for i in range(2, min(len(words) + 1, 4)):
+        for i in range(2, min(len(words) + 1, 3)):
             combs = combinations(words, i)
             for comb_ in combs:
                 comb = sorted(list(comb_))
@@ -175,8 +175,8 @@ def generate_feature_candidates(
 
 def select_feature_candidates(
     data: pd.DataFrame, candidates: Dict[str, List[str]], fpr_cuttoff: float = 0.98
-) -> List[str]:
-    useful_features = []
+) -> Dict[str, List[str]]:
+    useful_features = dict()
     for label in ("good", "bad"):
         good, bad, patterns = [], [], []
         for candidate in candidates[label]:
@@ -190,7 +190,8 @@ def select_feature_candidates(
         else:
             one_fpr = 1 - (good / np.sum(data["[LABELS]"]))
 
-        useful_features.extend(
-            [item for i, item in enumerate(patterns) if one_fpr[i] > fpr_cuttoff]
+        useful_features[label] = list(
+            set([item for i, item in enumerate(patterns) if one_fpr[i] > fpr_cuttoff])
         )
-    return list(set(useful_features))
+
+    return useful_features
