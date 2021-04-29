@@ -235,6 +235,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
 
             pattern = select_feature_candidates(data, candidates)
+            logging.warning(pattern)
             conf_exps_out.append(
                 ExpectationConfig(
                     ideal=train_input.config.get_expectation_ideal(exp_num)
