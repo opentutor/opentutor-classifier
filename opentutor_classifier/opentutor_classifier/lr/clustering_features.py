@@ -57,7 +57,7 @@ def get_best_candidate(
     sentence_cluster: np.array,
     word2vec: Word2VecKeyedVectors,
     index2word_set,
-    cuttoff_length: int = 15,
+    cuttoff_length: int = 20,
 ) -> str:
 
     sentence_cluster = sentence_cluster[
@@ -93,20 +93,20 @@ def generate_patterns_from_candidates(
         "bad": list(),
     }
 
+    data["[NEG]"] = data["[SENTENCES]"].apply(
+        lambda x: 1 * (number_of_negatives(x)[0] > 0)
+    )
+
     for label, best_target in best_targets:
         words = set()
-        for word in best_target.split(" "):
+        for word in best_target:
             if number_of_negatives([word])[0] > 0:
-                words.add("[NEG]")
+                pass
             else:
                 words.add(word)
 
         for word in words:
             data[word] = data["[SENTENCES]"].apply(lambda x: 1 * (word in x))
-
-        data["[NEG]"] = data["[SENTENCES]"].apply(
-            lambda x: 1 * (number_of_negatives(x)[0] > 0)
-        )
 
         # maximum pattern length will be 4
         total_patterns = list(words)
@@ -129,7 +129,6 @@ def generate_feature_candidates(
     word2vec: Word2VecKeyedVectors,
     index2word_set,
 ):
-
     good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
     good_labels, bad_labels = get_clusters(
         good_answers, bad_answers, word2vec, index2word_set
@@ -170,13 +169,12 @@ def generate_feature_candidates(
             "[LABELS]": [1] * len(good_answers) + [0] * len(bad_answers),
         }
     )
-
     data, candidates = generate_patterns_from_candidates(data, best_candidates)
     return data, candidates
 
 
 def select_feature_candidates(
-    data: pd.DataFrame, candidates: Dict[str,List[str]], fpr_cuttoff: float = 0.98
+    data: pd.DataFrame, candidates: Dict[str, List[str]], fpr_cuttoff: float = 0.98
 ) -> List[str]:
     useful_features = []
     for label in ("good", "bad"):
@@ -188,15 +186,11 @@ def select_feature_candidates(
         good, bad = np.array(good), np.array(bad)
         one_fpr = None
         if label == "good":
-            one_fpr = 1 - (
-                bad / np.sum(1 - data["[LABELS]"])
-            )  # np.array(good)/(np.array(good)+np.array(bad)+1e-10)
+            one_fpr = 1 - (bad / np.sum(1 - data["[LABELS]"]))
         else:
             one_fpr = 1 - (good / np.sum(data["[LABELS]"]))
 
-        # patterns = patterns[one_fpr > fpr_cuttoff]
-        # one_fpr = one_fpr[one_fpr > fpr_cuttoff]
         useful_features.extend(
             [item for i, item in enumerate(patterns) if one_fpr[i] > fpr_cuttoff]
         )
-    return useful_features
+    return list(set(useful_features))

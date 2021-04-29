@@ -217,4 +217,3 @@ STOPWORDS = set(
         "y",
     ]
 )
-0

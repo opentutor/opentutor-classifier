@@ -14,14 +14,13 @@ from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 import numpy as np
+import pandas as pd
+import re
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import LeaveOneOut
 from text_to_num import alpha2digit
-import pandas as pd
-import re
-
 
 from opentutor_classifier import (
     AnswerClassifier,
@@ -54,9 +53,8 @@ word_mapper = {
 
 def preprocess_punctuations(sentence: str) -> str:
     sentence = re.sub(r'["\-"]', " - ", sentence)
-    sentence = re.sub(r'["."]', " . ", sentence)
     sentence = re.sub(r'["%"]', " percent ", sentence)
-    return re.sub(r'["(", ")", "~", "!", "^", ",", "?", " "]', " ", sentence)
+    return re.sub(r'["(", ")", "~", "!", "^", ",", "?", " ", "."]', " ", sentence)
 
 
 def preprocess_sentence(sentence: str) -> Tuple[Any, ...]:

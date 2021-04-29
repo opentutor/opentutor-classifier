@@ -74,7 +74,7 @@ def _preprocess_trainx(data: List[str]) -> List[Tuple[Any, ...]]:
             if word not in STOPWORDS:
                 final_words.append(word)
         pre_processed_dataset.append(tuple(final_words))
-    return pre_processed_dataset
+    return np.array(pre_processed_dataset)
 
 
 def _save(model_instances, filename):
@@ -226,14 +226,15 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             ideal_answer = self.model_obj.initialize_ideal_answer(processed_data)
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
+
             data, candidates = generate_feature_candidates(
-                np.array(train_x)[np.array(train_y) == "good"],
-                np.array(train_x)[np.array(train_y) == "bad"],
+                np.array(processed_data)[np.array(train_y) == "good"],
+                np.array(processed_data)[np.array(train_y) == "bad"],
                 self.word2vec,
                 index2word_set,
             )
-            pattern = list(select_feature_candidates(data, candidates))
 
+            pattern = select_feature_candidates(data, candidates)
             conf_exps_out.append(
                 ExpectationConfig(
                     ideal=train_input.config.get_expectation_ideal(exp_num)
