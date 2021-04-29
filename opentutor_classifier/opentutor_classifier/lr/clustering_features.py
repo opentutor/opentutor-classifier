@@ -177,7 +177,7 @@ def select_feature_candidates(
     data: pd.DataFrame, candidates: Dict[str, List[str]], fpr_cuttoff: float = 0.98
 ) -> List[str]:
     useful_features = []
-    for label in ("good", ):
+    for label in ("good", "bad"):
         good, bad, patterns = [], [], []
         for candidate in candidates[label]:
             good.append(np.sum(data[candidate] * data["[LABELS]"]))
