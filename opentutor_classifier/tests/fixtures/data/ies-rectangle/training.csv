@@ -80,9 +80,9 @@ exp_num,text,label
 0,"The 4th one, since the three unit different has less effect on the shape of the rectangle and the ratio is closer to 1/1",Good
 1,"The 4th one, since the three unit different has less effect on the shape of the rectangle and the ratio is closer to 1/1",Good
 2,"The 4th one, since the three unit different has less effect on the shape of the rectangle and the ratio is closer to 1/1",Good
-0,37x40. Dividing the sides is almost 1.,Good
-1,37x40. Dividing the sides is almost 1.,Bad
-2,37x40. Dividing the sides is almost 1.,Good
+0,37 x 40. Dividing the sides is almost 1.,Good
+1,37 x 40. Dividing the sides is almost 1.,Bad
+2,37 x 40. Dividing the sides is almost 1.,Good
 0,"When you get closer to a hundred, its more square-like",Good
 1,"When you get closer to a hundred, its more square-like",Bad
 2,"When you get closer to a hundred, its more square-like",Bad
@@ -119,12 +119,12 @@ exp_num,text,label
 0,less,Bad
 1,less,Bad
 2,less,Bad
-0,"the larger one, 37x40",Bad
-1,"the larger one, 37x40",Bad
-2,"the larger one, 37x40",Good
-0,37x40,Bad
-1,37x40,Bad
-2,37x40,Good
+0,"the larger one, 37 x 40",Bad
+1,"the larger one, 37 x 40",Bad
+2,"the larger one, 37 x 40",Good
+0,37 x 40,Bad
+1,37 x 40,Bad
+2,37 x 40,Good
 0,37 by 40 feel looks most like a square,Bad
 1,37 by 40 feel looks most like a square,Bad
 2,37 by 40 feel looks most like a square,Good
@@ -294,9 +294,9 @@ exp_num,text,label
 0,larger the sides,Bad
 1,larger the sides,Bad
 2,larger the sides,Bad
-0,the 2x3 one,Bad
-1,the 2x3 one,Bad
-2,the 2x3 one,Bad
+0,the 2 x 3 one,Bad
+1,the 2 x 3 one,Bad
+2,the 2 x 3 one,Bad
 0,the first one,Bad
 1,the first one,Bad
 2,the first one,Bad
@@ -478,9 +478,9 @@ exp_num,text,label
 0,37 x 40,Bad
 1,37 x 40,Bad
 2,37 x 40,Good
-0,37|40,Bad
-1,37|40,Bad
-2,37|40,Good
+0,37 | 40,Bad
+1,37 | 40,Bad
+2,37 | 40,Good
 0,37 x 40,Bad
 1,37 x 40,Bad
 2,37 x 40,Good
@@ -490,9 +490,9 @@ exp_num,text,label
 0,40 ft by 37 ft.,Bad
 1,40 ft by 37 ft.,Bad
 2,40 ft by 37 ft.,Good
-0,37/40,Bad
-1,37/40,Bad
-2,37/40,Good
+0,37 / 40,Bad
+1,37 / 40,Bad
+2,37 / 40,Good
 0,17 x 20,Bad
 1,17 x 20,Bad
 2,17 x 20,Bad
@@ -615,9 +615,9 @@ exp_num,text,label
 0,The 37 feet by 40 feet square is the most square because the ratio of sides is closest to one. That means that the 3 unit difference will have the smallest effect.,Good
 1,The 37 feet by 40 feet square is the most square because the ratio of sides is closest to one. That means that the 3 unit difference will have the smallest effect.,Good
 2,The 37 feet by 40 feet square is the most square because the ratio of sides is closest to one. That means that the 3 unit difference will have the smallest effect.,Good
-0,7x10 because its the smallest,Bad
-1,7x10 because its the smallest,Bad
-2,7x10 because its the smallest,Bad
+0,7 x 10 because its the smallest,Bad
+1,7 x 10 because its the smallest,Bad
+2,7 x 10 because its the smallest,Bad
 0,"The bigger it is, the smaller the difference",Bad
 2,"The bigger it is, the smaller the difference",Bad
 0,The larger has less of an effect than the smaller,Bad
@@ -630,9 +630,9 @@ exp_num,text,label
 0,Bottom right is the most square-ish,Bad
 1,Bottom right is the most square-ish,Bad
 2,Bottom right is the most square-ish,Bad
-0,37x40,Bad
-1,37x40,Bad
-2,37x40,Good
+0,37 x 40,Bad
+1,37 x 40,Bad
+2,37 x 40,Good
 2,"The one with the side that is 37. The ratio is almost 1/1, but not quite. Even though it has the same difference, that doesn't really matter since the ratios are different.",Good
 0,"The closer to one, the more it looks like a square",Good
 1,"The closer to one, the more it looks like a square",Bad
@@ -645,9 +645,9 @@ exp_num,text,label
 0,Bottom right is the square-est,Bad
 1,Bottom right is the square-est,Bad
 2,Bottom right is the square-est,Bad
-0,37x40,Bad
-1,37x40,Bad
-2,37x40,Good
+0,37 x 40,Bad
+1,37 x 40,Bad
+2,37 x 40,Good
 0,"is 37 by 40. As the ratio gets closer to 1, the rectangle looks more square. This is because the difference of 3 units matters less as the rectangle gets bigger.",Good
 1,"is 37 by 40. As the ratio gets closer to 1, the rectangle looks more square. This is because the difference of 3 units matters less as the rectangle gets bigger.",Good
 2,"is 37 by 40. As the ratio gets closer to 1, the rectangle looks more square. This is because the difference of 3 units matters less as the rectangle gets bigger.",Good
@@ -687,9 +687,9 @@ The correct answer is the rectangle with dimensions 37 ft by 40 ft.",Good
 0,"The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",Good
 1,"The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",Bad
 2,"The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.",Bad
-0,the 37x40 looks most like a square because the sides are close to being equal,Bad
-1,the 37x40 looks most like a square because the sides are close to being equal,Bad
-2,the 37x40 looks most like a square because the sides are close to being equal,Good
+0,the 37 x 40 looks most like a square because the sides are close to being equal,Bad
+1,the 37 x 40 looks most like a square because the sides are close to being equal,Bad
+2,the 37 x 40 looks most like a square because the sides are close to being equal,Good
 0,"as the ratio gets closer to 1, the figure looks more like a square",Good
 1,"as the ratio gets closer to 1, the figure looks more like a square",Bad
 2,"as the ratio gets closer to 1, the figure looks more like a square",Bad
@@ -729,18 +729,18 @@ The correct answer is the rectangle with dimensions 37 ft by 40 ft.",Good
 0,less effect than a smaller rectangle,Bad
 1,less effect than a smaller rectangle,Good
 2,less effect than a smaller rectangle,Bad
-0,37x40 becasue the ratio of length to width is closer to 1 and a 3 unit different is less impactful as the values of length and width increase.,Good
-1,37x40 becasue the ratio of length to width is closer to 1 and a 3 unit different is less impactful as the values of length and width increase.,Good
-2,37x40 becasue the ratio of length to width is closer to 1 and a 3 unit different is less impactful as the values of length and width increase.,Good
+0,37 x 40 becasue the ratio of length to width is closer to 1 and a 3 unit different is less impactful as the values of length and width increase.,Good
+1,37 x 40 becasue the ratio of length to width is closer to 1 and a 3 unit different is less impactful as the values of length and width increase.,Good
+2,37 x 40 becasue the ratio of length to width is closer to 1 and a 3 unit different is less impactful as the values of length and width increase.,Good
 0,"ratio gets closer to 1, the rectangle looks more like a square",Good
 1,"ratio gets closer to 1, the rectangle looks more like a square",Bad
 2,"ratio gets closer to 1, the rectangle looks more like a square",Bad
 0,"You know, it looks more like a square",Bad
 1,"You know, it looks more like a square",Bad
 2,"You know, it looks more like a square",Bad
-0,"The 37x40 because as the ratio of length to width approaches 1, the rectangle looks more like a square, and a 3 unit difference is less of an impact on a rectangle with larger values of lengths and widths.",Good
-1,"The 37x40 because as the ratio of length to width approaches 1, the rectangle looks more like a square, and a 3 unit difference is less of an impact on a rectangle with larger values of lengths and widths.",Good
-2,"The 37x40 because as the ratio of length to width approaches 1, the rectangle looks more like a square, and a 3 unit difference is less of an impact on a rectangle with larger values of lengths and widths.",Good
+0,"The 37 x 40 because as the ratio of length to width approaches 1, the rectangle looks more like a square, and a 3 unit difference is less of an impact on a rectangle with larger values of lengths and widths.",Good
+1,"The 37 x 40 because as the ratio of length to width approaches 1, the rectangle looks more like a square, and a 3 unit difference is less of an impact on a rectangle with larger values of lengths and widths.",Good
+2,"The 37 x 40 because as the ratio of length to width approaches 1, the rectangle looks more like a square, and a 3 unit difference is less of an impact on a rectangle with larger values of lengths and widths.",Good
 0,it looks more like a square if the ratio of length to width gets closer to 1,Good
 1,it looks more like a square if the ratio of length to width gets closer to 1,Bad
 2,it looks more like a square if the ratio of length to width gets closer to 1,Bad
