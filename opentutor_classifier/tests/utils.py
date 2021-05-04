@@ -4,14 +4,18 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import json
+from contextlib import contextmanager
+from distutils.dir_util import copy_tree
 import logging
-from os import environ, path
+from pathlib import Path
+from os import path
 from typing import List, Tuple
+from unittest.mock import patch
 
 import pandas as pd
 import pytest
 import responses
+
 
 from opentutor_classifier import (
     AnswerClassifierInput,
@@ -19,13 +23,16 @@ from opentutor_classifier import (
     ClassifierFactory,
     ClassifierConfig,
     ExpectationClassifierResult,
+    FeaturesDao,
+    FeaturesSaveRequest,
     ExpectationTrainingResult,
     TrainingConfig,
     TrainingOptions,
     TrainingResult,
+    load_question_config,
 )
 from opentutor_classifier.training import train_data_root, train_default
-from opentutor_classifier.api import GRAPHQL_ENDPOINT
+from opentutor_classifier.api import get_graphql_endpoint
 from opentutor_classifier.config import (
     LABEL_BAD,
     LABEL_GOOD,
@@ -34,6 +41,7 @@ from opentutor_classifier.config import (
 )
 from .types import (
     ComparisonType,
+    _TestConfig,
     _TestExample,
     _TestExampleResult,
     _TestExpectation,
@@ -41,14 +49,6 @@ from .types import (
     _TestSet,
     _TestSetResult,
 )
-
-
-def add_graphql_response(name: str):
-    if environ.get("MOCKING_DISABLED"):
-        responses.add_passthru(GRAPHQL_ENDPOINT)
-        return
-    with open(fixture_path(path.join("graphql", f"{name}.json"))) as f:
-        responses.add(responses.POST, GRAPHQL_ENDPOINT, json=json.load(f), status=200)
 
 
 def assert_train_expectation_results(
@@ -85,19 +85,6 @@ def to_expectation_result(
             f"expected evaluation '{observed.evaluation}' to be '{expected.evaluation}'"
         )
     return _TestExpectationResult(expected=expected, observed=observed, errors=errors)
-
-
-def to_example_result(
-    expected: _TestExample, observed: AnswerClassifierResult
-) -> _TestExampleResult:
-    return _TestExampleResult(
-        expected=expected,
-        observed=observed,
-        expectations=[
-            to_expectation_result(e, o)
-            for e, o in zip(expected.expectations, observed.expectation_results)
-        ],
-    )
 
 
 def assert_classifier_evaluate(
@@ -184,26 +171,71 @@ def example_testset_path(example: str, testset_name="test.csv") -> str:
     return fixture_path(path.join("data", example, testset_name))
 
 
-def output_and_archive_for_test(tmpdir, data_root: str) -> Tuple[str, str]:
+def copy_test_env_to_tmp(
+    tmpdir, data_root: str, shared_root: str, arch="", is_default_model: bool = False
+) -> _TestConfig:
     testdir = tmpdir.mkdir("test")
-    return (
-        path.join(testdir, "model_root", path.basename(path.normpath(data_root))),
-        path.join(testdir, "archive"),
-    )
-
-
-def train_classifier(
-    tmpdir, data_root: str, shared_root: str, arch=""
-) -> TrainingResult:
-    output_dir, archive_root = output_and_archive_for_test(tmpdir, data_root)
-    return train_data_root(
-        data_root=data_root,
-        config=TrainingConfig(shared_root=shared_root),
-        opts=TrainingOptions(
-            archive_root=archive_root,
-            output_dir=output_dir,
-        ),
+    config = _TestConfig(
         arch=arch,
+        archive_root=path.join(testdir, "archive"),
+        data_root=path.join(testdir, "data"),
+        is_default_model=is_default_model,
+        output_dir=path.join(
+            testdir, "model_root", path.basename(path.normpath(data_root))
+        ),
+        shared_root=shared_root,
+    )
+    copy_tree(data_root, config.data_root)
+    return config
+
+
+def _add_gql_response(config: _TestConfig):
+    cfile = Path(path.join(config.data_root, "config.yaml"))
+    dfile = Path(path.join(config.data_root, "training.csv"))
+    training_data_prop = (
+        "allTrainingData" if config.is_default_model else "trainingData"
+    )
+    res = {
+        "data": {
+            "me": {
+                training_data_prop: {
+                    "config": cfile.read_text() if cfile.is_file() else None,
+                    "training": dfile.read_text() if dfile.is_file() else None,
+                }
+            }
+        }
+    }
+    responses.add(responses.POST, get_graphql_endpoint(), json=res, status=200)
+
+
+@contextmanager
+def test_env_isolated(
+    tmpdir, data_root: str, shared_root: str, arch="", is_default_model=False
+):
+    config = copy_test_env_to_tmp(
+        tmpdir, data_root, shared_root, arch=arch, is_default_model=is_default_model
+    )
+    patcher = patch("opentutor_classifier.find_features_dao")
+    try:
+        mock_find_features_dao = patcher.start()
+        mock_find_features_dao.return_value = _TestExpectationFeaturesDao(
+            config.data_root
+        )
+        _add_gql_response(config)
+        yield config
+    finally:
+        patcher.stop()
+
+
+def train_classifier(config: _TestConfig) -> TrainingResult:
+    return train_data_root(
+        data_root=config.data_root,
+        config=TrainingConfig(shared_root=config.shared_root),
+        opts=TrainingOptions(
+            archive_root=config.archive_root,
+            output_dir=config.output_dir,
+        ),
+        arch=config.arch,
     )
 
 
@@ -260,3 +292,28 @@ def read_example_testset(
         ),
         confidence_threshold=confidence_threshold,
     )
+
+
+def to_example_result(
+    expected: _TestExample, observed: AnswerClassifierResult
+) -> _TestExampleResult:
+    return _TestExampleResult(
+        expected=expected,
+        observed=observed,
+        expectations=[
+            to_expectation_result(e, o)
+            for e, o in zip(expected.expectations, observed.expectation_results)
+        ],
+    )
+
+
+class _TestExpectationFeaturesDao(FeaturesDao):
+    def __init__(self, tmp_data_root: str):
+        self.tmp_data_root = tmp_data_root
+
+    def save_features(self, req: FeaturesSaveRequest) -> None:
+        config_file = path.join(self.tmp_data_root, "config.yaml")
+        config = load_question_config(config_file)
+        for e in req.expectations:
+            config.expectations[e.expectation].features = e.features
+        config.write_to(config_file)

@@ -14,9 +14,9 @@ import pytest
 
 from opentutor_classifier import ARCH_DEFAULT
 from .utils import (
+    copy_test_env_to_tmp,
     create_and_test_classifier,
     fixture_path,
-    output_and_archive_for_test,
     _TestExpectation,
 )
 
@@ -41,20 +41,20 @@ def __train_model(
     tmpdir, question_id: str, shared_root: str
 ) -> Tuple[str, str, str, str]:
     training_data_path = os.path.join(fixture_path("data"), question_id)
-    output_dir, _ = output_and_archive_for_test(tmpdir, question_id)
+    config = copy_test_env_to_tmp(tmpdir, training_data_path, shared_root)
     command = [
         ".venv/bin/python3.8",
         "bin/opentutor_classifier",
         "train",
         "--data",
-        training_data_path,
+        config.data_root,
         "--shared",
-        shared_root,
+        config.shared_root,
         "--output",
-        output_dir,
+        config.output_dir,
     ]
     out, err, exitcode = capture(command)
-    return out, err, exitcode, output_dir
+    return out, err, exitcode, config.output_dir
 
 
 def __sync(tmpdir, lesson: str, url: str) -> Tuple[str, str, str, str]:
@@ -73,18 +73,6 @@ def __sync(tmpdir, lesson: str, url: str) -> Tuple[str, str, str, str]:
     ]
     out, err, exitcode = capture(command)
     return out, err, exitcode, output_dir
-
-
-def test_cli_syncs_training_data(tmpdir):
-    out, err, exit_code, output_root = __sync(
-        tmpdir, "q1", fixture_path(os.path.join("graphql", "example-1.json"))
-    )
-    assert exit_code == 0
-    assert path.exists(path.join(output_root, "training.csv"))
-    assert path.exists(path.join(output_root, "config.yaml"))
-    out_str = out.decode("utf-8")
-    out_str = out_str.split("\n")
-    assert out_str[0] == f"Data is saved at: {output_root}"
 
 
 @pytest.mark.parametrize(
