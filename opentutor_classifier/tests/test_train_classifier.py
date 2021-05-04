@@ -4,11 +4,9 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from os import environ, path, makedirs
-import shutil
+from os import environ, path
 from typing import List
 
-from freezegun import freeze_time
 import pytest
 import responses
 
@@ -24,22 +22,20 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.config import confidence_threshold_default
 from opentutor_classifier.training import (
-    train_data_root,
     train_online,
     train_default_online,
 )
-from opentutor_classifier.utils import dict_to_config, load_config
+from opentutor_classifier.utils import dict_to_config
 from .utils import (
-    add_graphql_response,
     assert_testset_accuracy,
     assert_train_expectation_results,
     create_and_test_classifier,
     fixture_path,
-    output_and_archive_for_test,
     read_example_testset,
-    _TestExpectation,
+    test_env_isolated,
     train_classifier,
     train_default_model,
+    _TestExpectation,
 )
 
 CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
@@ -59,58 +55,12 @@ def shared_root(word2vec) -> str:
 def test_outputs_models_at_specified_root(
     tmpdir, data_root: str, shared_root: str, input_lesson: str
 ):
-    result = train_classifier(tmpdir, path.join(data_root, input_lesson), shared_root)
-    assert path.exists(path.join(result.models, "models_by_expectation_num.pkl"))
-    assert path.exists(path.join(result.models, "config.yaml"))
-
-
-@pytest.mark.parametrize("input_lesson", [("question1")])
-def test_training_archives_old_models(
-    tmpdir, data_root: str, shared_root: str, input_lesson: str
-):
-    models_path: str = ""
-    config_path: str = ""
-    archive_root: str = ""
-    data_path = path.join(data_root, input_lesson)
-    config_1 = load_config(path.join(data_path, "config.yaml"))
-    with freeze_time("20200901T012345"):
-        result = train_classifier(tmpdir, data_path, shared_root)
-        archive_root = path.join(path.dirname(result.models), "archive")
-        models_path = path.join(result.models, "models_by_expectation_num.pkl")
-        config_path = path.join(result.models, "config.yaml")
-        assert path.exists(models_path)
-        assert path.exists(config_path)
-        assert load_config(config_path).question == config_1.question
-    with freeze_time("20200902T123456"):
-        # retrain the slightly altered data
-        # to the the same output dir
-        # it should copy the old model files to archive
-        # and replace with newly trained
-        test_data_path = path.join(tmpdir, "data_test", input_lesson)
-        makedirs(path.dirname(test_data_path), exist_ok=True)
-        shutil.copytree(data_path, test_data_path)
-        # just change the config question, so we'll have something to test
-        config_2_path = path.join(test_data_path, "config.yaml")
-        config_2 = load_config(config_2_path)
-        config_2.question = "question changed for train 1"
-        config_2.write_to(config_2_path)
-        result = train_data_root(
-            data_root=test_data_path,
-            config=TrainingConfig(shared_root=shared_root),
-            opts=TrainingOptions(
-                archive_root=archive_root,
-                output_dir=result.models,
-            ),
-        )
-        assert result.archive.endswith(f"{input_lesson}-20200902T123456")
-        assert (
-            load_config(path.join(result.archive, "config.yaml")).question
-            == config_1.question
-        )
-        assert (
-            load_config(path.join(result.models, "config.yaml")).question
-            == config_2.question
-        )
+    with test_env_isolated(
+        tmpdir, path.join(data_root, input_lesson), shared_root
+    ) as test_config:
+        result = train_classifier(test_config)
+        assert path.exists(path.join(result.models, "models_by_expectation_num.pkl"))
+        assert path.exists(path.join(result.models, "config.yaml"))
 
 
 def test_outputs_models_at_specified_model_root_for_default_model(
@@ -146,11 +96,11 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.92),
-                ExpectationTrainingResult(accuracy=0.93),
-                ExpectationTrainingResult(accuracy=0.93),
+                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.90),
             ],
-            0.90,
+            0.85,
         ),
         (
             "ies-rectangle",
@@ -171,9 +121,9 @@ def test_outputs_models_at_specified_model_root_for_default_model(
                 ExpectationTrainingResult(accuracy=0.82),
                 ExpectationTrainingResult(accuracy=0.85),
                 ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.95),
+                ExpectationTrainingResult(accuracy=0.89),
             ],
-            0.9,
+            0.8,
         ),
         (
             "candles",
@@ -202,21 +152,28 @@ def test_train_and_predict(
     data_root: str,
     shared_root: str,
 ):
-    train_result = train_classifier(
+    # test_config = setup_test(tmpdir, data_root, shared_root, arch=arch)
+    with test_env_isolated(
         tmpdir, path.join(data_root, example), shared_root, arch=arch
-    )
-    assert path.exists(train_result.models)
-    assert_train_expectation_results(
-        train_result.expectations, expected_training_result
-    )
-    testset = read_example_testset(example, confidence_threshold=confidence_threshold)
-    assert_testset_accuracy(
-        arch,
-        train_result.models,
-        shared_root,
-        testset,
-        expected_accuracy=expected_accuracy,
-    )
+    ) as test_config:
+        # mock_find_features_dao.return_value = _TestExpectationFeaturesDao(
+        #     test_config.data_root
+        # )
+        train_result = train_classifier(test_config)
+        assert path.exists(train_result.models)
+        assert_train_expectation_results(
+            train_result.expectations, expected_training_result
+        )
+        testset = read_example_testset(
+            example, confidence_threshold=confidence_threshold
+        )
+        assert_testset_accuracy(
+            arch,
+            train_result.models,
+            shared_root,
+            testset,
+            expected_accuracy=expected_accuracy,
+        )
 
 
 @responses.activate
@@ -234,23 +191,24 @@ def test_train_and_predict_multiple(
     shared_root: str,
     tmpdir,
 ):
-    train_result = train_classifier(
+    with test_env_isolated(
         tmpdir, path.join(data_root, lesson), shared_root, arch
-    )
-    assert path.exists(train_result.models)
-    assert_train_expectation_results(
-        train_result.expectations, expected_training_result
-    )
-    for evaluate_input, expected_evaluate_result in zip(
-        evaluate_inputs, expected_evaluate_results
-    ):
-        create_and_test_classifier(
-            train_result.models,
-            shared_root,
-            evaluate_input,
-            expected_evaluate_result,
-            arch=arch,
+    ) as test_config:
+        train_result = train_classifier(test_config)
+        assert path.exists(train_result.models)
+        assert_train_expectation_results(
+            train_result.expectations, expected_training_result
         )
+        for evaluate_input, expected_evaluate_result in zip(
+            evaluate_inputs, expected_evaluate_results
+        ):
+            create_and_test_classifier(
+                train_result.models,
+                shared_root,
+                evaluate_input,
+                expected_evaluate_result,
+                arch=arch,
+            )
 
 
 @pytest.mark.parametrize(
@@ -281,17 +239,18 @@ def test_train_and_single_expectation_predict(
     data_root: str,
     shared_root: str,
 ):
-    train_result = train_classifier(
+    with test_env_isolated(
         tmpdir, path.join(data_root, lesson), shared_root, arch
-    )
-    assert path.exists(train_result.models)
-    assert_train_expectation_results(
-        train_result.expectations, expected_training_result
-    )
-    for evaluate_input, ans in zip(evaluate_input_list, expected_evaluate_result):
-        create_and_test_classifier(
-            train_result.models, shared_root, evaluate_input, [ans], arch=arch
+    ) as test_config:
+        train_result = train_classifier(test_config)
+        assert path.exists(train_result.models)
+        assert_train_expectation_results(
+            train_result.expectations, expected_training_result
         )
+        for evaluate_input, ans in zip(evaluate_input_list, expected_evaluate_result):
+            create_and_test_classifier(
+                train_result.models, shared_root, evaluate_input, [ans], arch=arch
+            )
 
 
 def _test_train_online(
@@ -305,27 +264,31 @@ def _test_train_online(
     tmpdir,
 ):
     lesson = environ.get("LESSON_OVERRIDE") or lesson
-    add_graphql_response(lesson)
-    output_dir, archive_root = output_and_archive_for_test(tmpdir, lesson)
-    train_result = train_online(
-        lesson,
-        TrainingConfig(shared_root=shared_root),
-        TrainingOptions(archive_root=archive_root, output_dir=output_dir),
-    )
-    assert_train_expectation_results(
-        train_result.expectations, expected_training_result
-    )
-    assert path.exists(train_result.models)
-    for evaluate_input, expected_evaluate_result in zip(
-        evaluate_inputs, expected_evaluate_results
-    ):
-        create_and_test_classifier(
-            train_result.models,
-            shared_root,
-            evaluate_input,
-            expected_evaluate_result,
+    with test_env_isolated(
+        tmpdir, path.join(data_root, lesson), shared_root, arch=arch
+    ) as test_config:
+        train_result = train_online(
+            lesson,
+            TrainingConfig(shared_root=test_config.shared_root),
+            TrainingOptions(
+                archive_root=test_config.archive_root, output_dir=test_config.output_dir
+            ),
             arch=arch,
         )
+        assert_train_expectation_results(
+            train_result.expectations, expected_training_result
+        )
+        assert path.exists(train_result.models)
+        for evaluate_input, expected_evaluate_result in zip(
+            evaluate_inputs, expected_evaluate_results
+        ):
+            create_and_test_classifier(
+                train_result.models,
+                shared_root,
+                evaluate_input,
+                expected_evaluate_result,
+                arch=arch,
+            )
 
 
 @responses.activate
@@ -342,27 +305,14 @@ def _test_train_online(
                 ExpectationTrainingResult(accuracy=0.90),
             ],
             [
-                _TestExpectation(evaluation="Good", score=0.65, expectation=0),
-                _TestExpectation(evaluation="Good", score=0.98, expectation=1),
-                _TestExpectation(evaluation="Bad", score=0.46, expectation=2),
-            ],
-        ),
-        (
-            "example-2",
-            ARCH_SVM_CLASSIFIER,
-            "the hr team",
-            [
-                ExpectationTrainingResult(accuracy=0.87),
-                ExpectationTrainingResult(accuracy=0.72),
-            ],
-            [
                 _TestExpectation(evaluation="Good", score=0.98, expectation=0),
-                _TestExpectation(evaluation="Bad", score=0.38, expectation=1),
+                _TestExpectation(evaluation="Bad", score=0.30, expectation=1),
+                _TestExpectation(evaluation="Bad", score=0.30, expectation=2),
             ],
         ),
         (
             "question1",
-            ARCH_SVM_CLASSIFIER,
+            ARCH_LR_CLASSIFIER,
             "peer pressure can change your behavior",
             [
                 ExpectationTrainingResult(accuracy=0.72),
@@ -370,24 +320,9 @@ def _test_train_online(
                 ExpectationTrainingResult(accuracy=0.90),
             ],
             [
-                _TestExpectation(evaluation="Good", score=0.65, expectation=0),
-                _TestExpectation(evaluation="Good", score=0.98, expectation=1),
-                _TestExpectation(evaluation="Bad", score=0.46, expectation=2),
-            ],
-        ),
-        (
-            "ies-television",
-            ARCH_SVM_CLASSIFIER,
-            "percentages represent a ratio of parts per 100",
-            [
-                ExpectationTrainingResult(accuracy=0.67),
-                ExpectationTrainingResult(accuracy=0.65),
-                ExpectationTrainingResult(accuracy=0.89),
-            ],
-            [
-                _TestExpectation(evaluation="Good", score=0.98, expectation=0),
-                _TestExpectation(evaluation="Good", score=0.64, expectation=1),
-                _TestExpectation(evaluation="Bad", score=0.0, expectation=2),
+                _TestExpectation(evaluation="Good", score=0.71, expectation=0),
+                _TestExpectation(evaluation="Bad", score=0.30, expectation=1),
+                _TestExpectation(evaluation="Bad", score=0.30, expectation=2),
             ],
         ),
     ],
@@ -443,49 +378,6 @@ def test_multiple_train_online(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "lesson,arch,evaluate_input,expected_training_result,expected_evaluate_result",
-    [
-        (
-            "question1-with-unknown-props-in-config",
-            ARCH_SVM_CLASSIFIER,
-            "peer pressure can change your behavior",
-            [
-                ExpectationTrainingResult(accuracy=0.72),
-                ExpectationTrainingResult(accuracy=0.18),
-                ExpectationTrainingResult(accuracy=0.90),
-            ],
-            [
-                _TestExpectation(evaluation="Good", score=0.66, expectation=0),
-                _TestExpectation(evaluation="Good", score=0.98, expectation=1),
-                _TestExpectation(evaluation="Bad", score=0.46, expectation=2),
-            ],
-        )
-    ],
-)
-def test_train_online_works_if_config_has_unknown_props(
-    lesson: str,
-    arch: str,
-    evaluate_input: str,
-    expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_result: List[_TestExpectation],
-    data_root: str,
-    shared_root: str,
-    tmpdir,
-):
-    _test_train_online(
-        lesson,
-        arch,
-        [evaluate_input],
-        expected_training_result,
-        [expected_evaluate_result],
-        data_root,
-        shared_root,
-        tmpdir,
-    )
-
-
-@responses.activate
-@pytest.mark.parametrize(
     "arch",
     [
         ARCH_SVM_CLASSIFIER,
@@ -494,16 +386,24 @@ def test_train_online_works_if_config_has_unknown_props(
 )
 def test_train_default_online(
     arch: str,
+    data_root: str,
     shared_root: str,
     tmpdir,
 ):
-    add_graphql_response("default")
-    output_dir, archive_root = output_and_archive_for_test(tmpdir, "default")
-    train_default_online(
-        TrainingConfig(shared_root=shared_root),
-        TrainingOptions(archive_root=archive_root, output_dir=output_dir),
-        arch,
-    )
+    with test_env_isolated(
+        tmpdir,
+        path.join(data_root, "default"),
+        shared_root,
+        arch=arch,
+        is_default_model=True,
+    ) as config:
+        train_default_online(
+            TrainingConfig(shared_root=config.shared_root),
+            TrainingOptions(
+                archive_root=config.archive_root, output_dir=config.output_dir
+            ),
+            arch,
+        )
 
 
 def test_trained_default_model_usable_for_inference(
