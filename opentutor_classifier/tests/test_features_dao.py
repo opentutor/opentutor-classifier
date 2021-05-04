@@ -4,26 +4,28 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import json
-import sys
+import responses
 
-# extract training data CSV from graphql dump
-# python convert_to_csv.py ies-rectangle.json
+from opentutor_classifier import (
+    find_features_dao,
+    FeaturesSaveRequest,
+    ExpectationFeatures,
+)
+from opentutor_classifier.api import get_graphql_endpoint, update_features_gql
 
 
-def fix_str(s: str) -> str:
-    return s.replace("\\n", "\n").replace('\\"', '"')
-
-
-if __name__ == "__main__":
-    inputfilename = sys.argv[1]
-    segments = inputfilename.split(".")
-    outfilename = "".join(segments[:-1]) + ".csv"
-
-    infile = open(inputfilename)
-
-    data = fix_str(json.load(infile)["data"]["trainingData"]["training"])
-    infile.close()
-    outfile = open(outfilename, "w")
-    print(data, file=outfile)
-    outfile.close()
+@responses.activate
+def test_saves_features_to_gql():
+    req = FeaturesSaveRequest(
+        lesson="lesson1",
+        expectations=[
+            ExpectationFeatures(expectation=2, features=dict(good=["a", "b"], bad="c"))
+        ],
+    )
+    responses.add(
+        responses.POST,
+        get_graphql_endpoint(),
+        json=update_features_gql(req),
+        status=200,
+    )
+    find_features_dao().save_features(req)
