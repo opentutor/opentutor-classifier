@@ -22,6 +22,16 @@ class ComparisonType(Enum):
 
 
 @dataclass
+class _TestConfig:
+    archive_root: str
+    data_root: str
+    output_dir: str
+    shared_root: str
+    arch: str = ""
+    is_default_model: bool = False
+
+
+@dataclass
 class _TestExpectation:
     expectation: int = -1  # if not -1, which lesson expectation by index?
     evaluation: str = ""  # Good | Bad

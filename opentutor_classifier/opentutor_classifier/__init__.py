@@ -11,6 +11,7 @@ from os import environ
 import pandas as pd
 from typing import Any, Dict, List, Optional
 import yaml
+
 from opentutor_classifier.speechact import SpeechActClassifierResult
 
 
@@ -103,6 +104,30 @@ class AnswerClassifier(ABC):
 
     @abstractmethod
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+        raise NotImplementedError()
+
+
+@dataclass
+class ExpectationFeatures:
+    expectation: int
+    features: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+@dataclass
+class FeaturesSaveRequest:
+    lesson: str
+    expectations: List[ExpectationFeatures] = field(default_factory=list)
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+class FeaturesDao(ABC):
+    @abstractmethod
+    def save_features(self, req: FeaturesSaveRequest) -> None:
         raise NotImplementedError()
 
 
@@ -202,6 +227,12 @@ class ArchClassifierFactory(ABC):
 
 
 _factories_by_arch: Dict[str, ArchClassifierFactory] = {}
+
+
+def find_features_dao() -> FeaturesDao:
+    from opentutor_classifier.api import GqlFeaturesDao
+
+    return GqlFeaturesDao()
 
 
 def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
