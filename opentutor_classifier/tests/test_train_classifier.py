@@ -96,17 +96,11 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.3),
-                ExpectationTrainingResult(accuracy=0.3),
-                ExpectationTrainingResult(accuracy=0.3),
+                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.90),
             ],
-            0.3,
-            # [
-            #     ExpectationTrainingResult(accuracy=0.90),
-            #     ExpectationTrainingResult(accuracy=0.90),
-            #     ExpectationTrainingResult(accuracy=0.90),
-            # ],
-            # 0.90,
+            0.85,
         ),
         (
             "ies-rectangle",
@@ -130,19 +124,12 @@ def test_outputs_models_at_specified_model_root_for_default_model(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.3),
-                ExpectationTrainingResult(accuracy=0.3),
-                ExpectationTrainingResult(accuracy=0.3),
-                ExpectationTrainingResult(accuracy=0.3),
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.85),
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.89),
             ],
-            0.3,
-            # [
-            #     ExpectationTrainingResult(accuracy=0.86),
-            #     ExpectationTrainingResult(accuracy=0.90),
-            #     ExpectationTrainingResult(accuracy=0.87),
-            #     ExpectationTrainingResult(accuracy=0.89),
-            # ],
-            # 0.8,
+            0.8,
         ),
         (
             "candles",
@@ -178,13 +165,9 @@ def test_train_and_predict(
     data_root: str,
     shared_root: str,
 ):
-    # test_config = setup_test(tmpdir, data_root, shared_root, arch=arch)
     with test_env_isolated(
         tmpdir, path.join(data_root, example), shared_root, arch=arch
     ) as test_config:
-        # mock_find_features_dao.return_value = _TestExpectationFeaturesDao(
-        #     test_config.data_root
-        # )
         train_result = train_classifier(test_config)
         assert path.exists(train_result.models)
         assert_train_expectation_results(
