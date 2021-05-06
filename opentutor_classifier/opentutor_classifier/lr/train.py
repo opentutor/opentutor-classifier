@@ -12,15 +12,15 @@ from os import makedirs, path
 import pickle
 import shutil
 import tempfile
-from typing import Dict, List
+from typing import Any, Dict, List, Tuple
 
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 import numpy as np
 import pandas as pd
-
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
+from text_to_num import alpha2digit
 
 from opentutor_classifier import (
     AnswerClassifierTraining,
@@ -38,9 +38,13 @@ from .predict import (  # noqa: F401
     preprocess_sentence,
     LRAnswerClassifier,
     LRExpectationClassifier,
+    preprocess_punctuations,
 )
+
 from opentutor_classifier.utils import load_data
 from opentutor_classifier.word2vec import find_or_load_word2vec
+
+from .clustering_features import generate_feature_candidates, select_feature_candidates
 
 
 def _archive_if_exists(p: str, archive_root: str) -> str:
@@ -56,17 +60,21 @@ def _archive_if_exists(p: str, archive_root: str) -> str:
     return archive_path
 
 
-def _preprocess_trainx(data):
+def _preprocess_trainx(data: List[str]) -> List[Tuple[Any, ...]]:
     pre_processed_dataset = []
     data = [entry.lower() for entry in data]
+    data = [
+        preprocess_punctuations(entry) for entry in data
+    ]  # [ re.sub(r'[^\w\s]', '', entry) for entry in data ]
+    data = [alpha2digit(entry, "en") for entry in data]
     data = [word_tokenize(entry) for entry in data]
     for entry in data:
         final_words = []
         for word, tag in pos_tag(entry):
-            if word not in STOPWORDS and word.isalpha():
+            if word not in STOPWORDS:
                 final_words.append(word)
-        pre_processed_dataset.append(final_words)
-    return pre_processed_dataset
+        pre_processed_dataset.append(tuple(final_words))
+    return np.array(pre_processed_dataset)
 
 
 def _save(model_instances, filename):
@@ -218,13 +226,32 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             ideal_answer = self.model_obj.initialize_ideal_answer(processed_data)
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
+
+            data, candidates = generate_feature_candidates(
+                np.array(processed_data)[np.array(train_y) == "good"],
+                np.array(processed_data)[np.array(train_y) == "bad"],
+                self.word2vec,
+                index2word_set,
+                ideal_answer,
+            )
+
+            pattern = select_feature_candidates(data, candidates)
+
             conf_exps_out.append(
                 ExpectationConfig(
                     ideal=train_input.config.get_expectation_ideal(exp_num)
                     or " ".join(ideal_answer),
-                    features=(dict(good=good, bad=bad)),
+                    features=(
+                        dict(
+                            good=good,
+                            bad=bad,
+                            patterns_good=pattern["good"],
+                            patterns_bad=pattern["bad"],
+                        )
+                    ),
                 )
             )
+
             features = [
                 np.array(
                     self.model_obj.calculate_features(
@@ -236,6 +263,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         index2word_set,
                         good,
                         bad,
+                        pattern["good"] + pattern["bad"],
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)
@@ -258,6 +286,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             path.join(tmp_save_dir, "config.yaml")
         )
         output_dir = path.abspath(config.output_dir)
+        # logging.warning(f"{tmp_save_dir}   {output_dir}" )
         archive_path = _archive_if_exists(output_dir, config.archive_root)
         makedirs(path.dirname(output_dir), exist_ok=True)
         logger.debug(f"copying results from {tmp_save_dir} to {output_dir}")
