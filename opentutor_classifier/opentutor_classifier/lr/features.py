@@ -14,6 +14,7 @@ import numpy as np
 from scipy import spatial
 from scipy.optimize import linear_sum_assignment
 
+word_alignment_dp = dict()
 
 def _avg_feature_vector(
     words: List[str],
@@ -62,22 +63,27 @@ def regex_match_ratio(str_example: str, regexes: List[str]) -> float:
 def word_alignment_feature(
     example: List[str], ia: List[str], word2vec: Word2VecKeyedVectors, index2word_set
 ) -> float:
+    if (example, ia) in word_alignment_dp: return word_alignment_dp[(example, ia)]
+
     cost = []
     n_exact_matches = len(set(ia).intersection(set(example)))
-    ia, example = (list(set(ia).difference(example)), list(set(example).difference(ia)))
-    if not ia:
+    ia_, example_ = (list(set(ia).difference(example)), list(set(example).difference(ia)))
+    if not ia_:
         return 1
 
-    for ia_i in ia:
+    for ia_i in ia_:
         inner_cost = []
-        for e in example:
+        for e in example_:
             dist = word2vec_example_similarity(word2vec, index2word_set, [e], [ia_i])
             inner_cost.append(dist)
         cost.append(inner_cost)
     row_idx, col_idx = linear_sum_assignment(cost, maximize=True)
-    return (
+    
+    word_alignment_dp[(example, ia)] = (
         n_exact_matches + sum([cost[r][c] for r, c in zip(row_idx, col_idx)])
-    ) / float(len(ia) + n_exact_matches)
+    ) / float(len(ia_) + n_exact_matches)
+
+    return word_alignment_dp[(example, ia)]
 
 
 def word2vec_example_similarity(
