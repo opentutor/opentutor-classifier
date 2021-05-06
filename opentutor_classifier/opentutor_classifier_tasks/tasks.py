@@ -4,12 +4,26 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+import logging
 import os
 
 from celery import Celery
+from celery.app.log import TaskFormatter
 
 from opentutor_classifier import TrainingConfig, TrainingOptions
 from opentutor_classifier.training import train_online, train_default_online
+
+
+logger = logging.getLogger()
+sh = logging.StreamHandler()
+sh.setFormatter(
+    TaskFormatter(
+        "%(asctime)s - %(task_id)s - %(task_name)s - %(name)s - %(levelname)s - %(message)s"
+    )
+)
+logger.setLevel(logging.INFO)
+logger.addHandler(sh)
+
 
 config = {
     "broker_url": os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0"),

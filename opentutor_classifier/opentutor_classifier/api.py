@@ -7,6 +7,7 @@
 from dataclasses import dataclass
 from io import StringIO
 import json
+import logging
 import os
 import requests
 from typing import TypedDict
@@ -20,8 +21,6 @@ from opentutor_classifier import (
     FeaturesDao,
     FeaturesSaveRequest,
 )
-
-API_SECRET = os.environ.get("API_SECRET") or ""
 
 
 def get_graphql_endpoint() -> str:
@@ -51,11 +50,41 @@ class GQLQueryBody(TypedDict):
     variables: dict
 
 
-GQL_UPDATE_LESSON_FEATURES = """mutation UpdateLessonFeatures($lessonId: String!, $features: UpdateLessonFeaturesInputType, $expectations: [UpdateExpectationFeaturesInputType]) {
+GQL_QUERY_LESSON_TRAINING_DATA = """
+query LessonTrainingData($lessonId: String!) {
+    query {
+        me {
+            trainingData(lessonId: $lessonId) {
+                config
+                training
+            }
+        }
+    }
+}
+"""
+
+
+GQL_QUERY_ALL_TRAINING_DATA = """
+query {
     me {
+        allTrainingData {
+            config
+            training
+        }
+    }
+}
+"""
+
+
+GQL_UPDATE_LESSON_FEATURES = """
+input ExpectationFeatures {
+  expectation: Int!
+  features: Any
+}
+mutation UpdateLessonFeatures($lessonId: String!, $expectations: [ExpectationFeatures]) {
+    api {
         updateLessonFeatures(lessonId: $lessonId, expectations: $expectations) {
             lessonId
-            features
             expectations {
                 expectation
                 features
@@ -63,6 +92,19 @@ GQL_UPDATE_LESSON_FEATURES = """mutation UpdateLessonFeatures($lessonId: String!
         }
     }
 }"""
+
+
+def query_all_training_data_gql() -> GQLQueryBody:
+    return {"query": GQL_QUERY_ALL_TRAINING_DATA, "variables": {}}
+
+
+def query_lesson_training_data_gql(lesson: str) -> GQLQueryBody:
+    return {
+        "query": GQL_QUERY_LESSON_TRAINING_DATA,
+        "variables": {
+            "lessonId": lesson,
+        },
+    }
 
 
 def update_features_gql(req: FeaturesSaveRequest) -> GQLQueryBody:
@@ -76,13 +118,9 @@ def update_features_gql(req: FeaturesSaveRequest) -> GQLQueryBody:
 
 
 def update_features(req: FeaturesSaveRequest) -> None:
-    headers = {"opentutor-api-req": "true", "Authorization": f"bearer {get_api_key()}"}
-    body = update_features_gql(req)
-    res = requests.post(get_graphql_endpoint(), json=body, headers=headers)
-    res.raise_for_status()
-    tdjson = res.json()
-    if "errors" in tdjson:
-        raise Exception(json.dumps(tdjson.get("errors")))
+    res_json = __auth_gql(update_features_gql(req))
+    if "errors" in res_json:
+        raise Exception(json.dumps(res_json.get("errors")))
 
 
 class GqlFeaturesDao(FeaturesDao):
@@ -90,19 +128,28 @@ class GqlFeaturesDao(FeaturesDao):
         update_features(req)
 
 
+def __auth_gql(query: GQLQueryBody, url: str = "") -> dict:
+    logging.warning("auth qql sending")
+    logging.warning(query)
+    res = requests.post(
+        url or get_graphql_endpoint(),
+        json=query,
+        headers={
+            '"opentutor-api-req': "true",
+            "Authorization": f"bearer {get_api_key()}",
+        },
+    )
+    logging.warning("auth qql res")
+    logging.warning(res.json())
+    res.raise_for_status()
+    return res.json()
+
+
 def __fetch_training_data(lesson: str, url: str) -> dict:
     if not url.startswith("http"):
         with open(url) as f:
             return json.load(f)
-    res = requests.post(
-        url,
-        json={
-            "query": f'query {{ me {{ trainingData(lessonId: "{lesson}") {{ config training }} }} }}'
-        },
-        headers={'"opentutor-api-req': "true", "Authorization": "bearer {API_SECRET}"},
-    )
-    res.raise_for_status()
-    return res.json()
+    return __auth_gql(query_lesson_training_data_gql(lesson), url=url)
 
 
 def fetch_training_data(lesson: str, url="") -> TrainingInput:
@@ -123,13 +170,7 @@ def __fetch_all_training_data(url: str) -> dict:
     if not url.startswith("http"):
         with open(url) as f:
             return json.load(f)
-    res = requests.post(
-        url,
-        json={"query": "query {{ me {{ allTrainingData {{ config training }} }} }}"},
-        headers={'"opentutor-api-req': "true", "Authorization": "bearer {API_SECRET}"},
-    )
-    res.raise_for_status()
-    return res.json()
+    return __auth_gql(query_all_training_data_gql(), url=url)
 
 
 def fetch_all_training_data(url="") -> TrainingInput:
