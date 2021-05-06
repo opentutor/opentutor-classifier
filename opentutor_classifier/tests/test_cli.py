@@ -4,7 +4,6 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import os
 from os import path
 import subprocess
 import re
@@ -13,12 +12,15 @@ from typing import List, Tuple
 import pytest
 
 from opentutor_classifier import ARCH_DEFAULT
+from opentutor_classifier.config import confidence_threshold_default
 from .utils import (
     copy_test_env_to_tmp,
     create_and_test_classifier,
     fixture_path,
     _TestExpectation,
 )
+
+CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
 
 
 @pytest.fixture(autouse=True)
@@ -28,7 +30,7 @@ def python_path_env(monkeypatch):
 
 @pytest.fixture(scope="module")
 def shared_root(word2vec) -> str:
-    return os.path.dirname(word2vec)
+    return path.dirname(word2vec)
 
 
 def capture(command):
@@ -37,17 +39,16 @@ def capture(command):
     return out, err, proc.returncode
 
 
-def __train_model(
-    tmpdir, question_id: str, shared_root: str
-) -> Tuple[str, str, str, str]:
-    training_data_path = os.path.join(fixture_path("data"), question_id)
-    config = copy_test_env_to_tmp(tmpdir, training_data_path, shared_root)
+def __train_model(tmpdir, lesson: str, shared_root: str) -> Tuple[str, str, str, str]:
+    config = copy_test_env_to_tmp(
+        tmpdir, fixture_path("data"), shared_root, lesson=lesson
+    )
     command = [
         ".venv/bin/python3.8",
         "bin/opentutor_classifier",
         "train",
         "--data",
-        config.data_root,
+        path.join(config.data_root, lesson),
         "--shared",
         config.shared_root,
         "--output",
@@ -59,7 +60,7 @@ def __train_model(
 
 def __sync(tmpdir, lesson: str, url: str) -> Tuple[str, str, str, str]:
     test_root = tmpdir.mkdir("test")
-    output_dir = os.path.join(test_root, lesson)
+    output_dir = path.join(test_root, lesson)
     command = [
         ".venv/bin/python3.8",
         "bin/opentutor_classifier",
@@ -76,28 +77,27 @@ def __sync(tmpdir, lesson: str, url: str) -> Tuple[str, str, str, str]:
 
 
 @pytest.mark.parametrize(
-    "input_lesson,no_of_expectations", [("question1", 3), ("question2", 1)]
+    "lesson,no_of_expectations", [("question1", 3), ("question2", 1)]
 )
-def test_cli_outputs_models_files(
-    tmpdir, input_lesson, no_of_expectations, shared_root
-):
-    out, err, exit_code, model_root = __train_model(tmpdir, input_lesson, shared_root)
+def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_root):
+    out, err, exit_code, model_root = __train_model(tmpdir, lesson, shared_root)
     assert exit_code == 0
-    assert path.exists(path.join(model_root, "models_by_expectation_num.pkl"))
-    assert path.exists(path.join(model_root, "config.yaml"))
-    out_str = out.decode("utf-8")
-    out_str = out_str.split("\n")
-    assert re.search(r"Models are saved at: /.+/" + input_lesson, out_str[0])
+    assert path.exists(path.join(model_root, lesson, "models_by_expectation_num.pkl"))
+    assert path.exists(path.join(model_root, lesson, "config.yaml"))
+    out_lines = out.decode("utf-8").split("\n")
+    while out_lines and re.search(r"^(DEBUG|INFO|WARNING|ERROR).*", out_lines[0]):
+        out_lines.pop(0)
+    assert re.search(r"Models are saved at: /.+/" + lesson, out_lines[0])
     for i in range(0, no_of_expectations):
         assert re.search(
             f"Accuracy for model={i} is [0-9]+\\.[0-9]+\\.",
-            out_str[i + 1],
+            out_lines[i + 1],
             flags=re.MULTILINE,
         )
 
 
 @pytest.mark.parametrize(
-    "input_lesson,input_answer,arch,expected_results",
+    "lesson,answer,arch,expected_results",
     [
         (
             "question1",
@@ -105,8 +105,16 @@ def test_cli_outputs_models_files(
             ARCH_DEFAULT,
             [
                 _TestExpectation(expectation=0, score=0.98, evaluation="Good"),
-                _TestExpectation(expectation=1, score=0.68, evaluation="Bad"),
-                _TestExpectation(expectation=2, score=0.56, evaluation="Bad"),
+                # _TestExpectation(
+                #     expectation=1,
+                #     score=CONFIDENCE_THRESHOLD_DEFAULT,
+                #     comparison=ComparisonType.LT,
+                # ),
+                # _TestExpectation(
+                #     expectation=2,
+                #     score=CONFIDENCE_THRESHOLD_DEFAULT,
+                #     comparison=ComparisonType.LT,
+                # ),
             ],
         ),
         (
@@ -118,15 +126,15 @@ def test_cli_outputs_models_files(
     ],
 )
 def test_cli_trained_models_usable_for_inference(
-    input_lesson: str,
-    input_answer: str,
+    lesson: str,
+    answer: str,
     arch: str,
     expected_results: List[_TestExpectation],
     tmpdir,
     shared_root,
 ):
-    _, _, _, model_root = __train_model(tmpdir, input_lesson, shared_root)
-    assert os.path.exists(model_root)
+    _, _, _, model_root = __train_model(tmpdir, lesson, shared_root)
+    assert path.exists(model_root)
     create_and_test_classifier(
-        model_root, shared_root, input_answer, expected_results, arch=arch
+        lesson, model_root, shared_root, answer, expected_results, arch=arch
     )

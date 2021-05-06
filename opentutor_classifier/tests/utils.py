@@ -22,17 +22,18 @@ from opentutor_classifier import (
     AnswerClassifierResult,
     ClassifierFactory,
     ClassifierConfig,
+    DataDao,
     ExpectationClassifierResult,
-    FeaturesDao,
-    FeaturesSaveRequest,
     ExpectationTrainingResult,
+    FeaturesSaveRequest,
+    QuestionConfig,
     TrainingConfig,
+    TrainingInput,
     TrainingOptions,
     TrainingResult,
-    load_question_config,
 )
 from opentutor_classifier.training import train_data_root, train_default
-from opentutor_classifier.api import get_graphql_endpoint
+from opentutor_classifier.api import FileDataDao, get_graphql_endpoint
 from opentutor_classifier.config import (
     LABEL_BAD,
     LABEL_GOOD,
@@ -80,7 +81,7 @@ def to_expectation_result(
             errors.append(
                 f"expected score {observed.score} to be within {expected.epsilon} of {expected.score} (observed difference {observed.score - expected.score}"
             )
-    if effective_evaluation != expected.evaluation.lower():
+    if expected.evaluation and effective_evaluation != expected.evaluation.lower():
         errors.append(
             f"expected evaluation '{observed.evaluation}' to be '{expected.evaluation}'"
         )
@@ -99,12 +100,15 @@ def assert_classifier_evaluate(
 
 
 def run_classifier_tests(
-    arch: str, model_path: str, shared_root: str, examples: List[_TestExample]
+    lesson: str,
+    arch: str,
+    model_root: str,
+    shared_root: str,
+    examples: List[_TestExample],
 ):
-    model_root, model_name = path.split(model_path)
     classifier = ClassifierFactory().new_classifier(
         ClassifierConfig(
-            model_name=model_name, model_roots=[model_root], shared_root=shared_root
+            model_name=lesson, model_roots=[model_root], shared_root=shared_root
         ),
         arch=arch,
     )
@@ -144,15 +148,17 @@ def assert_testset_accuracy(
 
 
 def create_and_test_classifier(
-    model_path: str,
+    lesson: str,
+    model_root: str,
     shared_root: str,
     evaluate_input: str,
     expected_evaluate_result: List[_TestExpectation],
     arch: str = "",
 ):
     run_classifier_tests(
+        lesson,
         arch,
-        model_path,
+        model_root,
         shared_root,
         [
             _TestExample(
@@ -172,7 +178,12 @@ def example_testset_path(example: str, testset_name="test.csv") -> str:
 
 
 def copy_test_env_to_tmp(
-    tmpdir, data_root: str, shared_root: str, arch="", is_default_model: bool = False
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    arch="",
+    lesson="",
+    is_default_model: bool = False,
 ) -> _TestConfig:
     testdir = tmpdir.mkdir("test")
     config = _TestConfig(
@@ -185,13 +196,13 @@ def copy_test_env_to_tmp(
         ),
         shared_root=shared_root,
     )
-    copy_tree(data_root, config.data_root)
+    copy_tree(path.join(data_root, lesson), path.join(config.data_root, lesson))
     return config
 
 
-def _add_gql_response(config: _TestConfig):
-    cfile = Path(path.join(config.data_root, "config.yaml"))
-    dfile = Path(path.join(config.data_root, "training.csv"))
+def _add_gql_response(config: _TestConfig, lesson: str):
+    cfile = Path(path.join(config.data_root, lesson, "config.yaml"))
+    dfile = Path(path.join(config.data_root, lesson, "training.csv"))
     training_data_prop = (
         "allTrainingData" if config.is_default_model else "trainingData"
     )
@@ -208,28 +219,61 @@ def _add_gql_response(config: _TestConfig):
     responses.add(responses.POST, get_graphql_endpoint(), json=res, status=200)
 
 
+class _TestDataDao(DataDao):
+    """
+    Wrapper DataDao for tests.
+    We need this because if the underlying DataDao is Gql,
+    then after DataDao::save_features is called,
+    we need to add a new mocked graphql response with the updated features
+    """
+
+    def __init__(self, dao: FileDataDao, config: _TestConfig):
+        self.dao = dao
+        self.config = config
+
+    def find_config(self, lesson: str) -> QuestionConfig:
+        return self.dao.find_config(lesson)
+
+    def find_training_input(self, lesson: str) -> TrainingInput:
+        return self.dao.find_training_input(lesson)
+
+    def save_features(self, req: FeaturesSaveRequest) -> None:
+        self.dao.save_features(req)
+        _add_gql_response(self.config, req.lesson)
+
+
 @contextmanager
 def test_env_isolated(
-    tmpdir, data_root: str, shared_root: str, arch="", is_default_model=False
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    arch="",
+    lesson="",
+    is_default_model=False,
 ):
     config = copy_test_env_to_tmp(
-        tmpdir, data_root, shared_root, arch=arch, is_default_model=is_default_model
+        tmpdir,
+        data_root,
+        shared_root,
+        arch=arch,
+        is_default_model=is_default_model,
+        lesson=lesson,
     )
-    patcher = patch("opentutor_classifier.find_features_dao")
+    _add_gql_response(config, lesson)
+    patcher = patch("opentutor_classifier.find_data_dao")
     try:
-        mock_find_features_dao = patcher.start()
-        mock_find_features_dao.return_value = _TestExpectationFeaturesDao(
-            config.data_root
+        mock_find_data_dao = patcher.start()
+        mock_find_data_dao.return_value = _TestDataDao(
+            FileDataDao(config.data_root), config
         )
-        _add_gql_response(config)
         yield config
     finally:
         patcher.stop()
 
 
-def train_classifier(config: _TestConfig) -> TrainingResult:
+def train_classifier(lesson: str, config: _TestConfig) -> TrainingResult:
     return train_data_root(
-        data_root=config.data_root,
+        data_root=path.join(config.data_root, lesson),
         config=TrainingConfig(shared_root=config.shared_root),
         opts=TrainingOptions(
             archive_root=config.archive_root,
@@ -263,7 +307,7 @@ def read_test_set_from_csv(csv_path: str, confidence_threshold=-1.0) -> _TestSet
     df = pd.read_csv(csv_path, header=0)
     df.fillna("", inplace=True)
     testset = _TestSet()
-    for i, row in df.iterrows():
+    for _, row in df.iterrows():
         testset.examples.append(
             _TestExample(
                 input=AnswerClassifierInput(expectation=row[0], input_sentence=row[1]),
@@ -305,15 +349,3 @@ def to_example_result(
             for e, o in zip(expected.expectations, observed.expectation_results)
         ],
     )
-
-
-class _TestExpectationFeaturesDao(FeaturesDao):
-    def __init__(self, tmp_data_root: str):
-        self.tmp_data_root = tmp_data_root
-
-    def save_features(self, req: FeaturesSaveRequest) -> None:
-        config_file = path.join(self.tmp_data_root, "config.yaml")
-        config = load_question_config(config_file)
-        for e in req.expectations:
-            config.expectations[e.expectation].features = e.features
-        config.write_to(config_file)

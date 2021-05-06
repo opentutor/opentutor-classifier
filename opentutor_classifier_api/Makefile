@@ -66,14 +66,17 @@ test: $(VENV)
 		&& coverage run \
 			--omit="$(PWD)/tests $(VENV)" \
 			-m py.test -vv $(args)
-			
+
+PHONY: test
+test-not-slow: $(VENV)
+	args="-m '(not slow)'" $(MAKE) test
+
 .PHONY: test-all
-test-all:
-	$(MAKE) test-format
-	$(MAKE) test-lint
-	$(MAKE) test-license
-	$(MAKE) test-types
-	$(MAKE) test
+test-all: test-format test-lint test-license test-types test
+
+.PHONY: test-all
+test-all-not-slow:
+	args="-m '(not slow)'" $(MAKE) test-all
 
 .PHONY: test-format
 test-format: $(VENV)

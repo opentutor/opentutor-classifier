@@ -42,13 +42,20 @@ test:
 	cd opentutor_classifier && $(MAKE) test
 	cd opentutor_classifier_api && $(MAKE) test
 
+.PHONY: test-not-slow
+test-not-slow:
+	cd opentutor_classifier && $(MAKE) test-not-slow
+	cd opentutor_classifier_api && $(MAKE) test-not-slow
+
 .PHONY: test-all
 test-all:
-	$(MAKE) test-format
-	$(MAKE) test-lint
-	$(MAKE) test-license
-	$(MAKE) test-types
-	$(MAKE) test
+	cd opentutor_classifier && $(MAKE) test-all
+	cd opentutor_classifier_api && $(MAKE) test-all
+
+.PHONY: test-all-not-slow
+test-all-not-slow:
+	cd opentutor_classifier && $(MAKE) test-all-not-slow
+	cd opentutor_classifier_api && $(MAKE) test-all-not-slow
 
 .PHONY: test-format
 test-format: $(VENV)

@@ -2,6 +2,7 @@ celery==5.0.5
 click==7.1.2
 gensim==3.8.3
 pandas==1.2.3
+python-dotenv>=0.17.1
 PyYAML==5.4.1
 nltk==3.5
 redis==3.5.3
