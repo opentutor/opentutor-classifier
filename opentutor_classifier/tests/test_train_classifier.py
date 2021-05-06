@@ -198,7 +198,7 @@ def test_outputs_models_at_specified_model_root_for_default_model(
                 ExpectationTrainingResult(accuracy=0.95),
             ],
             0.8,
-        )
+        ),
     ],
 )
 def test_train_and_predict(

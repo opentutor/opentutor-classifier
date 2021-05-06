@@ -128,11 +128,11 @@ def generate_feature_candidates(
     bad_answers: np.array,
     word2vec: Word2VecKeyedVectors,
     index2word_set,
-    ideal_answer: Tuple[str]
+    ideal_answer: Tuple[str],
 ):
-    max_len = max( 10, min( len(ideal_answer)+2, 20 ) )
 
     good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
+    # max_len = max(10, min(len(ideal_answer) + 2, 20))
     # good_answers = good_answers[
     #     np.vectorize(lambda x: len(x) < max_len)(good_answers)
     # ]
