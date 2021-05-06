@@ -28,8 +28,14 @@ def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
 
 
 def find_model_dir(model_name: str, model_roots: Iterable[str]) -> str:
+    from opentutor_classifier.log import logger
+
+    logger.warning(
+        f"\n\n\n find_model_dir model_roots={model_roots} model_name={model_name}"
+    )
     for m in model_roots:
         d = path.join(m, model_name)
+        logger.warning(f"path.isdir({d})...{path.isdir(d)}")
         if path.isdir(d):
             return d
     return ""

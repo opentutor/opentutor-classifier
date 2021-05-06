@@ -7,7 +7,6 @@
 from collections import defaultdict
 from datetime import datetime
 import json
-import logging
 from os import makedirs, path
 import pickle
 import shutil
@@ -70,7 +69,7 @@ def _preprocess_trainx(data):
 
 
 def _save(model_instances, filename):
-    logger.info(f"saving models to {filename}")
+    # logger.info(f"saving models to {filename}")
     pickle.dump(model_instances, open(filename, "wb"))
 
 
@@ -189,7 +188,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
         for i, exp_num in enumerate(train_data["exp_num"]):
             label = str(train_data["label"][i]).lower().strip()
             if label not in ["good", "bad"]:
-                logging.warning(
+                logger.warning(
                     f"ignoring training-data row {i} with invalid label {label}"
                 )
                 continue
@@ -258,7 +257,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
         QuestionConfig(question=question, expectations=conf_exps_out).write_to(
             path.join(tmp_save_dir, "config.yaml")
         )
-        output_dir = path.abspath(config.output_dir)
+        output_dir = path.abspath(path.join(config.output_dir, train_input.lesson))
         archive_path = _archive_if_exists(output_dir, config.archive_root)
         makedirs(path.dirname(output_dir), exist_ok=True)
         logger.debug(f"copying results from {tmp_save_dir} to {output_dir}")

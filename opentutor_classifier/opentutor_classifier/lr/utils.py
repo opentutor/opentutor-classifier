@@ -10,7 +10,8 @@ from typing import Dict, Iterable
 
 from sklearn import linear_model
 
-from opentutor_classifier.utils import find_model_dir, load_config
+import opentutor_classifier
+from opentutor_classifier.utils import find_model_dir
 from .dtos import InstanceModels
 
 
@@ -18,8 +19,15 @@ def load_models(
     model_name: str,
     model_roots: Iterable[str] = ["./models", "./models_deployed"],
     models_by_expectation_num_filename="models_by_expectation_num.pkl",
-    config_filename="config.yaml",
+    # config_filename="config.yaml",
 ) -> InstanceModels:
+    from opentutor_classifier.log import logger
+
+    config = opentutor_classifier.find_data_dao().find_config(model_name)
+
+    logger.warning(
+        f"\n\n\n\n\nfind_model_dir for model_name={model_name}, model_roots={model_roots}\n\n\n\n\n"
+    )
     model_dir = find_model_dir(model_name, model_roots)
     with open(
         path.join(model_dir, models_by_expectation_num_filename), "rb"
@@ -28,6 +36,7 @@ def load_models(
             int, linear_model.LogisticRegression
         ] = pickle.load(models_file)
         return InstanceModels(
-            config=load_config(path.join(model_dir, config_filename)),
+            # config=load_config(path.join(model_dir, config_filename)),
+            config=config,
             models_by_expectation_num=models_by_expectation_num,
         )

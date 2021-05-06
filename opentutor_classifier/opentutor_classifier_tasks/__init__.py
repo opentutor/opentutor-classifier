@@ -4,3 +4,41 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+import logging
+import os
+import sys
+
+from dotenv import load_dotenv
+
+load_dotenv(verbose=True, override=True, dotenv_path=os.path.join(os.getcwd(), ".env"))
+
+from celery import signals  # noqa E402
+from celery.utils.log import get_task_logger  # noqa E402
+
+dotenv_path = os.path.join(os.getcwd(), ".env")
+
+
+@signals.after_setup_logger.connect()
+def logger_setup_handler(logger: logging.Logger, **kwargs):
+    logger.addHandler(logging.StreamHandler(sys.stdout))
+
+
+@signals.task_retry.connect
+@signals.task_failure.connect
+@signals.task_revoked.connect
+def on_task_failure(**kwargs):
+    """Abort transaction on task errors."""
+    # celery exceptions will not be published to `sys.excepthook`. therefore we have to create another handler here.
+    from traceback import format_tb
+
+    get_task_logger(__name__).error(
+        "[task:%s:%s]"
+        % (
+            kwargs.get("task_id"),
+            kwargs["sender"].request.correlation_id,
+        )
+        + "\n"
+        + "".join(format_tb(kwargs.get("traceback", [])))
+        + "\n"
+        + str(kwargs.get("exception", ""))
+    )

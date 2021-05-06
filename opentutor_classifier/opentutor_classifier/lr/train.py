@@ -7,7 +7,6 @@
 from collections import defaultdict
 from datetime import datetime
 import json
-import logging
 from os import makedirs, path
 import pickle
 import shutil
@@ -22,10 +21,12 @@ from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
 from text_to_num import alpha2digit
 
+import opentutor_classifier
 from opentutor_classifier import (
     AnswerClassifierTraining,
-    ExpectationConfig,
+    ExpectationFeatures,
     ExpectationTrainingResult,
+    FeaturesSaveRequest,
     QuestionConfig,
     TrainingConfig,
     TrainingInput,
@@ -78,7 +79,7 @@ def _preprocess_trainx(data: List[str]) -> List[Tuple[Any, ...]]:
 
 
 def _save(model_instances, filename):
-    logger.info(f"saving models to {filename}")
+    # logger.info(f"saving models to {filename}")
     pickle.dump(model_instances, open(filename, "wb"))
 
 
@@ -177,6 +178,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def train(
         self, train_input: TrainingInput, config: TrainingOptions
     ) -> TrainingResult:
+        logger.info(f"train config={config}...")
         question = train_input.config.question or ""
         if not question:
             raise ValueError("config must have a 'question'")
@@ -196,7 +198,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         for i, exp_num in enumerate(train_data["exp_num"]):
             label = str(train_data["label"][i]).lower().strip()
             if label not in ["good", "bad"]:
-                logging.warning(
+                logger.warning(
                     f"ignoring training-data row {i} with invalid label {label}"
                 )
                 continue
@@ -207,7 +209,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
             split_training_sets[exp_num][1].append(label)
         index2word_set: set = set(self.word2vec.index2word)
-        conf_exps_out: List[ExpectationConfig] = []
+        expectation_generated_features: List[ExpectationFeatures] = []
         expectation_results: List[ExpectationTrainingResult] = []
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
         supergoodanswer = ""
@@ -235,18 +237,17 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
 
             pattern = select_feature_candidates(data, candidates)
-
-            conf_exps_out.append(
-                ExpectationConfig(
-                    ideal=train_input.config.get_expectation_ideal(exp_num)
-                    or " ".join(ideal_answer),
-                    features=(
-                        dict(
-                            good=good,
-                            bad=bad,
-                            patterns_good=pattern["good"],
-                            patterns_bad=pattern["bad"],
-                        )
+            # logger.warning(
+            #     f"ex[{len(expectation_generated_features)}] what is in pattern? {pattern}"
+            # )
+            expectation_generated_features.append(
+                ExpectationFeatures(
+                    expectation=len(expectation_generated_features),
+                    features=dict(
+                        good=good,
+                        bad=bad,
+                        patterns_good=pattern["good"],
+                        patterns_bad=pattern["bad"],
                     ),
                 )
             )
@@ -281,14 +282,18 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         _save(
             expectation_models, path.join(tmp_save_dir, "models_by_expectation_num.pkl")
         )
-        QuestionConfig(question=question, expectations=conf_exps_out).write_to(
-            path.join(tmp_save_dir, "config.yaml")
+        # logger.warning(f"lr train will save lesson {train_input.lesson}...")
+        opentutor_classifier.find_data_dao().save_features(
+            FeaturesSaveRequest(
+                lesson=train_input.lesson, expectations=expectation_generated_features
+            )
         )
-        output_dir = path.abspath(config.output_dir)
-        # logging.warning(f"{tmp_save_dir}   {output_dir}" )
+        output_dir = path.abspath(path.join(config.output_dir, train_input.lesson))
         archive_path = _archive_if_exists(output_dir, config.archive_root)
         makedirs(path.dirname(output_dir), exist_ok=True)
-        logger.debug(f"copying results from {tmp_save_dir} to {output_dir}")
+        logger.warning(
+            f"copying results for {train_input.lesson} from {tmp_save_dir} to {output_dir}"
+        )
         # can't use rename here because target is likely a network mount (e.g. S3 bucket)
         shutil.copytree(tmp_save_dir, output_dir)
         shutil.rmtree(tmp_save_dir)

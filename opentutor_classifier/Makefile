@@ -64,8 +64,19 @@ test: $(VENV)
 			--omit="$(PWD)/tests $(VENV)" \
 			-m py.test -vv $(args)
 
+PHONY: test
+test-not-slow: $(VENV)
+	args="-m '(not slow)'" $(MAKE) test
+
+
 .PHONY: test-all
-test-all: test-format test-lint test-types test-license test
+test-all: test-format test-lint test-types test-license
+	$(MAKE) test
+
+.PHONY: test-all
+test-all-not-slow:
+	args="-m '(not slow)'" $(MAKE) test-all
+
 
 .PHONY: test-format
 test-format: $(VENV)

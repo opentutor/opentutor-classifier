@@ -6,8 +6,8 @@
 #
 import responses
 
+import opentutor_classifier
 from opentutor_classifier import (
-    find_features_dao,
     FeaturesSaveRequest,
     ExpectationFeatures,
 )
@@ -28,4 +28,4 @@ def test_saves_features_to_gql():
         json=update_features_gql(req),
         status=200,
     )
-    find_features_dao().save_features(req)
+    opentutor_classifier.find_data_dao().save_features(req)

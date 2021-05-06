@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import click
 import os
+import sys
 from opentutor_classifier import TrainingConfig, TrainingOptions
 from opentutor_classifier.training import train_data_root, train_default
 from opentutor_classifier.sync import sync as _sync
@@ -21,9 +22,11 @@ def train(data: str, shared: str, output: str):
         config=TrainingConfig(shared_root=shared),
         opts=TrainingOptions(output_dir=output),
     )
-    print("Models are saved at: " + output)
+    print(f"Models are saved at: {result.models}", file=sys.stdout)
     for exp_num, exp_result in enumerate(result.expectations):
-        print(f"Accuracy for model={exp_num} is {exp_result.accuracy}.")
+        print(
+            f"Accuracy for model={exp_num} is {exp_result.accuracy}.", file=sys.stdout
+        )
 
 
 @cli.command()

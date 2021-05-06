@@ -267,6 +267,10 @@ class LRAnswerClassifier(AnswerClassifier):
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = preprocess_sentence(answer.input_sentence)
         conf = answer.config_data or self.config()
+        # from opentutor_classifier.log import logger
+
+        # logger.warning(f"on evaluate, what is config?")
+        # logger.warning(conf.to_dict())
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
