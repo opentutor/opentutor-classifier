@@ -19,7 +19,6 @@ def load_models(
     model_name: str,
     model_roots: Iterable[str] = ["./models", "./models_deployed"],
     models_by_expectation_num_filename="models_by_expectation_num.pkl",
-    # config_filename="config.yaml",
 ) -> InstanceModels:
     config = opentutor_classifier.find_data_dao().find_config(model_name)
     model_dir = find_model_dir(model_name, model_roots)
@@ -30,7 +29,6 @@ def load_models(
             int, linear_model.LogisticRegression
         ] = pickle.load(models_file)
         return InstanceModels(
-            # config=load_config(path.join(model_dir, config_filename)),
             config=config,
             models_by_expectation_num=models_by_expectation_num,
         )
