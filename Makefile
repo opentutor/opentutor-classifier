@@ -73,7 +73,7 @@ test-license: LICENSE LICENSE_HEADER
 test-types: $(VENV)
 	. $(VENV)/bin/activate \
 		&& mypy opentutor_classifier \
-		&& mypy opentutor_classifier_api \
+		&& mypy opentutor_classifier_api  \
 		&& mypy word2vec
 
 virtualenv-installed:

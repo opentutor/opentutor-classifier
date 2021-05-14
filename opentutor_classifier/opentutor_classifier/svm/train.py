@@ -5,12 +5,10 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from collections import defaultdict
-from datetime import datetime
+
 import json
-from os import makedirs, path
-import pickle
-import shutil
-import tempfile
+from os import path
+
 from typing import Dict, List
 
 from nltk import pos_tag
@@ -22,37 +20,26 @@ from sklearn import model_selection, svm
 from sklearn.model_selection import LeaveOneOut
 
 from opentutor_classifier import (
+    ARCH_SVM_CLASSIFIER,
+    ArchLesson,
+    DefaultModelSaveReq,
     AnswerClassifierTraining,
-    ExpectationConfig,
     ExpectationTrainingResult,
-    QuestionConfig,
+    ModelSaveReq,
+    QuestionConfigSaveReq,
     TrainingConfig,
     TrainingInput,
-    TrainingOptions,
     TrainingResult,
 )
+from opentutor_classifier import DataDao
 from opentutor_classifier.log import logger
 from opentutor_classifier.stopwords import STOPWORDS
+from .constants import MODEL_FILE_NAME
 from .predict import (  # noqa: F401
     preprocess_sentence,
-    SVMAnswerClassifier,
     SVMExpectationClassifier,
 )
-from opentutor_classifier.utils import load_data
 from opentutor_classifier.word2vec import find_or_load_word2vec
-
-
-def _archive_if_exists(p: str, archive_root: str) -> str:
-    if not path.exists(p):
-        return ""
-    makedirs(archive_root, exist_ok=True)
-    archive_path = path.join(
-        archive_root, f"{path.basename(p)}-{datetime.now().strftime('%Y%m%dT%H%M%S')}"
-    )
-    # can't use rename here because target is likely a network mount (e.g. S3 bucket)
-    shutil.copytree(p, archive_path)
-    shutil.rmtree(p)
-    return archive_path
 
 
 def _preprocess_trainx(data):
@@ -68,10 +55,6 @@ def _preprocess_trainx(data):
     return pre_processed_dataset
 
 
-def _save(model_instances, filename):
-    pickle.dump(model_instances, open(filename, "wb"))
-
-
 class SVMAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
         self.model_obj = SVMExpectationClassifier()
@@ -83,17 +66,9 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
         )
         return self
 
-    def _train_default(
-        self,
-        training_data: pd.DataFrame,
-        config: TrainingConfig = None,
-        opts: TrainingOptions = None,
-    ) -> TrainingResult:
-
+    def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         model = self.model_obj.initialize_model()
-        index2word_set = set(self.word2vec.index2word)
-        output_dir = path.abspath((opts or TrainingOptions()).output_dir)
-        makedirs(output_dir, exist_ok=True)
+        index2word_set = set(self.word2vec.index_to_key)
         expectation_models: Dict[int, svm.SVC] = {}
 
         def process_features(features, input_sentence, index2word_set):
@@ -114,60 +89,35 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
             return features_list
 
         all_features = list(
-            training_data.apply(
+            data.apply(
                 lambda row: process_features(
                     json.loads(row["exp_data"]), row["text"], index2word_set
                 ),
                 axis=1,
             )
         )
-        train_y = np.array(self.model_obj.encode_y(training_data["label"]))
+        train_y = np.array(self.model_obj.encode_y(data["label"]))
         model.fit(all_features, train_y)
         results_loocv = model_selection.cross_val_score(
             model, all_features, train_y, cv=LeaveOneOut(), scoring="accuracy"
         )
         accuracy = results_loocv.mean()
-        expectation_models[training_data["exp_num"].iloc[0]] = model
-        _save(
-            expectation_models, path.join(output_dir, "models_by_expectation_num.pkl")
+        expectation_models[data["exp_num"].iloc[0]] = model
+        dao.save_default_pickle(
+            DefaultModelSaveReq(
+                arch=ARCH_SVM_CLASSIFIER,
+                filename=MODEL_FILE_NAME,
+                model=expectation_models,
+            )
         )
         # need to write config for default even though it's empty
         # or will get errors later on attempt to load
-        QuestionConfig(question="").write_to(path.join(output_dir, "config.yaml"))
-        return TrainingResult(
-            lesson="default",
-            expectations=[ExpectationTrainingResult(accuracy=accuracy)],
-            models=output_dir,
-            archive="",
+        # QuestionConfig(question="").write_to(path.join(output_dir, "config.yaml"))
+        return dao.create_default_training_result(
+            ARCH_SVM_CLASSIFIER, ExpectationTrainingResult(accuracy=accuracy)
         )
 
-    def train_default(
-        self,
-        data_root: str = "data",
-        config: TrainingConfig = None,
-        opts: TrainingOptions = None,
-    ) -> TrainingResult:
-        try:
-            training_data = load_data(path.join(data_root, "default", "training.csv"))
-        except Exception:
-            training_data = self.model_obj.combine_dataset(data_root)
-        return self._train_default(
-            training_data=training_data, config=config, opts=opts
-        )
-
-    def train_default_online(
-        self,
-        train_input: TrainingInput,
-        config: TrainingConfig = None,
-        opts: TrainingOptions = None,
-    ) -> TrainingResult:
-        return self._train_default(
-            training_data=train_input.data, config=config, opts=opts
-        )
-
-    def train(
-        self, train_input: TrainingInput, config: TrainingOptions
-    ) -> TrainingResult:
+    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
         question = train_input.config.question or ""
         if not question:
             raise ValueError("config must have a 'question'")
@@ -180,9 +130,8 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
                 ],
                 columns=["exp_num", "text", "label"],
             ).append(train_input.data, ignore_index=True)
-            if config.add_ideal_answers_to_training_data
-            else train_input.data
         ).sort_values(by=["exp_num"], ignore_index=True)
+        config_updated = train_input.config.clone()
         split_training_sets: dict = defaultdict(int)
         for i, exp_num in enumerate(train_data["exp_num"]):
             label = str(train_data["label"][i]).lower().strip()
@@ -197,8 +146,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
                 str(train_data["text"][i]).lower().strip()
             )
             split_training_sets[exp_num][1].append(label)
-        index2word_set: set = set(self.word2vec.index2word)
-        conf_exps_out: List[ExpectationConfig] = []
+        index2word_set: set = set(self.word2vec.index_to_key)
         expectation_results: List[ExpectationTrainingResult] = []
         expectation_models: Dict[int, svm.SVC] = {}
         supergoodanswer = ""
@@ -217,13 +165,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
             ideal_answer = self.model_obj.initialize_ideal_answer(processed_data)
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
-            conf_exps_out.append(
-                ExpectationConfig(
-                    ideal=train_input.config.get_expectation_ideal(exp_num)
-                    or " ".join(ideal_answer),
-                    features=(dict(good=good, bad=bad)),
-                )
-            )
+            config_updated.expectations[exp_num].features = dict(good=good, bad=bad)
             features = [
                 np.array(
                     self.model_obj.calculate_features(
@@ -249,22 +191,25 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
                 ExpectationTrainingResult(accuracy=results_loocv.mean())
             )
             expectation_models[exp_num] = model
-        tmp_save_dir = tempfile.mkdtemp()
-        _save(
-            expectation_models, path.join(tmp_save_dir, "models_by_expectation_num.pkl")
+        dao.save_config(
+            QuestionConfigSaveReq(
+                arch=ARCH_SVM_CLASSIFIER,
+                lesson=train_input.lesson,
+                config=config_updated,
+            )
         )
-        QuestionConfig(question=question, expectations=conf_exps_out).write_to(
-            path.join(tmp_save_dir, "config.yaml")
+        dao.save_pickle(
+            ModelSaveReq(
+                arch=ARCH_SVM_CLASSIFIER,
+                lesson=train_input.lesson,
+                filename="models_by_expectation_num.pkl",
+                model=expectation_models,
+            )
         )
-        output_dir = path.abspath(path.join(config.output_dir, train_input.lesson))
-        archive_path = _archive_if_exists(output_dir, config.archive_root)
-        makedirs(path.dirname(output_dir), exist_ok=True)
-        # can't use rename here because target is likely a network mount (e.g. S3 bucket)
-        shutil.copytree(tmp_save_dir, output_dir)
-        shutil.rmtree(tmp_save_dir)
         return TrainingResult(
-            archive=archive_path,
             expectations=expectation_results,
             lesson=train_input.lesson,
-            models=output_dir,
+            models=dao.get_model_root(
+                ArchLesson(arch=ARCH_SVM_CLASSIFIER, lesson=train_input.lesson)
+            ),
         )

@@ -2,8 +2,8 @@
 import click
 import os
 import sys
-from opentutor_classifier import TrainingConfig, TrainingOptions
-from opentutor_classifier.training import train_data_root, train_default
+from opentutor_classifier import TrainingConfig
+from opentutor_classifier.training import train_data_root, train_default_data_root
 from opentutor_classifier.sync import sync as _sync
 
 
@@ -18,9 +18,7 @@ def cli():
 @click.option("-o", "--output", required=False, type=click.Path(exists=False))
 def train(data: str, shared: str, output: str):
     result = train_data_root(
-        data_root=data,
-        config=TrainingConfig(shared_root=shared),
-        opts=TrainingOptions(output_dir=output),
+        data_root=data, config=TrainingConfig(shared_root=shared), output_dir=output
     )
     print(f"Models are saved at: {result.models}", file=sys.stdout)
     for exp_num, exp_result in enumerate(result.expectations):
@@ -34,10 +32,8 @@ def train(data: str, shared: str, output: str):
 @click.option("-s", "--shared", required=False, type=click.Path(exists=True))
 @click.option("-o", "--output", required=False, type=click.Path(exists=False))
 def traindefault(data: str, shared: str, output: str):
-    training = train_default(
-        data_root=data,
-        config=TrainingConfig(shared_root=shared),
-        opts=TrainingOptions(output_dir=output),
+    training = train_default_data_root(
+        data_root=data, shared_root=shared, output_dir=output
     )
     accuracy = training.default_train_all(data_root=data, output_dir=output)
     print("Models are saved at: " + output)

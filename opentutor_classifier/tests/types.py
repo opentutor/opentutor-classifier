@@ -23,8 +23,8 @@ class ComparisonType(Enum):
 
 @dataclass
 class _TestConfig:
-    archive_root: str
     data_root: str
+    deployed_models: str
     output_dir: str
     shared_root: str
     arch: str = ""
