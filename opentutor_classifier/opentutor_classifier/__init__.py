@@ -215,12 +215,6 @@ class ArchClassifierFactory(ABC):
 _factories_by_arch: Dict[str, ArchClassifierFactory] = {}
 
 
-def find_features_dao() -> FeaturesDao:
-    from opentutor_classifier.api import GqlFeaturesDao
-
-    return GqlFeaturesDao()
-
-
 def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
     _factories_by_arch[arch] = fac
 

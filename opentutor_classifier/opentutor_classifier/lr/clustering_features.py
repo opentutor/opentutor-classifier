@@ -130,15 +130,7 @@ def generate_feature_candidates(
     index2word_set,
     ideal_answer: Tuple[str],
 ):
-
     good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
-    # max_len = max(10, min(len(ideal_answer) + 2, 20))
-    # good_answers = good_answers[
-    #     np.vectorize(lambda x: len(x) < max_len)(good_answers)
-    # ]
-    # bad_answers = bad_answers[
-    #     np.vectorize(lambda x: len(x) < max_len)(bad_answers)
-    # ]
     good_labels, bad_labels = get_clusters(
         good_answers, bad_answers, word2vec, index2word_set
     )
