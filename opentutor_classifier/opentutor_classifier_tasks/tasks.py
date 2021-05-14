@@ -7,9 +7,11 @@
 import os
 
 from celery import Celery
+from celery.utils.log import get_task_logger
 
 from opentutor_classifier import TrainingConfig, TrainingOptions
 from opentutor_classifier.training import train_online, train_default_online
+
 
 config = {
     "broker_url": os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0"),
@@ -29,20 +31,27 @@ SHARED_ROOT = os.environ.get("SHARED_ROOT") or "shared"
 
 @celery.task()
 def train_task(lesson: str) -> dict:
-    return train_online(
-        lesson,
-        TrainingConfig(shared_root=SHARED_ROOT),
-        TrainingOptions(
-            archive_root=ARCHIVE_ROOT, output_dir=os.path.join(OUTPUT_ROOT, lesson)
-        ),
-    ).to_dict()
+    try:
+        return train_online(
+            lesson,
+            TrainingConfig(shared_root=SHARED_ROOT),
+            TrainingOptions(archive_root=ARCHIVE_ROOT, output_dir=OUTPUT_ROOT),
+        ).to_dict()
+    except BaseException as ex:
+        get_task_logger(__name__).exception(ex)
+        raise ex
 
 
 @celery.task()
 def train_default_task() -> dict:
-    return train_default_online(
-        config=TrainingConfig(shared_root=SHARED_ROOT),
-        opts=TrainingOptions(
-            archive_root=ARCHIVE_ROOT, output_dir=os.path.join(OUTPUT_ROOT, "default")
-        ),
-    ).to_dict()
+    try:
+        return train_default_online(
+            config=TrainingConfig(shared_root=SHARED_ROOT),
+            opts=TrainingOptions(
+                archive_root=ARCHIVE_ROOT,
+                output_dir=os.path.join(OUTPUT_ROOT, "default"),
+            ),
+        ).to_dict()
+    except BaseException as ex:
+        get_task_logger(__name__).exception(ex)
+        raise ex

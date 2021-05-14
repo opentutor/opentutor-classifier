@@ -1,34 +1,38 @@
 from os import path
 
+import opentutor_classifier
 from . import (
     ClassifierFactory,
-    QuestionConfig,
+    DataDao,
     TrainingConfig,
-    TrainingInput,
     TrainingOptions,
     TrainingResult,
 )
-from .api import fetch_training_data, fetch_all_training_data
-from .utils import load_data, load_yaml
+from .api import FileDataDao, fetch_all_training_data
+
+
+def train(
+    dao: DataDao,
+    lesson: str,
+    config: TrainingConfig = None,
+    opts: TrainingOptions = None,
+    arch="",
+) -> TrainingResult:
+    data = dao.find_training_input(lesson)
+    fac = ClassifierFactory()
+    training = fac.new_training(config or TrainingConfig(), arch=arch)
+    res = training.train(data, opts or TrainingOptions())
+    return res
 
 
 def train_data_root(
-    data_root="data",
     arch="",
     config: TrainingConfig = None,
+    data_root="data",
     opts: TrainingOptions = None,
-):
-    return (
-        ClassifierFactory()
-        .new_training(config or TrainingConfig(), arch=arch)
-        .train(
-            TrainingInput(
-                config=QuestionConfig(**load_yaml(path.join(data_root, "config.yaml"))),
-                data=load_data(path.join(data_root, "training.csv")),
-            ),
-            opts or TrainingOptions(),
-        )
-    )
+) -> TrainingResult:
+    droot, lesson = path.split(path.abspath(data_root))
+    return train(FileDataDao(droot), lesson, config=config, opts=opts, arch=arch)
 
 
 def train_default(
@@ -51,13 +55,12 @@ def train_online(
     arch="",
     fetch_training_data_url="",
 ) -> TrainingResult:
-    return (
-        ClassifierFactory()
-        .new_training(config, arch=arch)
-        .train(
-            fetch_training_data(lesson, url=fetch_training_data_url),
-            opts,
-        )
+    return train(
+        opentutor_classifier.find_data_dao(),
+        lesson,
+        config=config,
+        opts=opts,
+        arch=arch,
     )
 
 

@@ -4,6 +4,10 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from opentutor_classifier_api import create_app
+import os
+from dotenv import load_dotenv
+
+load_dotenv(verbose=True, override=True, dotenv_path=os.path.join(os.getcwd(), ".env"))
+from opentutor_classifier_api import create_app  # noqa E402
 
 app = create_app()

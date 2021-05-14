@@ -13,9 +13,8 @@ from opentutor_classifier import (
     TrainingConfig,
     register_classifier_factory,
 )
-from .predict import LRAnswerClassifier, LRExpectationClassifier  # noqa: F401
-from opentutor_classifier.word2vec import find_or_load_word2vec  # noqa: F401
-from .train import LRAnswerClassifierTraining  # noqa: F401
+from .predict import LRAnswerClassifier
+from .train import LRAnswerClassifierTraining
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):

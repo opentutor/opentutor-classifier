@@ -7,7 +7,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, asdict
 from importlib import import_module
-from os import environ
+from os import environ, makedirs, path
 import pandas as pd
 from typing import Any, Dict, List, Optional
 import yaml
@@ -59,6 +59,7 @@ class QuestionConfig:
         return asdict(self)
 
     def write_to(self, file_path: str):
+        makedirs(path.basename(path.abspath(file_path)), exist_ok=True)
         with open(file_path, "w") as config_file:
             yaml.safe_dump(self.to_dict(), config_file)
 
@@ -114,21 +115,6 @@ class ExpectationFeatures:
 
     def to_dict(self) -> dict:
         return asdict(self)
-
-
-@dataclass
-class FeaturesSaveRequest:
-    lesson: str
-    expectations: List[ExpectationFeatures] = field(default_factory=list)
-
-    def to_dict(self) -> dict:
-        return asdict(self)
-
-
-class FeaturesDao(ABC):
-    @abstractmethod
-    def save_features(self, req: FeaturesSaveRequest) -> None:
-        raise NotImplementedError()
 
 
 @dataclass
@@ -229,12 +215,6 @@ class ArchClassifierFactory(ABC):
 _factories_by_arch: Dict[str, ArchClassifierFactory] = {}
 
 
-def find_features_dao() -> FeaturesDao:
-    from opentutor_classifier.api import GqlFeaturesDao
-
-    return GqlFeaturesDao()
-
-
 def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
     _factories_by_arch[arch] = fac
 
@@ -244,9 +224,13 @@ ARCH_LR_CLASSIFIER = "opentutor_classifier.lr"
 ARCH_DEFAULT = "opentutor_classifier.svm"
 
 
+def get_classifier_arch() -> str:
+    return environ.get("CLASSIFIER_ARCH") or ARCH_DEFAULT
+
+
 class ClassifierFactory:
     def _find_arch_fac(self, arch: str) -> ArchClassifierFactory:
-        arch = arch or environ.get("CLASSIFIER_ARCH") or ARCH_DEFAULT
+        arch = arch or get_classifier_arch()
         if arch not in _factories_by_arch:
             import_module(arch)
         f = _factories_by_arch[arch]
@@ -262,3 +246,32 @@ class ClassifierFactory:
 
     def new_training(self, config: TrainingConfig, arch="") -> AnswerClassifierTraining:
         return self._find_arch_fac(arch).new_training(config)
+
+
+@dataclass
+class FeaturesSaveRequest:
+    lesson: str
+    expectations: List[ExpectationFeatures] = field(default_factory=list)
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+class DataDao(ABC):
+    @abstractmethod
+    def find_config(self, lesson: str) -> QuestionConfig:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def find_training_input(self, lesson: str) -> TrainingInput:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def save_features(self, req: FeaturesSaveRequest) -> None:
+        raise NotImplementedError()
+
+
+def find_data_dao() -> DataDao:
+    from opentutor_classifier.api import GqlDataDao
+
+    return GqlDataDao()
