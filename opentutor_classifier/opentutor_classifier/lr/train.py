@@ -231,6 +231,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 np.array(processed_data)[np.array(train_y) == "bad"],
                 self.word2vec,
                 index2word_set,
+                ideal_answer,
             )
             pattern = select_feature_candidates(data, candidates)
             expectation_generated_features.append(

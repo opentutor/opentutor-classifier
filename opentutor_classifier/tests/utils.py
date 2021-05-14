@@ -24,6 +24,8 @@ from opentutor_classifier import (
     ClassifierConfig,
     DataDao,
     ExpectationClassifierResult,
+    FeaturesDao,
+    FeaturesSaveRequest,
     ExpectationTrainingResult,
     FeaturesSaveRequest,
     QuestionConfig,
@@ -31,6 +33,7 @@ from opentutor_classifier import (
     TrainingInput,
     TrainingOptions,
     TrainingResult,
+    load_question_config,
 )
 from opentutor_classifier.training import train_data_root, train_default
 from opentutor_classifier.api import FileDataDao, get_graphql_endpoint
