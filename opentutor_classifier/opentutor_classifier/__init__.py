@@ -224,9 +224,13 @@ ARCH_LR_CLASSIFIER = "opentutor_classifier.lr"
 ARCH_DEFAULT = "opentutor_classifier.svm"
 
 
+def get_classifier_arch() -> str:
+    return environ.get("CLASSIFIER_ARCH") or ARCH_DEFAULT
+
+
 class ClassifierFactory:
     def _find_arch_fac(self, arch: str) -> ArchClassifierFactory:
-        arch = arch or environ.get("CLASSIFIER_ARCH") or ARCH_DEFAULT
+        arch = arch or get_classifier_arch()
         if arch not in _factories_by_arch:
             import_module(arch)
         f = _factories_by_arch[arch]

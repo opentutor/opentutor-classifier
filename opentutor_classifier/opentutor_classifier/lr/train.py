@@ -35,9 +35,8 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.log import logger
 from opentutor_classifier.stopwords import STOPWORDS
-from .predict import (  # noqa: F401
+from .predict import (
     preprocess_sentence,
-    LRAnswerClassifier,
     LRExpectationClassifier,
     preprocess_punctuations,
 )
