@@ -25,7 +25,7 @@ class CustomAgglomerativeClustering:
             self.index2word_set,
         )
 
-    def fit_predict(self, data):
+    def fit_predict(self, data: np.ndarray):
         self.data = data
         x = np.arange(len(self.data)).reshape(-1, 1)
 
@@ -194,5 +194,6 @@ def select_feature_candidates(
         useful_features[label] = list(
             set([item for i, item in enumerate(patterns) if one_fpr[i] > fpr_cuttoff])
         )
+        useful_features[label].sort()
 
     return useful_features
