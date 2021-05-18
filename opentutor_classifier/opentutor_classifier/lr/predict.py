@@ -46,9 +46,7 @@ def _confidence_score(
     return model.predict_proba(sentence)[0, 1]
 
 
-word_mapper = {
-    "n't": "not",
-}
+word_mapper = {"n't": "not", "'s": ""}
 
 
 def preprocess_punctuations(sentence: str) -> str:

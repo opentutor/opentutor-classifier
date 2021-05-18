@@ -234,6 +234,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 ideal_answer,
             )
             pattern = select_feature_candidates(data, candidates)
+            print(pattern)
             expectation_generated_features.append(
                 ExpectationFeatures(
                     expectation=len(expectation_generated_features),

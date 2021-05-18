@@ -177,7 +177,7 @@ def generate_feature_candidates(
 def select_feature_candidates(
     data: pd.DataFrame, candidates: Dict[str, List[str]], fpr_cuttoff: float = 0.98
 ) -> Dict[str, List[str]]:
-    useful_features = dict()
+    useful_features: Dict[str, List[str]] = dict()
     for label in ("good", "bad"):
         good, bad, patterns = [], [], []
         for candidate in candidates[label]:
@@ -191,9 +191,26 @@ def select_feature_candidates(
         else:
             one_fpr = 1 - (good / np.sum(data["[LABELS]"]))
 
-        useful_features[label] = list(
-            set([item for i, item in enumerate(patterns) if one_fpr[i] > fpr_cuttoff])
-        )
+        patterns_with_fpr = list(zip(patterns, one_fpr))
+        patterns_with_fpr.sort()
+        # ignores bigger pattern if indivudal words in pattern have higher (1-fpr)
+        useful_features[label] = []
+        fpr_store: Dict[str, int] = dict()
+        for pattern, fpr in patterns_with_fpr:
+            if fpr < fpr_cuttoff:
+                continue
+            ok = True
+            for word in pattern.split("+"):
+                word = word.strip()
+                if fpr_store.get(word, float("-inf")) >= fpr:
+                    ok = False
+            fpr_store[pattern] = fpr
+            if ok:
+                useful_features[label].append(pattern)
+
+        # useful_features[label] = list(
+        #     set([item for i, item in enumerate(patterns) if one_fpr[i] > fpr_cuttoff])
+        # )
         useful_features[label].sort()
 
     return useful_features
