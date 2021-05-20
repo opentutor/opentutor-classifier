@@ -9,37 +9,43 @@ from distutils.dir_util import copy_tree
 import logging
 from pathlib import Path
 from os import path
-from typing import List, Tuple
+from typing import Any, List
 from unittest.mock import patch
 
 import pandas as pd
 import pytest
 import responses
 
+from opentutor_classifier.training import train_default_data_root
+
 
 from opentutor_classifier import (
     AnswerClassifierInput,
     AnswerClassifierResult,
+    ArchLesson,
     ClassifierFactory,
     ClassifierConfig,
-    DataDao,
     ExpectationClassifierResult,
     ExpectationTrainingResult,
-    FeaturesSaveRequest,
     QuestionConfig,
+    QuestionConfigSaveReq,
+    ModelRef,
+    ModelSaveReq,
     TrainingConfig,
     TrainingInput,
-    TrainingOptions,
     TrainingResult,
 )
-from opentutor_classifier.training import train_data_root, train_default
-from opentutor_classifier.api import FileDataDao, get_graphql_endpoint
+from opentutor_classifier.training import train_data_root
+from opentutor_classifier.api import get_graphql_endpoint
 from opentutor_classifier.config import (
     LABEL_BAD,
     LABEL_GOOD,
     LABEL_NEUTRAL,
     confidence_threshold_default,
 )
+from opentutor_classifier import DataDao
+import opentutor_classifier.dao
+from opentutor_classifier.dao import FileDataDao
 from .types import (
     ComparisonType,
     _TestConfig,
@@ -108,7 +114,10 @@ def run_classifier_tests(
 ):
     classifier = ClassifierFactory().new_classifier(
         ClassifierConfig(
-            model_name=lesson, model_roots=[model_root], shared_root=shared_root
+            dao=opentutor_classifier.dao.find_data_dao(),
+            model_name=lesson,
+            model_roots=[model_root],
+            shared_root=shared_root,
         ),
         arch=arch,
     )
@@ -122,7 +131,10 @@ def run_classifier_testset(
     model_root, model_name = path.split(model_path)
     classifier = ClassifierFactory().new_classifier(
         ClassifierConfig(
-            model_name=model_name, model_roots=[model_root], shared_root=shared_root
+            dao=opentutor_classifier.dao.find_data_dao(),
+            model_name=model_name,
+            model_roots=[model_root],
+            shared_root=shared_root,
         ),
         arch=arch,
     )
@@ -173,8 +185,12 @@ def fixture_path(p: str) -> str:
     return path.abspath(path.join(".", "tests", "fixtures", p))
 
 
+def example_data_path(example: str) -> str:
+    return fixture_path(path.join("data", example))
+
+
 def example_testset_path(example: str, testset_name="test.csv") -> str:
-    return fixture_path(path.join("data", example, testset_name))
+    return path.join(example_data_path(example), testset_name)
 
 
 def copy_test_env_to_tmp(
@@ -182,14 +198,15 @@ def copy_test_env_to_tmp(
     data_root: str,
     shared_root: str,
     arch="",
+    deployed_models="",
     lesson="",
     is_default_model: bool = False,
 ) -> _TestConfig:
     testdir = tmpdir.mkdir("test")
     config = _TestConfig(
         arch=arch,
-        archive_root=path.join(testdir, "archive"),
         data_root=path.join(testdir, "data"),
+        deployed_models=deployed_models or fixture_path("models_deployed"),
         is_default_model=is_default_model,
         output_dir=path.join(
             testdir, "model_root", path.basename(path.normpath(data_root))
@@ -200,12 +217,10 @@ def copy_test_env_to_tmp(
     return config
 
 
-def _add_gql_response(config: _TestConfig, lesson: str):
-    cfile = Path(path.join(config.data_root, lesson, "config.yaml"))
-    dfile = Path(path.join(config.data_root, lesson, "training.csv"))
-    training_data_prop = (
-        "allTrainingData" if config.is_default_model else "trainingData"
-    )
+def mock_gql_response(lesson: str, data_root: str, is_default_model=False):
+    cfile = Path(path.join(data_root, lesson, "config.yaml"))
+    dfile = Path(path.join(data_root, lesson, "training.csv"))
+    training_data_prop = "allTrainingData" if is_default_model else "trainingData"
     res = {
         "data": {
             "me": {
@@ -223,23 +238,82 @@ class _TestDataDao(DataDao):
     """
     Wrapper DataDao for tests.
     We need this because if the underlying DataDao is Gql,
-    then after DataDao::save_features is called,
+    then after DataDao::save_config is called,
     we need to add a new mocked graphql response with the updated features
     """
 
-    def __init__(self, dao: FileDataDao, config: _TestConfig):
+    def __init__(self, dao: FileDataDao, is_default_model=False):
         self.dao = dao
-        self.config = config
+        self.is_default_model = is_default_model
 
-    def find_config(self, lesson: str) -> QuestionConfig:
-        return self.dao.find_config(lesson)
+    @property
+    def data_root(self) -> str:
+        return self.dao.data_root
+
+    @property
+    def model_root(self) -> str:
+        return self.dao.model_root
+
+    def get_model_root(self, lesson: ArchLesson) -> str:
+        return self.dao.get_model_root(lesson)
+
+    def find_default_training_data(self) -> pd.DataFrame:
+        return self.dao.find_default_training_data()
+
+    def find_prediction_config(self, lesson: ArchLesson) -> QuestionConfig:
+        return self.dao.find_prediction_config(lesson)
+
+    def find_training_config(self, lesson: str) -> QuestionConfig:
+        return self.dao.find_training_config(lesson)
 
     def find_training_input(self, lesson: str) -> TrainingInput:
         return self.dao.find_training_input(lesson)
 
-    def save_features(self, req: FeaturesSaveRequest) -> None:
-        self.dao.save_features(req)
-        _add_gql_response(self.config, req.lesson)
+    def load_pickle(self, ref: ModelRef) -> Any:
+        return self.dao.load_pickle(ref)
+
+    def trained_model_exists(self, ref: ModelRef) -> bool:
+        return self.dao.trained_model_exists(ref)
+
+    def save_config(self, req: QuestionConfigSaveReq) -> None:
+        self.dao.save_config(req)
+        mock_gql_response(
+            req.lesson,
+            self.dao.data_root,
+            is_default_model=self.is_default_model,
+        )
+
+    def save_pickle(self, req: ModelSaveReq) -> None:
+        self.dao.save_pickle(req)
+
+
+@contextmanager
+def mocked_data_dao(
+    lesson: str,
+    data_root: str,
+    model_root: str,
+    deployed_model_root: str,
+    is_default_model=False,
+):
+    patcher = patch("opentutor_classifier.dao.find_data_dao")
+    try:
+        mock_gql_response(
+            lesson,
+            data_root,
+            is_default_model=is_default_model,
+        )
+        mock_find_data_dao = patcher.start()
+        mock_find_data_dao.return_value = _TestDataDao(
+            FileDataDao(
+                data_root,
+                model_root=model_root,
+                deployed_model_root=deployed_model_root,
+            ),
+            is_default_model,
+        )
+        yield None
+    finally:
+        patcher.stop()
 
 
 @contextmanager
@@ -259,12 +333,17 @@ def test_env_isolated(
         is_default_model=is_default_model,
         lesson=lesson,
     )
-    _add_gql_response(config, lesson)
-    patcher = patch("opentutor_classifier.find_data_dao")
+    mock_gql_response(
+        lesson,
+        config.data_root,
+        is_default_model=config.is_default_model,
+    )
+    patcher = patch("opentutor_classifier.dao.find_data_dao")
     try:
         mock_find_data_dao = patcher.start()
         mock_find_data_dao.return_value = _TestDataDao(
-            FileDataDao(config.data_root), config
+            FileDataDao(config.data_root, model_root=config.output_dir),
+            config.is_default_model,
         )
         yield config
     finally:
@@ -275,27 +354,18 @@ def train_classifier(lesson: str, config: _TestConfig) -> TrainingResult:
     return train_data_root(
         data_root=path.join(config.data_root, lesson),
         config=TrainingConfig(shared_root=config.shared_root),
-        opts=TrainingOptions(
-            archive_root=config.archive_root,
-            output_dir=config.output_dir,
-        ),
+        output_dir=config.output_dir,
         arch=config.arch,
     )
 
 
-def train_default_model(
-    tmpdir, data_root: str, shared_root: str, arch=""
-) -> Tuple[str, TrainingResult]:
-    output_dir = path.join(
-        tmpdir.mkdir("test"), "model_root", path.basename(path.normpath(data_root))
+def train_default_classifier(config: _TestConfig) -> TrainingResult:
+    return train_default_data_root(
+        data_root=path.join(config.data_root, "default"),
+        config=TrainingConfig(shared_root=config.shared_root),
+        output_dir=config.output_dir,
+        arch=config.arch,
     )
-    result = train_default(
-        data_root=data_root,
-        arch=arch,
-        config=TrainingConfig(shared_root=shared_root),
-        opts=TrainingOptions(output_dir=output_dir),
-    )
-    return output_dir, result
 
 
 def read_test_set_from_csv(csv_path: str, confidence_threshold=-1.0) -> _TestSet:

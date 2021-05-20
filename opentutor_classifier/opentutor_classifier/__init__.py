@@ -39,6 +39,9 @@ class QuestionConfig:
             for x in self.expectations or []
         ]
 
+    def clone(self) -> "QuestionConfig":
+        return QuestionConfig(**self.to_dict())
+
     def get_expectation_feature(
         self, exp: int, feature_name: str, dft: Any = None
     ) -> Any:
@@ -59,9 +62,150 @@ class QuestionConfig:
         return asdict(self)
 
     def write_to(self, file_path: str):
-        makedirs(path.basename(path.abspath(file_path)), exist_ok=True)
+        makedirs(path.split(path.abspath(file_path))[0], exist_ok=True)
         with open(file_path, "w") as config_file:
             yaml.safe_dump(self.to_dict(), config_file)
+
+
+@dataclass
+class ArchLesson:
+    arch: str
+    lesson: str
+
+
+@dataclass
+class ArchFile:
+    arch: str
+    filename: str
+
+
+@dataclass
+class DefaultModelSaveReq(ArchFile):
+    model: Any
+
+
+@dataclass
+class QuestionConfigSaveReq(ArchLesson):
+    config: QuestionConfig
+
+
+@dataclass
+class ModelRef(ArchLesson):
+    filename: str
+
+
+@dataclass
+class ModelSaveReq(ModelRef):
+    model: Any
+
+
+@dataclass
+class TrainingInput:
+    lesson: str = ""  # the lesson id
+    config: QuestionConfig = field(default_factory=QuestionConfig)
+    data: pd.DataFrame = field(default_factory=pd.DataFrame)
+
+    def __post_init__(self):
+        if isinstance(self.config, dict):
+            self.config = QuestionConfig(**self.config)
+
+
+@dataclass
+class ExpectationTrainingResult:
+    accuracy: float = 0
+
+
+@dataclass
+class TrainingResult:
+    lesson: str = ""  # the lesson id
+    expectations: List[ExpectationTrainingResult] = field(default_factory=list)
+    models: str = (
+        ""  # uri (typically directory path) to newly trained models for this lesson
+    )
+
+    def to_dict(self) -> dict:
+        return {k: v for k, v in asdict(self).items() if v}
+
+
+DEFAULT_LESSON_NAME = "default"
+
+
+class DataDao(ABC):
+    def create_default_training_result(
+        self,
+        arch: str,
+        result: ExpectationTrainingResult,
+    ) -> TrainingResult:
+        return TrainingResult(
+            expectations=[result],
+            lesson=self.get_default_lesson_name(),
+            models=self.get_model_root(
+                ArchLesson(arch=arch, lesson=self.get_default_lesson_name())
+            ),
+        )
+
+    def get_default_lesson_name(self) -> str:
+        return DEFAULT_LESSON_NAME
+
+    def get_default_model_root(self, arch: str) -> str:
+        return self.get_model_root(
+            ArchLesson(arch=arch, lesson=self.get_default_lesson_name())
+        )
+
+    def load_default_pickle(self, file: ArchFile) -> Any:
+        return self.load_pickle(
+            ModelRef(
+                arch=file.arch,
+                filename=file.filename,
+                lesson=self.get_default_lesson_name(),
+            )
+        )
+
+    def save_default_pickle(self, req: DefaultModelSaveReq) -> None:
+        self.save_pickle(
+            ModelSaveReq(
+                arch=req.arch,
+                lesson=self.get_default_lesson_name(),
+                filename=req.filename,
+                model=req.model,
+            )
+        )
+
+    @abstractmethod
+    def find_prediction_config(self, lesson: ArchLesson) -> QuestionConfig:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def find_default_training_data(self) -> pd.DataFrame:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def find_training_config(self, lesson: str) -> QuestionConfig:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def find_training_input(self, lesson: str) -> TrainingInput:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_model_root(self, lesson: ArchLesson) -> str:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def load_pickle(self, ref: ModelRef) -> Any:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def trained_model_exists(self, ref: ModelRef) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def save_config(self, req: QuestionConfigSaveReq) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def save_pickle(self, req: ModelSaveReq) -> None:
+        raise NotImplementedError()
 
 
 @dataclass
@@ -85,12 +229,8 @@ class AnswerClassifierResult:
 
 
 @dataclass
-class ExpectationTrainingResult:
-    accuracy: float = 0
-
-
-@dataclass
 class ClassifierConfig:
+    dao: DataDao
     model_name: str
     shared_root: str = "shared"
     model_roots: List[str] = field(
@@ -118,35 +258,6 @@ class ExpectationFeatures:
 
 
 @dataclass
-class TrainingResult:
-    lesson: str = ""  # the lesson id
-    expectations: List[ExpectationTrainingResult] = field(default_factory=list)
-    models: str = ""  # path to directory with newly trained models for this lesson
-    archive: str = ""  # path to directory where previously active models for this lesson (if any) have been archived
-
-    def to_dict(self) -> dict:
-        return {k: v for k, v in asdict(self).items() if v}
-
-
-@dataclass
-class TrainingOptions:
-    add_ideal_answers_to_training_data: bool = True
-    archive_root: str = "archive"
-    output_dir: str = "output"
-
-
-@dataclass
-class TrainingInput:
-    lesson: str = ""  # the lesson id
-    config: QuestionConfig = field(default_factory=QuestionConfig)
-    data: pd.DataFrame = field(default_factory=pd.DataFrame)
-
-    def __post_init__(self):
-        if isinstance(self.config, dict):
-            self.config = QuestionConfig(**self.config)
-
-
-@dataclass
 class TrainingConfig:
     shared_root: str = "shared"
 
@@ -157,27 +268,11 @@ class AnswerClassifierTraining(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def train(
-        self, train_input: TrainingInput, config: TrainingOptions
-    ) -> TrainingResult:
+    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
         raise NotImplementedError()
 
     @abstractmethod
-    def train_default(
-        self,
-        data_root: str = "data",
-        config: TrainingConfig = None,
-        opts: TrainingOptions = None,
-    ) -> TrainingResult:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def train_default_online(
-        self,
-        train_input: TrainingInput,
-        config: TrainingConfig = None,
-        opts: TrainingOptions = None,
-    ) -> TrainingResult:
+    def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         raise NotImplementedError()
 
 
@@ -191,11 +286,6 @@ def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
             for x in d.get("expectations") or []
         ],
     )
-
-
-def load_question_config(f: str) -> QuestionConfig:
-    with open(f, "r") as yaml_file:
-        return dict_to_question_config(yaml.load(yaml_file, Loader=yaml.FullLoader))
 
 
 class ArchClassifierFactory(ABC):
@@ -246,32 +336,3 @@ class ClassifierFactory:
 
     def new_training(self, config: TrainingConfig, arch="") -> AnswerClassifierTraining:
         return self._find_arch_fac(arch).new_training(config)
-
-
-@dataclass
-class FeaturesSaveRequest:
-    lesson: str
-    expectations: List[ExpectationFeatures] = field(default_factory=list)
-
-    def to_dict(self) -> dict:
-        return asdict(self)
-
-
-class DataDao(ABC):
-    @abstractmethod
-    def find_config(self, lesson: str) -> QuestionConfig:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def find_training_input(self, lesson: str) -> TrainingInput:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def save_features(self, req: FeaturesSaveRequest) -> None:
-        raise NotImplementedError()
-
-
-def find_data_dao() -> DataDao:
-    from opentutor_classifier.api import GqlDataDao
-
-    return GqlDataDao()

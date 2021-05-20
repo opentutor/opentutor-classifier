@@ -9,8 +9,8 @@ import os
 from celery import Celery
 from celery.utils.log import get_task_logger
 
-from opentutor_classifier import TrainingConfig, TrainingOptions
-from opentutor_classifier.training import train_online, train_default_online
+from opentutor_classifier import TrainingConfig
+from opentutor_classifier.training import train, train_default
 
 
 config = {
@@ -24,7 +24,6 @@ config = {
 celery = Celery("opentutor-classifier-tasks", broker=config["broker_url"])
 celery.conf.update(config)
 
-ARCHIVE_ROOT = os.environ.get("ARCHIVE_ROOT") or "archive"
 OUTPUT_ROOT = os.environ.get("OUTPUT_ROOT") or "models"
 SHARED_ROOT = os.environ.get("SHARED_ROOT") or "shared"
 
@@ -32,10 +31,9 @@ SHARED_ROOT = os.environ.get("SHARED_ROOT") or "shared"
 @celery.task()
 def train_task(lesson: str) -> dict:
     try:
-        return train_online(
+        return train(
             lesson,
-            TrainingConfig(shared_root=SHARED_ROOT),
-            TrainingOptions(archive_root=ARCHIVE_ROOT, output_dir=OUTPUT_ROOT),
+            config=TrainingConfig(shared_root=SHARED_ROOT),
         ).to_dict()
     except BaseException as ex:
         get_task_logger(__name__).exception(ex)
@@ -45,12 +43,8 @@ def train_task(lesson: str) -> dict:
 @celery.task()
 def train_default_task() -> dict:
     try:
-        return train_default_online(
+        return train_default(
             config=TrainingConfig(shared_root=SHARED_ROOT),
-            opts=TrainingOptions(
-                archive_root=ARCHIVE_ROOT,
-                output_dir=os.path.join(OUTPUT_ROOT, "default"),
-            ),
         ).to_dict()
     except BaseException as ex:
         get_task_logger(__name__).exception(ex)

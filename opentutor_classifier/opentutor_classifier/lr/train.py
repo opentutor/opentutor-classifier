@@ -5,14 +5,12 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from collections import defaultdict
-from datetime import datetime
 import json
-from os import makedirs, path
-import pickle
-import shutil
-import tempfile
-from typing import Any, Dict, List, Tuple
+from os import path
 
+from typing import Dict, List
+
+from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 import numpy as np
@@ -21,51 +19,36 @@ from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
 from text_to_num import alpha2digit
 
-import opentutor_classifier
+from opentutor_classifier import DataDao
 from opentutor_classifier import (
+    ARCH_LR_CLASSIFIER,
     AnswerClassifierTraining,
-    ExpectationFeatures,
+    ArchLesson,
+    DefaultModelSaveReq,
     ExpectationTrainingResult,
-    FeaturesSaveRequest,
-    QuestionConfig,
+    ModelSaveReq,
+    QuestionConfigSaveReq,
     TrainingConfig,
     TrainingInput,
-    TrainingOptions,
     TrainingResult,
 )
 from opentutor_classifier.log import logger
 from opentutor_classifier.stopwords import STOPWORDS
-from .predict import (
+from .expectations import (
     preprocess_sentence,
     LRExpectationClassifier,
     preprocess_punctuations,
 )
 
-from opentutor_classifier.utils import load_data
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
-from .clustering_features import generate_feature_candidates, select_feature_candidates
+from .clustering_features import CustomAgglomerativeClustering
 
 
-def _archive_if_exists(p: str, archive_root: str) -> str:
-    if not path.exists(p):
-        return ""
-    makedirs(archive_root, exist_ok=True)
-    archive_path = path.join(
-        archive_root, f"{path.basename(p)}-{datetime.now().strftime('%Y%m%dT%H%M%S')}"
-    )
-    # can't use rename here because target is likely a network mount (e.g. S3 bucket)
-    shutil.copytree(p, archive_path)
-    shutil.rmtree(p)
-    return archive_path
-
-
-def _preprocess_trainx(data: List[str]) -> List[Tuple[Any, ...]]:
+def _preprocess_trainx(data: List[str]) -> List[List[str]]:
     pre_processed_dataset = []
     data = [entry.lower() for entry in data]
-    data = [
-        preprocess_punctuations(entry) for entry in data
-    ]  # [ re.sub(r'[^\w\s]', '', entry) for entry in data ]
+    data = [preprocess_punctuations(entry) for entry in data]
     data = [alpha2digit(entry, "en") for entry in data]
     data = [word_tokenize(entry) for entry in data]
     for entry in data:
@@ -77,14 +60,10 @@ def _preprocess_trainx(data: List[str]) -> List[Tuple[Any, ...]]:
     return np.array(pre_processed_dataset)
 
 
-def _save(model_instances, filename):
-    pickle.dump(model_instances, open(filename, "wb"))
-
-
 class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
-        self.model_obj = LRExpectationClassifier()
         self.accuracy: Dict[int, int] = {}
+        self.word2vec: Word2VecKeyedVectors = None
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
         self.word2vec = find_or_load_word2vec(
@@ -92,24 +71,18 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         )
         return self
 
-    def _train_default(
-        self,
-        training_data: pd.DataFrame,
-        config: TrainingConfig = None,
-        opts: TrainingOptions = None,
-    ) -> TrainingResult:
-        model = self.model_obj.initialize_model()
-        index2word_set = set(self.word2vec.index2word)
-        output_dir = path.abspath((opts or TrainingOptions()).output_dir)
-        makedirs(output_dir, exist_ok=True)
+    def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
+        model = LRExpectationClassifier.initialize_model()
+        index2word_set = set(self.word2vec.index_to_key)
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
+        clustering = CustomAgglomerativeClustering(self.word2vec, index2word_set)
 
         def process_features(features, input_sentence, index2word_set):
             processed_input_sentence = preprocess_sentence(input_sentence)
             processed_question = preprocess_sentence(features["question"])
             processed_ia = preprocess_sentence(features["ideal"])
 
-            features_list = self.model_obj.calculate_features(
+            features_list = LRExpectationClassifier.calculate_features(
                 processed_question,
                 input_sentence,
                 processed_input_sentence,
@@ -118,64 +91,37 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 index2word_set,
                 [],
                 [],
+                clustering,
             )
             return features_list
 
         all_features = list(
-            training_data.apply(
+            data.apply(
                 lambda row: process_features(
                     json.loads(row["exp_data"]), row["text"], index2word_set
                 ),
                 axis=1,
             )
         )
-        train_y = np.array(self.model_obj.encode_y(training_data["label"]))
+        train_y = np.array(LRExpectationClassifier.encode_y(data["label"]))
         model.fit(all_features, train_y)
         results_loocv = model_selection.cross_val_score(
             model, all_features, train_y, cv=LeaveOneOut(), scoring="accuracy"
         )
         accuracy = results_loocv.mean()
-        expectation_models[training_data["exp_num"].iloc[0]] = model
-        _save(
-            expectation_models, path.join(output_dir, "models_by_expectation_num.pkl")
+        expectation_models[data["exp_num"].iloc[0]] = model
+        dao.save_default_pickle(
+            DefaultModelSaveReq(
+                arch=ARCH_LR_CLASSIFIER,
+                filename="models_by_expectation_num.pkl",
+                model=expectation_models,
+            )
         )
-        # need to write config for default even though it's empty
-        # or will get errors later on attempt to load
-        QuestionConfig(question="").write_to(path.join(output_dir, "config.yaml"))
-        return TrainingResult(
-            lesson="default",
-            expectations=[ExpectationTrainingResult(accuracy=accuracy)],
-            models=output_dir,
-            archive="",
+        return dao.create_default_training_result(
+            ARCH_LR_CLASSIFIER, ExpectationTrainingResult(accuracy=accuracy)
         )
 
-    def train_default(
-        self,
-        data_root: str = "data",
-        config: TrainingConfig = None,
-        opts: TrainingOptions = None,
-    ) -> TrainingResult:
-        try:
-            training_data = load_data(path.join(data_root, "default", "training.csv"))
-        except Exception:
-            training_data = self.model_obj.combine_dataset(data_root)
-        return self._train_default(
-            training_data=training_data, config=config, opts=opts
-        )
-
-    def train_default_online(
-        self,
-        train_input: TrainingInput,
-        config: TrainingConfig = None,
-        opts: TrainingOptions = None,
-    ) -> TrainingResult:
-        return self._train_default(
-            training_data=train_input.data, config=config, opts=opts
-        )
-
-    def train(
-        self, train_input: TrainingInput, config: TrainingOptions
-    ) -> TrainingResult:
+    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
         question = train_input.config.question or ""
         if not question:
             raise ValueError("config must have a 'question'")
@@ -188,8 +134,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 ],
                 columns=["exp_num", "text", "label"],
             ).append(train_input.data, ignore_index=True)
-            if config.add_ideal_answers_to_training_data
-            else train_input.data
         ).sort_values(by=["exp_num"], ignore_index=True)
         split_training_sets: dict = defaultdict(int)
         for i, exp_num in enumerate(train_data["exp_num"]):
@@ -205,8 +149,9 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 str(train_data["text"][i]).lower().strip()
             )
             split_training_sets[exp_num][1].append(label)
-        index2word_set: set = set(self.word2vec.index2word)
-        expectation_generated_features: List[ExpectationFeatures] = []
+        index2word_set: set = set(self.word2vec.index_to_key)
+        clustering = CustomAgglomerativeClustering(self.word2vec, index2word_set)
+        config_updated = train_input.config.clone()
         expectation_results: List[ExpectationTrainingResult] = []
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
         supergoodanswer = ""
@@ -222,33 +167,29 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             train_y.append("good")
             processed_data = _preprocess_trainx(train_x)
             processed_question = preprocess_sentence(question)
-            ideal_answer = self.model_obj.initialize_ideal_answer(processed_data)
+            ideal_answer = LRExpectationClassifier.initialize_ideal_answer(
+                processed_data
+            )
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
-            data, candidates = generate_feature_candidates(
+            data, candidates = clustering.generate_feature_candidates(
                 np.array(processed_data)[np.array(train_y) == "good"],
                 np.array(processed_data)[np.array(train_y) == "bad"],
                 self.word2vec,
                 index2word_set,
                 ideal_answer,
             )
-            pattern = select_feature_candidates(data, candidates)
-            expectation_generated_features.append(
-                ExpectationFeatures(
-                    expectation=len(expectation_generated_features),
-                    features=dict(
-                        good=good,
-                        bad=bad,
-                        patterns_good=pattern["good"],
-                        patterns_bad=pattern["bad"],
-                    ),
-                )
+            pattern = clustering.select_feature_candidates(data, candidates)
+            config_updated.expectations[exp_num].features = dict(
+                good=good,
+                bad=bad,
+                patterns_good=pattern["good"],
+                patterns_bad=pattern["bad"],
             )
-
             features = [
                 np.array(
-                    self.model_obj.calculate_features(
+                    LRExpectationClassifier.calculate_features(
                         processed_question,
                         raw_example,
                         example,
@@ -257,13 +198,14 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         index2word_set,
                         good,
                         bad,
-                        pattern["good"] + pattern["bad"],
+                        clustering,
+                        patterns=pattern["good"] + pattern["bad"],
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)
             ]
-            train_y = np.array(self.model_obj.encode_y(train_y))
-            model = self.model_obj.initialize_model()
+            train_y = np.array(LRExpectationClassifier.encode_y(train_y))
+            model = LRExpectationClassifier.initialize_model()
             model.fit(features, train_y)
             results_loocv = model_selection.cross_val_score(
                 model, features, train_y, cv=LeaveOneOut(), scoring="accuracy"
@@ -272,24 +214,25 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 ExpectationTrainingResult(accuracy=results_loocv.mean())
             )
             expectation_models[exp_num] = model
-        tmp_save_dir = tempfile.mkdtemp()
-        _save(
-            expectation_models, path.join(tmp_save_dir, "models_by_expectation_num.pkl")
-        )
-        opentutor_classifier.find_data_dao().save_features(
-            FeaturesSaveRequest(
-                lesson=train_input.lesson, expectations=expectation_generated_features
+        dao.save_pickle(
+            ModelSaveReq(
+                arch=ARCH_LR_CLASSIFIER,
+                lesson=train_input.lesson,
+                filename="models_by_expectation_num.pkl",
+                model=expectation_models,
             )
         )
-        output_dir = path.abspath(path.join(config.output_dir, train_input.lesson))
-        archive_path = _archive_if_exists(output_dir, config.archive_root)
-        makedirs(path.dirname(output_dir), exist_ok=True)
-        # can't use rename here because target is likely a network mount (e.g. S3 bucket)
-        shutil.copytree(tmp_save_dir, output_dir)
-        shutil.rmtree(tmp_save_dir)
+        dao.save_config(
+            QuestionConfigSaveReq(
+                arch=ARCH_LR_CLASSIFIER,
+                lesson=train_input.lesson,
+                config=config_updated,
+            )
+        )
         return TrainingResult(
-            archive=archive_path,
             expectations=expectation_results,
             lesson=train_input.lesson,
-            models=output_dir,
+            models=dao.get_model_root(
+                ArchLesson(arch=ARCH_LR_CLASSIFIER, lesson=train_input.lesson)
+            ),
         )

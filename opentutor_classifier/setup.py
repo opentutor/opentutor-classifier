@@ -20,10 +20,12 @@ requirements = _read_dependencies()
 setup(
     name="opentutor_classifier",
     version="1.0.0",
-    author_email="vinitbodhwani123@gmail.com",
     description="train and run inference for open tutor",
     packages=packages,
     package_dir={"opentutor_classifier": "opentutor_classifier"},
+    package_data={
+        "opentutor_classifier": ["py.typed"],
+    },
     scripts=["bin/opentutor_classifier"],
     install_requires=requirements,
     long_description=long_description,

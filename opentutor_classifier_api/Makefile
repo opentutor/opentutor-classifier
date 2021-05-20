@@ -36,10 +36,13 @@ build/opentutor_classifier:
 			--exclude tests \
 			--exclude __pycache__ \
 		$(OPENTUTOR_CLASSIFIER_SRC) build
-	
+
+
 .PHONY docker-build:
-docker-build: clean build/opentutor_classifier
-	docker build -t $(DOCKER_IMAGE) .
+docker-build: clean
+	cd .. \
+		&& docker build -t $(DOCKER_IMAGE) -f ./opentutor_classifier_api/Dockerfile .
+
 
 .PHONY docker-build:
 docker-run:

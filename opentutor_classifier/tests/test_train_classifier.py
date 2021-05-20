@@ -4,28 +4,18 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from os import environ, path
+from os import path
 from typing import List
 
 import pytest
 import responses
 
 from opentutor_classifier import (
-    AnswerClassifierInput,
-    ClassifierFactory,
-    ClassifierConfig,
     ExpectationTrainingResult,
-    TrainingConfig,
-    TrainingOptions,
     ARCH_SVM_CLASSIFIER,
     ARCH_LR_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
-from opentutor_classifier.training import (
-    train_online,
-    train_default_online,
-)
-from opentutor_classifier.utils import dict_to_config
 from .utils import (
     assert_testset_accuracy,
     assert_train_expectation_results,
@@ -34,7 +24,7 @@ from .utils import (
     read_example_testset,
     test_env_isolated,
     train_classifier,
-    train_default_model,
+    train_default_classifier,
     _TestExpectation,
 )
 
@@ -63,11 +53,21 @@ def test_outputs_models_at_specified_root(
         assert path.exists(path.join(result.models, "config.yaml"))
 
 
+@pytest.mark.parametrize(
+    "arch,expected_model_file_name",
+    [
+        (ARCH_SVM_CLASSIFIER, "models_by_expectation_num.pkl"),
+        (ARCH_LR_CLASSIFIER, "models_by_expectation_num.pkl"),
+    ],
+)
 def test_outputs_models_at_specified_model_root_for_default_model(
-    tmpdir, data_root: str, shared_root: str
+    arch: str, expected_model_file_name: str, tmpdir, data_root: str, shared_root: str
 ):
-    output_dir, _ = train_default_model(tmpdir, data_root, shared_root)
-    assert path.exists(path.join(output_dir, "models_by_expectation_num.pkl"))
+    with test_env_isolated(
+        tmpdir, data_root, shared_root, lesson="default"
+    ) as test_config:
+        result = train_default_classifier(test_config)
+        assert path.exists(path.join(result.models, expected_model_file_name))
 
 
 def _test_train_and_predict(
@@ -178,24 +178,6 @@ def test_train_and_predict(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
         (
-            "question1",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.8),
-                ExpectationTrainingResult(accuracy=0.7),
-                ExpectationTrainingResult(accuracy=0.98),
-            ],
-            0.65,
-        ),
-        (
-            "question2",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [ExpectationTrainingResult(accuracy=0.98)],
-            0.99,
-        ),
-        (
             "ies-rectangle",
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
@@ -207,17 +189,6 @@ def test_train_and_predict(
             0.85,
         ),
         (
-            "ies-rectangle",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.92),
-                ExpectationTrainingResult(accuracy=0.93),
-                ExpectationTrainingResult(accuracy=0.93),
-            ],
-            0.8,
-        ),
-        (
             "candles",
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
@@ -226,18 +197,6 @@ def test_train_and_predict(
                 ExpectationTrainingResult(accuracy=0.85),
                 ExpectationTrainingResult(accuracy=0.82),
                 ExpectationTrainingResult(accuracy=0.89),
-            ],
-            0.8,
-        ),
-        (
-            "candles",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.85),
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.95),
             ],
             0.8,
         ),
@@ -267,42 +226,6 @@ def test_train_and_predict_slow(
         data_root,
         shared_root,
     )
-
-
-# @responses.activate
-# @pytest.mark.parametrize(
-#     "lesson,arch,evaluate_inputs,expected_training_result,expected_evaluate_results",
-#     [],
-# )
-# def test_train_and_predict_multiple(
-#     lesson: str,
-#     arch: str,
-#     evaluate_inputs: List[str],
-#     expected_training_result: List[ExpectationTrainingResult],
-#     expected_evaluate_results: List[List[_TestExpectation]],
-#     data_root: str,
-#     shared_root: str,
-#     tmpdir,
-# ):
-#     with test_env_isolated(
-#         tmpdir, data_root, shared_root, arch, lesson=lesson
-#     ) as test_config:
-#         train_result = train_classifier(lesson, test_config)
-#         assert path.exists(train_result.models)
-#         assert_train_expectation_results(
-#             train_result.expectations, expected_training_result
-#         )
-#         for evaluate_input, expected_evaluate_result in zip(
-#             evaluate_inputs, expected_evaluate_results
-#         ):
-#             create_and_test_classifier(
-#                 lesson,
-#                 train_result.models,
-#                 shared_root,
-#                 evaluate_input,
-#                 expected_evaluate_result,
-#                 arch=arch,
-#             )
 
 
 @pytest.mark.parametrize(
@@ -381,146 +304,6 @@ def test_train_and_predict_specific_answers(
             )
 
 
-def _test_train_online(
-    lesson: str,
-    arch: str,
-    evaluate_inputs: List[str],
-    expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_results: List[List[_TestExpectation]],
-    data_root: str,
-    shared_root: str,
-    tmpdir,
-):
-    lesson = environ.get("LESSON_OVERRIDE") or lesson
-    with test_env_isolated(
-        tmpdir, data_root, shared_root, arch=arch, lesson=lesson
-    ) as test_config:
-        train_result = train_online(
-            lesson,
-            TrainingConfig(shared_root=test_config.shared_root),
-            TrainingOptions(
-                archive_root=test_config.archive_root, output_dir=test_config.output_dir
-            ),
-            arch=arch,
-        )
-        assert_train_expectation_results(
-            train_result.expectations, expected_training_result
-        )
-        assert path.exists(train_result.models)
-        for evaluate_input, expected_evaluate_result in zip(
-            evaluate_inputs, expected_evaluate_results
-        ):
-            create_and_test_classifier(
-                lesson,
-                path.split(path.abspath(train_result.models))[0],
-                shared_root,
-                evaluate_input,
-                expected_evaluate_result,
-                arch=arch,
-            )
-
-
-@responses.activate
-@pytest.mark.parametrize(
-    "lesson,arch,evaluate_input,expected_training_result,expected_evaluate_result",
-    [
-        (
-            "question1",
-            ARCH_SVM_CLASSIFIER,
-            "peer pressure can change your behavior",
-            [
-                ExpectationTrainingResult(accuracy=0.72),
-                ExpectationTrainingResult(accuracy=0.18),
-                ExpectationTrainingResult(accuracy=0.90),
-            ],
-            [
-                _TestExpectation(evaluation="Good", score=0.98, expectation=0),
-                # _TestExpectation(
-                #     score=CONFIDENCE_THRESHOLD_DEFAULT,
-                #     expectation=1,
-                #     comparison=ComparisonType.LT,
-                # ),
-                # _TestExpectation(
-                #     score=CONFIDENCE_THRESHOLD_DEFAULT,
-                #     expectation=2,
-                #     comparison=ComparisonType.LT,
-                # ),
-            ],
-        ),
-        (
-            "question1",
-            ARCH_LR_CLASSIFIER,
-            "peer pressure can change your behavior",
-            [
-                ExpectationTrainingResult(accuracy=0.72),
-                ExpectationTrainingResult(accuracy=0.18),
-                ExpectationTrainingResult(accuracy=0.90),
-            ],
-            [
-                _TestExpectation(evaluation="Good", score=0.71, expectation=0),
-                # _TestExpectation(
-                #     score=CONFIDENCE_THRESHOLD_DEFAULT,
-                #     expectation=1,
-                #     comparison=ComparisonType.LT,
-                # ),
-                # _TestExpectation(
-                #     score=CONFIDENCE_THRESHOLD_DEFAULT,
-                #     expectation=2,
-                #     comparison=ComparisonType.LT,
-                # ),
-            ],
-        ),
-    ],
-)
-def test_train_online(
-    lesson: str,
-    arch: str,
-    evaluate_input: str,
-    expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_result: List[_TestExpectation],
-    data_root: str,
-    shared_root: str,
-    tmpdir,
-):
-    _test_train_online(
-        lesson,
-        arch,
-        [evaluate_input],
-        expected_training_result,
-        [expected_evaluate_result],
-        data_root,
-        shared_root,
-        tmpdir,
-    )
-
-
-@responses.activate
-@pytest.mark.parametrize(
-    "lesson,arch,evaluate_inputs,expected_training_result,expected_evaluate_results",
-    [],
-)
-def test_multiple_train_online(
-    lesson: str,
-    arch: str,
-    evaluate_inputs: List[str],
-    expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_results: List[List[_TestExpectation]],
-    data_root: str,
-    shared_root: str,
-    tmpdir,
-):
-    _test_train_online(
-        lesson,
-        arch,
-        evaluate_inputs,
-        expected_training_result,
-        expected_evaluate_results,
-        data_root,
-        shared_root,
-        tmpdir,
-    )
-
-
 @responses.activate
 @pytest.mark.parametrize(
     "arch",
@@ -529,7 +312,7 @@ def test_multiple_train_online(
         ARCH_LR_CLASSIFIER,
     ],
 )
-def test_train_default_online(
+def test_train_default(
     arch: str,
     data_root: str,
     shared_root: str,
@@ -537,46 +320,10 @@ def test_train_default_online(
 ):
     with test_env_isolated(
         tmpdir,
-        path.join(data_root, "default"),
+        data_root,
         shared_root,
         arch=arch,
         is_default_model=True,
+        lesson="default",
     ) as config:
-        train_default_online(
-            TrainingConfig(shared_root=config.shared_root),
-            TrainingOptions(
-                archive_root=config.archive_root, output_dir=config.output_dir
-            ),
-            arch,
-        )
-
-
-def test_trained_default_model_usable_for_inference(
-    tmpdir, data_root: str, shared_root: str
-):
-    output_dir, result = train_default_model(tmpdir, data_root, shared_root)
-    assert path.exists(output_dir)
-    assert result.expectations[0].accuracy >= 0.72
-    config_data = {
-        "question": "What are the challenges to demonstrating integrity in a group?",
-        "expectations": [
-            {"ideal": "Peer pressure can cause you to allow inappropriate behavior"}
-        ],
-    }
-    model_root, model_name = path.split(output_dir)
-    classifier = ClassifierFactory().new_classifier(
-        ClassifierConfig(
-            model_name=model_name, model_roots=[model_root], shared_root=shared_root
-        ),
-        arch=ARCH_SVM_CLASSIFIER,
-    )
-    eval_result = classifier.evaluate(
-        AnswerClassifierInput(
-            input_sentence="peer pressure can change your behavior",
-            config_data=dict_to_config(config_data),
-            expectation=0,
-        )
-    )
-    assert len(eval_result.expectation_results) == 1
-    assert eval_result.expectation_results[0].evaluation == "Bad"
-    assert round(eval_result.expectation_results[0].score, 2) == 0.0
+        train_default_classifier(config=config)

@@ -12,6 +12,7 @@ from opentutor_classifier import (
     ClassifierFactory,
     ClassifierConfig,
 )
+import opentutor_classifier.dao
 from opentutor_classifier.lr import LRAnswerClassifier
 from opentutor_classifier.svm import SVMAnswerClassifier
 
@@ -28,6 +29,10 @@ def test_creates_a_classifier_with_default_arch(
 ):
     monkeypatch.setenv("CLASSIFIER_ARCH", arch)
     assert isinstance(
-        ClassifierFactory().new_classifier(ClassifierConfig(model_name="somemodel")),
+        ClassifierFactory().new_classifier(
+            ClassifierConfig(
+                dao=opentutor_classifier.dao.find_data_dao(), model_name="somemodel"
+            )
+        ),
         expected_classifier_type,
     )
