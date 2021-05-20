@@ -33,7 +33,7 @@ from .utils import load_data, load_config
 
 
 MODEL_ROOT_DEFAULT = "./models"
-MODELS_DEPLOYED_ROOT_DEFAULT = "./models-deployed"
+MODELS_DEPLOYED_ROOT_DEFAULT = "./models_deployed"
 
 
 def _get_model_root() -> str:
