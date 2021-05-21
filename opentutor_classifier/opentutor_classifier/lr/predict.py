@@ -50,7 +50,7 @@ word_mapper = {"n't": "not", "'s": ""}
 
 
 def preprocess_punctuations(sentence: str) -> str:
-    sentence = re.sub(r'["\-"]', " - ", sentence)
+    sentence = re.sub(r'["\-"]', " ", sentence)
     sentence = re.sub(r'["%"]', " percent ", sentence)
     sentence = re.sub("'s", "", sentence)
     return re.sub(r'["(", ")", "~", "!", "^", ",", "?", " ", "."]', " ", sentence)
