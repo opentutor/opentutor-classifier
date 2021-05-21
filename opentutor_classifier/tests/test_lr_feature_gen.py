@@ -11,7 +11,6 @@ import pytest
 
 from opentutor_classifier import ARCH_LR_CLASSIFIER
 from opentutor_classifier.utils import load_config
-from opentutor_classifier.log import logger
 from opentutor_classifier.lr.expectations import preprocess_sentence
 
 from typing import Dict, List, Any
@@ -47,7 +46,6 @@ def test_text2num(sentence: str, expected_transformation: str):
     ), f"Expected {expected_transformation} got {transformed_tranform}"
 
 
-@pytest.mark.only
 @pytest.mark.parametrize(
     "lesson,expected_features",
     [
@@ -159,99 +157,99 @@ def test_text2num(sentence: str, expected_transformation: str):
                 },
             ],
         ),
-        # (
-        #     "ies-rectangle",
-        #     [
-        #         {
-        #             "bad": ["less|different|any"],
-        #             "good": ["1|more"],
-        #             "patterns_bad": [
-        #                 "3 + impact",
-        #                 "37 + impact",
-        #                 "40 + impact",
-        #                 "bigger + impact",
-        #                 "bigger + unit",
-        #                 "bigger + x",
-        #                 "closer + impact",
-        #                 "closer + x",
-        #                 "difference + impact",
-        #                 "difference + x",
-        #                 "gets + impact",
-        #                 "gets + unit",
-        #                 "gets + x",
-        #                 "impact",
-        #                 "rectangle + x",
-        #                 "square + x",
-        #             ],
-        #             "patterns_good": [
-        #                 "1 + closer",
-        #                 "1 + gets",
-        #                 "1 + like",
-        #                 "1 + looks",
-        #                 "1 + ratio",
-        #                 "1 + rectangle",
-        #                 "1 + square",
-        #                 "closer + gets",
-        #                 "closer + like",
-        #                 "closer + looks",
-        #                 "closer + ratio",
-        #                 "closer + rectangle",
-        #                 "closer + square",
-        #                 "gets + like",
-        #                 "gets + looks",
-        #                 "gets + ratio",
-        #                 "gets + rectangle",
-        #                 "gets + square",
-        #                 "like + ratio",
-        #                 "like + rectangle",
-        #                 "looks + ratio",
-        #                 "looks + rectangle",
-        #                 "ratio + rectangle",
-        #                 "ratio + square",
-        #                 "rectangle + square",
-        #             ],
-        #         },
-        #         {
-        #             "bad": ["same"],
-        #             "good": ["less"],
-        #             "patterns_bad": [],
-        #             "patterns_good": [
-        #                 "3",
-        #                 "3 + bigger",
-        #                 "3 + difference",
-        #                 "3 + effect",
-        #                 "3 + less",
-        #                 "3 + rectangle",
-        #                 "3 + unit",
-        #                 "bigger",
-        #                 "bigger + difference",
-        #                 "bigger + effect",
-        #                 "bigger + less",
-        #                 "bigger + rectangle",
-        #                 "bigger + unit",
-        #                 "difference",
-        #                 "difference + effect",
-        #                 "difference + less",
-        #                 "difference + rectangle",
-        #                 "difference + unit",
-        #                 "effect",
-        #                 "effect + less",
-        #                 "effect + rectangle",
-        #                 "effect + unit",
-        #                 "less + rectangle",
-        #                 "less + unit",
-        #                 "rectangle + unit",
-        #                 "unit",
-        #             ],
-        #         },
-        #         {
-        #             "bad": ["10|17|20", "27|30"],
-        #             "good": ["37|40"],
-        #             "patterns_bad": [],
-        #             "patterns_good": ["37"],
-        #         },
-        #     ],
-        # ),
+        (
+            "ies-rectangle",
+            [
+                {
+                    "bad": ["less|different|any"],
+                    "good": ["1|more"],
+                    "patterns_bad": [
+                        "3 + impact",
+                        "37 + impact",
+                        "40 + impact",
+                        "bigger + impact",
+                        "bigger + unit",
+                        "bigger + x",
+                        "closer + impact",
+                        "closer + x",
+                        "difference + impact",
+                        "difference + x",
+                        "gets + impact",
+                        "gets + unit",
+                        "gets + x",
+                        "impact",
+                        "rectangle + x",
+                        "square + x",
+                    ],
+                    "patterns_good": [
+                        "1 + closer",
+                        "1 + gets",
+                        "1 + like",
+                        "1 + looks",
+                        "1 + ratio",
+                        "1 + rectangle",
+                        "1 + square",
+                        "closer + gets",
+                        "closer + like",
+                        "closer + looks",
+                        "closer + ratio",
+                        "closer + rectangle",
+                        "closer + square",
+                        "gets + like",
+                        "gets + looks",
+                        "gets + ratio",
+                        "gets + rectangle",
+                        "gets + square",
+                        "like + ratio",
+                        "like + rectangle",
+                        "looks + ratio",
+                        "looks + rectangle",
+                        "ratio + rectangle",
+                        "ratio + square",
+                        "rectangle + square",
+                    ],
+                },
+                {
+                    "bad": ["same"],
+                    "good": ["less"],
+                    "patterns_bad": [],
+                    "patterns_good": [
+                        "3",
+                        "3 + bigger",
+                        "3 + difference",
+                        "3 + effect",
+                        "3 + less",
+                        "3 + rectangle",
+                        "3 + unit",
+                        "bigger",
+                        "bigger + difference",
+                        "bigger + effect",
+                        "bigger + less",
+                        "bigger + rectangle",
+                        "bigger + unit",
+                        "difference",
+                        "difference + effect",
+                        "difference + less",
+                        "difference + rectangle",
+                        "difference + unit",
+                        "effect",
+                        "effect + less",
+                        "effect + rectangle",
+                        "effect + unit",
+                        "less + rectangle",
+                        "less + unit",
+                        "rectangle + unit",
+                        "unit",
+                    ],
+                },
+                {
+                    "bad": ["10|17|20", "27|30"],
+                    "good": ["37|40"],
+                    "patterns_bad": [],
+                    "patterns_good": ["37"],
+                },
+            ],
+        ),
     ],
 )
 @pytest.mark.slow
@@ -271,13 +269,12 @@ def test_generates_features(
             test_config.output_dir, test_config.arch, lesson, "config.yaml"
         )
         assert path.isfile(config_file)
-        logger.warning(f"{config_file}")
         generated_config = load_config(config_file)
         # "'s" check
-        # print(generated_config.expectations)
-        # for e in generated_config.expectations:
-        #     for pattern in e.features["patterns_good"]:
-        #         assert "'s'" not in pattern, f"'s found in {pattern}"
-        #     for pattern in e.features["patterns_bad"]:
-        #         assert "'s" not in pattern, f"'s found in {pattern}"
+        print(generated_config.expectations)
+        for e in generated_config.expectations:
+            for pattern in e.features["patterns_good"]:
+                assert "'s'" not in pattern, f"'s found in {pattern}"
+            for pattern in e.features["patterns_bad"]:
+                assert "'s" not in pattern, f"'s found in {pattern}"
         assert [e.features for e in generated_config.expectations] == expected_features
