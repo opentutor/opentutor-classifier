@@ -30,7 +30,15 @@ def shared_root(word2vec) -> str:
 
 @pytest.mark.parametrize(
     "sentence, expected_transformation",
-    [("thirty", ["30",]), ("thirty seven by forty", ["37", "40"])],
+    [
+        (
+            "thirty",
+            [
+                "30",
+            ],
+        ),
+        ("thirty seven by forty", ["37", "40"]),
+    ],
 )
 def test_text2num(sentence: str, expected_transformation: str):
     transformed_tranform = preprocess_sentence(sentence)
@@ -38,7 +46,8 @@ def test_text2num(sentence: str, expected_transformation: str):
         expected_transformation == transformed_tranform
     ), f"Expected {expected_transformation} got {transformed_tranform}"
 
-@pytest.mark.only
+
+# @pytest.mark.only
 @pytest.mark.parametrize(
     "lesson,expected_features",
     [

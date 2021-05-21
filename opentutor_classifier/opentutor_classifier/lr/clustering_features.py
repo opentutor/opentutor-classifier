@@ -203,7 +203,7 @@ class CustomAgglomerativeClustering:
         candidates: Dict[str, List[str]],
         fpr_cuttoff: float = 0.98,
     ) -> Dict[str, List[str]]:
-        useful_features = dict()
+        useful_features: Dict[str, List[str]] = dict()
         for label in ("good", "bad"):
             good, bad, patterns = [], [], []
             for candidate in candidates[label]:
