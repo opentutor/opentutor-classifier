@@ -47,7 +47,7 @@ def test_text2num(sentence: str, expected_transformation: str):
     ), f"Expected {expected_transformation} got {transformed_tranform}"
 
 
-# @pytest.mark.only
+@pytest.mark.only
 @pytest.mark.parametrize(
     "lesson,expected_features",
     [
@@ -267,7 +267,9 @@ def test_generates_features(
     ) as test_config:
         train_result = train_classifier(lesson, test_config)
         assert path.exists(train_result.models)
-        config_file = path.join(test_config.data_root, lesson, "config.yaml")
+        config_file = path.join(
+            test_config.output_dir, test_config.arch, lesson, "config.yaml"
+        )
         assert path.isfile(config_file)
         logger.warning(f"{config_file}")
         generated_config = load_config(config_file)
