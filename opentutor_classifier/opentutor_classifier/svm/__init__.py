@@ -13,11 +13,8 @@ from opentutor_classifier import (
     TrainingConfig,
     register_classifier_factory,
 )
-from .predict import SVMAnswerClassifier, SVMExpectationClassifier  # noqa: F401
-from opentutor_classifier.word2vec import find_or_load_word2vec  # noqa: F401
-from .train import (  # noqa: F401
-    SVMAnswerClassifierTraining,
-)
+from .predict import SVMAnswerClassifier
+from .train import SVMAnswerClassifierTraining
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):

@@ -4,22 +4,14 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from collections import defaultdict
-from glob import glob
-import json
+from dataclasses import dataclass
 import math
-from os import path, makedirs
-from typing import Dict, List, Optional
+from os import path
+from typing import Dict, List, Optional, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
-from nltk import pos_tag
-from nltk.tokenize import word_tokenize
 import numpy as np
-from sklearn import model_selection, svm
-from sklearn.model_selection import GridSearchCV
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import LeaveOneOut
-import pandas as pd
+from sklearn import svm
 
 
 from opentutor_classifier import (
@@ -28,16 +20,23 @@ from opentutor_classifier import (
     AnswerClassifierResult,
     ClassifierConfig,
     ExpectationClassifierResult,
+    ModelRef,
     QuestionConfig,
+    ARCH_SVM_CLASSIFIER,
 )
-from opentutor_classifier.utils import load_data, load_yaml
 from opentutor_classifier.speechact import SpeechActClassifier
-from opentutor_classifier.stopwords import STOPWORDS
-from .dtos import ExpectationToEvaluate, InstanceModels
 
-from . import features
-from .utils import load_models
+
+from .constants import MODEL_FILE_NAME
+from .expectations import SVMExpectationClassifier, preprocess_sentence
+from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.word2vec import find_or_load_word2vec
+
+
+@dataclass
+class ExpectationToEvaluate:
+    expectation: int
+    classifier: svm.SVC
 
 
 def _confidence_score(model: svm.SVC, sentence: List[List[float]]) -> float:
@@ -47,153 +46,52 @@ def _confidence_score(model: svm.SVC, sentence: List[List[float]]) -> float:
     return sigmoid
 
 
-def preprocess_sentence(sentence: str) -> List[str]:
-    word_tokens_groups: List[str] = [
-        word_tokenize(entry.lower())
-        for entry in ([sentence] if isinstance(sentence, str) else sentence)
-    ]
-    result_words = []
-    for entry in word_tokens_groups:
-        for word, _ in pos_tag(entry):
-            if word not in STOPWORDS and word.isalpha():
-                result_words.append(word)
-    return result_words
-
-
-class SVMExpectationClassifier:
-    def __init__(self):
-        self.model = None
-        self.score_dictionary = defaultdict(int)
-
-    def split(self, pre_processed_dataset, target):
-        train_x, test_x, train_y, test_y = model_selection.train_test_split(
-            pre_processed_dataset, target, test_size=0.0
-        )
-        return train_x, test_x, train_y, test_y
-
-    def initialize_ideal_answer(self, processed_data):
-        return processed_data[0]
-
-    def encode_y(self, train_y):
-        encoder = LabelEncoder()
-        train_y = encoder.fit_transform(train_y)
-        return train_y
-
-    def calculate_features(
-        self,
-        question: List[str],
-        raw_example: str,
-        example: List[str],
-        ideal: List[str],
-        word2vec: Word2VecKeyedVectors,
-        index2word_set: set,
-        good: List[str],
-        bad: List[str],
-    ) -> List[float]:
-        return [
-            features.regex_match_ratio(raw_example, good),
-            features.regex_match_ratio(raw_example, bad),
-            *features.number_of_negatives(example),
-            features.word_alignment_feature(example, ideal, word2vec, index2word_set),
-            features.length_ratio_feature(example, ideal),
-            features.word2vec_example_similarity(
-                word2vec, index2word_set, example, ideal
-            ),
-            features.word2vec_question_similarity(
-                word2vec, index2word_set, example, question
-            ),
-        ]
-
-    def train(self, model: svm.SVC, train_features: np.ndarray, train_y: np.ndarray):
-        model.fit(train_features, train_y)
-        return model
-
-    def predict(self, model: svm.SVC, test_features: np.ndarray) -> np.ndarray:
-        return model.predict(test_features)
-
-    def combine_dataset(self, data_root):
-        training_data_list = [
-            fn
-            for fn in glob(path.join(data_root, "*/*.csv"))
-            if not path.basename(path.dirname(fn)).startswith("default")
-        ]
-        config_list = glob(path.join(data_root, "*/*.yaml"))
-        dataframes = []
-        temp_data = {}
-
-        for training_i, config_i in zip(training_data_list, config_list):
-            loaded_df = load_data(training_i)
-            loaded_config = load_yaml(config_i)
-            temp_data["question"] = loaded_config["question"]
-            exp_idx = loaded_df[
-                loaded_df["exp_num"] != loaded_df["exp_num"].shift()
-            ].index.tolist()
-            loaded_df["exp_data"] = 0
-            loaded_df["exp_num"] = 0
-            for i in range(len(exp_idx) - 1):
-                temp_data["ideal"] = loaded_df.text[exp_idx[i]]
-                r1 = exp_idx[i]
-                r2 = exp_idx[i + 1]
-                loaded_df["exp_data"][r1:r2] = json.dumps(temp_data)
-            temp_data["ideal"] = loaded_df.text[exp_idx[-1]]
-            r3 = exp_idx[-1]
-            r4 = len(loaded_df)
-            loaded_df["exp_data"][r3:r4] = json.dumps(temp_data)
-            dataframes.append(loaded_df)
-
-        result = pd.concat(dataframes, axis=0)
-        output_dir = path.join(data_root, "default")
-        makedirs(output_dir, exist_ok=True)
-        result.to_csv(path.join(output_dir, "training.csv"), index=False)
-        return result
-
-    def initialize_model(self):
-        return svm.SVC(kernel="rbf", C=10, gamma="auto")
-
-    def tune_hyper_parameters(self, model, parameters):
-        model = GridSearchCV(
-            model, parameters, cv=LeaveOneOut(), return_train_score=False
-        )
-        return model
+ModelAndConfig = Tuple[Dict[int, svm.SVC], QuestionConfig]
 
 
 class SVMAnswerClassifier(AnswerClassifier):
     def __init__(self):
-        self.model_obj = SVMExpectationClassifier()
         self._word2vec = None
-        self._instance_models: Optional[InstanceModels] = None
+        self._model_and_config: Optional[
+            Tuple[Dict[int, svm.SVC], QuestionConfig]
+        ] = None
         self.speech_act_classifier = SpeechActClassifier()
 
     def configure(
         self,
         config: ClassifierConfig,
     ) -> AnswerClassifier:
+        self.dao = config.dao
         self.model_name = config.model_name
         self.model_roots = config.model_roots
         self.shared_root = config.shared_root
         return self
 
-    def instance_models(self) -> InstanceModels:
-        if not self._instance_models:
-            self._instance_models = load_models(
-                self.model_name, model_roots=self.model_roots
+    @property
+    def model_and_config(self) -> ModelAndConfig:
+        if not self._model_and_config:
+            cm = find_predicton_config_and_pickle(
+                ModelRef(
+                    arch=ARCH_SVM_CLASSIFIER,
+                    lesson=self.model_name,
+                    filename=MODEL_FILE_NAME,
+                ),
+                self.dao,
             )
-        return self._instance_models
-
-    def models_by_expectation_num(self) -> Dict[int, svm.SVC]:
-        return self.instance_models().models_by_expectation_num
-
-    def config(self) -> QuestionConfig:
-        return self.instance_models().config
+            self._model_and_config = (cm.model, cm.config)
+        return self._model_and_config
 
     def find_model_for_expectation(
-        self, expectation: int, return_first_model_if_only_one=False
+        self,
+        models_by_expectation: Dict[int, svm.SVC],
+        expectation: int,
+        return_first_model_if_only_one=False,
     ) -> svm.SVC:
-        m_by_e = self.models_by_expectation_num()
         return (
-            m_by_e[0]
-            if expectation >= len(m_by_e) and return_first_model_if_only_one
-            else m_by_e[expectation]
+            models_by_expectation[0]
+            if expectation >= len(models_by_expectation)
+            and return_first_model_if_only_one
+            else models_by_expectation[expectation]
         )
 
     def find_word2vec(self) -> Word2VecKeyedVectors:
@@ -203,12 +101,10 @@ class SVMAnswerClassifier(AnswerClassifier):
             )
         return self._word2vec
 
-    def find_score_and_class(self, classifier, exp_num_i, sent_features):
-        _evaluation = (
-            "Good"
-            if self.model_obj.predict(classifier, sent_features)[0] == 1
-            else "Bad"
-        )
+    def find_score_and_class(
+        self, classifier: svm.SVC, exp_num_i: int, sent_features: np.ndarray
+    ):
+        _evaluation = "Good" if classifier.predict(sent_features)[0] == 1 else "Bad"
         _score = _confidence_score(classifier, sent_features)
         return ExpectationClassifierResult(
             expectation=exp_num_i,
@@ -217,13 +113,17 @@ class SVMAnswerClassifier(AnswerClassifier):
         )
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+        from opentutor_classifier.log import logger
+
         sent_proc = preprocess_sentence(answer.input_sentence)
-        conf = answer.config_data or self.config()
+        models_by_expectation, conf = self.model_and_config
+        logger.warning("\n\n\nwhat is loaded conf?")
+        logger.warning(conf)
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
                 classifier=self.find_model_for_expectation(
-                    i, return_first_model_if_only_one=True
+                    models_by_expectation, i, return_first_model_if_only_one=True
                 ),
             )
             for i in (
@@ -234,7 +134,7 @@ class SVMAnswerClassifier(AnswerClassifier):
         ]
         result = AnswerClassifierResult(input=answer, expectation_results=[])
         word2vec = self.find_word2vec()
-        index2word = set(word2vec.index2word)
+        index2word = set(word2vec.index_to_key)
         result.speech_acts[
             "metacognitive"
         ] = self.speech_act_classifier.check_meta_cognitive(result)
@@ -244,7 +144,10 @@ class SVMAnswerClassifier(AnswerClassifier):
         question_proc = preprocess_sentence(conf.question)
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
-            sent_features = self.model_obj.calculate_features(
+            logger.warning(f"\n\n\neval exp {exp.expectation}?")
+            logger.warning(exp_conf.ideal)
+            logger.warning(expectations)
+            sent_features = SVMExpectationClassifier.calculate_features(
                 question_proc,
                 answer.input_sentence,
                 sent_proc,

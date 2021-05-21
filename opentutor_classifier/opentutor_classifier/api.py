@@ -7,7 +7,6 @@
 from dataclasses import dataclass
 from io import StringIO
 import json
-from opentutor_classifier.utils import load_data
 import os
 import requests
 from typing import Optional, TypedDict
@@ -16,12 +15,11 @@ import yaml
 import pandas as pd
 
 from opentutor_classifier import (
-    DataDao,
-    FeaturesSaveRequest,
+    ExpectationFeatures,
     QuestionConfig,
+    QuestionConfigSaveReq,
     TrainingInput,
     dict_to_question_config,
-    load_question_config,
 )
 from opentutor_classifier.log import logger
 
@@ -129,17 +127,20 @@ def query_lesson_training_data_gql(lesson: str) -> GQLQueryBody:
     }
 
 
-def update_features_gql(req: FeaturesSaveRequest) -> GQLQueryBody:
+def update_features_gql(req: QuestionConfigSaveReq) -> GQLQueryBody:
     return {
         "query": GQL_UPDATE_LESSON_FEATURES,
         "variables": {
             "lessonId": req.lesson,
-            "expectations": [e.to_dict() for e in req.expectations],
+            "expectations": [
+                ExpectationFeatures(expectation=i, features=e.features).to_dict()
+                for i, e in enumerate(req.config.expectations)
+            ],
         },
     }
 
 
-def update_features(req: FeaturesSaveRequest) -> None:
+def update_features(req: QuestionConfigSaveReq) -> None:
     res_json = __auth_gql(update_features_gql(req))
     if "errors" in res_json:
         raise Exception(json.dumps(res_json.get("errors")))
@@ -202,51 +203,11 @@ def __fetch_all_training_data(url: str) -> dict:
     return __auth_gql(query_all_training_data_gql(), url=url)
 
 
-def fetch_all_training_data(url="") -> TrainingInput:
+def fetch_all_training_data(url="") -> pd.DataFrame:
     tdjson = __fetch_all_training_data(url or get_graphql_endpoint())
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
     data = tdjson["data"]["me"]["allTrainingData"]
     df = pd.read_csv(StringIO(data.get("training") or ""))
     df.sort_values(by=["exp_num"], ignore_index=True, inplace=True)
-    return TrainingInput(
-        lesson="default",
-        config=dict_to_question_config(yaml.safe_load(data.get("config") or "")),
-        data=df,
-    )
-
-
-class FileDataDao(DataDao):
-    def __init__(self, data_root: str):
-        self.data_root = data_root
-
-    def _get_config_file(self, lesson: str) -> str:
-        return os.path.join(self.data_root, lesson, "config.yaml")
-
-    def find_config(self, lesson: str) -> QuestionConfig:
-        return load_question_config(self._get_config_file(lesson))
-
-    def find_training_input(self, lesson: str) -> TrainingInput:
-        return TrainingInput(
-            lesson=lesson,
-            config=self.find_config(lesson),
-            data=load_data(os.path.join(self.data_root, lesson, "training.csv")),
-        )
-
-    def save_features(self, req: FeaturesSaveRequest) -> None:
-        config_file = self._get_config_file(req.lesson)
-        config = load_question_config(config_file)
-        for e in req.expectations:
-            config.expectations[e.expectation].features = e.features
-        config.write_to(config_file)
-
-
-class GqlDataDao(DataDao):
-    def find_config(self, lesson: str) -> QuestionConfig:
-        return fetch_config(lesson)
-
-    def find_training_input(self, lesson: str) -> TrainingInput:
-        return fetch_training_data(lesson)
-
-    def save_features(self, req: FeaturesSaveRequest) -> None:
-        update_features(req)
+    return df

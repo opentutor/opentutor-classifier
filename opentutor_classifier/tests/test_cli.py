@@ -10,13 +10,16 @@ import re
 from typing import List, Tuple
 
 import pytest
+import responses
 
 from opentutor_classifier import ARCH_DEFAULT
 from opentutor_classifier.config import confidence_threshold_default
+from .types import _TestConfig
 from .utils import (
     copy_test_env_to_tmp,
     create_and_test_classifier,
     fixture_path,
+    mocked_data_dao,
     _TestExpectation,
 )
 
@@ -39,7 +42,9 @@ def capture(command):
     return out, err, proc.returncode
 
 
-def __train_model(tmpdir, lesson: str, shared_root: str) -> Tuple[str, str, str, str]:
+def __train_model(
+    tmpdir, lesson: str, shared_root: str
+) -> Tuple[str, str, str, _TestConfig]:
     config = copy_test_env_to_tmp(
         tmpdir, fixture_path("data"), shared_root, lesson=lesson
     )
@@ -55,35 +60,21 @@ def __train_model(tmpdir, lesson: str, shared_root: str) -> Tuple[str, str, str,
         config.output_dir,
     ]
     out, err, exitcode = capture(command)
-    return out, err, exitcode, config.output_dir
-
-
-def __sync(tmpdir, lesson: str, url: str) -> Tuple[str, str, str, str]:
-    test_root = tmpdir.mkdir("test")
-    output_dir = path.join(test_root, lesson)
-    command = [
-        ".venv/bin/python3.8",
-        "bin/opentutor_classifier",
-        "sync",
-        "--lesson",
-        lesson,
-        "--url",
-        url,
-        "--output",
-        test_root,
-    ]
-    out, err, exitcode = capture(command)
-    return out, err, exitcode, output_dir
+    return out, err, exitcode, config
 
 
 @pytest.mark.parametrize(
-    "lesson,no_of_expectations", [("question1", 3), ("question2", 1)]
+    "lesson,no_of_expectations",
+    [("question1", 3), ("question2", 1)],
 )
 def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_root):
-    out, err, exit_code, model_root = __train_model(tmpdir, lesson, shared_root)
+    out, err, exit_code, config = __train_model(tmpdir, lesson, shared_root)
+    model_root = config.output_dir
     assert exit_code == 0
-    assert path.exists(path.join(model_root, lesson, "models_by_expectation_num.pkl"))
-    assert path.exists(path.join(model_root, lesson, "config.yaml"))
+    assert path.exists(
+        path.join(model_root, ARCH_DEFAULT, lesson, "models_by_expectation_num.pkl")
+    )
+    assert path.exists(path.join(model_root, ARCH_DEFAULT, lesson, "config.yaml"))
     out_lines = out.decode("utf-8").split("\n")
     while out_lines and re.search(r"^(DEBUG|INFO|WARNING|ERROR).*", out_lines[0]):
         out_lines.pop(0)
@@ -121,10 +112,11 @@ def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_roo
             "question2",
             "Current flows in the same direction as the arrow",
             ARCH_DEFAULT,
-            [_TestExpectation(expectation=0, score=0.95, evaluation="Good")],
+            [_TestExpectation(expectation=0, score=0.92, evaluation="Good")],
         ),
     ],
 )
+@responses.activate
 def test_cli_trained_models_usable_for_inference(
     lesson: str,
     answer: str,
@@ -133,8 +125,10 @@ def test_cli_trained_models_usable_for_inference(
     tmpdir,
     shared_root,
 ):
-    _, _, _, model_root = __train_model(tmpdir, lesson, shared_root)
+    _, _, _, config = __train_model(tmpdir, lesson, shared_root)
+    model_root = config.output_dir
     assert path.exists(model_root)
-    create_and_test_classifier(
-        lesson, model_root, shared_root, answer, expected_results, arch=arch
-    )
+    with mocked_data_dao(lesson, config.data_root, model_root, config.deployed_models):
+        create_and_test_classifier(
+            lesson, model_root, shared_root, answer, expected_results, arch=arch
+        )

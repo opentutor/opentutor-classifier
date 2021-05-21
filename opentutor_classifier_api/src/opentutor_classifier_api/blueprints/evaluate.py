@@ -14,9 +14,8 @@ from opentutor_classifier import (
     ClassifierConfig,
     ClassifierFactory,
 )
-from opentutor_classifier.utils import dict_to_config, find_model_dir
+import opentutor_classifier.dao
 
-import json
 import re
 
 eval_blueprint = Blueprint("evaluate", __name__)
@@ -47,14 +46,6 @@ def evaluate():
                 "coerce": int,
                 "default": -1,
             },
-            "config": {
-                "required": False,
-                "type": "dict",
-                "schema": {
-                    "question": {"type": "string", "required": False},
-                    "expectations": {"type": "list", "required": False},
-                },
-            },
         },
         allow_unknown=True,
         purge_unknown=True,
@@ -67,43 +58,24 @@ def evaluate():
         os.environ.get("MODEL_ROOT") or "models",
         os.environ.get("MODEL_DEPLOYED_ROOT") or "models_deployed",
     ]
-    question_models = find_model_dir(model_name, model_roots=model_roots)
-    config_data = {}
     input_sentence = args.get("input")
     exp_num = int(args.get("expectation", -1))
-    if not question_models:
-        if not args.get("config"):
-            return (
-                jsonify(
-                    {
-                        "message": f"No models found for lesson {args.get('lesson')}. Config data is required"
-                    }
-                ),
-                404,
-            )
-        else:
-            model_name = "default"
-            question_models = find_model_dir(model_name, model_roots=model_roots)
-            config_data = args.get("config")
-    version_path = os.path.join(question_models, "build_version.json")
-    version = None
-    if os.path.isfile(version_path):
-        with open(version_path) as f:
-            version = json.load(f)
     shared_root = os.environ.get("SHARED_ROOT") or "shared"
     classifier = ClassifierFactory().new_classifier(
         ClassifierConfig(
-            model_name=model_name, model_roots=model_roots, shared_root=shared_root
+            dao=opentutor_classifier.dao.find_data_dao(),
+            model_name=model_name,
+            model_roots=model_roots,
+            shared_root=shared_root,
         )
     )
     _model_op = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_sentence,
-            config_data=dict_to_config(config_data),
             expectation=exp_num,
         )
     )
     return (
-        jsonify({"output": to_camelcase(_model_op.to_dict()), "version": version}),
+        jsonify({"output": to_camelcase(_model_op.to_dict())}),
         200,
     )

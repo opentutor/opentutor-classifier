@@ -6,11 +6,13 @@
 #
 import json
 import os
+from typing import List
 
 import pytest
 
 from opentutor_classifier import ExpectationClassifierResult, SpeechActClassifierResult  # type: ignore
 from . import fixture_path
+from .utils import mocked_data_dao
 
 
 @pytest.fixture(scope="module")
@@ -45,84 +47,61 @@ def test_returns_400_response_when_input_not_set(client):
     assert res.json == {"input": ["required field"]}
 
 
-def test_returns_404_response_with_no_question_available_with_no_config_data(client):
-    res = client.post(
-        "/classifier/evaluate/",
-        data=json.dumps({"lesson": "doesNotExist", "input": "peer pressure"}),
-        content_type="application/json",
-    )
-    assert res.status_code == 404
-    assert res.json == {
-        "message": "No models found for lesson doesNotExist. Config data is required"
-    }
-
-
 @pytest.mark.parametrize(
-    "input_lesson, input_answer, input_expectation, config_data, expected_results",
+    "lesson, answer, expectation, expected_results",
     [
-        # (
-        #     "doesNotExist",
-        #     "peer pressure can change your behavior",
-        #     0,
-        #     {
-        #         "question": "What are the challenges to demonstrating integrity in a group?",
-        #         "expectations": [
-        #             {
-        #                 "ideal": "Peer pressure can cause you to allow inappropriate behavior"
-        #             }
-        #         ],
-        #     },
-        #     [ExpectationClassifierResult(expectation=0, score=0.0, evaluation="Bad")],
-        # ),
         (
-            "doesNotExist",
-            "they need sunlight",
+            "q1-untrained",
+            "peer pressure might lead to bad behavior",
             -1,
-            {
-                "question": "how can i grow better plants?",
-                "expectations": [
-                    {"ideal": "give them the right amount of water"},
-                    {"ideal": "they need sunlight"},
-                ],
-            },
             [
                 ExpectationClassifierResult(
-                    expectation=0, evaluation="Bad", score=0.02
-                ),
-                ExpectationClassifierResult(
-                    expectation=1, evaluation="Good", score=1.0
+                    expectation=0, evaluation="Good", score=1.0
                 ),
             ],
         )
     ],
 )
-def test_evaluate_with_no_question_available_with_config_data(
-    client, input_lesson, input_answer, input_expectation, config_data, expected_results
+def test_evaluate_uses_default_model_when_question_untrained(
+    client,
+    lesson: str,
+    answer: str,
+    expectation: int,
+    expected_results: List[ExpectationClassifierResult],
 ):
-    res = client.post(
-        "/classifier/evaluate/",
-        data=json.dumps(
-            {
-                "lesson": input_lesson,
-                "input": input_answer,
-                "expectation": input_expectation,
-                "config": config_data,
-            }
-        ),
-        content_type="application/json",
-    )
-    assert res.status_code == 200
-    assert res.json["version"]["modelId"] == "default"
-    results = res.json["output"]["expectationResults"]
-    assert len(results) == len(expected_results)
-    for res, res_expected in zip(results, expected_results):
-        assert res["expectation"] == res_expected.expectation
-        assert round(float(res["score"]), 2) == res_expected.score
-        assert res["evaluation"] == res_expected.evaluation
+    with mocked_data_dao(
+        lesson,
+        fixture_path("data"),
+        fixture_path("models"),
+        fixture_path("models_deployed"),
+    ):
+        res = client.post(
+            "/classifier/evaluate/",
+            data=json.dumps(
+                {
+                    "lesson": lesson,
+                    "input": answer,
+                    "expectation": expectation,
+                    "config": {},
+                }
+            ),
+            content_type="application/json",
+        )
+        import logging
+
+        logging.warning("what is response?")
+        logging.warning(res.json)
+        assert res.status_code == 200
+        results = res.json["output"]["expectationResults"]
+        assert len(results) == len(expected_results)
+        for res, res_expected in zip(results, expected_results):
+            assert res["expectation"] == res_expected.expectation
+            assert round(float(res["score"]), 2) == res_expected.score
+            assert res["evaluation"] == res_expected.evaluation
 
 
 @pytest.mark.parametrize(
-    "input_lesson,input_answer,input_expectation,config_data,expected_results,expected_sa_results",
+    "lesson,answer,expectation,config_data,expected_results,expected_sa_results",
     [
         (
             "q1",
@@ -171,9 +150,9 @@ def test_evaluate_with_no_question_available_with_config_data(
 )
 def test_evaluate_classifies_user_answers(
     client,
-    input_lesson,
-    input_answer,
-    input_expectation,
+    lesson,
+    answer,
+    expectation,
     config_data,
     expected_results,
     expected_sa_results,
@@ -182,15 +161,14 @@ def test_evaluate_classifies_user_answers(
         "/classifier/evaluate/",
         data=json.dumps(
             {
-                "lesson": input_lesson,
-                "input": input_answer,
-                "expectation": input_expectation,
+                "lesson": lesson,
+                "input": answer,
+                "expectation": expectation,
                 "config": config_data,
             }
         ),
         content_type="application/json",
     )
-    assert res.json["version"]["modelId"] == input_lesson
     speech_acts = res.json["output"]["speechActs"]
     assert (
         speech_acts["metacognitive"]["evaluation"]
