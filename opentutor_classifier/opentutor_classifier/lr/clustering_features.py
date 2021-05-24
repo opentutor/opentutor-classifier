@@ -4,21 +4,24 @@ from typing import Dict, List, Tuple
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
-from scipy.optimize import linear_sum_assignment
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.metrics.pairwise import pairwise_distances
+from sklearn.metrics.pairwise import pairwise_distances, cosine_similarity
 
+from sentence_transformers import SentenceTransformer
 
-from .features import (
-    number_of_negatives,
-    word2vec_example_similarity,
-)
+from .features import number_of_negatives
 
 
 class CustomAgglomerativeClustering:
-    def __init__(self, word2vec: Word2VecKeyedVectors, index2word_set):
+    def __init__(
+        self,
+        word2vec: Word2VecKeyedVectors,
+        index2word_set,
+        sentence_transformer="bert-base-nli-mean-tokens",
+    ):
         self.word2vec = word2vec
         self.index2word_set = index2word_set
+        self.model = SentenceTransformer(sentence_transformer)
         self.word_alignment_dp: Dict[
             Tuple[Tuple[str, ...], Tuple[str, ...]], float
         ] = dict()
@@ -28,28 +31,11 @@ class CustomAgglomerativeClustering:
         if key in self.word_alignment_dp:
             return self.word_alignment_dp[key]
 
-        cost = []
-        n_exact_matches = len(set(ia).intersection(set(example)))
-        ia_, example_ = (
-            list(set(ia).difference(example)),
-            list(set(example).difference(ia)),
-        )
-        if not ia_:
-            return 1
+        en_example = self.model.encode(" ".join(example))
+        en_ia = self.model.encode(" ".join(ia))
 
-        for ia_i in ia_:
-            inner_cost = []
-            for e in example_:
-                dist = word2vec_example_similarity(
-                    self.word2vec, self.index2word_set, [e], [ia_i]
-                )
-                inner_cost.append(dist)
-            cost.append(inner_cost)
-        row_idx, col_idx = linear_sum_assignment(cost, maximize=True)
+        self.word_alignment_dp[key] = cosine_similarity([en_example], [en_ia])[0][0]
 
-        self.word_alignment_dp[key] = (
-            n_exact_matches + sum([cost[r][c] for r, c in zip(row_idx, col_idx)])
-        ) / float(len(ia_) + n_exact_matches)
         return self.word_alignment_dp[key]
 
     def alignment_metric(self, x, y) -> float:
@@ -83,24 +69,19 @@ class CustomAgglomerativeClustering:
         index2word_set,
         cuttoff_length: int = 20,
     ) -> str:
+
         sentence_cluster = sentence_cluster[
             np.vectorize(lambda x: len(x) < cuttoff_length)(sentence_cluster)
         ]
         if len(sentence_cluster) < 5:
             return ""
+
         avg_proximity = np.zeros(len(sentence_cluster))
         for i, row1 in enumerate(sentence_cluster):
             for row2 in sentence_cluster:
                 if row1 == row2:
                     continue
-                avg_proximity[i] += (
-                    len(row2) / (len(row2) + len(row1))
-                ) * self.word_alignment_feature(
-                    row2, row1
-                )  # check best alignment in both directions
-                avg_proximity[i] += (
-                    len(row1) / (len(row2) + len(row1))
-                ) * self.word_alignment_feature(row1, row2)
+                avg_proximity[i] += self.word_alignment_feature(row2, row1)
 
         avg_proximity /= len(sentence_cluster)
         best_idx = np.argmax(avg_proximity)
