@@ -233,10 +233,6 @@ class CustomAgglomerativeClustering:
                 fpr_store[pattern] = fpr
                 if ok:
                     useful_features[label].append(pattern)
-
-            # useful_features[label] = list(
-            #     set([item for i, item in enumerate(patterns) if one_fpr[i] > fpr_cuttoff])
-            # )
             useful_features[label].sort()
 
         return useful_features
