@@ -4,6 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from opentutor_classifier.utils import model_last_updated_at
 from os import path
 from typing import Dict, List, Optional, Tuple
 
@@ -149,3 +150,8 @@ class LRAnswerClassifier(AnswerClassifier):
                 )
             )
         return result
+
+    def get_last_trained_at(self) -> float:
+        return model_last_updated_at(
+            ARCH_LR_CLASSIFIER, self.model_name, self.model_roots, MODEL_FILE_NAME
+        )

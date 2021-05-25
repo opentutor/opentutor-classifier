@@ -6,6 +6,7 @@
 #
 from dataclasses import dataclass
 import math
+from opentutor_classifier.utils import model_last_updated_at
 from os import path
 from typing import Dict, List, Optional, Tuple
 
@@ -163,3 +164,8 @@ class SVMAnswerClassifier(AnswerClassifier):
                 )
             )
         return result
+
+    def get_last_trained_at(self) -> float:
+        return model_last_updated_at(
+            ARCH_SVM_CLASSIFIER, self.model_name, self.model_roots, MODEL_FILE_NAME
+        )

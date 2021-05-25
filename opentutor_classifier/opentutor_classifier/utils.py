@@ -8,6 +8,7 @@ from os import path
 from typing import Any, Dict, Iterable, Optional
 import pandas as pd
 import yaml
+from pathlib import Path
 
 from . import ExpectationConfig, QuestionConfig
 
@@ -27,9 +28,17 @@ def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
     )
 
 
-def find_model_dir(model_name: str, model_roots: Iterable[str]) -> str:
+def model_last_updated_at(
+    arch: str, model_name: str, model_roots: Iterable[str], model_file_name: str
+) -> int:
+    dir_path = find_model_dir(arch, model_name, model_roots)
+    file_path = path.join(dir_path, model_file_name)
+    return int(Path(file_path).stat().st_mtime)
+
+
+def find_model_dir(arch: str, model_name: str, model_roots: Iterable[str]) -> str:
     for m in model_roots:
-        d = path.join(m, model_name)
+        d = path.join(m, arch, model_name)
         if path.isdir(d):
             return d
     return ""
