@@ -173,19 +173,19 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
-            data, candidates = clustering.generate_feature_candidates(
-                np.array(processed_data)[np.array(train_y) == "good"],
-                np.array(processed_data)[np.array(train_y) == "bad"],
-                self.word2vec,
-                index2word_set,
-                ideal_answer,
-            )
-            pattern = clustering.select_feature_candidates(data, candidates)
+            # data, candidates = clustering.generate_feature_candidates(
+            #     np.array(processed_data)[np.array(train_y) == "good"],
+            #     np.array(processed_data)[np.array(train_y) == "bad"],
+            #     self.word2vec,
+            #     index2word_set,
+            #     ideal_answer,
+            # )
+            # pattern = clustering.select_feature_candidates(data, candidates)
             config_updated.expectations[exp_num].features = dict(
                 good=good,
                 bad=bad,
-                patterns_good=pattern["good"],
-                patterns_bad=pattern["bad"],
+                patterns_good=[],  # pattern["good"],
+                patterns_bad=[],  # pattern["bad"],
             )
             features = [
                 np.array(
@@ -199,7 +199,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         good,
                         bad,
                         clustering,
-                        patterns=pattern["good"] + pattern["bad"],
+                        patterns=[],  # pattern["good"] + pattern["bad"],
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)

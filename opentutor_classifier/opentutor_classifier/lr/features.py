@@ -12,6 +12,9 @@ from typing import List, Tuple
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 from scipy import spatial
+from sentence_transformers import SentenceTransformer
+
+sentence_transformer = SentenceTransformer("bert-base-nli-mean-tokens")
 
 
 def _avg_feature_vector(
@@ -20,14 +23,16 @@ def _avg_feature_vector(
     num_features: int,
     index2word_set: set,
 ) -> np.ndarray:
-    feature_vec = np.zeros((num_features,), dtype="float32")
-    nwords = 0
-    common_words = set(words).intersection(index2word_set)
-    for word in common_words:
-        nwords = nwords + 1
-        feature_vec = np.add(feature_vec, model[word])
-    if nwords > 0:
-        feature_vec = np.divide(feature_vec, nwords)
+    # feature_vec = np.zeros((num_features,), dtype="float32")
+    # nwords = 0
+    # common_words = set(words).intersection(index2word_set)
+    # for word in common_words:
+    #     nwords = nwords + 1
+    #     feature_vec = np.add(feature_vec, model[word])
+    # if nwords > 0:
+    #     feature_vec = np.divide(feature_vec, nwords)
+    feature_vec = sentence_transformer.encode(" ".join(words))
+    print(feature_vec.shape)
     return feature_vec
 
 

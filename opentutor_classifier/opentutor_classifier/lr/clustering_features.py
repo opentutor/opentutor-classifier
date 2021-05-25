@@ -39,10 +39,8 @@ class CustomAgglomerativeClustering:
         return self.word_alignment_dp[key]
 
     def alignment_metric(self, x, y) -> float:
-        if len(self.data[int(x[0])]) > len(self.data[int(y[0])]):
-            x, y = y, x
         return 1 - self.word_alignment_feature(
-            self.data[int(y[0])], self.data[int(x[0])]
+            self.data[int(x[0])], self.data[int(y[0])]
         )
 
     def fit_predict(self, data: np.ndarray):
