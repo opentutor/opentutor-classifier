@@ -221,13 +221,17 @@ def mock_gql_response(lesson: str, data_root: str, is_default_model=False):
     cfile = Path(path.join(data_root, lesson, "config.yaml"))
     dfile = Path(path.join(data_root, lesson, "training.csv"))
     training_data_prop = "allTrainingData" if is_default_model else "trainingData"
+    config_stringified = cfile.read_text() if cfile.is_file() else None
     res = {
         "data": {
             "me": {
                 training_data_prop: {
-                    "config": cfile.read_text() if cfile.is_file() else None,
+                    "config": config_stringified,
                     "training": dfile.read_text() if dfile.is_file() else None,
-                }
+                },
+                "config": {
+                    "stringified": config_stringified,
+                },
             }
         }
     }

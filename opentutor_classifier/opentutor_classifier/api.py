@@ -54,8 +54,8 @@ class GQLQueryBody(TypedDict):
 GQL_QUERY_LESSON_CONFIG = """
 query LessonConfig($lessonId: String!) {
     me {
-        trainingData(lessonId: $lessonId) {
-            config
+        config(lessonId: $lessonId) {
+            stringified
         }
     }
 }
@@ -178,8 +178,8 @@ def fetch_config(lesson: str) -> QuestionConfig:
     tdjson = __auth_gql(query_lesson_config_gql(lesson))
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
-    data = tdjson["data"]["me"]["trainingData"]
-    return dict_to_question_config(yaml.safe_load(data.get("config") or ""))
+    data = tdjson["data"]["me"]["config"]
+    return dict_to_question_config(yaml.safe_load(data.get("stringified") or ""))
 
 
 def fetch_training_data(lesson: str, url="") -> TrainingInput:
