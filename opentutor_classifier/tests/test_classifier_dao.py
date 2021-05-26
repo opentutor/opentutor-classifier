@@ -48,11 +48,11 @@ def test_classifier_cache(arch: str, lesson: str, tmpdir, data_root, shared_root
         train_result = train_classifier(lesson, test_config)
         assert path.exists(train_result.models)
         mocked_data_dao(
-                lesson,
-                example_data_path(""),
-                test_config.output_dir,
-                test_config.output_dir,
-            )
+            lesson,
+            example_data_path(""),
+            test_config.output_dir,
+            test_config.output_dir,
+        )
         config = ClassifierConfig(
             dao=find_data_dao(),
             model_name=lesson,
