@@ -4,7 +4,24 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-def test_healthcheck_returns_ok_response(client):
-    res = client.get("/classifier/healthcheck/")
-    assert res.status_code == 200
-    assert len(res.json.get("services")) == 5
+import os
+
+from flask import Blueprint, jsonify
+
+healthcheck_blueprint = Blueprint("healthcheck", __name__)
+
+
+@healthcheck_blueprint.route("", methods=["GET"])
+@healthcheck_blueprint.route("/", methods=["GET"])
+def healthcheck():
+    return jsonify(
+        {
+            "services": {
+                "admin": { "status": 418 },
+                "graphql": { "status": 418 },   
+                "home": { "status": 418 },
+                "tutor": { "status": 418 },
+                "training": { "status": 418 },
+            }
+        }
+    )
