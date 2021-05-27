@@ -17,11 +17,11 @@ class CustomAgglomerativeClustering:
         self,
         word2vec: Word2VecKeyedVectors,
         index2word_set,
-        sentence_transformer="bert-base-nli-mean-tokens",
+        sentence_transformer: SentenceTransformer,
     ):
         self.word2vec = word2vec
         self.index2word_set = index2word_set
-        self.model = SentenceTransformer(sentence_transformer)
+        self.model = sentence_transformer
         self.word_alignment_dp: Dict[
             Tuple[Tuple[str, ...], Tuple[str, ...]], float
         ] = dict()
@@ -31,8 +31,8 @@ class CustomAgglomerativeClustering:
         if key in self.word_alignment_dp:
             return self.word_alignment_dp[key]
 
-        en_example = self.model.encode(" ".join(example))
-        en_ia = self.model.encode(" ".join(ia))
+        en_example = self.model.encode(" ".join(example), show_progress_bar=False)
+        en_ia = self.model.encode(" ".join(ia), show_progress_bar=False)
 
         self.word_alignment_dp[key] = cosine_similarity([en_example], [en_ia])[0][0]
 

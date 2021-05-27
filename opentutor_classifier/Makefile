@@ -59,10 +59,14 @@ PHONY: test
 test: $(VENV)
 	cd $(ROOT)/word2vec/ \
 		&& $(MAKE) word2vec.bin
+
+	cd $(ROOT)/sentence-transformer/ \
+		&& $(MAKE) sentence_transformer
+	
 	. $(VENV)/bin/activate \
 		&& coverage run \
 			--omit="$(PWD)/tests $(VENV)" \
-			-m py.test -vv $(args)
+			-m py.test -vv $(args) 
 
 PHONY: test
 test-not-slow: $(VENV)
