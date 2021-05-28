@@ -33,7 +33,6 @@ def shared_root(word2vec) -> str:
     return path.dirname(word2vec)
 
 
-@pytest.mark.only
 @pytest.mark.parametrize(
     "lesson,arch",
     [

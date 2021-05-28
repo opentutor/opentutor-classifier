@@ -30,10 +30,10 @@ def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
 
 def model_last_updated_at(
     arch: str, model_name: str, model_roots: Iterable[str], model_file_name: str
-) -> int:
+) -> float:
     dir_path = find_model_dir(arch, model_name, model_roots)
     file_path = path.join(dir_path, model_file_name)
-    return int(Path(file_path).stat().st_mtime)
+    return Path(file_path).stat().st_mtime if path.isfile(file_path) else -1.0
 
 
 def find_model_dir(arch: str, model_name: str, model_roots: Iterable[str]) -> str:
