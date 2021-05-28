@@ -41,7 +41,7 @@ from opentutor_classifier.api import get_graphql_endpoint
 @pytest.mark.parametrize(
     "message,status",
     [
-        ("pong!","success")
+        ('pong!','success')
     ],
 )
 def test_can_i_mock(
