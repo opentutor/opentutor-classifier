@@ -311,6 +311,7 @@ def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
 
 ARCH_SVM_CLASSIFIER = "opentutor_classifier.svm"
 ARCH_LR_CLASSIFIER = "opentutor_classifier.lr"
+ARCH_LR_EMB_DIFF_CLASSIFIER = "opentutor_classifier.lr_emb_diff"
 ARCH_DEFAULT = "opentutor_classifier.svm"
 
 

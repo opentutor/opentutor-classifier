@@ -14,6 +14,7 @@ from opentutor_classifier import (
     ExpectationTrainingResult,
     ARCH_SVM_CLASSIFIER,
     ARCH_LR_CLASSIFIER,
+    ARCH_LR_EMB_DIFF_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
 from .utils import (
@@ -58,6 +59,7 @@ def test_outputs_models_at_specified_root(
     [
         (ARCH_SVM_CLASSIFIER, "models_by_expectation_num.pkl"),
         (ARCH_LR_CLASSIFIER, "models_by_expectation_num.pkl"),
+        (ARCH_LR_EMB_DIFF_CLASSIFIER, "models_by_expectation_num.pkl"),
     ],
 )
 def test_outputs_models_at_specified_model_root_for_default_model(
@@ -182,9 +184,9 @@ def test_train_and_predict(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.90),
-                ExpectationTrainingResult(accuracy=0.90),
-                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.9375),
+                ExpectationTrainingResult(accuracy=0.948),
+                ExpectationTrainingResult(accuracy=0.959),
             ],
             0.85,
         ),
@@ -193,12 +195,35 @@ def test_train_and_predict(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.8376),
                 ExpectationTrainingResult(accuracy=0.85),
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.89),
+                ExpectationTrainingResult(accuracy=0.854),
+                ExpectationTrainingResult(accuracy=0.959),
             ],
             0.8,
+        ),
+        (
+            "ies-rectangle",
+            ARCH_LR_EMB_DIFF_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.9375),
+                ExpectationTrainingResult(accuracy=0.948),
+                ExpectationTrainingResult(accuracy=0.959),
+            ],
+            0.73,
+        ),
+        (
+            "candles",
+            ARCH_LR_EMB_DIFF_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.948),
+                ExpectationTrainingResult(accuracy=0.91),
+                ExpectationTrainingResult(accuracy=0.94),
+                ExpectationTrainingResult(accuracy=0.943),
+            ],
+            0.75,
         ),
     ],
 )
