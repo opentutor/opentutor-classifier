@@ -4,7 +4,8 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-def test_healthcheck_returns_ok_response(client):
-    res = client.get("/classifier/healthcheck/")
+def test_it_returns_pong_response(client):
+    res = client.get("/classifier/ping/")
     assert res.status_code == 200
-    assert len(res.json.get("services")) == 5
+    assert res.json.get("message") == "pong!"
+    assert res.json.get("status") == "success"

@@ -5,8 +5,12 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import os
+import requests
+import json
+import pandas as pd
 
 from flask import Blueprint, jsonify
+from opentutor_classifier.api import get_graphql_endpoint
 
 healthcheck_blueprint = Blueprint("healthcheck", __name__)
 
@@ -14,14 +18,53 @@ healthcheck_blueprint = Blueprint("healthcheck", __name__)
 @healthcheck_blueprint.route("", methods=["GET"])
 @healthcheck_blueprint.route("/", methods=["GET"])
 def healthcheck():
+
+    # Get service statuses
+    # Admin
+    res_admin = requests.head('https://httpbin.org/')
+    admin_status = res_admin.status_code
+
+    # GraphQL
+    endpoint = get_graphql_endpoint()
+    GQL_QUERY_STATUS = """
+    query {
+        message,
+        status
+    }
+    """
+    res_gql = requests.post(endpoint, json={'query': GQL_QUERY_STATUS})
+    print(res_gql.status_code)
+    print(res_gql.text)
+    graphql_status = res_gql.status_code
+
+    # Home
+    res_home = requests.head('https://httpbin.org/')
+    home_status = res_home.status_code
+
+    # Tutor
+    res_tutor = requests.head('https://httpbin.org/')
+    tutor_status = res_tutor.status_code
+
+    # Training
+    # Needs to ping
+    training_status = 418
+
+    healthy = ( 
+        admin_status == 200 
+        and graphql_status == 200
+        and home_status == 200
+        and tutor_status == 200
+        and training_status == 200
+    )
+
     return jsonify(
         {
             "services": {
-                "admin": { "status": 418 },
-                "graphql": { "status": 418 },   
-                "home": { "status": 418 },
-                "tutor": { "status": 418 },
-                "training": { "status": 418 },
+                "admin": {"status": admin_status},
+                "graphql": {"status": graphql_status},
+                "home": {"status": home_status},
+                "tutor": {"status": tutor_status},
+                "training": {"status": training_status},
             }
         }
-    )
+    ), 200 if healthy else 503
