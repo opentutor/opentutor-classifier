@@ -200,7 +200,7 @@ class CustomAgglomerativeClustering:
     @staticmethod
     def deduplicate_patterns(
         patterns_with_fpr: List[Tuple[str, float]], fpr_cuttoff: float
-    ):
+    ) -> List[str]:
         fpr_store: Dict[str, float] = dict()
         features: List[str] = []
         for pattern, fpr in patterns_with_fpr:
