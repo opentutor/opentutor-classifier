@@ -83,11 +83,12 @@ class LRAnswerClassifier(AnswerClassifier):
             else m_by_e[expectation]
         )
 
-    def find_word2vec(self) -> Word2VecKeyedVectors:
+    def find_sentence_transformer(self):
         self.sentence_transformer = find_or_load_sentence_transformer(
             self.shared_root + "/../sentence-transformer"
         )
 
+    def find_word2vec(self) -> Word2VecKeyedVectors:
         if not self._word2vec:
             self._word2vec = find_or_load_word2vec(
                 path.join(self.shared_root, "word2vec.bin")
@@ -128,6 +129,7 @@ class LRAnswerClassifier(AnswerClassifier):
         result.speech_acts["profanity"] = self.speech_act_classifier.check_profanity(
             result
         )
+        self.find_sentence_transformer()
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
             sent_features = LRExpectationClassifier.calculate_features(
