@@ -55,7 +55,7 @@ def _preprocess_trainx(data: List[str]) -> List[List[str]]:
     for entry in data:
         final_words = []
         for word, tag in pos_tag(entry):
-            if word not in STOPWORDS:
+            if word not in STOPWORDS and (len(word) > 1 or word.isnumeric()):
                 final_words.append(word_mapper.get(word, word))
         pre_processed_dataset.append(tuple(final_words))
     return np.array(pre_processed_dataset)
