@@ -38,6 +38,7 @@ from .expectations import (
     preprocess_sentence,
     LRExpectationClassifier,
     preprocess_punctuations,
+    word_mapper,
 )
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
@@ -55,7 +56,7 @@ def _preprocess_trainx(data: List[str]) -> List[List[str]]:
         final_words = []
         for word, tag in pos_tag(entry):
             if word not in STOPWORDS:
-                final_words.append(word)
+                final_words.append(word_mapper.get(word, word))
         pre_processed_dataset.append(tuple(final_words))
     return np.array(pre_processed_dataset)
 

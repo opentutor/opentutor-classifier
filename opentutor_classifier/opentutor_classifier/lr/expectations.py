@@ -21,7 +21,7 @@ word_mapper = {
 
 
 def preprocess_punctuations(sentence: str) -> str:
-    sentence = re.sub(r'["\-"]', " - ", sentence)
+    sentence = re.sub(r'["\-"]', " ", sentence)
     sentence = re.sub(r'["%"]', " percent ", sentence)
     return re.sub(r'["(", ")", "~", "!", "^", ",", "?", " ", "."]', " ", sentence)
 
