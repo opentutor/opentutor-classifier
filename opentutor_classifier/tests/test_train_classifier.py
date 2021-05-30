@@ -242,10 +242,10 @@ def test_train_and_predict(
             ARCH_LR_EMB_DIFF_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.948),
+                ExpectationTrainingResult(accuracy=0.94),
                 ExpectationTrainingResult(accuracy=0.916),
-                ExpectationTrainingResult(accuracy=0.940),
-                ExpectationTrainingResult(accuracy=0.9435),
+                ExpectationTrainingResult(accuracy=0.931),
+                ExpectationTrainingResult(accuracy=0.935),
             ],
             0.75,
         ),
