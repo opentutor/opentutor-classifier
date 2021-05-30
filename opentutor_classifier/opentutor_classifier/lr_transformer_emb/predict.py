@@ -12,7 +12,7 @@ import numpy as np
 from sklearn import linear_model
 
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR_TRANSFORMER_CLASSIFIER,
     AnswerClassifier,
     AnswerClassifierInput,
     AnswerClassifierResult,
@@ -28,6 +28,7 @@ from .clustering_features import CustomAgglomerativeClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier, preprocess_sentence
 from opentutor_classifier.word2vec import find_or_load_word2vec
+from opentutor_classifier.sentence_transformer import find_or_load_sentence_transformer
 
 
 def _confidence_score(
@@ -42,6 +43,7 @@ ModelAndConfig = Tuple[Dict[int, linear_model.LogisticRegression], QuestionConfi
 class LRAnswerClassifier(AnswerClassifier):
     def __init__(self):
         self._word2vec = None
+        self.sentence_transformer = None
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
         self._model_and_config: ModelAndConfig = None
@@ -61,7 +63,7 @@ class LRAnswerClassifier(AnswerClassifier):
         if not self._model_and_config:
             cm = find_predicton_config_and_pickle(
                 ModelRef(
-                    arch=ARCH_LR_CLASSIFIER,
+                    arch=ARCH_LR_TRANSFORMER_CLASSIFIER,
                     lesson=self.model_name,
                     filename=MODEL_FILE_NAME,
                 ),
@@ -83,6 +85,10 @@ class LRAnswerClassifier(AnswerClassifier):
         )
 
     def find_word2vec(self) -> Word2VecKeyedVectors:
+        self.sentence_transformer = find_or_load_sentence_transformer(
+            self.shared_root + "/../sentence-transformer"
+        )
+
         if not self._word2vec:
             self._word2vec = find_or_load_word2vec(
                 path.join(self.shared_root, "word2vec.bin")
@@ -126,7 +132,9 @@ class LRAnswerClassifier(AnswerClassifier):
             result
         )
         question_proc = preprocess_sentence(conf.question)
-        clustering = CustomAgglomerativeClustering(word2vec, index2word)
+        clustering = CustomAgglomerativeClustering(
+            word2vec, index2word, self.sentence_transformer
+        )
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
             sent_features = LRExpectationClassifier.calculate_features(
@@ -134,8 +142,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 answer.input_sentence,
                 sent_proc,
                 preprocess_sentence(exp_conf.ideal),
-                word2vec,
-                index2word,
+                self.sentence_transformer,
                 exp_conf.features.get("good") or [],
                 exp_conf.features.get("bad") or [],
                 clustering,

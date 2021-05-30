@@ -7,28 +7,25 @@
 import math
 import re
 
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
-from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 from scipy import spatial
+from sentence_transformers import SentenceTransformer
+
+avg_feature_vec_dp: Dict[str, np.array] = dict()
 
 
 def _avg_feature_vector(
     words: List[str],
-    model: Word2VecKeyedVectors,
-    num_features: int,
-    index2word_set: set,
+    model: SentenceTransformer,
 ) -> np.ndarray:
-    feature_vec = np.zeros((num_features,), dtype="float32")
-    nwords = 0
-    common_words = set(words).intersection(index2word_set)
-    for word in common_words:
-        nwords = nwords + 1
-        feature_vec = np.add(feature_vec, model[word])
-    if nwords > 0:
-        feature_vec = np.divide(feature_vec, nwords)
-    return feature_vec
+    sentence = " ".join(words)
+    if sentence in avg_feature_vec_dp:
+        return avg_feature_vec_dp[sentence]
+
+    avg_feature_vec_dp[sentence] = model.encode(sentence, show_progress_bar=False)
+    return avg_feature_vec_dp[sentence]
 
 
 def _calculate_similarity(a: float, b: float) -> float:
@@ -59,27 +56,16 @@ def regex_match_ratio(str_example: str, regexes: List[str]) -> float:
 
 
 def word2vec_example_similarity(
-    word2vec: Word2VecKeyedVectors,
-    index2word_set: set,
+    model: SentenceTransformer,
     example: List[str],
     ideal: List[str],
 ) -> float:
-    example_feature_vec = _avg_feature_vector(
-        example, model=word2vec, num_features=300, index2word_set=index2word_set
-    )
-    ia_feature_vec = _avg_feature_vector(
-        ideal, model=word2vec, num_features=300, index2word_set=index2word_set
-    )
+    example_feature_vec = _avg_feature_vector(example, model=model)
+    ia_feature_vec = _avg_feature_vector(ideal, model=model)
     return _calculate_similarity(example_feature_vec, ia_feature_vec)
 
 
-def word2vec_question_similarity(
-    word2vec: Word2VecKeyedVectors, index2word_set: set, example, question
-):
-    example_feature_vec = _avg_feature_vector(
-        example, model=word2vec, num_features=300, index2word_set=index2word_set
-    )
-    question_feature_vec = _avg_feature_vector(
-        question, model=word2vec, num_features=300, index2word_set=index2word_set
-    )
+def word2vec_question_similarity(model: SentenceTransformer, example, question):
+    example_feature_vec = _avg_feature_vector(example, model=model)
+    question_feature_vec = _avg_feature_vector(question, model=model)
     return _calculate_similarity(example_feature_vec, question_feature_vec)

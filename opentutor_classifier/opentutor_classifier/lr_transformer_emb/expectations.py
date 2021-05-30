@@ -2,7 +2,6 @@ from collections import defaultdict
 import re
 from typing import List
 
-from gensim.models.keyedvectors import Word2VecKeyedVectors
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 from sklearn import model_selection, linear_model
@@ -13,6 +12,7 @@ from text_to_num import alpha2digit
 from opentutor_classifier.stopwords import STOPWORDS
 from . import features
 from .clustering_features import CustomAgglomerativeClustering
+from sentence_transformers import SentenceTransformer
 
 
 word_mapper = {
@@ -95,8 +95,7 @@ class LRExpectationClassifier:
         raw_example: str,
         example: List[str],
         ideal: List[str],
-        word2vec: Word2VecKeyedVectors,
-        index2word_set: set,
+        model: SentenceTransformer,
         good: List[str],
         bad: List[str],
         clustering: CustomAgglomerativeClustering,
@@ -109,12 +108,8 @@ class LRExpectationClassifier:
             *features.number_of_negatives(example),
             clustering.word_alignment_feature(example, ideal),
             features.length_ratio_feature(example, ideal),
-            features.word2vec_example_similarity(
-                word2vec, index2word_set, example, ideal
-            ),
-            features.word2vec_question_similarity(
-                word2vec, index2word_set, example, question
-            ),
+            features.word2vec_example_similarity(model, example, ideal),
+            features.word2vec_question_similarity(model, example, question),
         ]
         if patterns:
             for pattern in patterns:

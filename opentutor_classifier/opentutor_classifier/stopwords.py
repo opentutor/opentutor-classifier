@@ -141,5 +141,6 @@ STOPWORDS = set(
         "ve",
         "y",
         "'s",
+        " ",
     ]
 )

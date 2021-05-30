@@ -15,6 +15,7 @@ from opentutor_classifier import (
     ARCH_SVM_CLASSIFIER,
     ARCH_LR_CLASSIFIER,
     ARCH_LR_EMB_DIFF_CLASSIFIER,
+    ARCH_LR_TRANSFORMER_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
 from .utils import (
@@ -175,40 +176,63 @@ def test_train_and_predict(
         shared_root,
     )
 
-@pytest.mark.only
+
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
-        # (
-        #     "ies-rectangle",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.9375),
-        #         ExpectationTrainingResult(accuracy=0.948),
-        #         ExpectationTrainingResult(accuracy=0.959),
-        #     ],
-        #     0.85,
-        # ),
-        # (
-        #     "candles",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.8376),
-        #         ExpectationTrainingResult(accuracy=0.85),
-        #         ExpectationTrainingResult(accuracy=0.854),
-        #         ExpectationTrainingResult(accuracy=0.959),
-        #     ],
-        #     0.8,
-        # ),
+        (
+            "ies-rectangle",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.91),
+                ExpectationTrainingResult(accuracy=0.94),
+                ExpectationTrainingResult(accuracy=0.97),
+            ],
+            0.85,
+        ),
+        (
+            "candles",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.854),
+                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.87),
+                ExpectationTrainingResult(accuracy=0.967),
+            ],
+            0.8,
+        ),
+        (
+            "ies-rectangle",
+            ARCH_LR_TRANSFORMER_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.9375),
+                ExpectationTrainingResult(accuracy=0.928),
+                ExpectationTrainingResult(accuracy=0.959),
+            ],
+            0.85,
+        ),
+        (
+            "candles",
+            ARCH_LR_TRANSFORMER_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.8376),
+                ExpectationTrainingResult(accuracy=0.85),
+                ExpectationTrainingResult(accuracy=0.854),
+                ExpectationTrainingResult(accuracy=0.959),
+            ],
+            0.8,
+        ),
         (
             "ies-rectangle",
             ARCH_LR_EMB_DIFF_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.9375),
-                ExpectationTrainingResult(accuracy=0.948),
+                ExpectationTrainingResult(accuracy=0.949),
+                ExpectationTrainingResult(accuracy=0.96),
                 ExpectationTrainingResult(accuracy=0.959),
             ],
             0.73,
@@ -219,9 +243,9 @@ def test_train_and_predict(
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(accuracy=0.948),
-                ExpectationTrainingResult(accuracy=0.91),
-                ExpectationTrainingResult(accuracy=0.94),
-                ExpectationTrainingResult(accuracy=0.943),
+                ExpectationTrainingResult(accuracy=0.916),
+                ExpectationTrainingResult(accuracy=0.940),
+                ExpectationTrainingResult(accuracy=0.9435),
             ],
             0.75,
         ),
