@@ -21,13 +21,18 @@ word_mapper = {
 
 
 def preprocess_punctuations(sentence: str) -> str:
-    sentence = re.sub(r'["\-"]', " - ", sentence)
+    sentence = re.sub(r'["\-"]', " ", sentence)
     sentence = re.sub(r'["%"]', " percent ", sentence)
-    return re.sub(r'["(", ")", "~", "!", "^", ",", "?", " ", "."]', " ", sentence)
+    sentence = re.sub("n't", " not", sentence)
+    sentence = re.sub(
+        r'["(", ")", "~", "!", "^", ",", "?", ".", "\'", "$", "="]', " ", sentence
+    )
+    return sentence
 
 
 def preprocess_sentence(sentence: str) -> List[str]:
     sentence = preprocess_punctuations(sentence)
+    print(sentence)
     sentence = alpha2digit(sentence, "en")
     word_tokens_groups: List[str] = [
         word_tokenize(entry.lower())

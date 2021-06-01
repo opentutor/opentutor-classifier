@@ -198,6 +198,26 @@ class CustomAgglomerativeClustering:
         return data, candidates
 
     @staticmethod
+    def deduplicate_patterns(
+        patterns_with_fpr: List[Tuple[str, float]], fpr_cuttoff: float
+    ) -> List[str]:
+        fpr_store: Dict[str, float] = dict()
+        features: List[str] = []
+        for pattern, fpr in patterns_with_fpr:
+            if fpr < fpr_cuttoff:
+                continue
+            ok = True
+            for word in pattern.split("+"):
+                word = word.strip()
+                if fpr_store.get(word, float("-inf")) >= fpr:
+                    ok = False
+            fpr_store[pattern] = fpr
+            if ok:
+                features.append(pattern)
+        features.sort()
+        return features
+
+    @staticmethod
     def select_feature_candidates(
         data: pd.DataFrame,
         candidates: Dict[str, List[str]],
@@ -218,21 +238,10 @@ class CustomAgglomerativeClustering:
                 one_fpr = 1 - (good / np.sum(data["[LABELS]"]))
 
             patterns_with_fpr = list(zip(patterns, one_fpr))
-            patterns_with_fpr.sort()
+            patterns_with_fpr.sort(key=lambda x: len(x[0]))
             # ignores bigger pattern if indivudal words in pattern have higher (1-fpr)
-            useful_features[label] = []
-            fpr_store: Dict[str, int] = dict()
-            for pattern, fpr in patterns_with_fpr:
-                if fpr < fpr_cuttoff:
-                    continue
-                ok = True
-                for word in pattern.split("+"):
-                    word = word.strip()
-                    if fpr_store.get(word, float("-inf")) >= fpr:
-                        ok = False
-                fpr_store[pattern] = fpr
-                if ok:
-                    useful_features[label].append(pattern)
-            useful_features[label].sort()
+            useful_features[label] = CustomAgglomerativeClustering.deduplicate_patterns(
+                patterns_with_fpr, fpr_cuttoff
+            )
 
         return useful_features

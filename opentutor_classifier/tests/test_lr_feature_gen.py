@@ -4,17 +4,15 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-# from typing import Any, Dict, List
 from os import path
 
 import pytest
 
-from opentutor_classifier import ARCH_LR_CLASSIFIER
-from opentutor_classifier.utils import load_config
 from opentutor_classifier.lr.expectations import preprocess_sentence
+from opentutor_classifier.lr.clustering_features import CustomAgglomerativeClustering
 
-from typing import Dict, List, Any
-from .utils import fixture_path, test_env_isolated, train_classifier
+from typing import List, Tuple
+from .utils import fixture_path
 
 
 @pytest.fixture(scope="module")
@@ -47,234 +45,31 @@ def test_text2num(sentence: str, expected_transformation: str):
 
 
 @pytest.mark.parametrize(
-    "lesson,expected_features",
+    "input_patterns_with_fpr, expected_patterns, cuttoff_fpr",
     [
         (
-            "candles",
             [
-                {
-                    "bad": [
-                        "different|differ|unequal|(\\b(isn't|not)\\b.*(same|equal))"
-                    ],
-                    "good": ["constant|same|identical|equal|uniform"],
-                    "patterns_bad": [
-                        "[NEG] + lengths",
-                        "[NEG] + lit",
-                        "burns + change",
-                        "burns + covary",
-                        "burns + one",
-                        "burns + time",
-                        "burns + well",
-                        "change + covary",
-                        "change + one",
-                        "change + same",
-                        "change + time",
-                        "change + well",
-                        "covary",
-                        "invariant + lengths",
-                        "invariant + lit",
-                        "invariant + same",
-                        "invariant + time",
-                        "lengths",
-                        "lit",
-                        "one",
-                        "same + well",
-                        "time + well",
-                        "well",
-                    ],
-                    "patterns_good": [
-                        "constant + indicates",
-                        "constant + rate",
-                        "constant + uniformity",
-                        "indicates",
-                        "pace",
-                        "rate + uniformity",
-                        "same + uniform",
-                        "uniformity",
-                    ],
-                },
-                {
-                    "bad": [
-                        "\\b(not|isn't|no|without)\\b.*\\b(related|relationship|change)\\b"
-                    ],
-                    "good": [
-                        "(covary|covariance|co-variance|co-vary)|\\b(same|equal|together)\\b.*\\b(change|increase|up|grow|vary|rate)\\b|(increase|change|grow|up|vary|rate).*(same|together|equal)"
-                    ],
-                    "patterns_bad": [
-                        "[NEG] + lengths",
-                        "[NEG] + lit",
-                        "invariant + lengths",
-                        "invariant + lit",
-                        "invariant + same",
-                        "invariant + time",
-                        "lengths + lit",
-                        "lengths + proportional",
-                        "lengths + ratio",
-                        "lengths + relationship",
-                        "lengths + same",
-                        "lengths + time",
-                        "lit",
-                    ],
-                    "patterns_good": ["also", "covariates", "increases", "length"],
-                },
-                {
-                    "bad": ["multiples"],
-                    "good": [
-                        "(\\b(not|isn't|no|without)\\b.*(fixed|constant|same).*(ratio|rate|multiple))|((ratio|rate|multiple).*\\b(not|isn't|no|without)\\b.*(fixed|constant|same))"
-                    ],
-                    "patterns_bad": [
-                        "[NEG] + covary",
-                        "candles + covary",
-                        "candles + invariant",
-                        "candles + uniform",
-                        "covary",
-                        "however + invariant",
-                        "however + uniform",
-                        "invariant + uniform",
-                    ],
-                    "patterns_good": [],
-                },
-                {
-                    "bad": ["proportion"],
-                    "good": ["\\b(no|not|isn't|hasn't|never|without)\\b.*proportion"],
-                    "patterns_bad": [
-                        "[NEG] + ratios",
-                        "both + burning",
-                        "both + covary",
-                        "burn + invariant",
-                        "burn + ratios",
-                        "burning + covary",
-                        "burning + keep",
-                        "covary + keep",
-                        "different + invariant",
-                        "different + ratios",
-                        "different + time",
-                        "invariant + ratios",
-                        "rate + ratios",
-                        "ratios",
-                    ],
-                    "patterns_good": ["[NEG] + proportional"],
-                },
+                ("square", 0.7),
+                ("rectangle", 0.90),
+                ("like + rectangle", 0.98),
+                ("like + square", 0.6),
             ],
+            ["like + rectangle", "rectangle", "square"],
+            0.6,
         ),
         (
-            "ies-rectangle",
-            [
-                {
-                    "bad": ["less|different|any"],
-                    "good": ["1|more"],
-                    "patterns_bad": [
-                        "3 + impact",
-                        "37 + impact",
-                        "40 + impact",
-                        "bigger + impact",
-                        "bigger + unit",
-                        "bigger + x",
-                        "closer + impact",
-                        "closer + x",
-                        "difference + impact",
-                        "difference + x",
-                        "gets + impact",
-                        "gets + unit",
-                        "gets + x",
-                        "impact",
-                        "rectangle + x",
-                        "square + x",
-                    ],
-                    "patterns_good": [
-                        "1 + closer",
-                        "1 + gets",
-                        "1 + like",
-                        "1 + looks",
-                        "1 + ratio",
-                        "1 + rectangle",
-                        "1 + square",
-                        "closer + gets",
-                        "closer + like",
-                        "closer + looks",
-                        "closer + ratio",
-                        "closer + rectangle",
-                        "closer + square",
-                        "gets + like",
-                        "gets + looks",
-                        "gets + ratio",
-                        "gets + rectangle",
-                        "gets + square",
-                        "like + ratio",
-                        "like + rectangle",
-                        "looks + ratio",
-                        "looks + rectangle",
-                        "ratio + rectangle",
-                        "ratio + square",
-                        "rectangle + square",
-                    ],
-                },
-                {
-                    "bad": ["same"],
-                    "good": ["less"],
-                    "patterns_bad": [],
-                    "patterns_good": [
-                        "3",
-                        "3 + bigger",
-                        "3 + difference",
-                        "3 + effect",
-                        "3 + less",
-                        "3 + rectangle",
-                        "3 + unit",
-                        "bigger",
-                        "bigger + difference",
-                        "bigger + effect",
-                        "bigger + less",
-                        "bigger + rectangle",
-                        "bigger + unit",
-                        "difference",
-                        "difference + effect",
-                        "difference + less",
-                        "difference + rectangle",
-                        "difference + unit",
-                        "effect",
-                        "effect + less",
-                        "effect + rectangle",
-                        "effect + unit",
-                        "less + rectangle",
-                        "less + unit",
-                        "rectangle + unit",
-                        "unit",
-                    ],
-                },
-                {
-                    "bad": ["10|17|20", "27|30"],
-                    "good": ["37|40"],
-                    "patterns_bad": [],
-                    "patterns_good": ["37"],
-                },
-            ],
+            [("uniform", 0.8), ("burn", 0.5), ("candles + burn + uniform", 0.75)],
+            ["uniform"],
+            0.7,
         ),
     ],
 )
-@pytest.mark.slow
-def test_generates_features(
-    lesson: str,
-    expected_features: List[Dict[str, Any]],
-    tmpdir,
-    data_root: str,
-    shared_root: str,
+def test_unit_deduplication(
+    input_patterns_with_fpr: List[Tuple[str, float]],
+    expected_patterns: List[str],
+    cuttoff_fpr: float,
 ):
-    with test_env_isolated(
-        tmpdir, data_root, shared_root, arch=ARCH_LR_CLASSIFIER, lesson=lesson
-    ) as test_config:
-        train_result = train_classifier(lesson, test_config)
-        assert path.exists(train_result.models)
-        config_file = path.join(
-            test_config.output_dir, test_config.arch, lesson, "config.yaml"
-        )
-        assert path.isfile(config_file)
-        generated_config = load_config(config_file)
-        # "'s" check
-        print(generated_config.expectations)
-        for e in generated_config.expectations:
-            for pattern in e.features["patterns_good"]:
-                assert "'s'" not in pattern, f"'s found in {pattern}"
-            for pattern in e.features["patterns_bad"]:
-                assert "'s" not in pattern, f"'s found in {pattern}"
-        assert [e.features for e in generated_config.expectations] == expected_features
+    patterns = CustomAgglomerativeClustering.deduplicate_patterns(
+        input_patterns_with_fpr, cuttoff_fpr
+    )
+    assert patterns == expected_patterns, f"Expected {expected_patterns} got {patterns}"
