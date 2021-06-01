@@ -11,13 +11,10 @@ from os import path
 from typing import Dict, List
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
-from nltk import pos_tag
-from nltk.tokenize import word_tokenize
 import numpy as np
 import pandas as pd
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
-from text_to_num import alpha2digit
 
 from opentutor_classifier import DataDao
 from opentutor_classifier import (
@@ -33,12 +30,10 @@ from opentutor_classifier import (
     TrainingResult,
 )
 from opentutor_classifier.log import logger
-from opentutor_classifier.stopwords import STOPWORDS
+
 from .expectations import (
     preprocess_sentence,
     LRExpectationClassifier,
-    preprocess_punctuations,
-    word_mapper,
 )
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
@@ -47,17 +42,7 @@ from .clustering_features import CustomAgglomerativeClustering
 
 
 def _preprocess_trainx(data: List[str]) -> List[List[str]]:
-    pre_processed_dataset = []
-    data = [entry.lower() for entry in data]
-    data = [preprocess_punctuations(entry) for entry in data]
-    data = [alpha2digit(entry, "en") for entry in data]
-    data = [word_tokenize(entry) for entry in data]
-    for entry in data:
-        final_words = []
-        for word, tag in pos_tag(entry):
-            if word not in STOPWORDS and (len(word) > 1 or word.isnumeric()):
-                final_words.append(word_mapper.get(word, word))
-        pre_processed_dataset.append(tuple(final_words))
+    pre_processed_dataset = [preprocess_sentence(entry) for entry in data]
     return np.array(pre_processed_dataset)
 
 

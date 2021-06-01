@@ -35,6 +35,10 @@ def shared_root(word2vec) -> str:
             ],
         ),
         ("thirty seven by forty", ["37", "40"]),
+        (
+            "mixture a would be proportional",
+            ["mixture", "a", "would", "proportional"],
+        ),
     ],
 )
 def test_text2num(sentence: str, expected_transformation: str):
