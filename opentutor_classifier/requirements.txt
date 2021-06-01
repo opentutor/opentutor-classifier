@@ -4,6 +4,7 @@ gensim==4.0.1
 pandas==1.2.4
 python-dotenv>=0.17.1
 PyYAML==5.4.1
+pylru==1.2.0
 nltk==3.6.2
 redis==3.5.3
 requests==2.25.1

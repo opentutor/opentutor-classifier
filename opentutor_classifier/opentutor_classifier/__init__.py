@@ -247,6 +247,10 @@ class AnswerClassifier(ABC):
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         raise NotImplementedError()
 
+    @abstractmethod
+    def get_last_trained_at(self) -> float:
+        raise NotImplementedError()
+
 
 @dataclass
 class ExpectationFeatures:

@@ -5,6 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import os
+import re
 from flask import Blueprint, jsonify, request
 
 from cerberus import Validator
@@ -12,11 +13,10 @@ from cerberus import Validator
 from opentutor_classifier import (
     AnswerClassifierInput,
     ClassifierConfig,
-    ClassifierFactory,
 )
 import opentutor_classifier.dao
 
-import re
+from opentutor_classifier.classifier_dao import ClassifierDao
 
 eval_blueprint = Blueprint("evaluate", __name__)
 under_pat = re.compile(r"_([a-z])")
@@ -31,6 +31,17 @@ def to_camelcase(d: dict) -> dict:
     for k, v in d.items():
         new_d[underscore_to_camel(k)] = to_camelcase(v) if isinstance(v, dict) else v
     return new_d
+
+
+_dao: ClassifierDao = None
+
+
+def _get_dao() -> ClassifierDao:
+    global _dao
+    if _dao:
+        return _dao
+    _dao = ClassifierDao()
+    return _dao
 
 
 @eval_blueprint.route("/", methods=["POST"])
@@ -61,7 +72,7 @@ def evaluate():
     input_sentence = args.get("input")
     exp_num = int(args.get("expectation", -1))
     shared_root = os.environ.get("SHARED_ROOT") or "shared"
-    classifier = ClassifierFactory().new_classifier(
+    classifier = _get_dao().find_classifier(
         ClassifierConfig(
             dao=opentutor_classifier.dao.find_data_dao(),
             model_name=model_name,
