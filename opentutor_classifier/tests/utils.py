@@ -415,11 +415,19 @@ def read_example_testset(
 def to_example_result(
     expected: _TestExample, observed: AnswerClassifierResult
 ) -> _TestExampleResult:
+    result_expectations = []
+    for e in expected.expectations:
+        for o in observed.expectation_results:
+            if e.expectation == o.expectation:
+                result_expectations.append(to_expectation_result(e, o))
     return _TestExampleResult(
-        expected=expected,
-        observed=observed,
-        expectations=[
-            to_expectation_result(e, o)
-            for e, o in zip(expected.expectations, observed.expectation_results)
-        ],
+        expected=expected, observed=observed, expectations=result_expectations
     )
+    # return _TestExampleResult(
+    #     expected=expected,
+    #     observed=observed,
+    #     expectations=[
+    #         to_expectation_result(e, o)
+    #         for e, o in zip(expected.expectations, observed.expectation_results)
+    #     ],
+    # )
