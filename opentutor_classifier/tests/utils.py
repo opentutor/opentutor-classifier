@@ -423,11 +423,3 @@ def to_example_result(
     return _TestExampleResult(
         expected=expected, observed=observed, expectations=result_expectations
     )
-    # return _TestExampleResult(
-    #     expected=expected,
-    #     observed=observed,
-    #     expectations=[
-    #         to_expectation_result(e, o)
-    #         for e, o in zip(expected.expectations, observed.expectation_results)
-    #     ],
-    # )
