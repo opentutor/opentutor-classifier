@@ -114,12 +114,8 @@ class SVMAnswerClassifier(AnswerClassifier):
         )
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
-        from opentutor_classifier.log import logger
-
         sent_proc = preprocess_sentence(answer.input_sentence)
         models_by_expectation, conf = self.model_and_config
-        logger.warning("\n\n\nwhat is loaded conf?")
-        logger.warning(conf)
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
@@ -145,9 +141,6 @@ class SVMAnswerClassifier(AnswerClassifier):
         question_proc = preprocess_sentence(conf.question)
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
-            logger.warning(f"\n\n\neval exp {exp.expectation}?")
-            logger.warning(exp_conf.ideal)
-            logger.warning(expectations)
             sent_features = SVMExpectationClassifier.calculate_features(
                 question_proc,
                 answer.input_sentence,
