@@ -11,15 +11,10 @@ from os import path
 from typing import Dict, List
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
-
-# from nltk import pos_tag
-# from nltk.tokenize import word_tokenize
 import numpy as np
 import pandas as pd
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
-
-# from text_to_num import alpha2digit
 
 from opentutor_classifier import DataDao
 from opentutor_classifier import (
@@ -36,12 +31,9 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.log import logger
 
-# from opentutor_classifier.stopwords import STOPWORDS
 from .expectations import (
     preprocess_sentence,
     LRExpectationClassifier,
-    # preprocess_punctuations,
-    # word_mapper,
 )
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
