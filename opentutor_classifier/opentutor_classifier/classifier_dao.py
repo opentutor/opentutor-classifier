@@ -8,10 +8,10 @@ from os import environ
 
 import pylru
 from opentutor_classifier import (
+    get_classifier_arch,
     ClassifierConfig,
     ClassifierFactory,
     AnswerClassifier,
-    ARCH_DEFAULT,
 )
 
 
@@ -26,13 +26,15 @@ class ClassifierDao:
         self.cache = pylru.lrucache(int(environ.get("CACHE_MAX_SIZE", "100")))
 
     def find_classifier(
-        self, config: ClassifierConfig, arch: str = ARCH_DEFAULT
+        self, config: ClassifierConfig, arch: str = ""
     ) -> AnswerClassifier:
         if config.model_name in self.cache:
             e = self.cache[config.model_name]
             if e and e.last_trained_at >= e.classifier.get_last_trained_at():
                 return e.classifier
-        c = ClassifierFactory().new_classifier(config=config, arch=arch)
+        c = ClassifierFactory().new_classifier(
+            config=config, arch=arch or get_classifier_arch()
+        )
 
         self.cache[config.model_name] = Entry(c)
         return c
