@@ -38,6 +38,7 @@ from opentutor_classifier.api import get_graphql_endpoint
 
 
 @responses.activate
+@pytest.mark.only
 @pytest.mark.parametrize(
     "message,status",
     [
@@ -50,5 +51,15 @@ def test_can_i_mock(
     with open(fixture_path("graphql/admin_ok.json")) as f:
         data = json.load(f)
     responses.add(responses.POST, get_graphql_endpoint(), json=data, status=200)
+    responses.add(responses.HEAD, "http://admin.com", status=200)
+    responses.add(responses.HEAD, "http://home.com", status=200)
+    responses.add(responses.HEAD, "http://tutor.com", status=200)
+    # responses.add(responses.GET, "http://training.com/ping", status=200)
+    
     res = client.get(f"/classifier/healthcheck/")
     assert res.json.get("services").get("graphql").get("status") == 200
+    assert res.json.get("services").get("admin").get("status") == 200
+    assert res.json.get("services").get("home").get("status") == 200
+    assert res.json.get("services").get("tutor").get("status") == 200
+    # assert res.json.get("services").get("training").get("status") == 200
+

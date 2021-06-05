@@ -21,7 +21,7 @@ def healthcheck():
 
     # Get service statuses
     # Admin
-    res_admin = requests.head('https://httpbin.org/')
+    res_admin = requests.head('http://admin.com')
     admin_status = res_admin.status_code
 
     # GraphQL
@@ -38,16 +38,17 @@ def healthcheck():
     graphql_status = res_gql.status_code
 
     # Home
-    res_home = requests.head('https://httpbin.org/')
+    res_home = requests.head('http://home.com')
     home_status = res_home.status_code
 
-    # Tutor
-    res_tutor = requests.head('https://httpbin.org/')
+    # # Tutor
+    res_tutor = requests.head('http://tutor.com')
     tutor_status = res_tutor.status_code
 
     # Training
     # Needs to ping
-    training_status = 418
+    training_status = requests.get('http://training.com/ping')
+    # training_status = 418
 
     healthy = ( 
         admin_status == 200 
