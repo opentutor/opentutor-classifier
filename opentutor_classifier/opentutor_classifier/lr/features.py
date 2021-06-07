@@ -19,8 +19,9 @@ from .constants import FEATURE_LENGTH_RATIO
 def feature_length_ratio_enabled() -> bool:
     enabled = environ.get(FEATURE_LENGTH_RATIO, "")
     from opentutor_classifier.log import logger
-    logger.warning(f"WHAT IS enabled? {enabled}")
-    logger.warning(f"WHAT IS environ? {environ}")
+
+    # logger.warning(f"WHAT IS enabled? {enabled}")
+    # logger.warning(f"WHAT IS environ? {environ}")
     return enabled == "1" or enabled.lower() == "true"
 
 
