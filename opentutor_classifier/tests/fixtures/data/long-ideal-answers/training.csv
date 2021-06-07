@@ -1,0 +1,31 @@
+exp_num,text,label
+0,The ratio of green to red is the highest for A, Good
+0,The last one because the ratio is closest to one,Bad
+0,C has the darkest color because the ratio of red to green is the lowest,Bad
+0,It changes because we increased the overall amount of paint in each,Bad
+0,The ratios stay the same in each,Bad
+0,They are all going to have the same shade because you add 1 of each kind of paint each time,Good
+0,The difference changed because you added a bunch of paint to each mixture,Bad
+0,MIxture A is going to be the darkest because red is darker than green and there is more red in there,Good
+0,It changed because you changed the mixtures,Bad
+0,mixture c has a larger shade of gray because the ratio of green to red is larger,Good
+0,Mixture C.  Because the ratio of red to green is close to 1.  ,Bad
+0,Mixture C is the darkest shade of grey because the ratio of green to red is the highest of the three. ,Good
+0,"The more there is overall, the less effect a one part difference will have",Good
+0,"The less paint total, the more effect a one part distance will have",Good
+0,"Mixture A is the darkest because it has a higher ratio of green to red. Additionally, the impact of a 1 unit difference decreases as the amount of each paint color increases",Good
+0,The shade of gray for each mixture is dependent on the ratio of green to red.,Bad
+0,The effect of a 1 part difference decreases as the total number of parts increases.,Good
+0,The shade of gray for each mixture is dependent on the ratio of green to red.,Bad
+0,The shade of gray for each mixture is dependent on the ratio of green to red.,Bad
+0,Mixture A is the correct answer. The shade of gray for each mixture is dependent on the ratio of green to red. The effect of a 1 part difference decreases as the total number of parts increases.,Good
+1,Mixture A is the correct answer. The shade of gray for each mixture is dependent on the ratio of green to red. The effect of a 1 part difference decreases as the total number of parts increases.,Good
+2,Mixture A is the correct answer. The shade of gray for each mixture is dependent on the ratio of green to red. The effect of a 1 part difference decreases as the total number of parts increases.,Good
+0,Mixture A is the darkest shade of gray. The effect of a 1 part difference decreases as the total number of parts increases. The shade of gray for each mixture is dependent on the ratio of green to red.,Good
+0,The shade of gray for each mixture is dependent on the ratio of green to red.,Bad
+0,"we need to compare the ratio of green.",Good
+0,"To determine if the given mixtures have darker shad pence, determines the shade of gray.",Good
+0,"Mixture A would be the darkest shade of grey.  It's the darkest shade of grey because the ratio of green to red paint is the greatest.  Even though the other mixtures have more green, they don't have more green to red in the mixture.  Mixture A has the most green for every one part red paint.",Good
+0,"Mixture A would be the darkest shade of grey. It's the darkest shade of grey because the ratio of green to red paint is the greatest. Even though the other mixtures have more green, they don't have more green to red in the mixture. Mixture A has the most green for every one part red paint.",Good
+0,"Mixture A.",Good
+

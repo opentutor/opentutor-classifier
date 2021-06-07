@@ -46,6 +46,7 @@ from opentutor_classifier.config import (
 from opentutor_classifier import DataDao
 import opentutor_classifier.dao
 from opentutor_classifier.dao import FileDataDao
+from opentutor_classifier.utils import load_yaml
 from .types import (
     ComparisonType,
     _TestConfig,
@@ -56,6 +57,12 @@ from .types import (
     _TestSet,
     _TestSetResult,
 )
+
+def assert_length_ratio_feature_toggle_consistent(test_config_path, lesson: str, use_length_ratio: str):
+        # assert use_length_ratio == 'True'
+        config_dict = load_yaml(path.join(test_config_path, lesson, 'config.yaml'))
+        assert config_dict[use_length_ratio] == use_length_ratio
+        # assert test_config[use_length_ratio] == use_length_ratio
 
 
 def assert_train_expectation_results(

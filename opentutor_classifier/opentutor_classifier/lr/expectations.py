@@ -14,6 +14,7 @@ from opentutor_classifier.stopwords import STOPWORDS
 from . import features
 from .clustering_features import CustomAgglomerativeClustering
 
+from opentutor_classifier.config import use_length_ratio
 
 word_mapper = {
     "n't": "not",
@@ -102,7 +103,7 @@ class LRExpectationClassifier:
             features.regex_match_ratio(raw_example, bad),
             *features.number_of_negatives(example),
             clustering.word_alignment_feature(example, ideal),
-            features.length_ratio_feature(example, ideal),
+            features.length_ratio_feature(example, ideal), # delete this
             features.word2vec_example_similarity(
                 word2vec, index2word_set, example, ideal
             ),
@@ -110,6 +111,8 @@ class LRExpectationClassifier:
                 word2vec, index2word_set, example, question
             ),
         ]
+        # if use_length_ratio():
+        #     feat.append(features.length_ratio_feature(example, ideal))
         if patterns:
             for pattern in patterns:
                 feat.append(check_is_pattern_match(raw_example, pattern))
