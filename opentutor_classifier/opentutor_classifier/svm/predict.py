@@ -6,6 +6,7 @@
 #
 from dataclasses import dataclass
 import math
+from opentutor_classifier.utils import model_last_updated_at
 from os import path
 from typing import Dict, List, Optional, Tuple
 
@@ -113,12 +114,8 @@ class SVMAnswerClassifier(AnswerClassifier):
         )
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
-        from opentutor_classifier.log import logger
-
         sent_proc = preprocess_sentence(answer.input_sentence)
         models_by_expectation, conf = self.model_and_config
-        logger.warning("\n\n\nwhat is loaded conf?")
-        logger.warning(conf)
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
@@ -144,9 +141,6 @@ class SVMAnswerClassifier(AnswerClassifier):
         question_proc = preprocess_sentence(conf.question)
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
-            logger.warning(f"\n\n\neval exp {exp.expectation}?")
-            logger.warning(exp_conf.ideal)
-            logger.warning(expectations)
             sent_features = SVMExpectationClassifier.calculate_features(
                 question_proc,
                 answer.input_sentence,
@@ -163,3 +157,8 @@ class SVMAnswerClassifier(AnswerClassifier):
                 )
             )
         return result
+
+    def get_last_trained_at(self) -> float:
+        return model_last_updated_at(
+            ARCH_SVM_CLASSIFIER, self.model_name, self.model_roots, MODEL_FILE_NAME
+        )

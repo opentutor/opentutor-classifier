@@ -154,10 +154,6 @@ def test_evaluates_for_default_model(
                 expectation=input_expectation_number,
             )
         )
-        from opentutor_classifier.log import logger
-
-        logger.warning("\n\n\n\nwhat is result?")
-        logger.warning(result)
         assert_classifier_evaluate(result, expected_results)
 
 

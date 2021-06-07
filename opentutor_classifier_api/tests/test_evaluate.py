@@ -87,10 +87,6 @@ def test_evaluate_uses_default_model_when_question_untrained(
             ),
             content_type="application/json",
         )
-        import logging
-
-        logging.warning("what is response?")
-        logging.warning(res.json)
         assert res.status_code == 200
         results = res.json["output"]["expectationResults"]
         assert len(results) == len(expected_results)
