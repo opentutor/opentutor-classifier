@@ -21,7 +21,7 @@ def healthcheck():
 
     # Get service statuses
     # Admin
-    res_admin = requests.head('http://admin.com')
+    res_admin = requests.head(os.getenv("HEALTHCHECK_ADMIN", "http://admin.com"))
     admin_status = res_admin.status_code
 
     # GraphQL
@@ -32,40 +32,43 @@ def healthcheck():
         status
     }
     """
-    res_gql = requests.post(endpoint, json={'query': GQL_QUERY_STATUS})
+    res_gql = requests.post(endpoint, json={"query": GQL_QUERY_STATUS})
     print(res_gql.status_code)
     print(res_gql.text)
     graphql_status = res_gql.status_code
 
     # Home
-    res_home = requests.head('http://home.com')
+    res_home = requests.head(os.getenv("HEALTHCHECK_HOME", "http://home.com"))
     home_status = res_home.status_code
 
-    # # Tutor
-    res_tutor = requests.head('http://tutor.com')
+    # Tutor
+    res_tutor = requests.head(os.getenv("HEALTHCHECK_TUTOR", "http://tutor.com"))
     tutor_status = res_tutor.status_code
 
     # Training
     # Needs to ping
-    training_status = requests.get('http://training.com/ping')
-    # training_status = 418
+    # training_status = requests.get(os.getenv('HEALTHCHECK_TRAINING', "http://training.com/ping"))
+    training_status = 200
 
-    healthy = ( 
-        admin_status == 200 
+    healthy = (
+        admin_status == 200
         and graphql_status == 200
         and home_status == 200
         and tutor_status == 200
         and training_status == 200
     )
 
-    return jsonify(
-        {
-            "services": {
-                "admin": {"status": admin_status},
-                "graphql": {"status": graphql_status},
-                "home": {"status": home_status},
-                "tutor": {"status": tutor_status},
-                "training": {"status": training_status},
+    return (
+        jsonify(
+            {
+                "services": {
+                    "admin": {"status": admin_status},
+                    "graphql": {"status": graphql_status},
+                    "home": {"status": home_status},
+                    "tutor": {"status": tutor_status},
+                    "training": {"status": training_status},
+                }
             }
-        }
-    ), 200 if healthy else 503
+        ),
+        200 if healthy else 503,
+    )
