@@ -1,5 +1,4 @@
 from os import path
-
 import opentutor_classifier
 from . import (
     ClassifierFactory,
@@ -8,7 +7,6 @@ from . import (
 )
 from . import DataDao
 from .dao import FileDataDao
-
 
 def train(
     lesson: str,

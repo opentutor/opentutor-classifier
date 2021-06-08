@@ -1,0 +1,7 @@
+exp_num,text,label
+0,magic fruit,good 
+0,Enora's magic fruit,good
+0,The sauce is magic because Enora put magic fruit into the sauce when she made it,good
+0,The sauce is not magic because it is made from vegetables,bad
+0,The sauce is magic because it is made from vegetables,bad
+0,The sauce is not magic because Enora did not put magic fruit in it,bad

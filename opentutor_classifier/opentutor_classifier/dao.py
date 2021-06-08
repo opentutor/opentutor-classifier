@@ -14,7 +14,7 @@ from typing import Any
 import pandas as pd
 
 from . import (
-    ArchFile,
+    Arch,
     ArchLesson,
     DataDao,
     ModelRef,

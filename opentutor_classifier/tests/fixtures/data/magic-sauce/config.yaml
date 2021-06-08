@@ -1,0 +1,9 @@
+question: "Why is the sauce magic"
+expectations:
+  - ideal: The sauce is magic because Enora made it with magic fruit
+    features:
+      bad:
+        - vegetables
+      good:
+        - Enora
+        - fruit
