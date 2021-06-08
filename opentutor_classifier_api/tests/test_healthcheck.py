@@ -13,7 +13,6 @@ import os
 
 
 @responses.activate
-@pytest.mark.only
 @pytest.mark.parametrize(
     "message,status",
     [("pong!", "success")],
@@ -38,7 +37,6 @@ def test_healthcheck_returns_all_statuses(client, message, status):
 
 
 @responses.activate
-@pytest.mark.only
 @pytest.mark.parametrize(
     "message,status",
     [("pong!", "success")],
@@ -68,7 +66,6 @@ def test_200_if_all_healthy(client, message, status):
 
 
 @responses.activate
-@pytest.mark.only
 @pytest.mark.parametrize(
     "message,status",
     [("pong!", "success")],
