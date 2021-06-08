@@ -127,7 +127,7 @@ def _train_classifier_and_get_confidence(
 
 @pytest.mark.parametrize(
     "lesson,arch,input_answer",
-    [("very_small_training_set", ARCH_LR_CLASSIFIER, "Mixture A")],
+    [("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "Mixture A")],
 )
 @pytest.mark.only
 def test_using_feature_length_ratio_lowers_confidence_w_long_ideal_answers(
@@ -139,7 +139,6 @@ def test_using_feature_length_ratio_lowers_confidence_w_long_ideal_answers(
     shared_root: str,
     monkeypatch,
 ):
-
     length_ratio_disabled_dir = tmpdir.mkdir("length_ratio_disabled")
     length_ratio_disabled_confidence = _train_classifier_and_get_confidence(
         lesson, arch, input_answer, length_ratio_disabled_dir, data_root, shared_root
