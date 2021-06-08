@@ -22,7 +22,6 @@ from opentutor_classifier import (
     ModelRef,
     QuestionConfig,
     ClassifierMode,
-    ExpectationConfig,
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier

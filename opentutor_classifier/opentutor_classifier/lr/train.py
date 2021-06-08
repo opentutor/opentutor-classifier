@@ -29,7 +29,6 @@ from opentutor_classifier import (
     TrainingInput,
     TrainingResult,
     ClassifierMode,
-    ExpectationConfig,
 )
 from opentutor_classifier.log import logger
 
