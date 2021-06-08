@@ -64,6 +64,7 @@ def _test_feature_length_ratio_enabled(
         )
     ],
 )
+@pytest.mark.only
 def test_feature_length_ratio_can_be_enabled_w_env_var(
     lesson: str,
     arch: str,
@@ -87,6 +88,7 @@ def test_feature_length_ratio_can_be_enabled_w_env_var(
         )
     ],
 )
+@pytest.mark.only
 def test_feature_length_ratio_disabled_by_default(
     lesson: str, arch: str, tmpdir, data_root: str, shared_root: str
 ):
@@ -96,12 +98,26 @@ def test_feature_length_ratio_disabled_by_default(
 
 
 def _train_classifier_and_get_confidence(
-    lesson: str, arch: str, input_answer: str, tmpdir, data_root: str, shared_root: str
+    lesson: str,
+    arch: str,
+    input_answer: str,
+    feature_env_var_enabled_at_train_time: bool,
+    feature_env_var_enabled_at_predict_time: bool,
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    monkeypatch,
 ):
     with test_env_isolated(
         tmpdir, data_root, shared_root, arch=arch, lesson=lesson
     ) as test_config:
+        monkeypatch.setenv(
+            FEATURE_LENGTH_RATIO, str(feature_env_var_enabled_at_train_time)
+        )
         training_result = train_classifier(lesson, test_config)
+        monkeypatch.setenv(
+            FEATURE_LENGTH_RATIO, str(feature_env_var_enabled_at_predict_time)
+        )
 
         from opentutor_classifier.dao import find_data_dao
 
@@ -136,6 +152,7 @@ def _train_classifier_and_get_confidence(
         ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "The answer is mixture A"),
     ],
 )
+@pytest.mark.only
 def test_using_feature_length_ratio_lowers_confidence_w_long_ideal_answers(
     lesson: str,
     arch: str,
@@ -147,13 +164,60 @@ def test_using_feature_length_ratio_lowers_confidence_w_long_ideal_answers(
 ):
     length_ratio_disabled_dir = tmpdir.mkdir("length_ratio_disabled")
     length_ratio_disabled_confidence = _train_classifier_and_get_confidence(
-        lesson, arch, input_answer, length_ratio_disabled_dir, data_root, shared_root
+        lesson,
+        arch,
+        input_answer,
+        False,
+        False,
+        length_ratio_disabled_dir,
+        data_root,
+        shared_root,
+        monkeypatch,
     )
 
     length_ratio_enabled_dir = tmpdir.mkdir("length_ratio_enabled")
-    monkeypatch.setenv(FEATURE_LENGTH_RATIO, "1")
     length_ratio_enabled_confidence = _train_classifier_and_get_confidence(
-        lesson, arch, input_answer, length_ratio_enabled_dir, data_root, shared_root
+        lesson,
+        arch,
+        input_answer,
+        True,
+        True,
+        length_ratio_enabled_dir,
+        data_root,
+        shared_root,
+        monkeypatch,
     )
 
     assert length_ratio_enabled_confidence < length_ratio_disabled_confidence
+
+
+@pytest.mark.parametrize(
+    "lesson,arch,input_answer,train_feature_on,predict_feature_on",
+    [
+        ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "Mixture A", False, True),
+        ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "Mixture A", True, False),
+    ],
+)
+@pytest.mark.only
+def test_feature_length_ratio_used_for_prediction_only_when_trained_in(
+    lesson: str,
+    arch: str,
+    input_answer: str,
+    train_feature_on: bool,
+    predict_feature_on: bool,
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    monkeypatch,
+):
+    _train_classifier_and_get_confidence(
+        lesson,
+        arch,
+        input_answer,
+        train_feature_on,
+        predict_feature_on,
+        tmpdir,
+        data_root,
+        shared_root,
+        monkeypatch,
+    )
