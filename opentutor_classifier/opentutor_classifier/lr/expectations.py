@@ -96,33 +96,20 @@ class LRExpectationClassifier:
         patterns: List[str] = None,
     ) -> List[float]:
         raw_example = alpha2digit(raw_example, "en")
+        feat = [
+            features.regex_match_ratio(raw_example, good),
+            features.regex_match_ratio(raw_example, bad),
+            *features.number_of_negatives(example),
+            clustering.word_alignment_feature(example, ideal),
+            features.word2vec_example_similarity(
+                word2vec, index2word_set, example, ideal
+            ),
+            features.word2vec_question_similarity(
+                word2vec, index2word_set, example, question
+            ),
+        ]
         if features.feature_length_ratio_enabled():
-            feat = [
-                features.regex_match_ratio(raw_example, good),
-                features.regex_match_ratio(raw_example, bad),
-                *features.number_of_negatives(example),
-                clustering.word_alignment_feature(example, ideal),
-                features.length_ratio_feature(example, ideal),
-                features.word2vec_example_similarity(
-                    word2vec, index2word_set, example, ideal
-                ),
-                features.word2vec_question_similarity(
-                    word2vec, index2word_set, example, question
-                ),
-            ]
-        else:
-            feat = [
-                features.regex_match_ratio(raw_example, good),
-                features.regex_match_ratio(raw_example, bad),
-                *features.number_of_negatives(example),
-                clustering.word_alignment_feature(example, ideal),
-                features.word2vec_example_similarity(
-                    word2vec, index2word_set, example, ideal
-                ),
-                features.word2vec_question_similarity(
-                    word2vec, index2word_set, example, question
-                ),
-            ]
+            feat.append(features.length_ratio_feature(example, ideal))
         if patterns:
             for pattern in patterns:
                 feat.append(check_is_pattern_match(raw_example, pattern))
