@@ -28,6 +28,8 @@ from opentutor_classifier import (
     TrainingConfig,
     TrainingInput,
     TrainingResult,
+    ClassifierMode,
+    ExpectationConfig,
 )
 from opentutor_classifier.log import logger
 
@@ -80,6 +82,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 [],
                 [],
                 clustering,
+                ClassifierMode.TRAIN,
             )
             return features_list
 
@@ -188,6 +191,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         good,
                         bad,
                         clustering,
+                        mode=ClassifierMode.TRAIN,
+                        expectation_config=train_input.config.expectations[exp_num],
                         patterns=pattern["good"] + pattern["bad"],
                     )
                 )

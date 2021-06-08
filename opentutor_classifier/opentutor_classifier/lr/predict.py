@@ -21,6 +21,8 @@ from opentutor_classifier import (
     ExpectationClassifierResult,
     ModelRef,
     QuestionConfig,
+    ClassifierMode,
+    ExpectationConfig,
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier
@@ -140,6 +142,8 @@ class LRAnswerClassifier(AnswerClassifier):
                 exp_conf.features.get("good") or [],
                 exp_conf.features.get("bad") or [],
                 clustering,
+                mode=ClassifierMode.PREDICT,
+                expectation_config=conf.expectations[exp.expectation],
                 patterns=exp_conf.features.get("patterns_good", [])
                 + exp_conf.features.get("patterns_bad", [])
                 or [],
