@@ -117,4 +117,4 @@ class LRExpectationClassifier:
 
     @staticmethod
     def initialize_model() -> linear_model.LogisticRegression:
-        return linear_model.LogisticRegression(tol=0.0001, C=1.0)
+        return linear_model.LogisticRegression(C=1.0, class_weight='balanced', solver='liblinear' )
