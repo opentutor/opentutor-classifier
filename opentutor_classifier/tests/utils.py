@@ -46,7 +46,6 @@ from opentutor_classifier.config import (
 from opentutor_classifier import DataDao
 import opentutor_classifier.dao
 from opentutor_classifier.dao import FileDataDao
-from opentutor_classifier.utils import load_yaml
 from .types import (
     ComparisonType,
     _TestConfig,

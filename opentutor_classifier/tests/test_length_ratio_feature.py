@@ -49,7 +49,6 @@ def _test_feature_length_ratio_enabled(
         )
 
 
-@pytest.mark.only
 @pytest.mark.parametrize(
     "lesson,arch",
     [
@@ -59,7 +58,6 @@ def _test_feature_length_ratio_enabled(
         )
     ],
 )
-@pytest.mark.only
 def test_feature_length_ratio_can_be_enabled_w_env_var(
     lesson: str,
     arch: str,
@@ -83,7 +81,6 @@ def test_feature_length_ratio_can_be_enabled_w_env_var(
         )
     ],
 )
-@pytest.mark.only
 def test_feature_length_ratio_disabled_by_default(
     lesson: str, arch: str, tmpdir, data_root: str, shared_root: str
 ):
@@ -127,9 +124,12 @@ def _train_classifier_and_get_confidence(
 
 @pytest.mark.parametrize(
     "lesson,arch,input_answer",
-    [("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "Mixture A")],
+    [
+        ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "Mixture A"),
+        ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "A"),
+        ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "The answer is mixture A"),
+    ],
 )
-@pytest.mark.only
 def test_using_feature_length_ratio_lowers_confidence_w_long_ideal_answers(
     lesson: str,
     arch: str,
