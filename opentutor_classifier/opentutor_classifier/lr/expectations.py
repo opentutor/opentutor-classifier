@@ -115,6 +115,8 @@ class LRExpectationClassifier:
             if features.feature_length_ratio_enabled():
                 feat.append(features.length_ratio_feature(example, ideal))
         elif mode == ClassifierMode.PREDICT:
+            if not expectation_config:
+                raise Exception("predict mode must pass in ExpectationConfig")
             if expectation_config.features[FEATURE_LENGTH_RATIO]:
                 feat.append(features.length_ratio_feature(example, ideal))
         if patterns:
