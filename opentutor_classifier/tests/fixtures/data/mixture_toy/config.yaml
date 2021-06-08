@@ -1,0 +1,17 @@
+question: "We are given 3 mixtures using green and red paint. Mixture A has 4 parts green and 3 parts red, Mixture B has 5 parts green and 4 parts red. Mixture C had 6 parts green and 5 parts red. Adding more Green paint will make shade of mixture darker, which of the mixture out of a, b and c will be of darkest shade?"
+expectations:
+  - ideal: The more the proportion of green paint the darker is the shade.
+    features:
+      bad:
+        - same
+      good:
+        - ratio|closer
+        - 1|one
+        - difference|substract
+  - ideal: mixture a will be the darkest.
+    features:
+      bad:
+        - b
+        - c
+      good:
+        - A|a

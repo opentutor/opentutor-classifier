@@ -1,0 +1,45 @@
+exp_num,text,label
+1,Mixture a,good
+1,a,good
+1,A,good
+1,The darkest will be A, good
+1,a will be darkest,good
+1,A will be the darkest, good
+1,A will be the darkest mixture, good
+1,The darkest mixture will be A, good 
+1,The darkest will be A in the end, good
+1,A is going to be the darkest mixture, good
+1,A will end up being the darkest,good
+1,it will be a, good
+1,mixture A will be the one that is the darkest, good
+1,mixture A will be the darkest because it has the more green compared to red, good
+1,mixture A will be the darkest because the ratio of red to green is the lowest,good
+1,the ratio of red to green is lowest in mixture A so it will be the darkest,good
+1,mixture A will be the darkest of the three because the ratio fo red to green is lowest,good
+1,the darkest mixture will be mixture A because there is more green than red, good
+1,mixture A will be the darkest mixture because the proportion of green to red is lowest,good
+1,mixture A is the darkest mixture,good
+1,mixture b,bad
+1,b,bad
+1,c,bad
+1, c will be the darkest mixture, bad
+1, b is the correct answer, bad
+1, b will be the darkest mixture, bad
+1, the darkest mixture will be b, bad
+1, the answer is b, bad
+1, the answer is that c will be the darkest mixture, bad
+1, mixture b will end up being the darkest, bad
+1, B is going to be the darkest mixture, bad
+1,Mixture C,bad
+1,C will be darkest,bad
+1,the answer is that B will be the darkest mixture,bad
+1,C will be the darkest mixture because it has the most green,bad
+1,B will be the darkest mixture because the ratio of green to red is the highest,bad
+1,C and B will both be the darkest,bad
+1,A and B will both be darkest,bad 
+0,More proportion of green paint will make mixture darker,good
+0,More proportion of red paint will make mixture darker,bad
+0,proportion have nothing to do with mixture darkness,bad
+0,As we add more green paint the mixture will become more darker,good
+0,more green paint will lead to darker shade,good
+0,more red paint will lead to darker shade,bad
