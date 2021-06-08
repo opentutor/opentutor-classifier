@@ -11,53 +11,47 @@ from . import fixture_path
 from opentutor_classifier.api import get_graphql_endpoint
 import os
 
-
 @responses.activate
 @pytest.mark.only
 @pytest.mark.parametrize(
     "message,status",
-    [("pong!", "success")],
+    [
+        ('pong!','success')
+    ],
 )
-def test_healthcheck_returns_all_statuses(client, message, status):
+def test_healthcheck_returns_all_statuses(
+    client, message, status
+):
     with open(fixture_path("graphql/admin_ok.json")) as f:
         data = json.load(f)
     responses.add(responses.POST, get_graphql_endpoint(), json=data, status=200)
-    responses.add(
-        responses.HEAD, os.getenv("HEALTHCHECK_ADMIN", "http://admin.com"), status=200
-    )
-    responses.add(
-        responses.HEAD, os.getenv("HEALTHCHECK_HOME", "http://home.com"), status=200
-    )
-    responses.add(
-        responses.HEAD, os.getenv("HEALTHCHECK_TUTOR", "http://tutor.com"), status=200
-    )
+    responses.add(responses.HEAD, os.getenv('HEALTHCHECK_ADMIN', "http://admin.com"), status=200)
+    responses.add(responses.HEAD, os.getenv('HEALTHCHECK_HOME', "http://home.com"), status=200)
+    responses.add(responses.HEAD, os.getenv('HEALTHCHECK_TUTOR', "http://tutor.com"), status=200)
     # responses.add(responses.GET, os.getenv('HEALTHCHECK_TRAINING', "http://training.com/ping"), status=200)
-
+    
     res = client.get("/classifier/healthcheck/")
     assert len(res.json.get("services")) == 5
 
-
 @responses.activate
 @pytest.mark.only
 @pytest.mark.parametrize(
     "message,status",
-    [("pong!", "success")],
+    [
+        ('pong!','success')
+    ],
 )
-def test_200_if_all_healthy(client, message, status):
+def test_200_if_all_healthy(
+    client, message, status
+):
     with open(fixture_path("graphql/admin_ok.json")) as f:
         data = json.load(f)
     responses.add(responses.POST, get_graphql_endpoint(), json=data, status=200)
-    responses.add(
-        responses.HEAD, os.getenv("HEALTHCHECK_ADMIN", "http://admin.com"), status=200
-    )
-    responses.add(
-        responses.HEAD, os.getenv("HEALTHCHECK_HOME", "http://home.com"), status=200
-    )
-    responses.add(
-        responses.HEAD, os.getenv("HEALTHCHECK_TUTOR", "http://tutor.com"), status=200
-    )
+    responses.add(responses.HEAD, os.getenv('HEALTHCHECK_ADMIN', "http://admin.com"), status=200)
+    responses.add(responses.HEAD, os.getenv('HEALTHCHECK_HOME', "http://home.com"), status=200)
+    responses.add(responses.HEAD, os.getenv('HEALTHCHECK_TUTOR', "http://tutor.com"), status=200)
     # responses.add(responses.GET, os.getenv('HEALTHCHECK_TRAINING', "http://training.com/ping"), status=200)
-
+    
     res = client.get(f"/classifier/healthcheck/")
     assert res.json.get("services").get("graphql").get("status") == 200
     assert res.json.get("services").get("admin").get("status") == 200
@@ -66,28 +60,25 @@ def test_200_if_all_healthy(client, message, status):
     # assert res.json.get("services").get("training").get("status") == 200
     assert res.status_code == 200
 
-
 @responses.activate
 @pytest.mark.only
 @pytest.mark.parametrize(
     "message,status",
-    [("pong!", "success")],
+    [
+        ('pong!','success')
+    ],
 )
-def test_503_if_not_healthy(client, message, status):
+def test_503_if_not_healthy(
+    client, message, status
+):
     with open(fixture_path("graphql/admin_bad.json")) as f:
         data = json.load(f)
     responses.add(responses.POST, get_graphql_endpoint(), json=data, status=404)
-    responses.add(
-        responses.HEAD, os.getenv("HEALTHCHECK_ADMIN", "http://admin.com"), status=400
-    )
-    responses.add(
-        responses.HEAD, os.getenv("HEALTHCHECK_HOME", "http://home.com"), status=500
-    )
-    responses.add(
-        responses.HEAD, os.getenv("HEALTHCHECK_TUTOR", "http://tutor.com"), status=502
-    )
+    responses.add(responses.HEAD, os.getenv('HEALTHCHECK_ADMIN', "http://admin.com"), status=400)
+    responses.add(responses.HEAD, os.getenv('HEALTHCHECK_HOME', "http://home.com"), status=500)
+    responses.add(responses.HEAD, os.getenv('HEALTHCHECK_TUTOR', "http://tutor.com"), status=502)
     # responses.add(responses.GET, os.getenv('HEALTHCHECK_TRAINING', "http://training.com/ping"), status=403)
-
+    
     res = client.get(f"/classifier/healthcheck/")
     assert res.json.get("services").get("graphql").get("status") == 404
     assert res.json.get("services").get("admin").get("status") == 400
@@ -95,3 +86,4 @@ def test_503_if_not_healthy(client, message, status):
     assert res.json.get("services").get("tutor").get("status") == 502
     # assert res.json.get("services").get("training").get("status") == 403
     assert res.status_code == 503
+

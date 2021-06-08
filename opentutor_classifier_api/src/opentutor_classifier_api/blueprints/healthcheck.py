@@ -6,13 +6,18 @@
 #
 import os
 import requests
-import json
-import pandas as pd
 
 from flask import Blueprint, jsonify
 from opentutor_classifier.api import get_graphql_endpoint
 
 healthcheck_blueprint = Blueprint("healthcheck", __name__)
+
+GQL_QUERY_STATUS = """
+    query {
+        message,
+        status
+    }
+    """
 
 
 @healthcheck_blueprint.route("", methods=["GET"])
@@ -26,12 +31,7 @@ def healthcheck():
 
     # GraphQL
     endpoint = get_graphql_endpoint()
-    GQL_QUERY_STATUS = """
-    query {
-        message,
-        status
-    }
-    """
+
     res_gql = requests.post(endpoint, json={"query": GQL_QUERY_STATUS})
     print(res_gql.status_code)
     print(res_gql.text)
