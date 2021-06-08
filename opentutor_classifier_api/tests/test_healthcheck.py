@@ -58,7 +58,7 @@ def test_200_if_all_healthy(client, message, status):
     )
     # responses.add(responses.GET, os.getenv('HEALTHCHECK_TRAINING', "http://training.com/ping"), status=200)
 
-    res = client.get(f"/classifier/healthcheck/")
+    res = client.get("/classifier/healthcheck/")
     assert res.json.get("services").get("graphql").get("status") == 200
     assert res.json.get("services").get("admin").get("status") == 200
     assert res.json.get("services").get("home").get("status") == 200
@@ -88,7 +88,7 @@ def test_503_if_not_healthy(client, message, status):
     )
     # responses.add(responses.GET, os.getenv('HEALTHCHECK_TRAINING', "http://training.com/ping"), status=403)
 
-    res = client.get(f"/classifier/healthcheck/")
+    res = client.get("/classifier/healthcheck/")
     assert res.json.get("services").get("graphql").get("status") == 404
     assert res.json.get("services").get("admin").get("status") == 400
     assert res.json.get("services").get("home").get("status") == 500
