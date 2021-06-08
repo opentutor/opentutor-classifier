@@ -199,10 +199,12 @@ class CustomAgglomerativeClustering:
 
     @staticmethod
     def deduplicate_patterns(
-        patterns_with_fpr: List[Tuple[str, float]], fpr_cuttoff: float
+        patterns_with_fpr: List[Tuple[str, float]],
+        fpr_cuttoff: float,
+        top_n=15,
     ) -> List[str]:
         fpr_store: Dict[str, float] = dict()
-        features: List[str] = []
+        features: List[Tuple[float, str]] = []
         for pattern, fpr in patterns_with_fpr:
             if fpr < fpr_cuttoff:
                 continue
@@ -213,9 +215,11 @@ class CustomAgglomerativeClustering:
                     ok = False
             fpr_store[pattern] = fpr
             if ok:
-                features.append(pattern)
-        features.sort()
-        return features
+                features.append((fpr, pattern))
+
+        top_features = [pat for _, pat in sorted(features)[:top_n]]
+        top_features.sort()
+        return top_features
 
     @staticmethod
     def select_feature_candidates(
