@@ -156,7 +156,7 @@ def assert_testset_accuracy(
     if metrics.accuracy >= expected_accuracy:
         return
     logging.warning("ERRORS:\n" + "\n".join(ex.errors() for ex in result.results))
-    assert metrics.accuracy > expected_accuracy
+    assert metrics.accuracy >= expected_accuracy
 
 def assert_inc_testset_accuracy(
     arch: str,
