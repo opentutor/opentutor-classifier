@@ -100,18 +100,11 @@ def find_testset_accuracy(arch, res, shared_root, testset):
     return metrics.accuracy
 
 
-def assert_inc_accuracy(
+def assert_inc(
     accuracy_list: List[float],
 ) -> None:
     for i in range(1, len(accuracy_list)):
         assert accuracy_list[i] >= accuracy_list[i - 1]
-
-
-def assert_inc_confidence(
-    confidence_list: List[float],
-) -> None:
-    for i in range(1, len(confidence_list)):
-        assert confidence_list[i] >= confidence_list[i - 1]
 
 
 @responses.activate
@@ -172,5 +165,5 @@ def test_data_replication(
                 evaluate_expectation,
             )
             confidence.append(predict_result)
-        assert_inc_accuracy(accuracy)
-        assert_inc_confidence(confidence)
+        assert_inc(accuracy)
+        assert_inc(confidence)
