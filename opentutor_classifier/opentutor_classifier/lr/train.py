@@ -36,6 +36,7 @@ from .expectations import (
     preprocess_sentence,
     LRExpectationClassifier,
 )
+from .features import feature_length_ratio_enabled
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
@@ -173,7 +174,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 "bad": bad,
                 "patterns_good": pattern["good"],
                 "patterns_bad": pattern["bad"],
-                FEATURE_LENGTH_RATIO: True,
+                FEATURE_LENGTH_RATIO: feature_length_ratio_enabled(),
             }
             features = [
                 np.array(

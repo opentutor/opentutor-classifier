@@ -5,13 +5,23 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import math
+from os import environ
 import re
-
 from typing import List, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 from scipy import spatial
+
+from .constants import FEATURE_LENGTH_RATIO
+
+
+def feature_length_ratio_enabled() -> bool:
+    enabled = environ.get(FEATURE_LENGTH_RATIO, "")
+    from opentutor_classifier.log import logger
+    logger.warning(f"WHAT IS enabled? {enabled}")
+    logger.warning(f"WHAT IS environ? {environ}")
+    return enabled == "1" or enabled.lower() == "true"
 
 
 def _avg_feature_vector(
