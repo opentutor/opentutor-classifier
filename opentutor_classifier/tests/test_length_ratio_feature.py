@@ -2,11 +2,12 @@ from os import path
 
 import pytest
 
-from opentutor_classifier import ARCH_LR_CLASSIFIER
+from opentutor_classifier import ARCH_LR_CLASSIFIER, ArchLesson
 from opentutor_classifier.config import confidence_threshold_default
+from opentutor_classifier.utils import load_yaml
+from opentutor_classifier.lr.constants import FEATURE_LENGTH_RATIO
+
 from .utils import (
-    assert_length_ratio_feature_toggle_consistent,
-    create_and_test_classifier,
     fixture_path,
     read_example_testset,
     test_env_isolated,
@@ -14,6 +15,16 @@ from .utils import (
 )
 
 CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
+
+
+def assert_length_ratio_feature_toggle_consistent(
+    test_config_path, lesson: str, use_length_ratio: str
+):
+    # assert use_length_ratio == 'True'
+    config_dict = load_yaml(path.join(test_config_path, lesson, "config.yaml"))
+    assert config_dict[use_length_ratio] == use_length_ratio
+    # assert test_config[use_length_ratio] == use_length_ratio
+
 
 @pytest.fixture(scope="module")
 def data_root() -> str:
@@ -24,14 +35,15 @@ def data_root() -> str:
 def shared_root(word2vec) -> str:
     return path.dirname(word2vec)
 
-@pytest.fixture
-def length_ratio_feature_toggle(monkeypatch, use_length_ratio):
-    monkeypatch.setenv("USE_LENGTH_RATIO", use_length_ratio)
-    return use_length_ratio
+
+# @pytest.fixture
+# def length_ratio_feature_toggle(monkeypatch, use_length_ratio):
+#     monkeypatch.setenv("FEATURE_LENGTH_RATIO_ENABLED", use_length_ratio)
+#     return use_length_ratio
 
 
 def _test_train_and_predict_length_ratio_consistent(
-    lesson: str, # ideal answers long dataset
+    lesson: str,  # ideal answers long dataset
     arch: str,
     # confidence_threshold for now determines whether an answer
     # is really classified as GOOD/BAD (confidence >= threshold)
@@ -49,7 +61,9 @@ def _test_train_and_predict_length_ratio_consistent(
     ) as test_config:
         train_result = train_classifier(lesson, test_config)
         assert path.exists(train_result.models)
-        config_path = path.join(fixture_path('models'), )
+        config_path = path.join(
+            fixture_path("models"),
+        )
         # call the config check twice? before training and after prediction?
         assert_length_ratio_feature_toggle_consistent(
             test_config.output_dir, lesson, use_length_ratio
@@ -64,45 +78,43 @@ def _test_train_and_predict_length_ratio_consistent(
             test_config.output_dir, lesson, use_length_ratio
         )
 
+
+@pytest.mark.only
 @pytest.mark.parametrize(
-    "example,arch,confidence_threshold,use_length_ratio",
+    "lesson,arch",
     [
         (
             # "long-ideal-answers",
-            "ies-rectangle",
+            "very_small_training_set",
             ARCH_LR_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            "True",
+            # CONFIDENCE_THRESHOLD_DEFAULT,
+            # "True",
         ),
-        (
-            # "long-ideal-answers",
-            "ies-rectangle",
-            ARCH_LR_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            "False",
-        ),
+        # (
+        #     # "long-ideal-answers",
+        #     "ies-rectangle",
+        #     ARCH_LR_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     "False",
+        # ),
     ],
 )
-
 @pytest.mark.only
 def test_can_toggle_length_ratio_feature(
-    example: str,
+    lesson: str,
     arch: str,
-    # confidence_threshold for now determines whether an answer
-    # is really classified as GOOD/BAD (confidence >= threshold)
-    # or whether it is interpretted as NEUTRAL (confidence < threshold)
-    confidence_threshold: float,
     tmpdir,
     data_root: str,
     shared_root: str,
-    length_ratio_feature_toggle
+    monkeypatch,
 ):
-    _test_train_and_predict_length_ratio_consistent(
-        example,
-        arch,
-        confidence_threshold,
-        tmpdir,
-        data_root,
-        shared_root,
-        length_ratio_feature_toggle
-    )
+    monkeypatch.setenv("FEATURE_LENGTH_RATIO_ENABLED", "1")
+    with test_env_isolated(
+        tmpdir, data_root, shared_root, arch=arch, lesson=lesson
+    ) as test_config:
+        train_classifier(lesson, test_config)
+        from opentutor_classifier.dao import find_data_dao
+
+        dao = find_data_dao()
+        pconfig = dao.find_prediction_config(ArchLesson(arch=arch, lesson=lesson))
+        assert bool(pconfig.expectations[0].features[FEATURE_LENGTH_RATIO])

@@ -58,12 +58,6 @@ from .types import (
     _TestSetResult,
 )
 
-def assert_length_ratio_feature_toggle_consistent(test_config_path, lesson: str, use_length_ratio: str):
-        # assert use_length_ratio == 'True'
-        config_dict = load_yaml(path.join(test_config_path, lesson, 'config.yaml'))
-        assert config_dict[use_length_ratio] == use_length_ratio
-        # assert test_config[use_length_ratio] == use_length_ratio
-
 
 def assert_train_expectation_results(
     observed: List[ExpectationTrainingResult], expected: List[ExpectationTrainingResult]
