@@ -8,3 +8,7 @@ LABEL_UNSPECIFIED = ""
 
 def confidence_threshold_default() -> float:
     return float(environ.get("CONFIDENCE_THRESHOLD_DEFAULT", "0.6"))
+
+
+def feature_generation_disabled() -> bool:
+    return bool(environ.get("FEATURE_GENERATION_DISABLED")) or False
