@@ -5,7 +5,7 @@ import pandas as pd
 import responses
 
 from opentutor_classifier.config import confidence_threshold_default
-from typing import Any, List
+from typing import List
 
 
 from opentutor_classifier import (
