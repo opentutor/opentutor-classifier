@@ -156,8 +156,28 @@ def assert_testset_accuracy(
     if metrics.accuracy >= expected_accuracy:
         return
     logging.warning("ERRORS:\n" + "\n".join(ex.errors() for ex in result.results))
-    assert metrics.accuracy >= expected_accuracy
+    assert metrics.accuracy > expected_accuracy
 
+def assert_inc_testset_accuracy(
+    arch: str,
+    result_list: List[TrainingResult],
+    shared_root: str,
+    testset: _TestSet,
+) -> None:
+    accuracy_res = []
+    for res in (result_list):
+        test_res= run_classifier_testset(arch, res.models, shared_root, testset)
+        metrics = test_res.metrics()
+        accuracy_res.append(metrics.accuracy)
+    for i in range(1, len(accuracy_res)):
+        assert_testset_accuracy(
+            arch,
+            result_list[i].models,
+            shared_root,
+            testset,
+            expected_accuracy= accuracy_res[i-1] ,
+        )
+    
 
 def create_and_test_classifier(
     lesson: str,
