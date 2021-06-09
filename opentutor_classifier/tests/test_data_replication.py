@@ -16,10 +16,8 @@ from opentutor_classifier import (
     TrainingResult,
     ClassifierConfig,
     AnswerClassifierInput,
-    AnswerClassifierResult,
 )
 from opentutor_classifier.dao import (
-    find_data_dao,
     FileDataDao,
     load_data,
     load_config,
