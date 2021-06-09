@@ -2,19 +2,20 @@ from os import path
 
 import pytest
 import pandas as pd
+import responses
 
 from opentutor_classifier import (
-    ClassifierFactory, 
-    ARCH_LR_CLASSIFIER, 
-    TrainingConfig, 
-    TrainingInput, 
+    ClassifierFactory,
+    ARCH_LR_CLASSIFIER,
+    TrainingConfig,
+    TrainingInput,
 )
-from opentutor_classifier.dao import(
-    FileDataDao,
+from opentutor_classifier.dao import (
+    find_data_dao,
     load_data,
     load_config,
     _CONFIG_YAML,
-    _TRAINING_CSV
+    _TRAINING_CSV,
 )
 
 from .utils import fixture_path, test_env_isolated
@@ -29,6 +30,8 @@ def data_root() -> str:
 def shared_root(word2vec) -> str:
     return path.dirname(word2vec)
 
+
+@responses.activate
 @pytest.mark.only
 @pytest.mark.parametrize(
     "lesson,arch",
@@ -39,36 +42,27 @@ def shared_root(word2vec) -> str:
         ),
     ],
 )
-def test_data_replication(
-    tmpdir, 
-    data_root, 
-    shared_root, 
-    lesson: str, 
-    arch: str
-):
-   with test_env_isolated(
+def test_data_replication(tmpdir, data_root, shared_root, lesson: str, arch: str):
+    with test_env_isolated(
         tmpdir, data_root, shared_root, arch=arch, lesson=lesson
     ) as test_config:
         rep_factor = [1, 2, 5, 10]
-        data=load_data(path.join(data_root, lesson, _TRAINING_CSV)) #dao.py
-        dao=FileDataDao(data_root, model_root=test_config.output_dir), #TrainingConfig
+        data = load_data(path.join(data_root, lesson, _TRAINING_CSV))  # dao.py
+        dao = find_data_dao()
         for i in rep_factor:
-            data_list = [data] * i 
+            data_list = [data] * i
             new_data = pd.concat(data_list)
             input = TrainingInput(
                 lesson=lesson,
-                config= load_config(path.join(data_root, lesson, _CONFIG_YAML)),
-                data=new_data, #dataframe
+                config=load_config(path.join(data_root, lesson, _CONFIG_YAML)),
+                data=new_data,  # dataframe
             )
         fac = ClassifierFactory()
         training = fac.new_training(
             arch=arch, config=TrainingConfig(shared_root=shared_root)
         )
-        train_result =  training.train(input, dao)
+        train_result = training.train(input, dao)
         assert training is not None
-
-
-
 
 
 # train_result = train_classifier(lesson, test_config)
@@ -109,8 +103,6 @@ def test_data_replication(
 #     training = fac.new_training(config or TrainingConfig(), arch=arch)
 #     res = training.train(data, dao)
 #     return res
-
-
 
 
 #     def find_training_input(self, lesson: str) -> TrainingInput:
