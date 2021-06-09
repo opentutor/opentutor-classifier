@@ -1,11 +1,13 @@
 exp_num,text,label
-1,A is going to be the darkest mixture, good
-1,A will end up being the darkest,good
-1,it will be a, good
-1,mixture A will be the one that is the darkest, good
-1,mixture A will be the darkest because it has the more green compared to red, good
-1, b, bad
-1, the darkest mixture will be b, bad
-1, the answer is b, bad
-1, the answer is that c will be the darkest mixture, bad
-1, mixture b will end up being the darkest, bad
+0,Mixture a,good
+0,a will be darkest,good
+0,A will be the darkest, good
+0,mixture b,bad
+0,mixture c will be the darkest mixture,ad
+0,the answer is that c will be the darkest mixture, bad
+0,mixture b will end up being the darkest, bad
+0,B is going to be the darkest mixture, bad
+0,A is going to be the darkest mixture, good
+0,A will end up being the darkest,good
+
+
