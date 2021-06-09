@@ -79,28 +79,7 @@ def _test_train_and_predict_length_ratio_consistent(
         )
 
 
-@pytest.mark.only
-@pytest.mark.parametrize(
-    "lesson,arch",
-    [
-        (
-            # "long-ideal-answers",
-            "very_small_training_set",
-            ARCH_LR_CLASSIFIER,
-            # CONFIDENCE_THRESHOLD_DEFAULT,
-            # "True",
-        ),
-        # (
-        #     # "long-ideal-answers",
-        #     "ies-rectangle",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     "False",
-        # ),
-    ],
-)
-@pytest.mark.only
-def test_can_toggle_length_ratio_feature(
+def _test_can_toggle_length_ratio_feature(
     lesson: str,
     arch: str,
     tmpdir,
@@ -118,3 +97,27 @@ def test_can_toggle_length_ratio_feature(
         dao = find_data_dao()
         pconfig = dao.find_prediction_config(ArchLesson(arch=arch, lesson=lesson))
         assert bool(pconfig.expectations[0].features[FEATURE_LENGTH_RATIO])
+
+
+@pytest.mark.only
+@pytest.mark.parametrize(
+    "lesson,arch",
+    [
+        (
+            "very_small_training_set",
+            ARCH_LR_CLASSIFIER,
+        )
+    ],
+)
+@pytest.mark.only
+def test_can_toggle_length_ratio_feature(
+    lesson: str,
+    arch: str,
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    monkeypatch,
+):
+    _test_can_toggle_length_ratio_feature(
+        lesson, arch, tmpdir, data_root, shared_root, monkeypatch
+    )

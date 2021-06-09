@@ -31,6 +31,7 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.log import logger
 
+from .constants import FEATURE_LENGTH_RATIO
 from .expectations import (
     preprocess_sentence,
     LRExpectationClassifier,
@@ -167,12 +168,13 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 ideal_answer,
             )
             pattern = clustering.select_feature_candidates(data, candidates)
-            config_updated.expectations[exp_num].features = dict(
-                good=good,
-                bad=bad,
-                patterns_good=pattern["good"],
-                patterns_bad=pattern["bad"],
-            )
+            config_updated.expectations[exp_num].features = {
+                "good": good,
+                "bad": bad,
+                "patterns_good": pattern["good"],
+                "patterns_bad": pattern["bad"],
+                FEATURE_LENGTH_RATIO: True,
+            }
             features = [
                 np.array(
                     LRExpectationClassifier.calculate_features(
