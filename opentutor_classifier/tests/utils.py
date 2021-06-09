@@ -202,9 +202,6 @@ def copy_test_env_to_tmp(
     lesson="",
     is_default_model: bool = False,
 ) -> _TestConfig:
-    import logging
-    logging.warning(f"data_root={data_root}")
-    logging.warning(f"shared_root={shared_root}")
     testdir = tmpdir.mkdir("test")
     config = _TestConfig(
         arch=arch,
