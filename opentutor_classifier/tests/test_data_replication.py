@@ -111,7 +111,6 @@ def assert_inc(
 
 
 @responses.activate
-@pytest.mark.only
 @pytest.mark.parametrize(
     "lesson,arch,confidence_threshold,evaluate_input, evaluate_expectation",
     [
