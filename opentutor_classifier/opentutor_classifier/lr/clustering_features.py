@@ -1,4 +1,5 @@
 from itertools import combinations
+import heapq
 from typing import Dict, List, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
@@ -63,7 +64,7 @@ class CustomAgglomerativeClustering:
         self.data = data
         x = np.arange(len(self.data)).reshape(-1, 1)
 
-        # Calculate pairwise distances with the new metric.
+        # Calculate pairwise distances with the new metric.'
         m = pairwise_distances(x, x, metric=self.alignment_metric)
 
         agg = AgglomerativeClustering(
@@ -82,12 +83,12 @@ class CustomAgglomerativeClustering:
         word2vec: Word2VecKeyedVectors,
         index2word_set,
         cuttoff_length: int = 20,
-    ) -> str:
+    ) -> Tuple[str]:
         sentence_cluster = sentence_cluster[
             np.vectorize(lambda x: len(x) < cuttoff_length)(sentence_cluster)
         ]
         if len(sentence_cluster) < 5:
-            return ""
+            return ("",)
         avg_proximity = np.zeros(len(sentence_cluster))
         for i, row1 in enumerate(sentence_cluster):
             for row2 in sentence_cluster:
@@ -108,7 +109,7 @@ class CustomAgglomerativeClustering:
 
     @staticmethod
     def generate_patterns_from_candidates(
-        data: pd.DataFrame, best_targets: List[Tuple[str, str]]
+        data: pd.DataFrame, best_targets: List[Tuple[str, Tuple[str]]]
     ):
         useful_pattern_for_each_cluster: Dict[str, List[str]] = {
             "good": list(),
@@ -153,40 +154,37 @@ class CustomAgglomerativeClustering:
         ideal_answer: Tuple[str],
     ):
         good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
-        good_labels, bad_labels = self.get_clusters(good_answers, bad_answers)
+        # good_labels, bad_labels = self.get_clusters(good_answers, bad_answers)
+
         best_candidates = []
         best_candidates.append(
             (
                 "good",
-                self.get_best_candidate(
-                    good_answers[good_labels == 0], word2vec, index2word_set
-                ),
+                self.get_best_candidate(good_answers, word2vec, index2word_set),
             )
         )
-        best_candidates.append(
-            (
-                "good",
-                self.get_best_candidate(
-                    good_answers[good_labels == 1], word2vec, index2word_set
-                ),
-            )
-        )
-        best_candidates.append(
-            (
-                "bad",
-                self.get_best_candidate(
-                    bad_answers[bad_labels == 0], word2vec, index2word_set
-                ),
-            )
-        )
+        # best_candidates.append(
+        #     (
+        #         "good",
+        #         self.get_best_candidate(
+        #             good_answers[good_labels == 1], word2vec, index2word_set
+        #         ),
+        #     )
+        # )
         best_candidates.append(
             (
                 "bad",
-                self.get_best_candidate(
-                    bad_answers[bad_labels == 1], word2vec, index2word_set
-                ),
+                self.get_best_candidate(bad_answers, word2vec, index2word_set),
             )
         )
+        # best_candidates.append(
+        #     (
+        #         "bad",
+        #         self.get_best_candidate(
+        #             bad_answers[bad_labels == 1], word2vec, index2word_set
+        #         ),
+        #     )
+        # )
 
         data = pd.DataFrame(
             {
@@ -194,7 +192,9 @@ class CustomAgglomerativeClustering:
                 "[LABELS]": [1] * len(good_answers) + [0] * len(bad_answers),
             }
         )
+
         data, candidates = self.generate_patterns_from_candidates(data, best_candidates)
+
         return data, candidates
 
     @staticmethod
@@ -217,7 +217,9 @@ class CustomAgglomerativeClustering:
             if ok:
                 features.append((fpr, pattern))
 
-        top_features = [pat for _, pat in sorted(features)[:top_n]]
+        top_features = top_features = [
+            pat for _, pat in heapq.nsmallest(top_n, features)
+        ]
         top_features.sort()
         return top_features
 

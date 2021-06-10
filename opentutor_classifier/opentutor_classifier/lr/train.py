@@ -37,7 +37,6 @@ from .expectations import (
 )
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
-from opentutor_classifier.config import feature_generation_disabled
 
 from .clustering_features import CustomAgglomerativeClustering
 
@@ -51,7 +50,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
         self.accuracy: Dict[int, int] = {}
         self.word2vec: Word2VecKeyedVectors = None
-        self.FEATURE_GENERATION_DISABLED = feature_generation_disabled()
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
         self.word2vec = find_or_load_word2vec(
@@ -161,16 +159,14 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
-            pattern: Dict[str, List[str]] = {"good": [], "bad": []}
-            if not self.FEATURE_GENERATION_DISABLED:
-                data, candidates = clustering.generate_feature_candidates(
-                    np.array(processed_data)[np.array(train_y) == "good"],
-                    np.array(processed_data)[np.array(train_y) == "bad"],
-                    self.word2vec,
-                    index2word_set,
-                    ideal_answer,
-                )
-                pattern = clustering.select_feature_candidates(data, candidates)
+            data, candidates = clustering.generate_feature_candidates(
+                np.array(processed_data)[np.array(train_y) == "good"],
+                np.array(processed_data)[np.array(train_y) == "bad"],
+                self.word2vec,
+                index2word_set,
+                ideal_answer,
+            )
+            pattern = clustering.select_feature_candidates(data, candidates)
 
             config_updated.expectations[exp_num].features = dict(
                 good=good,
