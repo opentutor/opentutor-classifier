@@ -133,7 +133,7 @@ class CustomAgglomerativeClustering:
 
     @staticmethod
     def generate_patterns_from_candidates(
-        data: pd.DataFrame, best_targets: List[Tuple[str, Tuple[str]]]
+        data: pd.DataFrame, best_targets: List[Tuple[str, List[str]]]
     ):
         useful_pattern_for_each_cluster: Dict[str, List[str]] = {
             "good": list(),
