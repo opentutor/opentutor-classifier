@@ -145,7 +145,7 @@ def _test_train_and_predict(
                 ExpectationTrainingResult(accuracy=0.80),
                 ExpectationTrainingResult(accuracy=0.96),
             ],
-            0.99,
+            0.8,
         ),
     ],
 )
