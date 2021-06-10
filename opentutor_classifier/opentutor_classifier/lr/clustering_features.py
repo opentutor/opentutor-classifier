@@ -151,7 +151,7 @@ class CustomAgglomerativeClustering:
         bad_answers: np.array,
         word2vec: Word2VecKeyedVectors,
         index2word_set,
-        ideal_answer: Tuple[str],
+        train_quality,
     ):
         good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
         # good_labels, bad_labels = self.get_clusters(good_answers, bad_answers)

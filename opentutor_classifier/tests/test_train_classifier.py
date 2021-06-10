@@ -194,7 +194,7 @@ def test_train_and_predict(
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(accuracy=0.80),
-                ExpectationTrainingResult(accuracy=0.83),
+                ExpectationTrainingResult(accuracy=0.80),
                 ExpectationTrainingResult(accuracy=0.75),
                 ExpectationTrainingResult(accuracy=0.89),
             ],
