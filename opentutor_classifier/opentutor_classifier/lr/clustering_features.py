@@ -94,7 +94,7 @@ class CustomAgglomerativeClustering:
         final_candidates: List[List[str]] = []
 
         for idx in range(0, total_sentences, batch_size):
-            current_batch = sentence_cluster[idx : (idx + batch_size)]
+            current_batch = sentence_cluster[idx : (idx + batch_size)]  # noqa E203
             avg_proximity = np.zeros(len(current_batch))
             for i, row1 in enumerate(current_batch):
                 for row2 in current_batch:
