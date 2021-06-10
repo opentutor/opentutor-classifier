@@ -60,7 +60,7 @@ class CustomAgglomerativeClustering:
             self.data[int(y[0])], self.data[int(x[0])]
         )
 
-    def fit_predict(self, data: np.ndarray):
+    def fit_predict(self, data: np.ndarray, train_quality):
         self.data = data
         x = np.arange(len(self.data)).reshape(-1, 1)
 
@@ -68,30 +68,54 @@ class CustomAgglomerativeClustering:
         m = pairwise_distances(x, x, metric=self.alignment_metric)
 
         agg = AgglomerativeClustering(
-            n_clusters=2, affinity="precomputed", linkage="average"
+            n_clusters=train_quality, affinity="precomputed", linkage="average"
         )
         return agg.fit_predict(m)
 
-    def get_clusters(self, good_answers: np.array, bad_answers: np.array):
-        good_labels = self.fit_predict(good_answers)
-        bad_labels = self.fit_predict(bad_answers)
-        return good_labels, bad_labels
+    def get_clusters(
+        self, good_answers: np.array, bad_answers: np.array, train_quality: int
+    ):
+        if train_quality == 1:
+            return np.zeros_like(good_answers), np.zeros_like(bad_answers)
+        else:
+            good_labels = self.fit_predict(good_answers, train_quality)
+            bad_labels = self.fit_predict(bad_answers, train_quality)
+            return good_labels, bad_labels
 
     def get_best_candidate(
-        self,
-        sentence_cluster: np.array,
-        word2vec: Word2VecKeyedVectors,
-        index2word_set,
-        cuttoff_length: int = 20,
-    ) -> Tuple[str]:
+        self, sentence_cluster: np.array, cuttoff_length: int = 20, batch_size=10
+    ) -> List[str]:
         sentence_cluster = sentence_cluster[
             np.vectorize(lambda x: len(x) < cuttoff_length)(sentence_cluster)
         ]
         if len(sentence_cluster) < 5:
-            return ("",)
-        avg_proximity = np.zeros(len(sentence_cluster))
-        for i, row1 in enumerate(sentence_cluster):
-            for row2 in sentence_cluster:
+            return [""]
+        total_sentences: int = len(sentence_cluster)
+        final_candidates: List[List[str]] = []
+
+        for idx in range(0, total_sentences, batch_size):
+            current_batch = sentence_cluster[idx : (idx + batch_size)]
+            avg_proximity = np.zeros(len(current_batch))
+            for i, row1 in enumerate(current_batch):
+                for row2 in current_batch:
+                    if row1 == row2:
+                        continue
+                    avg_proximity[i] += (
+                        len(row2) / (len(row2) + len(row1))
+                    ) * self.word_alignment_feature(
+                        row2, row1
+                    )  # check best alignment in both directions
+                    avg_proximity[i] += (
+                        len(row1) / (len(row2) + len(row1))
+                    ) * self.word_alignment_feature(row1, row2)
+
+            avg_proximity /= len(current_batch)
+            best_idx = np.argmax(avg_proximity)
+            final_candidates.append(list(current_batch[best_idx]))
+
+        avg_proximity = np.zeros(len(final_candidates))
+        for i, row1 in enumerate(final_candidates):
+            for row2 in final_candidates:
                 if row1 == row2:
                     continue
                 avg_proximity[i] += (
@@ -103,9 +127,9 @@ class CustomAgglomerativeClustering:
                     len(row1) / (len(row2) + len(row1))
                 ) * self.word_alignment_feature(row1, row2)
 
-        avg_proximity /= len(sentence_cluster)
+        avg_proximity /= len(final_candidates)
         best_idx = np.argmax(avg_proximity)
-        return sentence_cluster[best_idx]
+        return final_candidates[best_idx]
 
     @staticmethod
     def generate_patterns_from_candidates(
@@ -149,42 +173,34 @@ class CustomAgglomerativeClustering:
         self,
         good_answers: np.array,
         bad_answers: np.array,
-        word2vec: Word2VecKeyedVectors,
-        index2word_set,
-        train_quality,
+        train_quality: int,
     ):
         good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
-        # good_labels, bad_labels = self.get_clusters(good_answers, bad_answers)
+        good_labels, bad_labels = self.get_clusters(
+            good_answers, bad_answers, train_quality
+        )
 
         best_candidates = []
-        best_candidates.append(
-            (
-                "good",
-                self.get_best_candidate(good_answers, word2vec, index2word_set),
+
+        for cluster_label in np.unique(good_labels):
+            best_candidates.append(
+                (
+                    "good",
+                    self.get_best_candidate(
+                        good_answers[good_labels == cluster_label],
+                    ),
+                )
             )
-        )
-        # best_candidates.append(
-        #     (
-        #         "good",
-        #         self.get_best_candidate(
-        #             good_answers[good_labels == 1], word2vec, index2word_set
-        #         ),
-        #     )
-        # )
-        best_candidates.append(
-            (
-                "bad",
-                self.get_best_candidate(bad_answers, word2vec, index2word_set),
+
+        for cluster_label in np.unique(bad_labels):
+            best_candidates.append(
+                (
+                    "bad",
+                    self.get_best_candidate(
+                        bad_answers[bad_labels == cluster_label],
+                    ),
+                )
             )
-        )
-        # best_candidates.append(
-        #     (
-        #         "bad",
-        #         self.get_best_candidate(
-        #             bad_answers[bad_labels == 1], word2vec, index2word_set
-        #         ),
-        #     )
-        # )
 
         data = pd.DataFrame(
             {

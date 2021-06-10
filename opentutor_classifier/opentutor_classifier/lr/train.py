@@ -166,8 +166,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 data, candidates = clustering.generate_feature_candidates(
                     np.array(processed_data)[np.array(train_y) == "good"],
                     np.array(processed_data)[np.array(train_y) == "bad"],
-                    self.word2vec,
-                    index2word_set,
                     self.train_quality,
                 )
                 pattern = clustering.select_feature_candidates(data, candidates)
