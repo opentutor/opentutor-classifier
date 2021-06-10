@@ -17,6 +17,7 @@ from opentutor_classifier.speechact import SpeechActClassifierResult
 
 @dataclass
 class ExpectationClassifierResult:
+    expectationId: str = ""
     expectation: int = -1
     evaluation: str = ""
     score: float = 0.0
@@ -24,6 +25,7 @@ class ExpectationClassifierResult:
 
 @dataclass
 class ExpectationConfig:
+    expectationId: str = ""
     ideal: str = ""
     features: Dict[str, Any] = field(default_factory=dict)
 
@@ -43,15 +45,16 @@ class QuestionConfig:
         return QuestionConfig(**self.to_dict())
 
     def get_expectation_feature(
-        self, exp: int, feature_name: str, dft: Any = None
+        self, exp: str, feature_name: str, dft: Any = None
     ) -> Any:
+        expectationList = [x for x in self.expectations if exp == x.expectationId]
         return (
-            self.expectations[exp].features.get(feature_name, dft)
-            if exp >= 0 and exp < len(self.expectations)
+            expectationList[0].features.get(feature_name, dft)
+            if len(expectationList) > 0
             else dft
         )
 
-    def get_expectation_ideal(self, exp: int) -> Any:
+    def get_expectation_ideal(self, exp: str) -> Any:
         return (
             self.expectations[exp].ideal
             if exp >= 0 and exp < len(self.expectations)
@@ -285,7 +288,7 @@ def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
         question=d.get("question") or "",
         expectations=[
             ExpectationConfig(
-                ideal=x.get("ideal") or "", features=x.get("features") or {}
+                expectationId=x.get("expectationId"), ideal=x.get("ideal") or "", features=x.get("features") or {}
             )
             for x in d.get("expectations") or []
         ],

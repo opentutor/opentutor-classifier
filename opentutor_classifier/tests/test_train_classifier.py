@@ -102,7 +102,7 @@ def _test_train_and_predict(
             expected_accuracy=expected_accuracy,
         )
 
-
+@pytest.mark.only
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
