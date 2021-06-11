@@ -9,11 +9,11 @@ from sklearn import model_selection, linear_model
 from sklearn.preprocessing import LabelEncoder
 from text_to_num import alpha2digit
 
-
+from opentutor_classifier import ClassifierMode, ExpectationConfig
 from opentutor_classifier.stopwords import STOPWORDS
 from . import features
 from .clustering_features import CustomAgglomerativeClustering
-
+from .constants import FEATURE_LENGTH_RATIO
 
 word_mapper = {
     "n't": "not",
@@ -94,6 +94,8 @@ class LRExpectationClassifier:
         good: List[str],
         bad: List[str],
         clustering: CustomAgglomerativeClustering,
+        mode: ClassifierMode,
+        expectation_config: ExpectationConfig = None,
         patterns: List[str] = None,
     ) -> List[float]:
         raw_example = alpha2digit(raw_example, "en")
@@ -102,7 +104,6 @@ class LRExpectationClassifier:
             features.regex_match_ratio(raw_example, bad),
             *features.number_of_negatives(example),
             clustering.word_alignment_feature(example, ideal),
-            features.length_ratio_feature(example, ideal),
             features.word2vec_example_similarity(
                 word2vec, index2word_set, example, ideal
             ),
@@ -110,6 +111,14 @@ class LRExpectationClassifier:
                 word2vec, index2word_set, example, question
             ),
         ]
+        if mode == ClassifierMode.TRAIN:
+            if features.feature_length_ratio_enabled():
+                feat.append(features.length_ratio_feature(example, ideal))
+        elif mode == ClassifierMode.PREDICT:
+            if not expectation_config:
+                raise Exception("predict mode must pass in ExpectationConfig")
+            if expectation_config.features[FEATURE_LENGTH_RATIO]:
+                feat.append(features.length_ratio_feature(example, ideal))
         if patterns:
             for pattern in patterns:
                 feat.append(check_is_pattern_match(raw_example, pattern))
