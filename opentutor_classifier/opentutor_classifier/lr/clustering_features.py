@@ -15,6 +15,9 @@ from .features import (
     word2vec_example_similarity,
 )
 
+CLUSTERS_MIN = 1
+CLUSTERS_MAX = 5
+
 
 class CustomAgglomerativeClustering:
     def __init__(self, word2vec: Word2VecKeyedVectors, index2word_set):
@@ -60,7 +63,7 @@ class CustomAgglomerativeClustering:
             self.data[int(y[0])], self.data[int(x[0])]
         )
 
-    def fit_predict(self, data: np.ndarray, train_quality):
+    def fit_predict(self, data: np.ndarray, train_quality: int):
         self.data = data
         x = np.arange(len(self.data)).reshape(-1, 1)
 
@@ -68,7 +71,9 @@ class CustomAgglomerativeClustering:
         m = pairwise_distances(x, x, metric=self.alignment_metric)
 
         agg = AgglomerativeClustering(
-            n_clusters=train_quality, affinity="precomputed", linkage="average"
+            n_clusters=min(CLUSTERS_MAX, max(train_quality, CLUSTERS_MIN)),
+            affinity="precomputed",
+            linkage="average",
         )
         return agg.fit_predict(m)
 

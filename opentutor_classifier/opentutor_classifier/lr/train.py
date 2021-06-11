@@ -19,6 +19,7 @@ from sklearn.model_selection import LeaveOneOut
 from opentutor_classifier import DataDao
 from opentutor_classifier import (
     ARCH_LR_CLASSIFIER,
+    PROP_TRAIN_QUALITY,
     AnswerClassifierTraining,
     ArchLesson,
     DefaultModelSaveReq,
@@ -29,6 +30,7 @@ from opentutor_classifier import (
     TrainingInput,
     TrainingResult,
 )
+from opentutor_classifier.config import get_train_quality_default
 from opentutor_classifier.log import logger
 
 from .expectations import (
@@ -56,7 +58,10 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         self.word2vec = find_or_load_word2vec(
             path.join(config.shared_root, "word2vec.bin")
         )
-        self.train_quality = config.property.get("TRAIN_QUALITY", 1)
+        self.train_quality = config.properties.get(
+            PROP_TRAIN_QUALITY, get_train_quality_default
+        )
+
         return self
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
