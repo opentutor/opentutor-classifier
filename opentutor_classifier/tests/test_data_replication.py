@@ -110,6 +110,7 @@ def assert_inc(
         assert accuracy_list[i] >= accuracy_list[i - 1]
 
 
+@pytest.mark.slow
 @responses.activate
 @pytest.mark.parametrize(
     "lesson,arch,confidence_threshold,evaluate_input, evaluate_expectation",
