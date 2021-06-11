@@ -95,46 +95,34 @@ class CustomAgglomerativeClustering:
         ]
         if len(sentence_cluster) < 5:
             return [""]
-        total_sentences: int = len(sentence_cluster)
-        final_candidates: List[List[str]] = []
 
-        for idx in range(0, total_sentences, batch_size):
-            current_batch = sentence_cluster[idx : (idx + batch_size)]  # noqa E203
-            avg_proximity = np.zeros(len(current_batch))
-            for i, row1 in enumerate(current_batch):
-                for row2 in current_batch:
-                    if row1 == row2:
-                        continue
-                    avg_proximity[i] += (
-                        len(row2) / (len(row2) + len(row1))
-                    ) * self.word_alignment_feature(
-                        row2, row1
-                    )  # check best alignment in both directions
-                    avg_proximity[i] += (
-                        len(row1) / (len(row2) + len(row1))
-                    ) * self.word_alignment_feature(row1, row2)
+        final_candidates: List[List[str]] = list(sentence_cluster)
+        total_sentences: int = len(final_candidates)
 
-            avg_proximity /= len(current_batch)
-            best_idx = np.argmax(avg_proximity)
-            final_candidates.append(list(current_batch[best_idx]))
+        while total_sentences != 1:
+            for idx in range(0, total_sentences, batch_size):
+                current_batch = final_candidates[idx : (idx + batch_size)]  # noqa E203
+                avg_proximity = np.zeros(len(current_batch))
+                for i, row1 in enumerate(current_batch):
+                    for row2 in current_batch:
+                        if row1 == row2:
+                            continue
+                        avg_proximity[i] += (
+                            len(row2) / (len(row2) + len(row1))
+                        ) * self.word_alignment_feature(
+                            row2, row1
+                        )  # check best alignment in both directions
+                        avg_proximity[i] += (
+                            len(row1) / (len(row2) + len(row1))
+                        ) * self.word_alignment_feature(row1, row2)
 
-        avg_proximity = np.zeros(len(final_candidates))
-        for i, row1 in enumerate(final_candidates):
-            for row2 in final_candidates:
-                if row1 == row2:
-                    continue
-                avg_proximity[i] += (
-                    len(row2) / (len(row2) + len(row1))
-                ) * self.word_alignment_feature(
-                    row2, row1
-                )  # check best alignment in both directions
-                avg_proximity[i] += (
-                    len(row1) / (len(row2) + len(row1))
-                ) * self.word_alignment_feature(row1, row2)
+                avg_proximity /= len(current_batch)
+                best_idx = np.argmax(avg_proximity)
+                final_candidates.append(list(current_batch[best_idx]))
+            final_candidates = final_candidates[total_sentences:]
+            total_sentences = len(final_candidates)
 
-        avg_proximity /= len(final_candidates)
-        best_idx = np.argmax(avg_proximity)
-        return final_candidates[best_idx]
+        return final_candidates[0]
 
     @staticmethod
     def generate_patterns_from_candidates(
