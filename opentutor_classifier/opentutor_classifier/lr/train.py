@@ -59,7 +59,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             path.join(config.shared_root, "word2vec.bin")
         )
         self.train_quality = config.properties.get(
-            PROP_TRAIN_QUALITY, get_train_quality_default
+            PROP_TRAIN_QUALITY, get_train_quality_default()
         )
 
         return self
