@@ -26,28 +26,26 @@ def healthcheck():
 
     # Get service statuses
     # Admin
-    res_admin = requests.head(os.getenv("HEALTHCHECK_ADMIN", "http://admin.com"))
+    res_admin = requests.head(os.getenv("HEALTHCHECK_ADMIN", "http://admin"))
     admin_status = res_admin.status_code
 
     # GraphQL
     endpoint = get_graphql_endpoint()
 
     res_gql = requests.post(endpoint, json={"query": GQL_QUERY_STATUS})
-    print(res_gql.status_code)
-    print(res_gql.text)
     graphql_status = res_gql.status_code
 
     # Home
-    res_home = requests.head(os.getenv("HEALTHCHECK_HOME", "http://home.com"))
+    res_home = requests.head(os.getenv("HEALTHCHECK_HOME", "http://home"))
     home_status = res_home.status_code
 
     # Tutor
-    res_tutor = requests.head(os.getenv("HEALTHCHECK_TUTOR", "http://tutor.com"))
+    res_tutor = requests.head(os.getenv("HEALTHCHECK_TUTOR", "http://tutor"))
     tutor_status = res_tutor.status_code
 
     # Training
     # Needs to ping
-    # training_status = requests.get(os.getenv('HEALTHCHECK_TRAINING', "http://training.com/ping"))
+    # training_status = requests.get(os.getenv('HEALTHCHECK_TRAINING', "http://training/ping"))
     training_status = 200
 
     healthy = (
