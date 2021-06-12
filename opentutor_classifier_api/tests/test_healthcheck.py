@@ -8,7 +8,6 @@ import pytest
 import responses
 import json
 from . import fixture_path
-from opentutor_classifier.api import get_graphql_endpoint  # type: ignore
 import os
 
 
