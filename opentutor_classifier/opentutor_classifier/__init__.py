@@ -6,6 +6,7 @@
 #
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, asdict
+from enum import Enum
 from importlib import import_module
 from os import environ, makedirs, path
 import pandas as pd
@@ -340,3 +341,8 @@ class ClassifierFactory:
 
     def new_training(self, config: TrainingConfig, arch="") -> AnswerClassifierTraining:
         return self._find_arch_fac(arch).new_training(config)
+
+
+class ClassifierMode(Enum):
+    TRAIN = 1
+    PREDICT = 2
