@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional
 import yaml
 
 from opentutor_classifier.speechact import SpeechActClassifierResult
+from opentutor_classifier.config import PROP_TRAIN_QUALITY
 
 
 @dataclass
@@ -265,6 +266,7 @@ class ExpectationFeatures:
 @dataclass
 class TrainingConfig:
     shared_root: str = "shared"
+    properties = {PROP_TRAIN_QUALITY: 1}
 
 
 class AnswerClassifierTraining(ABC):
