@@ -5,10 +5,56 @@ exp_num,text,label
 0, the amounts will be proportional, good
 0, we will see that they are proportional,good
 0, they are going to be proportional,good
-0, they are going to be proportional to one another,good
+0, they are going to be proportional to one another,
+0, it is the case that A and be will be proportional, good
+0, the two will be proportional in the end, good
+0, we will see proportional quantities, good
+0, the quantities will be proportional, good
+0, the quantities are going to be proportional, good
+0, A and b will be proportional quantities, good
+0, the quantities of A and B will be proportional, good
+0, A and B will be proportional in amount, good
+0, The amount of A and B will be proportional, good
+0, the amount of the two quantities will be proportional, good
+0, there will be proportional quantities of the two, good
+0, A and B will be proportional amounts, good
+0, B and C will be proportional, bad
 0, they will be consistent,good
 0, A and B will be consistent,good
 0, the two will be consistent,good
+0, the quantities A and B will be consistent,good
+0, A and B will be consistent quantities,good
+0, A will be consistent with B,good
+0, the two will remain consistent,good
+0, we will see that A and B are consistent,good
+0, B and A will be consistent,good
+0, A and B will be proportional but B and C will be disproportionate, good
+0, A and B will be consistent but B and C will be incongruous, good
+0, A and B will be proportional but B and C will be incongruous, good
+0, the quantities of A and B will be proportional but the quantities of B and C will be incongruous, good
+0, A and B will be proportional not incongruous, good
+
+0, A and B will be consistent and not disproportionate, good
+0, quantities A and B will be consistent and not disproportionate, good
+0, the amounts of A and B will be consistent and not disproportionate, good
+0, A and B will be consistent quantities and not disproportionate, good
+0, A and B will be consistent in quantity and not disproportionate, good
+0, A and B will be consistent in amount and not disproportionate, good
+0, A and B will be consistent and not disproportionate quantities, good
+0, the amounts of B and C will be consistent and not disproportionate, bad
+0, A and B will not be consistent quantities and they will be disproportionate, bad
+0, B and C will be consistent in quantity and not disproportionate, bad
+0, A and B will not be consistent in amount and therefore disproportionate, bad
+0, A and B will be consistent and disproportionate quantities, bad
+0, B and C will be proportional but A and B will be incongruous, bad
+0, B and C will be consistent but A and B will be incongruous, bad
+0, B and C will be proportional but A and B will be disproportionate, bad
+0, B and C will be consistent, bad
+0, the three will be consistent, bad
+0, they will not be consistent, bad
+0, C and B will be consistent, bad
+0, the two will be kind of consistent, bad
+0, B and C will be proportional, bad
 0, A and B will be incongruous,bad
 0, the two will be incongruous,bad
 0, they will be incongruous with eachother,bad
