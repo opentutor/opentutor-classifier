@@ -58,7 +58,8 @@ def regex_match(str_example: str, regexes: List[str]) -> List[bool]:
         else:
             matches.append(0)
     return matches
-    
+
+
 def regex_match_ratio(str_example: str, regexes: List[str]) -> float:
     if len(regexes) == 0:
         return 0

@@ -102,51 +102,52 @@ def _test_train_and_predict(
             expected_accuracy=expected_accuracy,
         )
 
+
 @pytest.mark.only
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
-#         (
-#             "question1",
-#             ARCH_SVM_CLASSIFIER,
-#             CONFIDENCE_THRESHOLD_DEFAULT,
-#             [
-#                 ExpectationTrainingResult(accuracy=0.8),
-#                 ExpectationTrainingResult(accuracy=0.7),
-#                 ExpectationTrainingResult(accuracy=0.98),
-#             ],
-#             0.33,
-#         ),
-#         (
-#             "question2",
-#             ARCH_SVM_CLASSIFIER,
-#             CONFIDENCE_THRESHOLD_DEFAULT,
-#             [ExpectationTrainingResult(accuracy=0.98)],
-#             0.99,
-#         ),
-#         (
-#             "ies-rectangle",
-#             ARCH_SVM_CLASSIFIER,
-#             CONFIDENCE_THRESHOLD_DEFAULT,
-#             [
-#                 ExpectationTrainingResult(accuracy=0.92),
-#                 ExpectationTrainingResult(accuracy=0.93),
-#                 ExpectationTrainingResult(accuracy=0.93),
-#             ],
-#             0.8,
-#         ),
-#         (
-#             "candles",
-#             ARCH_SVM_CLASSIFIER,
-#             CONFIDENCE_THRESHOLD_DEFAULT,
-#             [
-#                 ExpectationTrainingResult(accuracy=0.84),
-#                 ExpectationTrainingResult(accuracy=0.87),
-#                 ExpectationTrainingResult(accuracy=0.80),
-#                 ExpectationTrainingResult(accuracy=0.96),
-#             ],
-#             0.8,
-#         ),
+        #         (
+        #             "question1",
+        #             ARCH_SVM_CLASSIFIER,
+        #             CONFIDENCE_THRESHOLD_DEFAULT,
+        #             [
+        #                 ExpectationTrainingResult(accuracy=0.8),
+        #                 ExpectationTrainingResult(accuracy=0.7),
+        #                 ExpectationTrainingResult(accuracy=0.98),
+        #             ],
+        #             0.33,
+        #         ),
+        #         (
+        #             "question2",
+        #             ARCH_SVM_CLASSIFIER,
+        #             CONFIDENCE_THRESHOLD_DEFAULT,
+        #             [ExpectationTrainingResult(accuracy=0.98)],
+        #             0.99,
+        #         ),
+        #         (
+        #             "ies-rectangle",
+        #             ARCH_SVM_CLASSIFIER,
+        #             CONFIDENCE_THRESHOLD_DEFAULT,
+        #             [
+        #                 ExpectationTrainingResult(accuracy=0.92),
+        #                 ExpectationTrainingResult(accuracy=0.93),
+        #                 ExpectationTrainingResult(accuracy=0.93),
+        #             ],
+        #             0.8,
+        #         ),
+        #         (
+        #             "candles",
+        #             ARCH_SVM_CLASSIFIER,
+        #             CONFIDENCE_THRESHOLD_DEFAULT,
+        #             [
+        #                 ExpectationTrainingResult(accuracy=0.84),
+        #                 ExpectationTrainingResult(accuracy=0.87),
+        #                 ExpectationTrainingResult(accuracy=0.80),
+        #                 ExpectationTrainingResult(accuracy=0.96),
+        #             ],
+        #             0.8,
+        #         ),
         (
             "proportion",
             ARCH_SVM_CLASSIFIER,
@@ -156,8 +157,8 @@ def _test_train_and_predict(
             ],
             1,
         ),
-     ],
- )
+    ],
+)
 def test_train_and_predict(
     example: str,
     arch: str,

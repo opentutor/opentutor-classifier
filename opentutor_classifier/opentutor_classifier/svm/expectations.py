@@ -56,14 +56,14 @@ class SVMExpectationClassifier:
     ) -> List[float]:
         regex_good = features.regex_match(raw_example, good)
         regex_bad = features.regex_match(raw_example, bad)
-        import logging 
+        import logging
+
         logging.warning(f"good{regex_good}")
         logging.warning(f"str{raw_example}")
         return (
             regex_good
-            + regex_bad+
-             [
-        
+            + regex_bad
+            + [
                 # features.regex_match_ratio(raw_example, good),
                 # features.regex_match_ratio(raw_example, bad),
                 *features.number_of_negatives(example),
