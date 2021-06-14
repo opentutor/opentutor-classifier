@@ -54,19 +54,31 @@ class SVMExpectationClassifier:
         good: List[str],
         bad: List[str],
     ) -> List[float]:
-        return [
-            features.regex_match_ratio(raw_example, good),
-            features.regex_match_ratio(raw_example, bad),
-            *features.number_of_negatives(example),
-            features.word_alignment_feature(example, ideal, word2vec, index2word_set),
-            features.length_ratio_feature(example, ideal),
-            features.word2vec_example_similarity(
-                word2vec, index2word_set, example, ideal
-            ),
-            features.word2vec_question_similarity(
-                word2vec, index2word_set, example, question
-            ),
-        ]
+        regex_good = features.regex_match(raw_example, good)
+        regex_bad = features.regex_match(raw_example, bad)
+        import logging 
+        logging.warning(f"good{regex_good}")
+        logging.warning(f"str{raw_example}")
+        return (
+            regex_good
+            + regex_bad+
+             [
+        
+                # features.regex_match_ratio(raw_example, good),
+                # features.regex_match_ratio(raw_example, bad),
+                *features.number_of_negatives(example),
+                features.word_alignment_feature(
+                    example, ideal, word2vec, index2word_set
+                ),
+                features.length_ratio_feature(example, ideal),
+                features.word2vec_example_similarity(
+                    word2vec, index2word_set, example, ideal
+                ),
+                features.word2vec_question_similarity(
+                    word2vec, index2word_set, example, question
+                ),
+            ]
+        )
 
     @staticmethod
     def initialize_model() -> svm.SVC:

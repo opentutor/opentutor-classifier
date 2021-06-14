@@ -48,6 +48,17 @@ def number_of_negatives(example) -> Tuple[float, float]:
     return (no_of_negatives, 1 if no_of_negatives % 2 == 0 else 0)
 
 
+def regex_match(str_example: str, regexes: List[str]) -> List[bool]:
+    if len(regexes) == 0:
+        return []
+    matches = []
+    for r in regexes:
+        if re.search(r, str_example):
+            matches.append(1)
+        else:
+            matches.append(0)
+    return matches
+    
 def regex_match_ratio(str_example: str, regexes: List[str]) -> float:
     if len(regexes) == 0:
         return 0
