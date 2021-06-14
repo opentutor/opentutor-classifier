@@ -6,6 +6,7 @@
 #
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field, asdict
+from enum import Enum
 from importlib import import_module
 from os import environ, makedirs, path
 import pandas as pd
@@ -13,6 +14,7 @@ from typing import Any, Dict, List, Optional
 import yaml
 
 from opentutor_classifier.speechact import SpeechActClassifierResult
+from opentutor_classifier.config import PROP_TRAIN_QUALITY
 
 
 @dataclass
@@ -267,6 +269,7 @@ class ExpectationFeatures:
 @dataclass
 class TrainingConfig:
     shared_root: str = "shared"
+    properties = {PROP_TRAIN_QUALITY: 1}
 
 
 class AnswerClassifierTraining(ABC):
@@ -343,3 +346,8 @@ class ClassifierFactory:
 
     def new_training(self, config: TrainingConfig, arch="") -> AnswerClassifierTraining:
         return self._find_arch_fac(arch).new_training(config)
+
+
+class ClassifierMode(Enum):
+    TRAIN = 1
+    PREDICT = 2
