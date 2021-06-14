@@ -6,10 +6,11 @@ from nltk.tokenize import word_tokenize
 from sklearn import model_selection, svm
 from sklearn.preprocessing import LabelEncoder
 
+from opentutor_classifier import ClassifierMode, ExpectationConfig
 
 from opentutor_classifier.stopwords import STOPWORDS
-
 from . import features
+from opentutor_classifier.svm.constants import FEATURE_REGEX_AGGREGATE
 
 
 def preprocess_sentence(sentence: str) -> List[str]:
@@ -53,24 +54,16 @@ class SVMExpectationClassifier:
         index2word_set: set,
         good: List[str],
         bad: List[str],
+        mode: ClassifierMode,
+        expectation_config: ExpectationConfig = None,
     ) -> List[float]:
         regex_good = features.regex_match(raw_example, good)
         regex_bad = features.regex_match(raw_example, bad)
-        # import logging
-
-        # logging.warning(f"good{regex_good}")
-        # logging.warning(f"str{raw_example}")
-        return (
-            # regex_good
-            # + regex_bad+
-                [
-                features.regex_match_ratio(raw_example, good),
-                features.regex_match_ratio(raw_example, bad),
+        feat =  [
                 *features.number_of_negatives(example),
                 features.word_alignment_feature(
                     example, ideal, word2vec, index2word_set
                 ),
-                features.length_ratio_feature(example, ideal),
                 features.word2vec_example_similarity(
                     word2vec, index2word_set, example, ideal
                 ),
@@ -78,7 +71,21 @@ class SVMExpectationClassifier:
                     word2vec, index2word_set, example, question
                 ),
             ]
-        )
+        if mode == ClassifierMode.TRAIN:
+            if features.feature_regex_aggregate_enabled():
+                feat.append(regex_good + regex_bad)
+            else:
+                feat.append(features.regex_match_ratio(raw_example, good) + 
+                    features.regex_match_ratio(raw_example, bad))
+        elif mode == ClassifierMode.PREDICT:
+            if not expectation_config:
+                raise Exception("predict mode must pass in ExpectationConfig")
+            if expectation_config.features[FEATURE_REGEX_AGGREGATE]:
+                feat.append(feat.append(regex_good + regex_bad))
+            else: 
+                feat.append(features.regex_match_ratio(raw_example, good) + 
+                    features.regex_match_ratio(raw_example, bad))
+        return feat
 
     @staticmethod
     def initialize_model() -> svm.SVC:

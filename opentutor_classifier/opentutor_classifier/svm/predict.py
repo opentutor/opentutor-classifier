@@ -24,6 +24,7 @@ from opentutor_classifier import (
     ModelRef,
     QuestionConfig,
     ARCH_SVM_CLASSIFIER,
+    ClassifierMode,
 )
 from opentutor_classifier.speechact import SpeechActClassifier
 
@@ -150,6 +151,8 @@ class SVMAnswerClassifier(AnswerClassifier):
                 index2word,
                 exp_conf.features.get("good") or [],
                 exp_conf.features.get("bad") or [],
+                mode=ClassifierMode.PREDICT,
+                expectation_config=conf.expectations[exp.expectation],
             )
             result.expectation_results.append(
                 self.find_score_and_class(

@@ -9,8 +9,8 @@ expectations:
   - ideal: it will be consistent and proportional
     features:
       bad:
-        - inconsistent
-        - unproportional
+        - incongruous
+        - disproportionate
       good:
         - proportional
         - consistent

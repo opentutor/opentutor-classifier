@@ -30,7 +30,10 @@ from opentutor_classifier import (
     TrainingConfig,
     TrainingInput,
     TrainingResult,
+    ClassifierMode,
 )
+from .constants import FEATURE_REGEX_AGGREGATE
+from .features import feature_regex_aggregate_enabled
 from opentutor_classifier import DataDao
 from opentutor_classifier.log import logger
 from opentutor_classifier.stopwords import STOPWORDS
@@ -85,6 +88,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
                 index2word_set,
                 [],
                 [],
+                ClassifierMode.TRAIN,
             )
             return features_list
 
@@ -165,7 +169,11 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
             ideal_answer = self.model_obj.initialize_ideal_answer(processed_data)
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
-            config_updated.expectations[exp_num].features = dict(good=good, bad=bad)
+            config_updated.expectations[exp_num].features = {
+                "good": good,
+                "bad": bad,
+                FEATURE_REGEX_AGGREGATE: feature_regex_aggregate_enabled(),
+            }
             features = [
                 np.array(
                     self.model_obj.calculate_features(
@@ -177,10 +185,14 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
                         index2word_set,
                         good,
                         bad,
+                        mode=ClassifierMode.TRAIN,
+                        expectation_config=train_input.config.expectations[exp_num]
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)
             ]
+            import logging
+            logging.warning(f"BEES{train_input.config.expectations[exp_num]}")
             train_y = np.array(self.model_obj.encode_y(train_y))
             model = self.model_obj.initialize_model()
             model.fit(features, train_y)

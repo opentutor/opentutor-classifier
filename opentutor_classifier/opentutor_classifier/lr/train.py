@@ -197,6 +197,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 )
                 for raw_example, example in zip(train_x, processed_data)
             ]
+            import logging
+            logging.warning(f"BEE{train_input.config.expectations[exp_num]}")
             train_y = np.array(LRExpectationClassifier.encode_y(train_y))
             model = LRExpectationClassifier.initialize_model()
             model.fit(features, train_y)

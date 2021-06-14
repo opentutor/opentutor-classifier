@@ -110,7 +110,6 @@ class LRExpectationClassifier:
                 features.regex_match_ratio(raw_example, bad),
                 *features.number_of_negatives(example),
                 clustering.word_alignment_feature(example, ideal),
-                features.length_ratio_feature(example, ideal),
                 features.word2vec_example_similarity(
                     word2vec, index2word_set, example, ideal
                 ),

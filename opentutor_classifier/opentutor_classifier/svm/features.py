@@ -5,6 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import math
+from .constants import FEATURE_REGEX_AGGREGATE
 import re
 
 from typing import List, Tuple
@@ -13,7 +14,13 @@ from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 from scipy import spatial
 from scipy.optimize import linear_sum_assignment
+from os import environ
 
+
+
+def feature_regex_aggregate_enabled() -> bool:
+    enabled = environ.get(FEATURE_REGEX_AGGREGATE, "")
+    return enabled == "1" or enabled.lower() == "true"
 
 def _avg_feature_vector(
     words: List[str],
