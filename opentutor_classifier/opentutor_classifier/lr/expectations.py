@@ -99,13 +99,13 @@ class LRExpectationClassifier:
         raw_example = alpha2digit(raw_example, "en")
         regex_good = features.regex_match(raw_example, good)
         regex_bad = features.regex_match(raw_example, bad)
-        feat = (
-            regex_good
-            + regex_bad
-            + [
-                # feat = [
-                # features.regex_match_ratio(raw_example, good),
-                # features.regex_match_ratio(raw_example, bad),
+        # feat = 
+            # regex_good
+            # + regex_bad+
+            # [
+        feat = [
+                features.regex_match_ratio(raw_example, good),
+                features.regex_match_ratio(raw_example, bad),
                 *features.number_of_negatives(example),
                 clustering.word_alignment_feature(example, ideal),
                 features.length_ratio_feature(example, ideal),
@@ -116,7 +116,7 @@ class LRExpectationClassifier:
                     word2vec, index2word_set, example, question
                 ),
             ]
-        )
+        
         if patterns:
             for pattern in patterns:
                 feat.append(check_is_pattern_match(raw_example, pattern))

@@ -28,12 +28,25 @@ exp_num,text,label
 0, the two will remain consistent,good
 0, we will see that A and B are consistent,good
 0, B and A will be consistent,good
+0, B and C will be consistent, bad
+0, the three will be consistent, bad
+0, they will not be consistent, bad
+0, C and B will be consistent, bad
+0, the two will be kind of consistent, bad
 0, A and B will be proportional but B and C will be disproportionate, good
-0, A and B will be consistent but B and C will be incongruous, good
+0, A and B will be proportional but and not disproportionate, good
+0, A and B will be proportional quantities not disproportionate, good
+0, B and C will be proportional but A and B will be disproportionate, bad
+0, B and C will be proportional and not be disproportionate, bad
+0, B and C will be proportional quantities but A and B will be disproportionate, bad
 0, A and B will be proportional but B and C will be incongruous, good
 0, the quantities of A and B will be proportional but the quantities of B and C will be incongruous, good
 0, A and B will be proportional not incongruous, good
-
+0, B and C will be proportional but A and B will be incongruous, bad
+0, A and B will be consistent but B and C will be incongruous, good
+0, A and B will be consistent quantities but B and C will be incongruous, good
+0, B and C will be consistent but A and B will be incongruous, bad
+0, B and C will be consistent quantities but A and B will be incongruous, bad
 0, A and B will be consistent and not disproportionate, good
 0, quantities A and B will be consistent and not disproportionate, good
 0, the amounts of A and B will be consistent and not disproportionate, good
@@ -46,17 +59,25 @@ exp_num,text,label
 0, B and C will be consistent in quantity and not disproportionate, bad
 0, A and B will not be consistent in amount and therefore disproportionate, bad
 0, A and B will be consistent and disproportionate quantities, bad
-0, B and C will be proportional but A and B will be incongruous, bad
-0, B and C will be consistent but A and B will be incongruous, bad
-0, B and C will be proportional but A and B will be disproportionate, bad
-0, B and C will be consistent, bad
-0, the three will be consistent, bad
-0, they will not be consistent, bad
-0, C and B will be consistent, bad
-0, the two will be kind of consistent, bad
-0, B and C will be proportional, bad
+0, B and C will be incongruous, good
 0, A and B will be incongruous,bad
 0, the two will be incongruous,bad
+0, they will be incongruous with eachother,bad
+0, A and B will be incongruous,bad
+0, the two will be incongruous,bad
+0, they will be incongruous with eachother,bad
+0, A and B will be incongruous,bad
+0, the two will be incongruous,bad
+0, they will be incongruous with eachother,bad
+0, A and B will be incongruous,bad
+0, the two will be incongruous,bad
+0, they will be incongruous with eachother,bad
+0, A and B will be incongruous,bad
+0, the two will be incongruous,bad
+0, they will be incongruous with eachother,bad
+0, A and B will be incongruous,bad
+0, the two will be incongruous,bad
+0, they will be incongruous with eachother,bad
 0, they will be incongruous with eachother,bad
 0, A will be disproportionate to B, bad
 0, B and A will be disproportionate, bad

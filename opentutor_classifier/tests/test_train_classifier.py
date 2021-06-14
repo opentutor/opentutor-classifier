@@ -109,46 +109,46 @@ def _test_train_and_predict(
     [
         #         (
         #             "question1",
-        #             ARCH_SVM_CLASSIFIER,
+        #             ARCH_LR_CLASSIFIER,
         #             CONFIDENCE_THRESHOLD_DEFAULT,
         #             [
-        #                 ExpectationTrainingResult(accuracy=0.8),
-        #                 ExpectationTrainingResult(accuracy=0.7),
-        #                 ExpectationTrainingResult(accuracy=0.98),
+        #                 ExpectationTrainingResult(accuracy=0.0),
+        #                 ExpectationTrainingResult(accuracy=0.0),
+        #                 ExpectationTrainingResult(accuracy=0.0),
         #             ],
-        #             0.33,
+        #             1,
         #         ),
         #         (
         #             "question2",
-        #             ARCH_SVM_CLASSIFIER,
+        #             ARCH_LR_CLASSIFIER,
         #             CONFIDENCE_THRESHOLD_DEFAULT,
-        #             [ExpectationTrainingResult(accuracy=0.98)],
-        #             0.99,
+        #             [ExpectationTrainingResult(accuracy=0.0)],
+        #             1,
         #         ),
         #         (
         #             "ies-rectangle",
-        #             ARCH_SVM_CLASSIFIER,
+        #             ARCH_LR_CLASSIFIER,
         #             CONFIDENCE_THRESHOLD_DEFAULT,
         #             [
-        #                 ExpectationTrainingResult(accuracy=0.92),
-        #                 ExpectationTrainingResult(accuracy=0.93),
-        #                 ExpectationTrainingResult(accuracy=0.93),
+        #                 ExpectationTrainingResult(accuracy=0),
+        #                 ExpectationTrainingResult(accuracy=0.0),
+        #                 ExpectationTrainingResult(accuracy=0.0),
         #             ],
-        #             0.8,
+        #             1,
         #         ),
         #         (
         #             "candles",
-        #             ARCH_SVM_CLASSIFIER,
+        #             ARCH_LR_CLASSIFIER,
         #             CONFIDENCE_THRESHOLD_DEFAULT,
         #             [
-        #                 ExpectationTrainingResult(accuracy=0.84),
-        #                 ExpectationTrainingResult(accuracy=0.87),
-        #                 ExpectationTrainingResult(accuracy=0.80),
-        #                 ExpectationTrainingResult(accuracy=0.96),
+        #                 ExpectationTrainingResult(accuracy=0.0),
+        #                 ExpectationTrainingResult(accuracy=0.0),
+        #                 ExpectationTrainingResult(accuracy=0.0),
+        #                 ExpectationTrainingResult(accuracy=0.0),
         #             ],
-        #             0.8,
+        #             1,
         #         ),
-        (
+         (
             "proportion",
             ARCH_SVM_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
@@ -157,7 +157,7 @@ def _test_train_and_predict(
             ],
             1,
         ),
-    ],
+    ]
 )
 def test_train_and_predict(
     example: str,
