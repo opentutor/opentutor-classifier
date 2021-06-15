@@ -53,7 +53,7 @@ def _preprocess_trainx(data: List[str]) -> List[List[str]]:
 
 class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
-        self.accuracy: Dict[int, int] = {}
+        self.accuracy: Dict[str, int] = {}
         self.word2vec: Word2VecKeyedVectors = None
         self.train_quality = 1
 
@@ -70,7 +70,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         model = LRExpectationClassifier.initialize_model()
         index2word_set = set(self.word2vec.index_to_key)
-        expectation_models: Dict[int, linear_model.LogisticRegression] = {}
+        expectation_models: Dict[str, linear_model.LogisticRegression] = {}
         clustering = CustomAgglomerativeClustering(self.word2vec, index2word_set)
 
         def process_features(features, input_sentence, index2word_set):
@@ -150,7 +150,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         clustering = CustomAgglomerativeClustering(self.word2vec, index2word_set)
         config_updated = train_input.config.clone()
         expectation_results: List[ExpectationTrainingResult] = []
-        expectation_models: Dict[int, linear_model.LogisticRegression] = {}
+        expectation_models: Dict[str, linear_model.LogisticRegression] = {}
         supergoodanswer = ""
         for exp_num in split_training_sets.keys():
             ideal = train_input.config.get_expectation_ideal(exp_num)
