@@ -74,8 +74,8 @@ class LRAnswerClassifier(AnswerClassifier):
 
     def find_model_for_expectation(
         self,
-        m_by_e: Dict[int, linear_model.LogisticRegression],
-        expectation: int,
+        m_by_e: Dict[str, linear_model.LogisticRegression],
+        expectation: str,
         return_first_model_if_only_one=False,
     ) -> linear_model.LogisticRegression:
         return (
@@ -90,12 +90,12 @@ class LRAnswerClassifier(AnswerClassifier):
         return self._word2vec
 
     def find_score_and_class(
-        self, classifier, exp_num_i: int, sent_features: np.ndarray
+        self, classifier, exp_num_i: str, sent_features: np.ndarray
     ):
         _evaluation = "Good" if classifier.predict(sent_features)[0] == 1 else "Bad"
         _score = _confidence_score(classifier, sent_features)
         return ExpectationClassifierResult(
-            expectation=exp_num_i,
+            expectation_id=exp_num_i,
             evaluation=_evaluation,
             score=_score if _evaluation == "Good" else 1 - _score,
         )
@@ -112,8 +112,6 @@ class LRAnswerClassifier(AnswerClassifier):
             )
             for i in (
                 [answer.expectation]
-                if answer.expectation != -1
-                else range(len(conf.expectations))
             )
         ]
         result = AnswerClassifierResult(input=answer, expectation_results=[])

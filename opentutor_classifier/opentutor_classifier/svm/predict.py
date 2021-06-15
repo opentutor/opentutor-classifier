@@ -98,12 +98,12 @@ class SVMAnswerClassifier(AnswerClassifier):
         return self._word2vec
 
     def find_score_and_class(
-        self, classifier: svm.SVC, exp_num_i: int, sent_features: np.ndarray
+        self, classifier: svm.SVC, exp_num_i: str, sent_features: np.ndarray
     ):
         _evaluation = "Good" if classifier.predict(sent_features)[0] == 1 else "Bad"
         _score = _confidence_score(classifier, sent_features)
         return ExpectationClassifierResult(
-            expectation=exp_num_i,
+            expectation_id=exp_num_i,
             evaluation=_evaluation,
             score=_score if _evaluation == "Good" else 1 - _score,
         )
@@ -120,8 +120,6 @@ class SVMAnswerClassifier(AnswerClassifier):
             )
             for i in (
                 [answer.expectation]
-                if answer.expectation != -1
-                else range(len(conf.expectations))
             )
         ]
         result = AnswerClassifierResult(input=answer, expectation_results=[])

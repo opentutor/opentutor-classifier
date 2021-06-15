@@ -418,7 +418,7 @@ def to_example_result(
     result_expectations = []
     for e in expected.expectations:
         for o in observed.expectation_results:
-            if e.expectation == o.expectation:
+            if e.expectation == o.expectation_id:
                 result_expectations.append(to_expectation_result(e, o))
     return _TestExampleResult(
         expected=expected, observed=observed, expectations=result_expectations

@@ -19,15 +19,14 @@ from opentutor_classifier.config import PROP_TRAIN_QUALITY
 
 @dataclass
 class ExpectationClassifierResult:
-    expectationId: str = ""
-    expectation: int = -1
+    expectation_id: str = ""
     evaluation: str = ""
     score: float = 0.0
 
 
 @dataclass
 class ExpectationConfig:
-    expectationId: str = ""
+    expectation_id: str = ""
     ideal: str = ""
     features: Dict[str, Any] = field(default_factory=dict)
 
@@ -49,22 +48,22 @@ class QuestionConfig:
     def get_expectation_feature(
         self, exp: str, feature_name: str, dft: Any = None
     ) -> Any:
-        expectationList = [x for x in self.expectations if exp == x.expectationId]
+        expectation_list = [x for x in self.expectations if exp == x.expectation_id]
         return (
-            expectationList[0].features.get(feature_name, dft)
-            if len(expectationList) > 0
+            expectation_list[0].features.get(feature_name, dft)
+            if len(expectation_list) > 0
             else dft
         )
 
     def get_expectation(
         self, exp: str, dft: ExpectationConfig = None
     ) -> ExpectationConfig:
-        expectationList = [x for x in self.expectations if exp == x.expectationId]
-        return expectationList[0] if len(expectationList) > 0 else dft
+        expectation_list = [x for x in self.expectations if exp == x.expectation_id]
+        return expectation_list[0] if len(expectation_list) > 0 else dft
 
     def get_expectation_ideal(self, exp: str) -> Any:
-        expectationList = [x for x in self.expectations if exp == x.expectationId]
-        return expectationList[0].ideal if len(expectationList) > 0 else ""
+        expectation_list = [x for x in self.expectations if exp == x.expectation_id]
+        return expectation_list[0].ideal if len(expectation_list) > 0 else ""
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -120,7 +119,7 @@ class TrainingInput:
 
 @dataclass
 class ExpectationTrainingResult:
-    expectationId: str
+    expectation_id: str
     accuracy: float = 0
 
 
@@ -295,7 +294,7 @@ def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
         question=d.get("question") or "",
         expectations=[
             ExpectationConfig(
-                expectationId=x.get("expectationId"),
+                expectation_id=x.get("expectation_id"),
                 ideal=x.get("ideal") or "",
                 features=x.get("features") or {},
             )

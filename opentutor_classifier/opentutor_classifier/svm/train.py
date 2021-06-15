@@ -114,7 +114,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
         # or will get errors later on attempt to load
         # QuestionConfig(question="").write_to(path.join(output_dir, "config.yaml"))
         return dao.create_default_training_result(
-            ARCH_SVM_CLASSIFIER, ExpectationTrainingResult(expectationId="", accuracy=accuracy)
+            ARCH_SVM_CLASSIFIER, ExpectationTrainingResult(expectation_id="", accuracy=accuracy)
         )
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
@@ -124,7 +124,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
         train_data = (
             pd.DataFrame(
                 [
-                    [x.expectationId, x.ideal, "good"]
+                    [x.expectation_id, x.ideal, "good"]
                     for i, x in enumerate(train_input.config.expectations)
                     if x.ideal
                 ],
@@ -189,7 +189,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
             )
             expectation_results.append(
                 ExpectationTrainingResult(
-                    expectationId=exp_num, accuracy=results_loocv.mean()
+                    expectation_id=exp_num, accuracy=results_loocv.mean()
                 )
             )
             expectation_models[exp_num] = model

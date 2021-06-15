@@ -115,7 +115,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
         )
         return dao.create_default_training_result(
-            ARCH_LR_CLASSIFIER, ExpectationTrainingResult(accuracy=accuracy)
+            ARCH_LR_CLASSIFIER, ExpectationTrainingResult(expectation_id="", accuracy=accuracy)
         )
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
@@ -125,7 +125,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         train_data = (
             pd.DataFrame(
                 [
-                    [x.expectationId, x.ideal, "good"]
+                    [x.expectation_id, x.ideal, "good"]
                     for i, x in enumerate(train_input.config.expectations)
                     if x.ideal
                 ],
@@ -214,7 +214,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
             expectation_results.append(
                 ExpectationTrainingResult(
-                    expectationId=exp_num, accuracy=results_loocv.mean()
+                    expectation_id=exp_num, accuracy=results_loocv.mean()
                 )
             )
             expectation_models[exp_num] = model

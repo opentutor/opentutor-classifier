@@ -98,11 +98,11 @@ CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
                     ),
                     _TestExample(
                         input=AnswerClassifierInput(
-                            expectation=1, input_sentence="a good response for exp 1"
+                            expectation="1", input_sentence="a good response for exp 1"
                         ),
                         expectations=[
                             _TestExpectation(
-                                expectation=1,
+                                expectation="1",
                                 evaluation=LABEL_GOOD,
                                 score=CONFIDENCE_THRESHOLD_DEFAULT,
                                 comparison=ComparisonType.GTE,

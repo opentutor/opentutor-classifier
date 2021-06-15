@@ -136,7 +136,7 @@ def _train_classifier_and_get_confidence(
             AnswerClassifierInput(
                 input_sentence=input_answer,
                 config_data=question_config,
-                expectation=0,
+                expectation="0",
             )
         )
         return answer_classifier_result.expectation_results[0].score

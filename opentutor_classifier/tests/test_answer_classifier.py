@@ -103,7 +103,7 @@ def test_evaluate_example(
         ),
         (
             "this answer should get a neutral response",
-            -1,
+            "-1",
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
                 "expectations": [
@@ -127,7 +127,7 @@ def test_evaluates_for_default_model(
     model_roots: List[str],
     shared_root: str,
     input_answer: str,
-    input_expectation_number: int,
+    input_expectation_number: str,
     config_data: dict,
     expected_results: List[_TestExpectation],
 ):
@@ -247,7 +247,7 @@ def test_evaluates_meta_cognitive_sentences(
     model_roots,
     shared_root,
     input_answer: str,
-    input_expectation_number: int,
+    input_expectation_number: str,
     config_data: dict,
     expected_results: List[_TestExpectation],
     expected_sa_results: dict,

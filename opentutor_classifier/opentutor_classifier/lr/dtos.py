@@ -14,7 +14,7 @@ from opentutor_classifier import QuestionConfig
 
 @dataclass
 class ExpectationToEvaluate:
-    expectation: int
+    expectation: str
     classifier: linear_model.LogisticRegression
 
 
