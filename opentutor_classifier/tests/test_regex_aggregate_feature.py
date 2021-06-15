@@ -15,8 +15,6 @@ from opentutor_classifier import (
 from opentutor_classifier.svm.constants import FEATURE_REGEX_AGGREGATE_ENABLED
 from opentutor_classifier.config import confidence_threshold_default
 
-CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
-
 from .utils import (
     fixture_path,
     test_env_isolated,
@@ -25,6 +23,9 @@ from .utils import (
     run_classifier_testset,
     assert_testset_accuracy,
 )
+
+
+CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
 
 
 @pytest.fixture(scope="module")
@@ -121,7 +122,8 @@ def test_classifier_and_get_accuracy(
         enabled_result = train_classifier(lesson, test_config)
         assert path.exists(enabled_result.models)
         monkeypatch.setenv(
-            FEATURE_REGEX_AGGREGATE_ENABLED, str(feature_env_var_enabled_at_predict_time)
+            FEATURE_REGEX_AGGREGATE_ENABLED,
+            str(feature_env_var_enabled_at_predict_time),
         )
         disabled_result = train_classifier(lesson, test_config)
         assert path.exists(disabled_result.models)
