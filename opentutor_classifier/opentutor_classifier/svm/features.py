@@ -5,21 +5,21 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import math
-from .constants import FEATURE_REGEX_AGGREGATE
+from os import environ
 import re
-
 from typing import List, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 from scipy import spatial
 from scipy.optimize import linear_sum_assignment
-from os import environ
+
+from opentutor_classifier.utils import prop_bool
+from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
 
 
-def feature_regex_aggregate_enabled() -> bool:
-    enabled = environ.get(FEATURE_REGEX_AGGREGATE, "")
-    return enabled == "1" or enabled.lower() == "true"
+def feature_regex_aggregate_disabled() -> bool:
+    return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
 
 
 def _avg_feature_vector(
@@ -56,7 +56,7 @@ def number_of_negatives(example) -> Tuple[float, float]:
     return (no_of_negatives, 1 if no_of_negatives % 2 == 0 else 0)
 
 
-def regex_match(str_example: str, regexes: List[str]) -> List[bool]:
+def regex_match(str_example: str, regexes: List[str]) -> List[int]:
     if len(regexes) == 0:
         return []
     matches = []

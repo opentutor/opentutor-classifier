@@ -55,7 +55,7 @@ def number_of_negatives(example) -> Tuple[float, float]:
     return (no_of_negatives, 1 if no_of_negatives % 2 == 0 else 0)
 
 
-def regex_match(str_example: str, regexes: List[str]) -> List[bool]:
+def regex_match(str_example: str, regexes: List[str]) -> List[int]:
     if len(regexes) == 0:
         return []
     matches = []

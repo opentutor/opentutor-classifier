@@ -295,6 +295,10 @@ def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
 
 class ArchClassifierFactory(ABC):
     @abstractmethod
+    def has_trained_model(self, lesson: str, config: ClassifierConfig) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
     def new_classifier(self, config: ClassifierConfig) -> AnswerClassifier:
         raise NotImplementedError()
 
@@ -330,6 +334,9 @@ class ClassifierFactory:
             import_module(arch)
         f = _factories_by_arch[arch]
         return f
+
+    def has_trained_model(self, lesson: str, config: ClassifierConfig, arch="") -> bool:
+        return self._find_arch_fac(arch).has_trained_model(lesson, config)
 
     def new_classifier(self, config: ClassifierConfig, arch="") -> AnswerClassifier:
         return self._find_arch_fac(arch).new_classifier(config)
