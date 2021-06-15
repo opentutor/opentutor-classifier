@@ -125,7 +125,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         train_data = (
             pd.DataFrame(
                 [
-                    [i, x.ideal, "good"]
+                    [x.expectationId, x.ideal, "good"]
                     for i, x in enumerate(train_input.config.expectations)
                     if x.ideal
                 ],
@@ -179,7 +179,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 )
                 pattern = clustering.select_feature_candidates(data, candidates)
 
-            config_updated.expectations[exp_num].features = {
+            config_updated.get_expectation(exp_num).features = {
                 "good": good,
                 "bad": bad,
                 "patterns_good": pattern["good"],
@@ -200,7 +200,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         bad,
                         clustering,
                         mode=ClassifierMode.TRAIN,
-                        expectation_config=train_input.config.expectations[exp_num],
+                        expectation_config=train_input.config.get_expectation(exp_num),
                         patterns=pattern["good"] + pattern["bad"],
                     )
                 )

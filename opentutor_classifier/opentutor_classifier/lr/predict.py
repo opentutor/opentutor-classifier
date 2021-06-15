@@ -79,9 +79,7 @@ class LRAnswerClassifier(AnswerClassifier):
         return_first_model_if_only_one=False,
     ) -> linear_model.LogisticRegression:
         return (
-            m_by_e[0]
-            if expectation >= len(m_by_e) and return_first_model_if_only_one
-            else m_by_e[expectation]
+            m_by_e[expectation]
         )
 
     def find_word2vec(self) -> Word2VecKeyedVectors:
@@ -130,7 +128,7 @@ class LRAnswerClassifier(AnswerClassifier):
         question_proc = preprocess_sentence(conf.question)
         clustering = CustomAgglomerativeClustering(word2vec, index2word)
         for exp in expectations:
-            exp_conf = conf.expectations[exp.expectation]
+            exp_conf = conf.get_expectation(exp.expectation)
             sent_features = LRExpectationClassifier.calculate_features(
                 question_proc,
                 answer.input_sentence,
@@ -142,7 +140,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 exp_conf.features.get("bad") or [],
                 clustering,
                 mode=ClassifierMode.PREDICT,
-                expectation_config=conf.expectations[exp.expectation],
+                expectation_config=conf.get_expectation(exp.expectation),
                 patterns=exp_conf.features.get("patterns_good", [])
                 + exp_conf.features.get("patterns_bad", [])
                 or [],
