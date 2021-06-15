@@ -78,7 +78,6 @@ def test_regex_aggregate_can_be_enabled_w_env_var(
 ):
     monkeypatch.setenv(FEATURE_REGEX_AGGREGATE, "1")
     _test_regex_aggregate_enabled(lesson, arch, tmpdir, data_root, shared_root, True)
-    monkeypatch.setenv(FEATURE_REGEX_AGGREGATE, "0")
 
 
 @pytest.mark.parametrize(
@@ -140,4 +139,3 @@ def test_classifier_and_get_accuracy(
             testset,
             expected_accuracy=metrics.accuracy,
         )
-        monkeypatch.setenv(FEATURE_REGEX_AGGREGATE, "0")
