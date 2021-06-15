@@ -10,14 +10,21 @@ from opentutor_classifier import (
     ArchClassifierFactory,
     AnswerClassifierTraining,
     ClassifierConfig,
+    ModelRef,
     TrainingConfig,
     register_classifier_factory,
 )
+from .constants import MODEL_FILE_NAME
 from .predict import SVMAnswerClassifier
 from .train import SVMAnswerClassifierTraining
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):
+    def has_trained_model(self, lesson: str, config: ClassifierConfig) -> bool:
+        return config.dao.trained_model_exists(
+            ModelRef(arch=ARCH_SVM_CLASSIFIER, lesson=lesson, filename=MODEL_FILE_NAME)
+        )
+
     def new_classifier(self, config: ClassifierConfig) -> AnswerClassifier:
         return SVMAnswerClassifier().configure(config)
 

@@ -13,6 +13,13 @@ from pathlib import Path
 from . import ExpectationConfig, QuestionConfig
 
 
+def prop_bool(name: str, props: Dict[str, Any], dft: bool = False) -> bool:
+    if not (props and name in props):
+        return dft
+    v = props[name]
+    return str(v).lower() in ["1", "t", "true"]
+
+
 # TODO this should never return None, but code currently depends on that
 def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
     return (

@@ -32,7 +32,7 @@ from opentutor_classifier import (
     TrainingResult,
     ClassifierMode,
 )
-from .constants import FEATURE_REGEX_AGGREGATE
+from .constants import FEATURE_REGEX_AGGREGATE_ENABLED
 from .features import feature_regex_aggregate_enabled
 from opentutor_classifier import DataDao
 from opentutor_classifier.log import logger
@@ -172,7 +172,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
             config_updated.expectations[exp_num].features = {
                 "good": good,
                 "bad": bad,
-                FEATURE_REGEX_AGGREGATE: feature_regex_aggregate_enabled(),
+                FEATURE_REGEX_AGGREGATE_ENABLED: feature_regex_aggregate_enabled(),
             }
             features = [
                 np.array(

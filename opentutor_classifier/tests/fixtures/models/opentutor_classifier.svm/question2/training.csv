@@ -1,0 +1,11 @@
+exp_num,text,label
+0,Current flows in the same direction as the arrow.,good
+0,Current circulates in the opposite order,bad
+0,The current will flow through the diode from left to right,good
+0,The current will flow through the diode from right to left,bad
+0,current flows from anode to cathode,good
+0,current flows in the identical direction as the arrow,good
+0,current flows in only one direction,good
+0,Current flows from cathode to anode,bad
+0,current flows in backward order,bad
+0,current movement is in both ways,bad
