@@ -213,7 +213,9 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 model, features, train_y, cv=LeaveOneOut(), scoring="accuracy"
             )
             expectation_results.append(
-                ExpectationTrainingResult(accuracy=results_loocv.mean())
+                ExpectationTrainingResult(
+                    expectationId=exp_num, accuracy=results_loocv.mean()
+                )
             )
             expectation_models[exp_num] = model
         dao.save_pickle(

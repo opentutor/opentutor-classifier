@@ -33,7 +33,7 @@ class _TestConfig:
 
 @dataclass
 class _TestExpectation:
-    expectation: int = -1  # if not -1, which lesson expectation by index?
+    expectation: str = ""  # if not -1, which lesson expectation by index?
     evaluation: str = ""  # Good | Bad
     score: float = 0.0  # confidence
     comparison: ComparisonType = ComparisonType.GTE

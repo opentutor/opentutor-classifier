@@ -56,12 +56,15 @@ class QuestionConfig:
             else dft
         )
 
+    def get_expectation(
+        self, exp: str, dft: ExpectationConfig = None
+    ) -> ExpectationConfig:
+        expectationList = [x for x in self.expectations if exp == x.expectationId]
+        return expectationList[0] if len(expectationList) > 0 else dft
+
     def get_expectation_ideal(self, exp: str) -> Any:
-        return (
-            self.expectations[exp].ideal
-            if exp >= 0 and exp < len(self.expectations)
-            else ""
-        )
+        expectationList = [x for x in self.expectations if exp == x.expectationId]
+        return expectationList[0].ideal if len(expectationList) > 0 else ""
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -117,6 +120,7 @@ class TrainingInput:
 
 @dataclass
 class ExpectationTrainingResult:
+    expectationId: str
     accuracy: float = 0
 
 
@@ -217,7 +221,7 @@ class DataDao(ABC):
 class AnswerClassifierInput:
     input_sentence: str
     config_data: Optional[QuestionConfig] = None
-    expectation: int = -1
+    expectation: str = ""
 
     def to_dict(self) -> Dict:
         return asdict(self)
@@ -291,7 +295,9 @@ def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
         question=d.get("question") or "",
         expectations=[
             ExpectationConfig(
-                expectationId=x.get("expectationId"), ideal=x.get("ideal") or "", features=x.get("features") or {}
+                expectationId=x.get("expectationId"),
+                ideal=x.get("ideal") or "",
+                features=x.get("features") or {},
             )
             for x in d.get("expectations") or []
         ],

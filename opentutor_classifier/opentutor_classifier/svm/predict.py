@@ -36,7 +36,7 @@ from opentutor_classifier.word2vec import find_or_load_word2vec
 
 @dataclass
 class ExpectationToEvaluate:
-    expectation: int
+    expectation: str
     classifier: svm.SVC
 
 
@@ -84,16 +84,11 @@ class SVMAnswerClassifier(AnswerClassifier):
 
     def find_model_for_expectation(
         self,
-        models_by_expectation: Dict[int, svm.SVC],
-        expectation: int,
+        models_by_expectation: Dict[str, svm.SVC],
+        expectation: str,
         return_first_model_if_only_one=False,
     ) -> svm.SVC:
-        return (
-            models_by_expectation[0]
-            if expectation >= len(models_by_expectation)
-            and return_first_model_if_only_one
-            else models_by_expectation[expectation]
-        )
+        return models_by_expectation[expectation]
 
     def find_word2vec(self) -> Word2VecKeyedVectors:
         if not self._word2vec:
@@ -140,7 +135,7 @@ class SVMAnswerClassifier(AnswerClassifier):
         )
         question_proc = preprocess_sentence(conf.question)
         for exp in expectations:
-            exp_conf = conf.expectations[exp.expectation]
+            exp_conf = conf.get_expectation(exp.expectation)
             sent_features = SVMExpectationClassifier.calculate_features(
                 question_proc,
                 answer.input_sentence,

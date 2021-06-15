@@ -87,7 +87,7 @@ def test_evaluate_example(
                 ],
             },
             [
-                _TestExpectation(expectation=0, evaluation="Good", score=0.8),
+                _TestExpectation(expectation="0", evaluation="Good", score=0.8),
                 # # NOTE: this exp is incorrectly getting GOOD with very high confidence
                 # _TestExpectation(
                 #     expectation=1,
@@ -115,7 +115,7 @@ def test_evaluate_example(
             },
             [
                 _TestExpectation(
-                    expectation=0,
+                    expectation="0",
                     score=CONFIDENCE_THRESHOLD_DEFAULT,
                     comparison=ComparisonType.LT,
                 ),
@@ -162,9 +162,9 @@ def test_evaluates_for_default_model(
     [
         (
             "I dont know what you are talking about",
-            0,
+            "0",
             {},
-            [_TestExpectation(expectation=0, score=0.85, evaluation="Bad")],
+            [_TestExpectation(expectation="0", score=0.85, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -172,9 +172,9 @@ def test_evaluates_for_default_model(
         ),
         (
             "I do not understand",
-            0,
+            "0",
             {},
-            [_TestExpectation(expectation=0, score=0.87, evaluation="Bad")],
+            [_TestExpectation(expectation="0", score=0.87, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -182,9 +182,9 @@ def test_evaluates_for_default_model(
         ),
         (
             "I believe the answer is peer pressure can change your behavior",
-            0,
+            "0",
             {},
-            [_TestExpectation(expectation=0, score=0.97, evaluation="Good")],
+            [_TestExpectation(expectation="0", score=0.97, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -192,9 +192,9 @@ def test_evaluates_for_default_model(
         ),
         (
             "Fuck you tutor",
-            0,
+            "0",
             {},
-            [_TestExpectation(expectation=0, score=0.94, evaluation="Bad")],
+            [_TestExpectation(expectation="0", score=0.94, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -202,9 +202,9 @@ def test_evaluates_for_default_model(
         ),
         (
             "What the hell is that?",
-            0,
+            "0",
             {},
-            [_TestExpectation(expectation=0, score=0.94, evaluation="Bad")],
+            [_TestExpectation(expectation="0", score=0.94, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -212,9 +212,9 @@ def test_evaluates_for_default_model(
         ),
         (
             "I dont know this shit",
-            0,
+            "0",
             {},
-            [_TestExpectation(expectation=0, score=0.85, evaluation="Bad")],
+            [_TestExpectation(expectation="0", score=0.85, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -222,9 +222,9 @@ def test_evaluates_for_default_model(
         ),
         (
             "I dont know this shit but I guess the answer is peer pressure can change your behavior",
-            0,
+            "0",
             {},
-            [_TestExpectation(expectation=0, score=0.97, evaluation="Good")],
+            [_TestExpectation(expectation="0", score=0.97, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -232,9 +232,9 @@ def test_evaluates_for_default_model(
         ),
         (
             "assistant, assistance",
-            0,
+            "0",
             {},
-            [_TestExpectation(expectation=0, score=0.94, evaluation="Bad")],
+            [_TestExpectation(expectation="0", score=0.94, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),

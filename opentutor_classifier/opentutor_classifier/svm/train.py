@@ -114,7 +114,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
         # or will get errors later on attempt to load
         # QuestionConfig(question="").write_to(path.join(output_dir, "config.yaml"))
         return dao.create_default_training_result(
-            ARCH_SVM_CLASSIFIER, ExpectationTrainingResult(accuracy=accuracy)
+            ARCH_SVM_CLASSIFIER, ExpectationTrainingResult(expectationId="", accuracy=accuracy)
         )
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
@@ -124,7 +124,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
         train_data = (
             pd.DataFrame(
                 [
-                    [i, x.ideal, "good"]
+                    [x.expectationId, x.ideal, "good"]
                     for i, x in enumerate(train_input.config.expectations)
                     if x.ideal
                 ],
@@ -148,7 +148,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
             split_training_sets[exp_num][1].append(label)
         index2word_set: set = set(self.word2vec.index_to_key)
         expectation_results: List[ExpectationTrainingResult] = []
-        expectation_models: Dict[int, svm.SVC] = {}
+        expectation_models: Dict[str, svm.SVC] = {}
         supergoodanswer = ""
         for exp_num in split_training_sets.keys():
             ideal = train_input.config.get_expectation_ideal(exp_num)
@@ -165,7 +165,7 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
             ideal_answer = self.model_obj.initialize_ideal_answer(processed_data)
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
-            config_updated.expectations[exp_num].features = dict(good=good, bad=bad)
+            config_updated.get_expectation(exp_num).features = dict(good=good, bad=bad)
             features = [
                 np.array(
                     self.model_obj.calculate_features(
@@ -188,7 +188,9 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
                 model, features, train_y, cv=LeaveOneOut(), scoring="accuracy"
             )
             expectation_results.append(
-                ExpectationTrainingResult(accuracy=results_loocv.mean())
+                ExpectationTrainingResult(
+                    expectationId=exp_num, accuracy=results_loocv.mean()
+                )
             )
             expectation_models[exp_num] = model
         dao.save_config(

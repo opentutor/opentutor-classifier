@@ -26,8 +26,8 @@ from .types import (
 )
 
 """
-0,a neutral response for exp 0,neutral
-0,no label is also neutral in a test set,
+"0",a neutral response for exp "0",neutral
+"0",no label is also neutral in a test set,
 1,a good response for exp 1,good
 """
 
@@ -44,11 +44,11 @@ CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
                 examples=[
                     _TestExample(
                         input=AnswerClassifierInput(
-                            expectation=0, input_sentence="a good response for exp 0"
+                            expectation="0", input_sentence="a good response for exp 0"
                         ),
                         expectations=[
                             _TestExpectation(
-                                expectation=0,
+                                expectation="0",
                                 evaluation=LABEL_GOOD,
                                 score=CONFIDENCE_THRESHOLD_DEFAULT,
                                 comparison=ComparisonType.GTE,
@@ -57,11 +57,11 @@ CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
                     ),
                     _TestExample(
                         input=AnswerClassifierInput(
-                            expectation=0, input_sentence="a bad response for exp 0"
+                            expectation="0", input_sentence="a bad response for exp 0"
                         ),
                         expectations=[
                             _TestExpectation(
-                                expectation=0,
+                                expectation="0",
                                 evaluation=LABEL_BAD,
                                 score=CONFIDENCE_THRESHOLD_DEFAULT,
                                 comparison=ComparisonType.GTE,
@@ -70,11 +70,12 @@ CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
                     ),
                     _TestExample(
                         input=AnswerClassifierInput(
-                            expectation=0, input_sentence="a neutral response for exp 0"
+                            expectation="0",
+                            input_sentence="a neutral response for exp 0",
                         ),
                         expectations=[
                             _TestExpectation(
-                                expectation=0,
+                                expectation="0",
                                 evaluation=LABEL_NEUTRAL,
                                 score=CONFIDENCE_THRESHOLD_DEFAULT,
                                 comparison=ComparisonType.LT,
@@ -83,12 +84,12 @@ CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
                     ),
                     _TestExample(
                         input=AnswerClassifierInput(
-                            expectation=0,
+                            expectation="0",
                             input_sentence="no label is also neutral in a test set",
                         ),
                         expectations=[
                             _TestExpectation(
-                                expectation=0,
+                                expectation="0",
                                 evaluation=LABEL_UNSPECIFIED,
                                 score=CONFIDENCE_THRESHOLD_DEFAULT,
                                 comparison=ComparisonType.LT,

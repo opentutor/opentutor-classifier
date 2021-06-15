@@ -378,7 +378,7 @@ def read_test_set_from_csv(csv_path: str, confidence_threshold=-1.0) -> _TestSet
         if confidence_threshold >= 0.0
         else confidence_threshold_default()
     )
-    df = pd.read_csv(csv_path, header=0)
+    df = pd.read_csv(csv_path, header=0, dtype={"exp_num": str})
     df.fillna("", inplace=True)
     testset = _TestSet()
     for _, row in df.iterrows():
