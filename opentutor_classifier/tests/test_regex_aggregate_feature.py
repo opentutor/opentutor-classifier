@@ -56,6 +56,7 @@ def _test_regex_aggregate_enabled(
             bool(pconfig.expectations[0].features[FEATURE_REGEX_AGGREGATE])
             == expect_enabled
         )
+
 @pytest.mark.only
 @pytest.mark.parametrize(
     "lesson,arch",
@@ -122,13 +123,11 @@ def train_classifier_and_get_accuracy(
         monkeypatch.setenv(
             FEATURE_REGEX_AGGREGATE, str(feature_env_var_enabled_at_train_time)
         )
-        tmpdir = tmpdir.mkdir("length_ratio_enabled")
         enabled_result = train_classifier(lesson, test_config)
         assert path.exists(enabled_result.models)
         monkeypatch.setenv(
             FEATURE_REGEX_AGGREGATE, str(feature_env_var_enabled_at_predict_time)
         )
-        tmpdir = tmpdir.mkdir("length_ratio_disabled")
         disabled_result = train_classifier(lesson, test_config)
         assert path.exists(disabled_result.models)
         testset = read_example_testset(
