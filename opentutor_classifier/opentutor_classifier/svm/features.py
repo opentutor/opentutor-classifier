@@ -19,7 +19,7 @@ from .constants import FEATURE_REGEX_AGGREGATE_ENABLED
 
 
 def feature_regex_aggregate_enabled() -> bool:
-    return prop_bool(environ, FEATURE_REGEX_AGGREGATE_ENABLED)
+    return prop_bool(FEATURE_REGEX_AGGREGATE_ENABLED, environ)
 
 
 def _avg_feature_vector(
@@ -56,7 +56,7 @@ def number_of_negatives(example) -> Tuple[float, float]:
     return (no_of_negatives, 1 if no_of_negatives % 2 == 0 else 0)
 
 
-def regex_match(str_example: str, regexes: List[str]) -> List[bool]:
+def regex_match(str_example: str, regexes: List[str]) -> List[int]:
     if len(regexes) == 0:
         return []
     matches = []

@@ -295,7 +295,7 @@ def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
 
 class ArchClassifierFactory(ABC):
     @abstractmethod
-    def has_trained_model(self, lesson: str, config: ClassifierConfig, arch="") -> bool:
+    def has_trained_model(self, lesson: str, config: ClassifierConfig) -> bool:
         raise NotImplementedError()
 
     @abstractmethod
