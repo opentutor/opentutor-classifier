@@ -2,21 +2,21 @@ expectations:
 - features:
     bad:
     - \brule\w*\b.*\bdiffer\w*\b
-    featureRegexAggregate: false
+    featureRegexAggregateDisabled: false
     good:
     - \b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b
   ideal: peer pressure can cause you to allow inappropriate behavior
 - features:
     bad:
     - \b(lov\w*|lik\w*|car)\b
-    featureRegexAggregate: false
+    featureRegexAggregateDisabled: false
     good:
     - \b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b
   ideal: you may get them in trouble
 - features:
     bad:
     - \b(super\w*|bette\w*)\b
-    featureRegexAggregate: false
+    featureRegexAggregateDisabled: false
     good:
     - \b(unpop\w*|hate\w*|unlik\w*|not\040popular)\b
   ideal: enforcing the rule can make you unpopular

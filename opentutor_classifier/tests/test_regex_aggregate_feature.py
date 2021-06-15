@@ -12,7 +12,7 @@ from opentutor_classifier import (
     ArchLesson,
 )
 
-from opentutor_classifier.svm.constants import FEATURE_REGEX_AGGREGATE_ENABLED
+from opentutor_classifier.svm.constants import FEATURE_REGEX_AGGREGATE_DISABLED
 from opentutor_classifier.config import confidence_threshold_default
 
 from .utils import (
@@ -55,7 +55,7 @@ def _test_regex_aggregate_enabled(
         dao = find_data_dao()
         pconfig = dao.find_prediction_config(ArchLesson(arch=arch, lesson=lesson))
         assert (
-            bool(pconfig.expectations[0].features[FEATURE_REGEX_AGGREGATE_ENABLED])
+            bool(pconfig.expectations[0].features[FEATURE_REGEX_AGGREGATE_DISABLED])
             == expect_enabled
         )
 
@@ -77,7 +77,7 @@ def test_regex_aggregate_can_be_enabled_w_env_var(
     shared_root: str,
     monkeypatch,
 ):
-    monkeypatch.setenv(FEATURE_REGEX_AGGREGATE_ENABLED, "1")
+    monkeypatch.setenv(FEATURE_REGEX_AGGREGATE_DISABLED, "1")
     _test_regex_aggregate_enabled(lesson, arch, tmpdir, data_root, shared_root, True)
 
 
@@ -117,12 +117,12 @@ def test_classifier_and_get_accuracy(
         tmpdir, data_root, shared_root, arch=arch, lesson=lesson
     ) as test_config:
         monkeypatch.setenv(
-            FEATURE_REGEX_AGGREGATE_ENABLED, str(feature_env_var_enabled_at_train_time)
+            FEATURE_REGEX_AGGREGATE_DISABLED, str(feature_env_var_enabled_at_train_time)
         )
         enabled_result = train_classifier(lesson, test_config)
         assert path.exists(enabled_result.models)
         monkeypatch.setenv(
-            FEATURE_REGEX_AGGREGATE_ENABLED,
+            FEATURE_REGEX_AGGREGATE_DISABLED,
             str(feature_env_var_enabled_at_predict_time),
         )
         disabled_result = train_classifier(lesson, test_config)

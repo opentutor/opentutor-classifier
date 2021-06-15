@@ -8,7 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 
 from opentutor_classifier import ClassifierMode, ExpectationConfig
 
-from .constants import FEATURE_REGEX_AGGREGATE_ENABLED
+from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
 from opentutor_classifier.stopwords import STOPWORDS
 from . import features
 from opentutor_classifier.utils import prop_bool
@@ -71,7 +71,7 @@ class SVMExpectationClassifier:
             ),
         ]
         if mode == ClassifierMode.TRAIN:
-            if features.feature_regex_aggregate_enabled():
+            if features.feature_regex_aggregate_disabled():
                 feat = feat + regex_good + regex_bad
             else:
                 feat.append(features.regex_match_ratio(raw_example, good))
@@ -79,7 +79,7 @@ class SVMExpectationClassifier:
         elif mode == ClassifierMode.PREDICT:
             if not expectation_config:
                 raise Exception("predict mode must pass in ExpectationConfig")
-            if prop_bool(FEATURE_REGEX_AGGREGATE_ENABLED, expectation_config.features):
+            if prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, expectation_config.features):
                 feat = feat + regex_good + regex_bad
             else:
                 feat.append(features.regex_match_ratio(raw_example, good))

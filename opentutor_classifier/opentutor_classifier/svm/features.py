@@ -15,11 +15,11 @@ from scipy import spatial
 from scipy.optimize import linear_sum_assignment
 
 from opentutor_classifier.utils import prop_bool
-from .constants import FEATURE_REGEX_AGGREGATE_ENABLED
+from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
 
 
-def feature_regex_aggregate_enabled() -> bool:
-    return prop_bool(FEATURE_REGEX_AGGREGATE_ENABLED, environ)
+def feature_regex_aggregate_disabled() -> bool:
+    return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
 
 
 def _avg_feature_vector(
