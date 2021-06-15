@@ -99,12 +99,6 @@ class LRExpectationClassifier:
         patterns: List[str] = None,
     ) -> List[float]:
         raw_example = alpha2digit(raw_example, "en")
-        regex_good = features.regex_match(raw_example, good)
-        regex_bad = features.regex_match(raw_example, bad)
-        # feat = 
-            # regex_good
-            # + regex_bad+
-            # [
         feat = [
                 features.regex_match_ratio(raw_example, good),
                 features.regex_match_ratio(raw_example, bad),

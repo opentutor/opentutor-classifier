@@ -10,11 +10,12 @@ import pytest
 from opentutor_classifier import (
     ARCH_SVM_CLASSIFIER,
     ArchLesson,
-    ClassifierConfig,
-    AnswerClassifierInput,
 )
 
 from opentutor_classifier.svm.constants import FEATURE_REGEX_AGGREGATE
+from opentutor_classifier.config import confidence_threshold_default
+
+CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
 
 from .utils import (
     fixture_path,
@@ -22,7 +23,7 @@ from .utils import (
     train_classifier,
     read_example_testset,
     run_classifier_testset,
-    assert_testset_accuracy
+    assert_testset_accuracy,
 )
 
 
@@ -57,7 +58,6 @@ def _test_regex_aggregate_enabled(
             == expect_enabled
         )
 
-@pytest.mark.only
 @pytest.mark.parametrize(
     "lesson,arch",
     [
@@ -79,6 +79,8 @@ def test_regex_aggregate_can_be_enabled_w_env_var(
     _test_regex_aggregate_enabled(
         lesson, arch, tmpdir, data_root, shared_root, True
     )
+    monkeypatch.setenv(
+            FEATURE_REGEX_AGGREGATE, "0")
 
 @pytest.mark.parametrize(
     "lesson,arch",
@@ -97,16 +99,14 @@ def test_feature_regex_aggregate_disabled_by_default(
     )
 
 
-
-
 @pytest.mark.parametrize(
-    "lesson,arch,feature_env_var_enabled_at_train_time,feature_env_var_enabled_at_predict_time",
+    "lesson,arch,confidence_threshold,feature_env_var_enabled_at_train_time,feature_env_var_enabled_at_predict_time",
     [
-        ("proportion", ARCH_SVM_CLASSIFIER, True, True),
+        ("proportion", ARCH_SVM_CLASSIFIER, CONFIDENCE_THRESHOLD_DEFAULT, True, True),
     ],
 )
 
-def train_classifier_and_get_accuracy(
+def test_classifier_and_get_accuracy(
     lesson: str,
     arch: str,
     feature_env_var_enabled_at_train_time: bool,
@@ -142,3 +142,5 @@ def train_classifier_and_get_accuracy(
             testset,
             expected_accuracy= metrics.accuracy
         )
+        monkeypatch.setenv(
+            FEATURE_REGEX_AGGREGATE, "0")

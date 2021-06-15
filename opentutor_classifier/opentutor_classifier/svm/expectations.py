@@ -73,18 +73,18 @@ class SVMExpectationClassifier:
             ]
         if mode == ClassifierMode.TRAIN:
             if features.feature_regex_aggregate_enabled():
-                feat.append(regex_good + regex_bad)
+                feat = feat + regex_good + regex_bad
             else:
-                feat.append(features.regex_match_ratio(raw_example, good) + 
-                    features.regex_match_ratio(raw_example, bad))
+                feat.append(features.regex_match_ratio(raw_example, good))
+                feat.append(features.regex_match_ratio(raw_example, bad))
         elif mode == ClassifierMode.PREDICT:
             if not expectation_config:
                 raise Exception("predict mode must pass in ExpectationConfig")
             if expectation_config.features[FEATURE_REGEX_AGGREGATE]:
-                feat.append(feat.append(regex_good + regex_bad))
+                feat = feat + regex_good + regex_bad
             else: 
-                feat.append(features.regex_match_ratio(raw_example, good) + 
-                    features.regex_match_ratio(raw_example, bad))
+                feat.append(features.regex_match_ratio(raw_example, good)) 
+                feat.append(features.regex_match_ratio(raw_example, bad))
         return feat
 
     @staticmethod
