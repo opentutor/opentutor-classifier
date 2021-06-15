@@ -59,18 +59,16 @@ class SVMExpectationClassifier:
     ) -> List[float]:
         regex_good = features.regex_match(raw_example, good)
         regex_bad = features.regex_match(raw_example, bad)
-        feat =  [
-                *features.number_of_negatives(example),
-                features.word_alignment_feature(
-                    example, ideal, word2vec, index2word_set
-                ),
-                features.word2vec_example_similarity(
-                    word2vec, index2word_set, example, ideal
-                ),
-                features.word2vec_question_similarity(
-                    word2vec, index2word_set, example, question
-                ),
-            ]
+        feat = [
+            *features.number_of_negatives(example),
+            features.word_alignment_feature(example, ideal, word2vec, index2word_set),
+            features.word2vec_example_similarity(
+                word2vec, index2word_set, example, ideal
+            ),
+            features.word2vec_question_similarity(
+                word2vec, index2word_set, example, question
+            ),
+        ]
         if mode == ClassifierMode.TRAIN:
             if features.feature_regex_aggregate_enabled():
                 feat = feat + regex_good + regex_bad
@@ -82,8 +80,8 @@ class SVMExpectationClassifier:
                 raise Exception("predict mode must pass in ExpectationConfig")
             if expectation_config.features[FEATURE_REGEX_AGGREGATE]:
                 feat = feat + regex_good + regex_bad
-            else: 
-                feat.append(features.regex_match_ratio(raw_example, good)) 
+            else:
+                feat.append(features.regex_match_ratio(raw_example, good))
                 feat.append(features.regex_match_ratio(raw_example, bad))
         return feat
 

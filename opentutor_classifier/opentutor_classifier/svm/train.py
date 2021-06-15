@@ -186,12 +186,13 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
                         good,
                         bad,
                         mode=ClassifierMode.TRAIN,
-                        expectation_config=train_input.config.expectations[exp_num]
+                        expectation_config=train_input.config.expectations[exp_num],
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)
             ]
             import logging
+
             logging.warning(f"BEES{train_input.config.expectations[exp_num]}")
             train_y = np.array(self.model_obj.encode_y(train_y))
             model = self.model_obj.initialize_model()

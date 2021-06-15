@@ -13,5 +13,6 @@ def confidence_threshold_default() -> float:
 def use_length_ratio() -> bool:
     return bool(environ.get("FEATURE_LENGTH_RATIO_ENABLED", "False"))
 
+
 def use_regex_aggregate() -> bool:
     return bool(environ.get("FEATURE_REGEX_AGGREGATE_ENABLED", "False"))

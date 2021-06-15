@@ -17,10 +17,10 @@ from scipy.optimize import linear_sum_assignment
 from os import environ
 
 
-
 def feature_regex_aggregate_enabled() -> bool:
     enabled = environ.get(FEATURE_REGEX_AGGREGATE, "")
     return enabled == "1" or enabled.lower() == "true"
+
 
 def _avg_feature_vector(
     words: List[str],

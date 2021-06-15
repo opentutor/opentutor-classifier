@@ -58,6 +58,7 @@ def _test_regex_aggregate_enabled(
             == expect_enabled
         )
 
+
 @pytest.mark.parametrize(
     "lesson,arch",
     [
@@ -76,11 +77,9 @@ def test_regex_aggregate_can_be_enabled_w_env_var(
     monkeypatch,
 ):
     monkeypatch.setenv(FEATURE_REGEX_AGGREGATE, "1")
-    _test_regex_aggregate_enabled(
-        lesson, arch, tmpdir, data_root, shared_root, True
-    )
-    monkeypatch.setenv(
-            FEATURE_REGEX_AGGREGATE, "0")
+    _test_regex_aggregate_enabled(lesson, arch, tmpdir, data_root, shared_root, True)
+    monkeypatch.setenv(FEATURE_REGEX_AGGREGATE, "0")
+
 
 @pytest.mark.parametrize(
     "lesson,arch",
@@ -94,9 +93,7 @@ def test_regex_aggregate_can_be_enabled_w_env_var(
 def test_feature_regex_aggregate_disabled_by_default(
     lesson: str, arch: str, tmpdir, data_root: str, shared_root: str
 ):
-    _test_regex_aggregate_enabled(
-        lesson, arch, tmpdir, data_root, shared_root, False
-    )
+    _test_regex_aggregate_enabled(lesson, arch, tmpdir, data_root, shared_root, False)
 
 
 @pytest.mark.parametrize(
@@ -105,7 +102,6 @@ def test_feature_regex_aggregate_disabled_by_default(
         ("proportion", ARCH_SVM_CLASSIFIER, CONFIDENCE_THRESHOLD_DEFAULT, True, True),
     ],
 )
-
 def test_classifier_and_get_accuracy(
     lesson: str,
     arch: str,
@@ -133,14 +129,15 @@ def test_classifier_and_get_accuracy(
         testset = read_example_testset(
             lesson, confidence_threshold=confidence_threshold
         )
-        result = run_classifier_testset(arch, disabled_result.models, shared_root, testset)
+        result = run_classifier_testset(
+            arch, disabled_result.models, shared_root, testset
+        )
         metrics = result.metrics()
         assert_testset_accuracy(
             arch,
             enabled_result.models,
             shared_root,
             testset,
-            expected_accuracy= metrics.accuracy
+            expected_accuracy=metrics.accuracy,
         )
-        monkeypatch.setenv(
-            FEATURE_REGEX_AGGREGATE, "0")
+        monkeypatch.setenv(FEATURE_REGEX_AGGREGATE, "0")
