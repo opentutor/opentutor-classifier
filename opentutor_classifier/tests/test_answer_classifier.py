@@ -42,7 +42,7 @@ CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
 
 @pytest.fixture(scope="module")
 def model_roots() -> List[str]:
-    return [fixture_path("models"), fixture_path("models_deployed")]
+    return [fixture_path("models"), fixture_path("models_deployed"), fixture_path("data")]
 
 
 @pytest.fixture(scope="module")
@@ -50,8 +50,8 @@ def shared_root(word2vec) -> str:
     return os.path.dirname(word2vec)
 
 
-def _find__or_train_classifier(
-    lesson: str, model_root: str, shared_root: str, arch=""
+def _find_or_train_classifier(
+    lesson: str, model_root: str, data_root:str, shared_root: str, arch=""
 ) -> AnswerClassifier:
     arch = arch or get_classifier_arch()
     dao = opentutor_classifier.dao.FileDataDao(
@@ -66,7 +66,7 @@ def _find__or_train_classifier(
         shared_root=shared_root,
     )
     if not cfac.has_trained_model(lesson, cconf, arch=arch):
-        example_dir = os.path.join(model_root, arch, lesson)
+        example_dir = os.path.join(data_root, lesson)
         logger.warning(
             f"trained model not found in fixtures for test lesson {lesson}, attempting to train..."
         )
@@ -191,7 +191,7 @@ def test_evaluates_for_default_model(
         )
         assert_classifier_evaluate(result, expected_results)
 
-@pytest.mark.only
+
 @pytest.mark.parametrize(
     "lesson, arch, input_answer,input_expectation_number,config_data,expected_results,expected_sa_results",
     [
@@ -273,7 +273,7 @@ def test_evaluates_for_default_model(
             "I dont know this shit but I guess the answer is peer pressure can change your behavior",
             "0",
             {},
-            [_TestExpectation(expectation="0", score=0.97, evaluation="Good")],
+            [_TestExpectation(expectation="0", score=0.94, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -306,8 +306,8 @@ def test_evaluates_meta_cognitive_sentences(
     expected_sa_results: dict,
 ):
     with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
-        classifier = _find__or_train_classifier(
-            lesson, model_roots[0], shared_root, arch=arch
+        classifier = _find_or_train_classifier(
+            lesson, model_roots[0], model_roots[2], shared_root, arch=arch
         )
         result = classifier.evaluate(
             AnswerClassifierInput(
