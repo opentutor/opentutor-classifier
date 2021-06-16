@@ -9,7 +9,8 @@ import json
 from os import path
 
 from typing import Dict, List
-
+from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
+from .features import feature_regex_aggregate_disabled
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
@@ -185,6 +186,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 "patterns_good": pattern["good"],
                 "patterns_bad": pattern["bad"],
                 FEATURE_LENGTH_RATIO: feature_length_ratio_enabled(),
+                FEATURE_REGEX_AGGREGATE_DISABLED: feature_regex_aggregate_disabled(),
             }
 
             features = [

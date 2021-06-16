@@ -13,7 +13,12 @@ from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 from scipy import spatial
 
-from .constants import FEATURE_LENGTH_RATIO
+from opentutor_classifier.utils import prop_bool
+from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
+
+
+def feature_regex_aggregate_disabled() -> bool:
+    return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
 
 
 def feature_length_ratio_enabled() -> bool:
@@ -53,6 +58,18 @@ def number_of_negatives(example) -> Tuple[float, float]:
     replaced_example = re.sub("[.*'.*]", "", str_example)
     no_of_negatives = len(re.findall(negative_regex, replaced_example))
     return (no_of_negatives, 1 if no_of_negatives % 2 == 0 else 0)
+
+
+def regex_match(str_example: str, regexes: List[str]) -> List[int]:
+    if len(regexes) == 0:
+        return []
+    matches = []
+    for r in regexes:
+        if re.search(r, str_example):
+            matches.append(1)
+        else:
+            matches.append(0)
+    return matches
 
 
 def regex_match_ratio(str_example: str, regexes: List[str]) -> float:

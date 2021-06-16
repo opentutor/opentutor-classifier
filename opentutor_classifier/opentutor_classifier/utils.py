@@ -4,13 +4,22 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from os import path
-from typing import Any, Dict, Iterable, Optional
+from os import path, _Environ
+from typing import Any, Dict, Iterable, Optional, Union
 import pandas as pd
 import yaml
 from pathlib import Path
 
 from . import ExpectationConfig, QuestionConfig
+
+
+def prop_bool(
+    name: str, props: Union[Dict[str, Any], _Environ], dft: bool = False
+) -> bool:
+    if not (props and name in props):
+        return dft
+    v = props[name]
+    return str(v).lower() in ["1", "t", "true"]
 
 
 # TODO this should never return None, but code currently depends on that
