@@ -6,7 +6,6 @@
 #
 from collections import defaultdict
 import json
-from os import path
 
 from typing import Dict, List
 
@@ -15,8 +14,6 @@ import pandas as pd
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
 from sentence_transformers import SentenceTransformer
-from text_to_num import alpha2digit
-
 
 from opentutor_classifier import DataDao
 from opentutor_classifier import (
@@ -32,15 +29,12 @@ from opentutor_classifier import (
     TrainingResult,
 )
 from opentutor_classifier.log import logger
-from opentutor_classifier.stopwords import STOPWORDS
-from .expectations import LRExpectationClassifier,
+from .expectations import LRExpectationClassifier
 
 from .features import (
     preprocess_sentence,
-    preprocess_punctuations
 )
 
-from opentutor_classifier.word2vec import find_or_load_word2vec
 from opentutor_classifier.sentence_transformer import find_or_load_sentence_transformer
 
 
@@ -76,9 +70,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
         all_features = list(
             data.apply(
-                lambda row: process_features(
-                    json.loads(row["exp_data"]), row["text"]
-                ),
+                lambda row: process_features(json.loads(row["exp_data"]), row["text"]),
                 axis=1,
             )
         )
@@ -97,7 +89,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
         )
         return dao.create_default_training_result(
-            ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER, ExpectationTrainingResult(accuracy=accuracy)
+            ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+            ExpectationTrainingResult(accuracy=accuracy),
         )
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
@@ -196,6 +189,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             expectations=expectation_results,
             lesson=train_input.lesson,
             models=dao.get_model_root(
-                ArchLesson(arch=ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER, lesson=train_input.lesson)
+                ArchLesson(
+                    arch=ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER, lesson=train_input.lesson
+                )
             ),
         )

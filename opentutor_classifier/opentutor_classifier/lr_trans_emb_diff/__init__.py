@@ -30,4 +30,6 @@ class __ArchClassifierFactory(ArchClassifierFactory):
         return LRAnswerClassifierTraining().configure(config)
 
 
-register_classifier_factory(ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER, __ArchClassifierFactory())
+register_classifier_factory(
+    ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER, __ArchClassifierFactory()
+)

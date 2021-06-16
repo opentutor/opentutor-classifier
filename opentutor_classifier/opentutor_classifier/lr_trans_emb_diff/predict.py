@@ -4,7 +4,6 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from os import path
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
@@ -22,9 +21,11 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier
+from opentutor_classifier.utils import model_last_updated_at
 from .constants import MODEL_FILE_NAME
 from .dtos import ExpectationToEvaluate, InstanceModels
-from .expectations import LRExpectationClassifier, preprocess_sentence
+from .expectations import LRExpectationClassifier
+from .features import preprocess_sentence
 from opentutor_classifier.sentence_transformer import find_or_load_sentence_transformer
 
 
@@ -39,7 +40,6 @@ ModelAndConfig = Tuple[Dict[int, linear_model.LogisticRegression], QuestionConfi
 
 class LRAnswerClassifier(AnswerClassifier):
     def __init__(self):
-        self._word2vec = None
         self.sentence_transformer = None
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
@@ -134,3 +134,11 @@ class LRAnswerClassifier(AnswerClassifier):
                 )
             )
         return result
+
+    def get_last_trained_at(self) -> float:
+        return model_last_updated_at(
+            ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+            self.model_name,
+            self.model_roots,
+            MODEL_FILE_NAME,
+        )

@@ -4,7 +4,6 @@ from typing import List
 from sklearn import model_selection, linear_model
 from sklearn.preprocessing import LabelEncoder
 
-from opentutor_classifier import ClassifierMode, ExpectationConfig
 from sentence_transformers import SentenceTransformer
 
 
@@ -41,7 +40,6 @@ class LRExpectationClassifier:
         ideal_emb = model.encode(" ".join(ideal), show_progress_bar=False)
 
         return list(example_emb - ideal_emb)
-        
 
     @staticmethod
     def initialize_model() -> linear_model.LogisticRegression:

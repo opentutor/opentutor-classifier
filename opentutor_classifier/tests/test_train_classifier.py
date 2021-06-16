@@ -59,7 +59,7 @@ def test_outputs_models_at_specified_root(
     [
         (ARCH_SVM_CLASSIFIER, "models_by_expectation_num.pkl"),
         (ARCH_LR_CLASSIFIER, "models_by_expectation_num.pkl"),
-        (ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER, "models_by_expectation_num.pkl")
+        (ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER, "models_by_expectation_num.pkl"),
     ],
 )
 def test_outputs_models_at_specified_model_root_for_default_model(
@@ -105,7 +105,6 @@ def _test_train_and_predict(
         )
 
 
-@pytest.mark.only
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
@@ -114,9 +113,9 @@ def _test_train_and_predict(
             ARCH_SVM_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(expectationId="0", accuracy=0.8),
-                ExpectationTrainingResult(expectationId="1", accuracy=0.7),
-                ExpectationTrainingResult(expectationId="2", accuracy=0.98),
+                ExpectationTrainingResult(accuracy=0.8),
+                ExpectationTrainingResult(accuracy=0.7),
+                ExpectationTrainingResult(accuracy=0.98),
             ],
             0.33,
         ),
@@ -124,7 +123,7 @@ def _test_train_and_predict(
             "question2",
             ARCH_SVM_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
-            [ExpectationTrainingResult(expectationId="0", accuracy=0.98)],
+            [ExpectationTrainingResult(accuracy=0.98)],
             0.99,
         ),
         (
@@ -132,9 +131,9 @@ def _test_train_and_predict(
             ARCH_SVM_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(expectationId="0", accuracy=0.92),
-                ExpectationTrainingResult(expectationId="1", accuracy=0.93),
-                ExpectationTrainingResult(expectationId="2", accuracy=0.93),
+                ExpectationTrainingResult(accuracy=0.92),
+                ExpectationTrainingResult(accuracy=0.93),
+                ExpectationTrainingResult(accuracy=0.93),
             ],
             0.8,
         ),
@@ -143,10 +142,10 @@ def _test_train_and_predict(
             ARCH_SVM_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(expectationId="0", accuracy=0.84),
-                ExpectationTrainingResult(expectationId="1", accuracy=0.87),
-                ExpectationTrainingResult(expectationId="2", accuracy=0.80),
-                ExpectationTrainingResult(expectationId="3", accuracy=0.96),
+                ExpectationTrainingResult(accuracy=0.84),
+                ExpectationTrainingResult(accuracy=0.87),
+                ExpectationTrainingResult(accuracy=0.80),
+                ExpectationTrainingResult(accuracy=0.96),
             ],
             0.8,
         ),
@@ -185,9 +184,9 @@ def test_train_and_predict(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(expectationId="0", accuracy=0.89),
-                ExpectationTrainingResult(expectationId="1", accuracy=0.90),
-                ExpectationTrainingResult(expectationId="2", accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.89),
+                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.90),
             ],
             0.85,
         ),
@@ -196,10 +195,10 @@ def test_train_and_predict(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(expectationId="0", accuracy=0.80),
-                ExpectationTrainingResult(expectationId="1", accuracy=0.80),
-                ExpectationTrainingResult(expectationId="2", accuracy=0.75),
-                ExpectationTrainingResult(expectationId="3", accuracy=0.89),
+                ExpectationTrainingResult(accuracy=0.80),
+                ExpectationTrainingResult(accuracy=0.80),
+                ExpectationTrainingResult(accuracy=0.75),
+                ExpectationTrainingResult(accuracy=0.89),
             ],
             0.8,
         ),
@@ -269,7 +268,7 @@ def _test_train_and_predict_specific_answers_slow(
             [
                 "37 x 40",
             ],
-            [ExpectationTrainingResult(expectationId="2", accuracy=0.90)],
+            [ExpectationTrainingResult(accuracy=0.90)],
             [
                 _TestExpectation(evaluation="Good", score=0.80, expectation=2),
             ],
@@ -317,7 +316,7 @@ def test_train_and_predict_specific_answers(
                 # "37.0 by 40.000",
                 # "thirty seven by fourty",
             ],
-            [ExpectationTrainingResult(expectationId="2", accuracy=0.89)],
+            [ExpectationTrainingResult(accuracy=0.89)],
             [
                 # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
                 # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
