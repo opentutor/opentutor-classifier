@@ -93,7 +93,6 @@ def test_feature_regex_aggregate_disabled_by_default(
 ):
     _test_regex_aggregate_enabled(lesson, arch, tmpdir, data_root, shared_root, False)
 
-@pytest.mark.only
 @pytest.mark.parametrize(
     "lesson,arch,confidence_threshold,feature_env_var_enabled_at_train_time,feature_env_var_enabled_at_predict_time",
     [
