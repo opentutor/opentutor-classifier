@@ -11,14 +11,19 @@ import pytest
 import responses
 
 from opentutor_classifier import (
+    get_classifier_arch,
     ARCH_SVM_CLASSIFIER,
+    AnswerClassifier,
     AnswerClassifierInput,
     ClassifierConfig,
     ClassifierFactory,
     SpeechActClassifierResult,
+    TrainingConfig,
 )
 from opentutor_classifier.config import confidence_threshold_default
 import opentutor_classifier.dao
+from opentutor_classifier.log import logger
+from opentutor_classifier.training import train_data_root
 from opentutor_classifier.utils import dict_to_config
 from .utils import (
     assert_classifier_evaluate,
@@ -42,6 +47,35 @@ def model_roots() -> List[str]:
 @pytest.fixture(scope="module")
 def shared_root(word2vec) -> str:
     return os.path.dirname(word2vec)
+
+
+def _find__or_train_classifier(
+    lesson: str, model_root: str, shared_root: str, arch=""
+) -> AnswerClassifier:
+    arch = arch or get_classifier_arch()
+    dao = opentutor_classifier.dao.FileDataDao(
+        data_root=os.path.join(model_root, arch), model_root=model_root
+    )
+
+    cfac = ClassifierFactory()
+    cconf = ClassifierConfig(
+        dao=dao,
+        model_name=lesson,
+        model_roots=[model_root],
+        shared_root=shared_root,
+    )
+    if not cfac.has_trained_model(lesson, cconf, arch=arch):
+        example_dir = os.path.join(model_root, arch, lesson)
+        logger.warning(
+            f"trained model not found in fixtures for test lesson {lesson}, attempting to train..."
+        )
+        train_data_root(
+            data_root=example_dir,
+            config=TrainingConfig(shared_root=shared_root),
+            output_dir=model_root,
+            arch=arch,
+        )
+    return cfac.new_classifier(cconf, arch=arch)
 
 
 @pytest.mark.parametrize(
@@ -158,9 +192,11 @@ def test_evaluates_for_default_model(
 
 
 @pytest.mark.parametrize(
-    "input_answer,input_expectation_number,config_data,expected_results,expected_sa_results",
+    "lesson, arch, input_answer,input_expectation_number,config_data,expected_results,expected_sa_results",
     [
         (
+            "question1",
+            "",
             "I dont know what you are talking about",
             0,
             {},
@@ -171,6 +207,8 @@ def test_evaluates_for_default_model(
             },
         ),
         (
+            "question1",
+            "",
             "I do not understand",
             0,
             {},
@@ -181,6 +219,8 @@ def test_evaluates_for_default_model(
             },
         ),
         (
+            "question1",
+            "",
             "I believe the answer is peer pressure can change your behavior",
             0,
             {},
@@ -191,6 +231,8 @@ def test_evaluates_for_default_model(
             },
         ),
         (
+            "question1",
+            "",
             "Fuck you tutor",
             0,
             {},
@@ -201,6 +243,8 @@ def test_evaluates_for_default_model(
             },
         ),
         (
+            "question1",
+            "",
             "What the hell is that?",
             0,
             {},
@@ -211,6 +255,8 @@ def test_evaluates_for_default_model(
             },
         ),
         (
+            "question1",
+            "",
             "I dont know this shit",
             0,
             {},
@@ -221,6 +267,8 @@ def test_evaluates_for_default_model(
             },
         ),
         (
+            "question1",
+            "",
             "I dont know this shit but I guess the answer is peer pressure can change your behavior",
             0,
             {},
@@ -231,6 +279,8 @@ def test_evaluates_for_default_model(
             },
         ),
         (
+            "question1",
+            "",
             "assistant, assistance",
             0,
             {},
@@ -246,21 +296,17 @@ def test_evaluates_for_default_model(
 def test_evaluates_meta_cognitive_sentences(
     model_roots,
     shared_root,
+    lesson: str,
+    arch: str,
     input_answer: str,
     input_expectation_number: int,
     config_data: dict,
     expected_results: List[_TestExpectation],
     expected_sa_results: dict,
 ):
-    lesson = "question1"
     with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
-        classifier = ClassifierFactory().new_classifier(
-            ClassifierConfig(
-                dao=opentutor_classifier.dao.find_data_dao(),
-                model_name=lesson,
-                model_roots=model_roots,
-                shared_root=shared_root,
-            )
+        classifier = _find__or_train_classifier(
+            lesson, model_roots[0], shared_root, arch=arch
         )
         result = classifier.evaluate(
             AnswerClassifierInput(
