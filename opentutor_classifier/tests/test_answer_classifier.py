@@ -6,7 +6,6 @@
 #
 import os
 from typing import List
-import py
 
 import pytest
 import responses
@@ -42,7 +41,11 @@ CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
 
 @pytest.fixture(scope="module")
 def model_roots() -> List[str]:
-    return [fixture_path("models"), fixture_path("models_deployed"), fixture_path("data")]
+    return [
+        fixture_path("models"),
+        fixture_path("models_deployed"),
+        fixture_path("data"),
+    ]
 
 
 @pytest.fixture(scope="module")
@@ -51,7 +54,7 @@ def shared_root(word2vec) -> str:
 
 
 def _find_or_train_classifier(
-    lesson: str, model_root: str, data_root:str, shared_root: str, arch=""
+    lesson: str, model_root: str, data_root: str, shared_root: str, arch=""
 ) -> AnswerClassifier:
     arch = arch or get_classifier_arch()
     dao = opentutor_classifier.dao.FileDataDao(

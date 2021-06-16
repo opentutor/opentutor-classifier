@@ -116,7 +116,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
         )
         return dao.create_default_training_result(
-            ARCH_LR_CLASSIFIER, ExpectationTrainingResult(expectation_id="", accuracy=accuracy)
+            ARCH_LR_CLASSIFIER,
+            ExpectationTrainingResult(expectation_id="", accuracy=accuracy),
         )
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:

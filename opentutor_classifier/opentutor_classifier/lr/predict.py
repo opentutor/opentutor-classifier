@@ -116,7 +116,7 @@ class LRAnswerClassifier(AnswerClassifier):
             )
             for i in (
                 [answer.expectation]
-                if answer.expectation != ''
+                if answer.expectation != ""
                 else conf.get_all_expectation_names()
             )
         ]

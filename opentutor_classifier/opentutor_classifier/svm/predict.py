@@ -96,7 +96,6 @@ class SVMAnswerClassifier(AnswerClassifier):
         else:
             return models_by_expectation[expectation]
 
-
     def find_word2vec(self) -> Word2VecKeyedVectors:
         if not self._word2vec:
             self._word2vec = find_or_load_word2vec(
@@ -127,7 +126,7 @@ class SVMAnswerClassifier(AnswerClassifier):
             )
             for i in (
                 [answer.expectation]
-                if answer.expectation != ''
+                if answer.expectation != ""
                 else conf.get_all_expectation_names()
             )
         ]

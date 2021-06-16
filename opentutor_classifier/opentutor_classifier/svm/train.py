@@ -114,7 +114,8 @@ class SVMAnswerClassifierTraining(AnswerClassifierTraining):
         # or will get errors later on attempt to load
         # QuestionConfig(question="").write_to(path.join(output_dir, "config.yaml"))
         return dao.create_default_training_result(
-            ARCH_SVM_CLASSIFIER, ExpectationTrainingResult(expectation_id="", accuracy=accuracy)
+            ARCH_SVM_CLASSIFIER,
+            ExpectationTrainingResult(expectation_id="", accuracy=accuracy),
         )
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
