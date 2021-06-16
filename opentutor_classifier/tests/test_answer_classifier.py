@@ -48,6 +48,7 @@ def model_roots() -> List[str]:
 def shared_root(word2vec) -> str:
     return os.path.dirname(word2vec)
 
+
 def _find__or_train_classifier(
     lesson: str, model_root: str, shared_root: str, arch=""
 ) -> AnswerClassifier:
@@ -75,6 +76,7 @@ def _find__or_train_classifier(
             arch=arch,
         )
     return cfac.new_classifier(cconf, arch=arch)
+
 
 @pytest.mark.parametrize(
     "lesson,arch,confidence_threshold,expected_accuracy",
@@ -304,7 +306,8 @@ def test_evaluates_meta_cognitive_sentences(
 ):
     with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
         classifier = _find__or_train_classifier(
-            lesson, model_roots[0], shared_root, arch=arch)
+            lesson, model_roots[0], shared_root, arch=arch
+        )
         result = classifier.evaluate(
             AnswerClassifierInput(
                 input_sentence=input_answer,

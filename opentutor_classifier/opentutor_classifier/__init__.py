@@ -336,7 +336,7 @@ class ClassifierFactory:
             import_module(arch)
         f = _factories_by_arch[arch]
         return f
-        
+
     def has_trained_model(self, lesson: str, config: ClassifierConfig, arch="") -> bool:
         return self._find_arch_fac(arch).has_trained_model(lesson, config)
 

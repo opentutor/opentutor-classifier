@@ -24,7 +24,7 @@ class __ArchClassifierFactory(ArchClassifierFactory):
         return config.dao.trained_model_exists(
             ModelRef(arch=ARCH_LR_CLASSIFIER, lesson=lesson, filename=MODEL_FILE_NAME)
         )
-        
+
     def new_classifier(self, config: ClassifierConfig) -> AnswerClassifier:
         return LRAnswerClassifier().configure(config)
 

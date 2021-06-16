@@ -59,6 +59,7 @@ def _test_regex_aggregate_enabled(
             == expect_enabled
         )
 
+
 @pytest.mark.parametrize(
     "lesson,arch",
     [
@@ -79,6 +80,7 @@ def test_regex_aggregate_can_be_enabled_w_env_var(
     monkeypatch.setenv(FEATURE_REGEX_AGGREGATE_DISABLED, "1")
     _test_regex_aggregate_enabled(lesson, arch, tmpdir, data_root, shared_root, True)
 
+
 @pytest.mark.parametrize(
     "lesson,arch",
     [
@@ -92,6 +94,7 @@ def test_feature_regex_aggregate_disabled_by_default(
     lesson: str, arch: str, tmpdir, data_root: str, shared_root: str
 ):
     _test_regex_aggregate_enabled(lesson, arch, tmpdir, data_root, shared_root, False)
+
 
 @pytest.mark.parametrize(
     "lesson,arch,confidence_threshold,feature_env_var_enabled_at_train_time,feature_env_var_enabled_at_predict_time",
@@ -138,4 +141,3 @@ def test_classifier_and_get_accuracy(
             testset,
             expected_accuracy=metrics.accuracy,
         )
-

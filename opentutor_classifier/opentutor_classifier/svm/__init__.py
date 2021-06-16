@@ -20,7 +20,6 @@ from .train import SVMAnswerClassifierTraining
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):
-
     def has_trained_model(self, lesson: str, config: ClassifierConfig) -> bool:
         return config.dao.trained_model_exists(
             ModelRef(arch=ARCH_SVM_CLASSIFIER, lesson=lesson, filename=MODEL_FILE_NAME)
