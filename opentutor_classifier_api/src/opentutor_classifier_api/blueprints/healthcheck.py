@@ -13,8 +13,8 @@ from opentutor_classifier.api import get_graphql_endpoint  # type: ignore
 healthcheck_blueprint = Blueprint("healthcheck", __name__)
 
 GQL_QUERY_STATUS = """
-    query {
-        message,
+    query Healthcheck {
+        message
         status
     }
     """

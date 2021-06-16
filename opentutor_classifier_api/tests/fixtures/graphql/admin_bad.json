@@ -1,4 +1,6 @@
 {
-    "message":"",
-    "status":"internal error"
+    "data": {
+        "message":"",
+        "status":"Internal error"
+    }
 }

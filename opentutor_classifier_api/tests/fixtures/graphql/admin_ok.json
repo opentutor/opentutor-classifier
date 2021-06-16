@@ -1,4 +1,6 @@
 {
-    "message":"pong!",
-    "status":"success"
+    "data": {
+        "message":"pong!",
+        "status":"Success"
+    }
 }
