@@ -78,9 +78,13 @@ class LRAnswerClassifier(AnswerClassifier):
         expectation: str,
         return_first_model_if_only_one=False,
     ) -> linear_model.LogisticRegression:
-        return (
-            m_by_e[expectation]
-        )
+        if expectation in m_by_e:
+            return m_by_e[expectation]
+        elif return_first_model_if_only_one and len(m_by_e) == 1:
+            key = list(m_by_e.keys())[0]
+            return m_by_e[key]
+        else:
+            return m_by_e[expectation]
 
     def find_word2vec(self) -> Word2VecKeyedVectors:
         if not self._word2vec:
@@ -112,6 +116,8 @@ class LRAnswerClassifier(AnswerClassifier):
             )
             for i in (
                 [answer.expectation]
+                if answer.expectation != ''
+                else conf.get_all_expectation_names()
             )
         ]
         result = AnswerClassifierResult(input=answer, expectation_results=[])

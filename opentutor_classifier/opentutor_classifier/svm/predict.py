@@ -88,7 +88,14 @@ class SVMAnswerClassifier(AnswerClassifier):
         expectation: str,
         return_first_model_if_only_one=False,
     ) -> svm.SVC:
-        return models_by_expectation[expectation]
+        if expectation in models_by_expectation:
+            return models_by_expectation[expectation]
+        elif return_first_model_if_only_one and len(models_by_expectation) == 1:
+            key = list(models_by_expectation.keys())[0]
+            return models_by_expectation[key]
+        else:
+            return models_by_expectation[expectation]
+
 
     def find_word2vec(self) -> Word2VecKeyedVectors:
         if not self._word2vec:
@@ -120,6 +127,8 @@ class SVMAnswerClassifier(AnswerClassifier):
             )
             for i in (
                 [answer.expectation]
+                if answer.expectation != ''
+                else conf.get_all_expectation_names()
             )
         ]
         result = AnswerClassifierResult(input=answer, expectation_results=[])

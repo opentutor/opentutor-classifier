@@ -6,6 +6,7 @@
 #
 import os
 from typing import List
+import py
 
 import pytest
 import responses
@@ -76,7 +77,7 @@ def test_evaluate_example(
     [
         (
             "peer pressure leads you to allow bad behavior",
-            -1,
+            "",
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
                 "expectations": [
@@ -103,7 +104,7 @@ def test_evaluate_example(
         ),
         (
             "this answer should get a neutral response",
-            "-1",
+            "",
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
                 "expectations": [
@@ -156,7 +157,7 @@ def test_evaluates_for_default_model(
         )
         assert_classifier_evaluate(result, expected_results)
 
-
+@pytest.mark.only
 @pytest.mark.parametrize(
     "input_answer,input_expectation_number,config_data,expected_results,expected_sa_results",
     [

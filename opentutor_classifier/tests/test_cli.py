@@ -79,7 +79,7 @@ def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_roo
     while out_lines and re.search(r"^(DEBUG|INFO|WARNING|ERROR).*", out_lines[0]):
         out_lines.pop(0)
     assert re.search(r"Models are saved at: /.+/" + lesson, out_lines[0])
-    for i in range("0", no_of_expectations):
+    for i in range(0, no_of_expectations):
         assert re.search(
             f"Accuracy for model={i} is [0-9]+\\.[0-9]+\\.",
             out_lines[i + 1],
