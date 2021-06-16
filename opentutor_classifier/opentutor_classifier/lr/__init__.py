@@ -10,14 +10,21 @@ from opentutor_classifier import (
     AnswerClassifierTraining,
     ArchClassifierFactory,
     ClassifierConfig,
+    ModelRef,
     TrainingConfig,
     register_classifier_factory,
 )
+from .constants import MODEL_FILE_NAME
 from .predict import LRAnswerClassifier
 from .train import LRAnswerClassifierTraining
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):
+    def has_trained_model(self, lesson: str, config: ClassifierConfig) -> bool:
+        return config.dao.trained_model_exists(
+            ModelRef(arch=ARCH_LR_CLASSIFIER, lesson=lesson, filename=MODEL_FILE_NAME)
+        )
+        
     def new_classifier(self, config: ClassifierConfig) -> AnswerClassifier:
         return LRAnswerClassifier().configure(config)
 
