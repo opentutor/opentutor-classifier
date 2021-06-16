@@ -14,7 +14,3 @@ def confidence_threshold_default() -> float:
 
 def get_train_quality_default() -> int:
     return int(environ.get("TRAIN_QUALITY_DEFAULT", 1))
-
-
-def use_length_ratio() -> bool:
-    return bool(environ.get("FEATURE_LENGTH_RATIO_ENABLED", "False"))
