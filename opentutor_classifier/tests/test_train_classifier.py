@@ -202,6 +202,17 @@ def test_train_and_predict(
             ],
             0.8,
         ),
+        (
+            "ies-mixture",
+            ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.98),
+                ExpectationTrainingResult(accuracy=0.89),
+                ExpectationTrainingResult(accuracy=0.94),
+            ],
+            0.8,
+        ),
     ],
 )
 @pytest.mark.slow

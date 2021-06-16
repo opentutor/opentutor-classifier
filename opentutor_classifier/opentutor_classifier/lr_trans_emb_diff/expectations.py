@@ -9,8 +9,11 @@ from sentence_transformers import SentenceTransformer
 
 class LRExpectationClassifier:
     def __init__(self):
-        self.model = None
         self.score_dictionary = defaultdict(int)
+        self.ideal_emb = None
+
+    def set_ideal_emb(self, ideal_ans: List[str], model: SentenceTransformer):
+        self.ideal_emb = model.encode(" ".join(ideal_ans), show_progress_bar=False)
 
     @staticmethod
     def split(pre_processed_dataset, target):
@@ -31,15 +34,20 @@ class LRExpectationClassifier:
 
     @staticmethod
     def calculate_features(
+        ideal_answer: List[str], example: List[str], model: SentenceTransformer
+    ) -> List[float]:
+        ideal_emb = model.encode(" ".join(ideal_answer), show_progress_bar=False)
+        example_emb = model.encode(" ".join(example), show_progress_bar=False)
+        return list(example_emb - ideal_emb)
+
+    def calculate_features_train(
+        self,
         example: List[str],
-        ideal: List[str],
         model: SentenceTransformer,
     ) -> List[float]:
 
         example_emb = model.encode(" ".join(example), show_progress_bar=False)
-        ideal_emb = model.encode(" ".join(ideal), show_progress_bar=False)
-
-        return list(example_emb - ideal_emb)
+        return list(example_emb - self.ideal_emb)
 
     @staticmethod
     def initialize_model() -> linear_model.LogisticRegression:
