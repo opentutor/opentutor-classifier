@@ -7,7 +7,8 @@
 question: With a DC input source, does current flow in the same or the opposite direction
   of the diode arrow?
 expectations:
-- ideal: current flows in the same direction as the arrow
+- expectation_id: "0"
+  ideal: current flows in the same direction as the arrow
   features:
     bad:
       - \b(oppo\w*|diffe\w*|back\w*|bot\w|aga\w*t|rev\w*)\b
