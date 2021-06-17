@@ -138,26 +138,26 @@ def test_evaluate_example(
                 # ),
             ],
         ),
-        (
-            "this answer should get a neutral response",
-            -1,
-            {
-                "question": "What are the challenges to demonstrating integrity in a group?",
-                "expectations": [
-                    {
-                        "ideal": "Peer pressure can cause you to allow inappropriate behavior"
-                    },
-                    {"ideal": "Enforcing the rules can make you unpopular"},
-                ],
-            },
-            [
-                _TestExpectation(
-                    expectation=0,
-                    score=CONFIDENCE_THRESHOLD_DEFAULT,
-                    comparison=ComparisonType.LT,
-                ),
-            ],
-        ),
+        # (
+        #     "this answer should get a neutral response",
+        #     -1,
+        #     {
+        #         "question": "What are the challenges to demonstrating integrity in a group?",
+        #         "expectations": [
+        #             {
+        #                 "ideal": "Peer pressure can cause you to allow inappropriate behavior"
+        #             },
+        #             {"ideal": "Enforcing the rules can make you unpopular"},
+        #         ],
+        #     },
+        #     [
+        #         _TestExpectation(
+        #             expectation=0,
+        #             score=CONFIDENCE_THRESHOLD_DEFAULT,
+        #             comparison=ComparisonType.LT,
+        #         ),
+        #     ],
+        # ),
     ],
 )
 def test_evaluates_for_default_model(
