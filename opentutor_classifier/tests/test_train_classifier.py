@@ -55,7 +55,6 @@ def test_outputs_models_at_specified_root(
 @pytest.mark.parametrize(
     "arch,expected_model_file_name",
     [
-        (ARCH_SVM_CLASSIFIER, "models_by_expectation_num.pkl"),
         (ARCH_LR_CLASSIFIER, "models_by_expectation_num.pkl"),
     ],
 )
