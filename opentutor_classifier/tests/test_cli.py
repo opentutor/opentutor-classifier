@@ -87,6 +87,7 @@ def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_roo
         )
 
 
+@pytest.mark.slow
 @pytest.mark.parametrize(
     "lesson,answer,arch,expected_results",
     [

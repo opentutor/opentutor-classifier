@@ -124,7 +124,7 @@ def test_evaluate_example(
                 ],
             },
             [
-                _TestExpectation(expectation=0, evaluation="Good", score=0.8),
+                _TestExpectation(expectation=0, evaluation="Good", score=0.65),
                 # # NOTE: this exp is incorrectly getting GOOD with very high confidence
                 # _TestExpectation(
                 #     expectation=1,
