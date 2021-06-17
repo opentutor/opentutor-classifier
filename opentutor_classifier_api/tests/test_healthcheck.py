@@ -19,7 +19,7 @@ def _mock_healthchecks(
     admin_status=200,
     home_status=200,
     tutor_status=200,
-) -> None:
+):
     rsps = responses.RequestsMock()
     try:
         rsps.start()
