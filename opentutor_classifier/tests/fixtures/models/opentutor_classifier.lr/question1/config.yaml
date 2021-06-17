@@ -5,7 +5,8 @@
 ## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 ##
 expectations:
-- features:
+- expectation_id: '0'
+  features:
     bad:
     - \brule\w*\b.*\bdiffer\w*\b
     featureLengthRatio: false
@@ -20,7 +21,8 @@ expectations:
     - peer
     - pressure
   ideal: peer pressure can cause you to allow inappropriate behavior
-- features:
+- expectation_id: '1'
+  features:
     bad:
     - \b(lov\w*|lik\w*|car)\b
     featureLengthRatio: false
@@ -44,7 +46,8 @@ expectations:
     - troubleenforcing
     - unpopular
   ideal: you may get them in trouble
-- features:
+- expectation_id: '2'
+  features:
     bad:
     - \b(super\w*|bette\w*)\b
     featureLengthRatio: false
