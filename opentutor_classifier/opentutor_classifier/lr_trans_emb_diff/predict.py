@@ -44,6 +44,7 @@ class LRAnswerClassifier(AnswerClassifier):
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
         self._model_and_config: ModelAndConfig = None
+        self.exp_ideal_answer = dict()
 
     def configure(
         self,
@@ -120,12 +121,22 @@ class LRAnswerClassifier(AnswerClassifier):
         result.speech_acts["profanity"] = self.speech_act_classifier.check_profanity(
             result
         )
+
         self.find_sentence_transformer()
+
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
+
+            if exp.expectation not in self.exp_ideal_answer:
+                self.exp_ideal_answer[
+                    exp.expectation
+                ] = LRExpectationClassifier.initialize_ideal_answer(
+                    [preprocess_sentence(exp_conf.ideal)], self.sentence_transformer
+                )
+
             sent_features = LRExpectationClassifier.calculate_features(
                 sent_proc,
-                preprocess_sentence(exp_conf.ideal),
+                self.exp_ideal_answer[exp.expectation],
                 self.sentence_transformer,
             )
             result.expectation_results.append(

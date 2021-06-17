@@ -137,7 +137,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             train_y.append("good")
             processed_data = _preprocess_trainx(train_x)
             ideal_answer = LRExpectationClassifier.initialize_ideal_answer(
-                processed_data
+                processed_data, self.sentence_transformer
             )
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
@@ -149,13 +149,11 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 patterns_bad=[],  # pattern["bad"],
             )
 
-            classifier = LRExpectationClassifier()
-            classifier.set_ideal_emb(ideal_answer, self.sentence_transformer)
-
             features = [
                 np.array(
-                    classifier.calculate_features_train(
+                    LRExpectationClassifier.calculate_features(
                         example,
+                        ideal_answer,
                         self.sentence_transformer,
                     )
                 )

@@ -203,16 +203,15 @@ def test_train_and_predict(
             0.8,
         ),
         (
-            "candles",
+            "ies-rectangle",
             ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.92),
-                ExpectationTrainingResult(accuracy=0.94),
-                ExpectationTrainingResult(accuracy=0.93),
-                ExpectationTrainingResult(accuracy=0.87),
+                ExpectationTrainingResult(accuracy=0.80),
+                ExpectationTrainingResult(accuracy=0.80),
+                ExpectationTrainingResult(accuracy=0.80),
             ],
-            0.3,
+            0.7,
         ),
     ],
 )
