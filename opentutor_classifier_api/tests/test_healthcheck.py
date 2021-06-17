@@ -69,7 +69,9 @@ def test_200_if_all_healthy(client, message, status):
     [("pong!", "success")],
 )
 def test_503_if_not_healthy(client, message, status):
-    with _mock_healthchecks("admin_bad"):
+    with _mock_healthchecks(
+        "admin_bad", gql_status=404, admin_status=400, home_status=500, tutor_status=502
+    ):
         res = client.get("/classifier/healthcheck/")
         assert res.json["services"]["graphql"]["status"] == 404
         assert res.json["services"]["admin"]["status"] == 400
