@@ -59,7 +59,7 @@ class QuestionConfig:
         return [x.expectation_id for x in self.expectations]
 
     def get_expectation(
-        self, exp: str, dft: ExpectationConfig = None
+        self, exp: str, dft: ExpectationConfig = ExpectationConfig()
     ) -> ExpectationConfig:
         expectation_list = [x for x in self.expectations if exp == x.expectation_id]
         return expectation_list[0] if len(expectation_list) > 0 else dft

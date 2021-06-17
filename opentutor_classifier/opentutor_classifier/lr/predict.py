@@ -38,7 +38,7 @@ def _confidence_score(
     return model.predict_proba(sentence)[0, 1]
 
 
-ModelAndConfig = Tuple[Dict[int, linear_model.LogisticRegression], QuestionConfig]
+ModelAndConfig = Tuple[Dict[str, linear_model.LogisticRegression], QuestionConfig]
 
 
 class LRAnswerClassifier(AnswerClassifier):
