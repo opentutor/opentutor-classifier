@@ -14,7 +14,7 @@ healthcheck_blueprint = Blueprint("healthcheck", __name__)
 
 GQL_QUERY_STATUS = """
     query Healthcheck {
-        healthcheck {
+        health {
             message
             status
         }
