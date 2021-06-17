@@ -1,6 +1,6 @@
 {
     "data": {
-        "healthcheck": {
+        "health": {
             "message": "Healthy",
             "status": "Success!"
         }
