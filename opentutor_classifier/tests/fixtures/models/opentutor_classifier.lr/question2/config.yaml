@@ -4,23 +4,25 @@
 ##
 ## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 ##
-question: What are the challenges to demonstrating integrity in a group?
 expectations:
-- ideal: peer pressure cause allow inappropriate behavior
+- expectation_id: "0"
+  ideal: current flows in the same direction as the arrow
   features:
     bad:
-      - \brule\w*\b.*\bdiffer\w*\b
+    - \b(oppo\w*|diffe\w*|back\w*|bot\w|aga\w*t|rev\w*)\b
+    - \b(right|cath\w*)\b.*\b(left|anode)\b
+    featureLengthRatio: false
+    featureRegexAggregateDisabled: false
     good:
-      - \b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b
-- ideal: may get trouble
-  features:
-    bad:
-      - \b(lov\w*|lik\w*|car)\b
-    good:
-      - \b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b
-- ideal: enforcing rule make unpopular
-  features:
-    bad:
-      - \b(super\w*|bette\w*)\b
-    good:
-      - \b(unpop\w*|hate\w*|unlik\w*|not\040popular)\b
+    - \b(sam\w*|const\w*|on\w*|eq(?!uip)\w*|id\w*n\w*[ck]\w*)\b
+    - \b(left|anode)\b.*\b(right|cath\w*)\b
+    patterns_bad:
+    - backward
+    - order
+    patterns_good:
+    - arrow
+    - direction
+    - identical
+  ideal: ''
+question: With a DC input source, does current flow in the same or the opposite direction
+  of the diode arrow?
