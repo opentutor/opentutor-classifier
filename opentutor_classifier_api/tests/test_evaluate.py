@@ -53,10 +53,10 @@ def test_returns_400_response_when_input_not_set(client):
         (
             "q1-untrained",
             "peer pressure might lead to bad behavior",
-            -1,
+            "0",
             [
                 ExpectationClassifierResult(
-                    expectation=0, evaluation="Good", score=0.62
+                    expectation_id="0", evaluation="Good", score=0.62
                 ),
             ],
         )
@@ -66,7 +66,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
     client,
     lesson: str,
     answer: str,
-    expectation: int,
+    expectation: str,
     expected_results: List[ExpectationClassifierResult],
 ):
     with mocked_data_dao(
@@ -91,7 +91,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
         results = res.json["output"]["expectationResults"]
         assert len(results) == len(expected_results)
         for res, res_expected in zip(results, expected_results):
-            assert res["expectation"] == res_expected.expectation
+            assert res["expectation_id"] == res_expected.expectation_id
             assert round(float(res["score"]), 2) == res_expected.score
             assert res["evaluation"] == res_expected.evaluation
 
@@ -102,9 +102,13 @@ def test_evaluate_uses_default_model_when_question_untrained(
         (
             "q1",
             "peer pressure can change your behavior",
-            0,
+            "0",
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.84, evaluation="Good")],
+            [
+                ExpectationClassifierResult(
+                    expectation_id="0", score=0.84, evaluation="Good"
+                )
+            ],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -113,17 +117,17 @@ def test_evaluate_uses_default_model_when_question_untrained(
         (
             "q1",
             "peer pressure can change your behavior",
-            -1,
+            "",
             {},
             [
                 ExpectationClassifierResult(
-                    expectation=0, score=0.84, evaluation="Good"
+                    expectation_id="0", score=0.84, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=1, score=0.56, evaluation="Good"
+                    expectation_id="1", score=0.56, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=2, score=0.62, evaluation="Bad"
+                    expectation_id="2", score=0.62, evaluation="Bad"
                 ),
             ],
             {
@@ -134,9 +138,13 @@ def test_evaluate_uses_default_model_when_question_untrained(
         (
             "q1",
             "I dont know what you are talking about",
-            0,
+            "0",
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.55, evaluation="Bad")],
+            [
+                ExpectationClassifierResult(
+                    expectation_id="0", score=0.55, evaluation="Bad"
+                )
+            ],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -182,6 +190,6 @@ def test_evaluate_classifies_user_answers(
     results = res.json["output"]["expectationResults"]
     assert len(results) == len(expected_results)
     for res, res_expected in zip(results, expected_results):
-        assert res["expectation"] == res_expected.expectation
+        assert res["expectation_id"] == res_expected.expectation_id
         assert round(float(res["score"]), 2) == res_expected.score
         assert res["evaluation"] == res_expected.evaluation

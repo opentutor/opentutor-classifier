@@ -91,6 +91,10 @@ def to_expectation_result(
         errors.append(
             f"expected evaluation '{observed.evaluation}' to be '{expected.evaluation}'"
         )
+    if expected.expectation != observed.expectation_id:
+        errors.append(
+            f"expected expectation_id '{observed.expectation_id}'' to be '{expected.expectation}"
+        )
     return _TestExpectationResult(expected=expected, observed=observed, errors=errors)
 
 

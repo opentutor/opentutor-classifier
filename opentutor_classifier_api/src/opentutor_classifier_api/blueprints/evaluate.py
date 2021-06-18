@@ -53,9 +53,9 @@ def evaluate():
             "input": {"required": True, "type": "string"},
             "expectation": {
                 "required": False,
-                "type": "integer",
-                "coerce": int,
-                "default": -1,
+                "type": "string",
+                "coerce": str,
+                "default": "",
             },
         },
         allow_unknown=True,
@@ -70,7 +70,7 @@ def evaluate():
         os.environ.get("MODEL_DEPLOYED_ROOT") or "models_deployed",
     ]
     input_sentence = args.get("input")
-    exp_num = int(args.get("expectation", -1))
+    exp_num = args.get("expectation", "")
     shared_root = os.environ.get("SHARED_ROOT") or "shared"
     classifier = _get_dao().find_classifier(
         ClassifierConfig(
