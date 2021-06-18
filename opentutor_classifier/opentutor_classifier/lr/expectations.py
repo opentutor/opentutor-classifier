@@ -11,8 +11,6 @@ from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
 from . import features
 
 from opentutor_classifier.utils import prop_bool
-from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
-from . import features
 from .clustering_features import CustomAgglomerativeClustering
 from .constants import FEATURE_LENGTH_RATIO
 
