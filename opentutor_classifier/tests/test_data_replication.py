@@ -120,7 +120,7 @@ def assert_inc(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             "mixture a",
-            0,
+            "0",
         ),
     ],
 )
@@ -132,7 +132,7 @@ def test_data_replication(
     arch: str,
     confidence_threshold: float,
     evaluate_input: str,
-    evaluate_expectation: float,
+    evaluate_expectation: str,
 ):
     with test_env_isolated(
         tmpdir,

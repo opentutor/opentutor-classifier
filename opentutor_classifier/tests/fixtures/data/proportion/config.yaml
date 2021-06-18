@@ -6,7 +6,8 @@
 ##
 question: "This is a question?"
 expectations:
-  - ideal: it will be consistent and proportional
+  - expectation_id: "0"
+    ideal: it will be consistent and proportional
     features:
       bad:
         - incongruous

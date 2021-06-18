@@ -6,7 +6,8 @@
 ##
 question: "When printing a photograph that is 10 cm wide and 16 cm high, 8 ml of toner is needed. Without distorting the picture, how much toner will be needed to print the same image on a poster that is 25 cm wide? Explain your answer."
 expectations:
-  - ideal: Quantities of width and height of similar rectangles are in a proportional relationship because their values are in the same ratio.
+  - expectation_id: "0"
+    ideal: Quantities of width and height of similar rectangles are in a proportional relationship because their values are in the same ratio.
     features:        
       bad:        
         - not\\040proportional
@@ -15,7 +16,8 @@ expectations:
       good:        
         - proportional|proportionally
         - \\040same|fixed  
-  - ideal: The area of the image determines the amount of toner needed, where the area and toner are in a proportional relationship.
+  - expectation_id: "1"
+    ideal: The area of the image determines the amount of toner needed, where the area and toner are in a proportional relationship.
     features: 
       bad:        
         - not\\040proportional
@@ -25,7 +27,8 @@ expectations:
         - area|dimensions
         - \\040proportional|proportionally
         - \\040same|fixed\\040
-  - ideal: 50 ml of toner is needed for the poster.
+  - expectation_id: "2"
+    ideal: 50 ml of toner is needed for the poster.
     features:
       bad:
       good:
