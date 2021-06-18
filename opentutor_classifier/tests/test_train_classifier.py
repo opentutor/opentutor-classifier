@@ -134,9 +134,9 @@ def _test_train_and_predict(
             ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.80),
-                ExpectationTrainingResult(accuracy=0.80),
-                ExpectationTrainingResult(accuracy=0.80),
+                ExpectationTrainingResult(accuracy=0.94),
+                ExpectationTrainingResult(accuracy=0.96),
+                ExpectationTrainingResult(accuracy=0.95),
             ],
             0.7,
         ),

@@ -324,6 +324,7 @@ ARCH_LR_CLASSIFIER = "opentutor_classifier.lr"
 ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER = "opentutor_classifier.lr_trans_emb_diff"
 ARCH_DEFAULT = ARCH_LR_CLASSIFIER
 
+
 def get_classifier_arch() -> str:
     return environ.get("CLASSIFIER_ARCH") or ARCH_DEFAULT
 
