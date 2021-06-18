@@ -9,7 +9,8 @@ import json
 from os import path
 
 from typing import Dict, List
-
+from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
+from .features import feature_regex_aggregate_disabled
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
@@ -19,6 +20,7 @@ from sklearn.model_selection import LeaveOneOut
 from opentutor_classifier import DataDao
 from opentutor_classifier import (
     ARCH_LR_CLASSIFIER,
+    PROP_TRAIN_QUALITY,
     AnswerClassifierTraining,
     ArchLesson,
     DefaultModelSaveReq,
@@ -28,13 +30,14 @@ from opentutor_classifier import (
     TrainingConfig,
     TrainingInput,
     TrainingResult,
+    ClassifierMode,
 )
+from opentutor_classifier.config import get_train_quality_default
 from opentutor_classifier.log import logger
 
-from .expectations import (
-    preprocess_sentence,
-    LRExpectationClassifier,
-)
+from .constants import FEATURE_LENGTH_RATIO
+from .expectations import LRExpectationClassifier
+from .features import feature_length_ratio_enabled, preprocess_sentence
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
@@ -50,11 +53,16 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
         self.accuracy: Dict[int, int] = {}
         self.word2vec: Word2VecKeyedVectors = None
+        self.train_quality = 1
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
         self.word2vec = find_or_load_word2vec(
             path.join(config.shared_root, "word2vec.bin")
         )
+        self.train_quality = config.properties.get(
+            PROP_TRAIN_QUALITY, get_train_quality_default()
+        )
+
         return self
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
@@ -78,6 +86,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 [],
                 [],
                 clustering,
+                ClassifierMode.TRAIN,
             )
             return features_list
 
@@ -159,20 +168,26 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
-            data, candidates = clustering.generate_feature_candidates(
-                np.array(processed_data)[np.array(train_y) == "good"],
-                np.array(processed_data)[np.array(train_y) == "bad"],
-                self.word2vec,
-                index2word_set,
-                ideal_answer,
-            )
-            pattern = clustering.select_feature_candidates(data, candidates)
-            config_updated.expectations[exp_num].features = dict(
-                good=good,
-                bad=bad,
-                patterns_good=pattern["good"],
-                patterns_bad=pattern["bad"],
-            )
+            pattern: Dict[str, List[str]] = {"good": [], "bad": []}
+            if self.train_quality > 0:
+                data, candidates = clustering.generate_feature_candidates(
+                    np.array(processed_data)[np.array(train_y) == "good"],
+                    np.array(processed_data)[np.array(train_y) == "bad"],
+                    self.train_quality,
+                )
+                pattern = clustering.select_feature_candidates(
+                    data, candidates, train_x, train_y
+                )
+
+            config_updated.expectations[exp_num].features = {
+                "good": good,
+                "bad": bad,
+                "patterns_good": pattern["good"],
+                "patterns_bad": pattern["bad"],
+                FEATURE_LENGTH_RATIO: feature_length_ratio_enabled(),
+                FEATURE_REGEX_AGGREGATE_DISABLED: feature_regex_aggregate_disabled(),
+            }
+
             features = [
                 np.array(
                     LRExpectationClassifier.calculate_features(
@@ -185,6 +200,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         good,
                         bad,
                         clustering,
+                        mode=ClassifierMode.TRAIN,
+                        expectation_config=train_input.config.expectations[exp_num],
                         patterns=pattern["good"] + pattern["bad"],
                     )
                 )

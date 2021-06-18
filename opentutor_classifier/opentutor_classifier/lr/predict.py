@@ -21,13 +21,15 @@ from opentutor_classifier import (
     ExpectationClassifierResult,
     ModelRef,
     QuestionConfig,
+    ClassifierMode,
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier
 from .constants import MODEL_FILE_NAME
 from .clustering_features import CustomAgglomerativeClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
-from .expectations import LRExpectationClassifier, preprocess_sentence
+from .expectations import LRExpectationClassifier
+from .features import preprocess_sentence
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
 
@@ -140,6 +142,8 @@ class LRAnswerClassifier(AnswerClassifier):
                 exp_conf.features.get("good") or [],
                 exp_conf.features.get("bad") or [],
                 clustering,
+                mode=ClassifierMode.PREDICT,
+                expectation_config=conf.expectations[exp.expectation],
                 patterns=exp_conf.features.get("patterns_good", [])
                 + exp_conf.features.get("patterns_bad", [])
                 or [],

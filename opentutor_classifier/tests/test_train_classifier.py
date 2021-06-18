@@ -12,7 +12,6 @@ import responses
 
 from opentutor_classifier import (
     ExpectationTrainingResult,
-    ARCH_SVM_CLASSIFIER,
     ARCH_LR_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
@@ -56,7 +55,6 @@ def test_outputs_models_at_specified_root(
 @pytest.mark.parametrize(
     "arch,expected_model_file_name",
     [
-        (ARCH_SVM_CLASSIFIER, "models_by_expectation_num.pkl"),
         (ARCH_LR_CLASSIFIER, "models_by_expectation_num.pkl"),
     ],
 )
@@ -107,84 +105,13 @@ def _test_train_and_predict(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
         (
-            "question1",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.8),
-                ExpectationTrainingResult(accuracy=0.7),
-                ExpectationTrainingResult(accuracy=0.98),
-            ],
-            0.33,
-        ),
-        (
-            "question2",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [ExpectationTrainingResult(accuracy=0.98)],
-            0.99,
-        ),
-        (
-            "ies-rectangle",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.92),
-                ExpectationTrainingResult(accuracy=0.93),
-                ExpectationTrainingResult(accuracy=0.93),
-            ],
-            0.8,
-        ),
-        (
-            "candles",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.84),
-                ExpectationTrainingResult(accuracy=0.87),
-                ExpectationTrainingResult(accuracy=0.80),
-                ExpectationTrainingResult(accuracy=0.96),
-            ],
-            0.8,
-        ),
-    ],
-)
-def test_train_and_predict(
-    example: str,
-    arch: str,
-    # confidence_threshold for now determines whether an answer
-    # is really classified as GOOD/BAD (confidence >= threshold)
-    # or whether it is interpretted as NEUTRAL (confidence < threshold)
-    confidence_threshold: float,
-    expected_training_result: List[ExpectationTrainingResult],
-    expected_accuracy: float,
-    tmpdir,
-    data_root: str,
-    shared_root: str,
-):
-    _test_train_and_predict(
-        example,
-        arch,
-        confidence_threshold,
-        expected_training_result,
-        expected_accuracy,
-        tmpdir,
-        data_root,
-        shared_root,
-    )
-
-
-@pytest.mark.parametrize(
-    "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
-    [
-        (
             "ies-rectangle",
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
+                ExpectationTrainingResult(accuracy=0.89),
                 ExpectationTrainingResult(accuracy=0.90),
-                ExpectationTrainingResult(accuracy=0.90),
-                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.95),
             ],
             0.85,
         ),
@@ -194,8 +121,8 @@ def test_train_and_predict(
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(accuracy=0.80),
-                ExpectationTrainingResult(accuracy=0.85),
                 ExpectationTrainingResult(accuracy=0.80),
+                ExpectationTrainingResult(accuracy=0.75),
                 ExpectationTrainingResult(accuracy=0.89),
             ],
             0.8,
@@ -257,86 +184,6 @@ def _test_train_and_predict_specific_answers_slow(
             )
 
 
-@pytest.mark.parametrize(
-    "lesson,arch,evaluate_input_list,expected_training_result,expected_evaluate_result",
-    [
-        (
-            "ies-rectangle",
-            ARCH_SVM_CLASSIFIER,
-            [
-                "37 x 40",
-            ],
-            [ExpectationTrainingResult(accuracy=0.90)],
-            [
-                _TestExpectation(evaluation="Good", score=0.80, expectation=2),
-            ],
-        ),
-        # (
-        #     "question3",
-        #     ARCH_SVM_CLASSIFIER,
-        #     ["7 by 10", "38 by 39", "37x40", "12x23", "45 x 67"],
-        #     [ExpectationTrainingResult(accuracy=0.98)],
-        #     [
-        #         _TestExpectation(evaluation="Bad", score=0.95, expectation=0),
-        #         _TestExpectation(evaluation="Bad", score=0.95, expectation=0),
-        #         _TestExpectation(evaluation="Good", score=0.92, expectation=0),
-        #         _TestExpectation(evaluation="Bad", score=0.95, expectation=0),
-        #         _TestExpectation(evaluation="Bad", score=0.95, expectation=0),
-        #     ],
-        # ),
-        # (
-        #     "ies-rectangle",
-        #     ARCH_LR_CLASSIFIER,
-        #     [
-        #         # "5",
-        #         # "It is 3 and 7 and 4 and 0",
-        #         # "30 and 74",
-        #         "37 x 40",
-        #         #"thirty seven by forty",
-        #         "forty by thirty seven",
-        #         # "37 by forty",
-        #         # "thirty-seven by forty",
-        #         # "37.0 by 40.000",
-        #         # "thirty seven by fourty",
-        #     ],
-        #     [ExpectationTrainingResult(accuracy=0.90)],
-        #     [
-        #         # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
-        #         # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
-        #          _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
-        #         #_TestExpectation(evaluation="Good", score=0.80, expectation=2),
-        #         _TestExpectation(evaluation="Good", score=0.80, expectation=2),
-        #         # _TestExpectation(evaluation="Good", score=0.80, expectation=2),
-        #         # _TestExpectation(evaluation="Good", score=0.80, expectation=2),
-        #         # _TestExpectation(evaluation="Good", score=0.80, expectation=2),
-        #         # _TestExpectation(evaluation="Good", score=0.80, expectation=2),
-        #         # _TestExpectation(evaluation="Good", score=0.80, expectation=2),
-        #     ],
-        # ),
-    ],
-)
-def test_train_and_predict_specific_answers(
-    lesson: str,
-    arch: str,
-    evaluate_input_list: List[str],
-    expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_result: List[_TestExpectation],
-    tmpdir,
-    data_root: str,
-    shared_root: str,
-):
-    _test_train_and_predict_specific_answers_slow(
-        lesson,
-        arch,
-        evaluate_input_list,
-        expected_training_result,
-        expected_evaluate_result,
-        tmpdir,
-        data_root,
-        shared_root,
-    )
-
-
 @pytest.mark.slow
 @pytest.mark.parametrize(
     "lesson,arch,evaluate_input_list,expected_training_result,expected_evaluate_result",
@@ -356,7 +203,7 @@ def test_train_and_predict_specific_answers(
                 # "37.0 by 40.000",
                 # "thirty seven by fourty",
             ],
-            [ExpectationTrainingResult(accuracy=0.90)],
+            [ExpectationTrainingResult(accuracy=0.89)],
             [
                 # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
                 # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
@@ -398,7 +245,6 @@ def test_train_and_predict_specific_answers_slow(
 @pytest.mark.parametrize(
     "arch",
     [
-        ARCH_SVM_CLASSIFIER,
         ARCH_LR_CLASSIFIER,
     ],
 )
