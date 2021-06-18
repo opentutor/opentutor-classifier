@@ -36,9 +36,11 @@ def create_app():
     from opentutor_classifier_api.blueprints.evaluate import eval_blueprint
 
     app.register_blueprint(eval_blueprint, url_prefix="/classifier/evaluate")
+
     from opentutor_classifier_api.blueprints.ping import ping_blueprint
 
     app.register_blueprint(ping_blueprint, url_prefix="/classifier/ping")
+
     from opentutor_classifier_api.blueprints.train import train_blueprint
 
     app.register_blueprint(train_blueprint, url_prefix="/classifier/train")
@@ -50,5 +52,9 @@ def create_app():
     app.register_blueprint(
         train_default_blueprint, url_prefix="/classifier/train_default"
     )
+
+    from opentutor_classifier_api.blueprints.healthcheck import healthcheck_blueprint
+
+    app.register_blueprint(healthcheck_blueprint, url_prefix="/classifier/healthcheck")
 
     return app
