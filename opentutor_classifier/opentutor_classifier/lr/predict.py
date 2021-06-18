@@ -28,7 +28,8 @@ from opentutor_classifier.speechact import SpeechActClassifier
 from .constants import MODEL_FILE_NAME
 from .clustering_features import CustomAgglomerativeClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
-from .expectations import LRExpectationClassifier, preprocess_sentence
+from .expectations import LRExpectationClassifier
+from .features import preprocess_sentence
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
 
