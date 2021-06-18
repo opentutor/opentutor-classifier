@@ -31,9 +31,7 @@ def _mock_healthchecks(
             fixture_path(os.path.join("graphql", f"{gql_fixture_name}.json"))
         ) as f:
             data = json.load(f)
-            rsps.add(
-                responses.POST, gql_url, json=data, status=gql_status
-            )
+            rsps.add(responses.POST, gql_url, json=data, status=gql_status)
         rsps.add(responses.HEAD, admin_url, status=admin_status)
         rsps.add(responses.HEAD, home_url, status=home_status)
         rsps.add(responses.HEAD, tutor_url, status=tutor_status)
@@ -89,7 +87,9 @@ def test_503_if_not_healthy(client, message, status):
     "message,status",
     [("pong!", "success")],
 )
-def test_can_override_healthcheck_admin_url(client, message, status, monkeypatch) -> None:
+def test_can_override_healthcheck_admin_url(
+    client, message, status, monkeypatch
+) -> None:
     with _mock_healthchecks("admin_ok", admin_url="http://someadmin", admin_status=418):
         monkeypatch.setenv("HEALTHCHECK_ADMIN", "http://someadmin")
         res = client.get("/classifier/healthcheck/")
@@ -101,7 +101,9 @@ def test_can_override_healthcheck_admin_url(client, message, status, monkeypatch
     "message,status",
     [("pong!", "success")],
 )
-def test_can_override_healthcheck_home_url(client, message, status, monkeypatch) -> None:
+def test_can_override_healthcheck_home_url(
+    client, message, status, monkeypatch
+) -> None:
     with _mock_healthchecks("admin_ok", home_url="http://somehome", home_status=418):
         monkeypatch.setenv("HEALTHCHECK_HOME", "http://somehome")
         res = client.get("/classifier/healthcheck/")
@@ -113,7 +115,9 @@ def test_can_override_healthcheck_home_url(client, message, status, monkeypatch)
     "message,status",
     [("pong!", "success")],
 )
-def test_can_override_healthcheck_tutor_url(client, message, status, monkeypatch) -> None:
+def test_can_override_healthcheck_tutor_url(
+    client, message, status, monkeypatch
+) -> None:
     with _mock_healthchecks("admin_ok", tutor_url="http://sometutor", tutor_status=418):
         monkeypatch.setenv("HEALTHCHECK_TUTOR", "http://sometutor")
         res = client.get("/classifier/healthcheck/")
