@@ -297,6 +297,10 @@ def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
 
 class ArchClassifierFactory(ABC):
     @abstractmethod
+    def has_trained_model(self, lesson: str, config: ClassifierConfig) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
     def new_classifier(self, config: ClassifierConfig) -> AnswerClassifier:
         raise NotImplementedError()
 
@@ -316,11 +320,9 @@ def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
     _factories_by_arch[arch] = fac
 
 
-ARCH_SVM_CLASSIFIER = "opentutor_classifier.svm"
 ARCH_LR_CLASSIFIER = "opentutor_classifier.lr"
 ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER = "opentutor_classifier.lr_trans_emb_diff"
-ARCH_DEFAULT = "opentutor_classifier.svm"
-
+ARCH_DEFAULT = ARCH_LR_CLASSIFIER
 
 def get_classifier_arch() -> str:
     return environ.get("CLASSIFIER_ARCH") or ARCH_DEFAULT
@@ -333,6 +335,9 @@ class ClassifierFactory:
             import_module(arch)
         f = _factories_by_arch[arch]
         return f
+
+    def has_trained_model(self, lesson: str, config: ClassifierConfig, arch="") -> bool:
+        return self._find_arch_fac(arch).has_trained_model(lesson, config)
 
     def new_classifier(self, config: ClassifierConfig, arch="") -> AnswerClassifier:
         return self._find_arch_fac(arch).new_classifier(config)

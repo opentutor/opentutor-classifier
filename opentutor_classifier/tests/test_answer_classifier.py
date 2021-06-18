@@ -11,14 +11,18 @@ import pytest
 import responses
 
 from opentutor_classifier import (
-    ARCH_SVM_CLASSIFIER,
+    get_classifier_arch,
+    AnswerClassifier,
     AnswerClassifierInput,
     ClassifierConfig,
     ClassifierFactory,
     SpeechActClassifierResult,
+    TrainingConfig,
 )
 from opentutor_classifier.config import confidence_threshold_default
 import opentutor_classifier.dao
+from opentutor_classifier.log import logger
+from opentutor_classifier.training import train_data_root
 from opentutor_classifier.utils import dict_to_config
 from .utils import (
     assert_classifier_evaluate,
@@ -36,7 +40,11 @@ CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
 
 @pytest.fixture(scope="module")
 def model_roots() -> List[str]:
-    return [fixture_path("models"), fixture_path("models_deployed")]
+    return [
+        fixture_path("models"),
+        fixture_path("models_deployed"),
+        fixture_path("data"),
+    ]
 
 
 @pytest.fixture(scope="module")
@@ -44,11 +52,40 @@ def shared_root(word2vec) -> str:
     return os.path.dirname(word2vec)
 
 
+def _find_or_train_classifier(
+    lesson: str, model_root: str, data_root: str, shared_root: str, arch=""
+) -> AnswerClassifier:
+    arch = arch or get_classifier_arch()
+    dao = opentutor_classifier.dao.FileDataDao(
+        data_root=data_root, model_root=model_root
+    )
+
+    cfac = ClassifierFactory()
+    cconf = ClassifierConfig(
+        dao=dao,
+        model_name=lesson,
+        model_roots=[model_root],
+        shared_root=shared_root,
+    )
+    if not cfac.has_trained_model(lesson, cconf, arch=arch):
+        example_dir = os.path.join(data_root, lesson)
+        logger.warning(
+            f"trained model not found in fixtures for test lesson {lesson}, attempting to train..."
+        )
+        train_data_root(
+            data_root=example_dir,
+            config=TrainingConfig(shared_root=shared_root),
+            output_dir=model_root,
+            arch=arch,
+        )
+    return cfac.new_classifier(cconf, arch=arch)
+
+
 @pytest.mark.parametrize(
     "lesson,arch,confidence_threshold,expected_accuracy",
     [
-        ("question1", ARCH_SVM_CLASSIFIER, CONFIDENCE_THRESHOLD_DEFAULT, 1.0),
-        ("question2", ARCH_SVM_CLASSIFIER, CONFIDENCE_THRESHOLD_DEFAULT, 1.0),
+        ("question1", "", CONFIDENCE_THRESHOLD_DEFAULT, 0.66),
+        ("question2", "", CONFIDENCE_THRESHOLD_DEFAULT, 1.0),
     ],
 )
 @responses.activate
@@ -87,7 +124,7 @@ def test_evaluate_example(
                 ],
             },
             [
-                _TestExpectation(expectation=0, evaluation="Good", score=0.8),
+                _TestExpectation(expectation=0, evaluation="Good", score=0.65),
                 # # NOTE: this exp is incorrectly getting GOOD with very high confidence
                 # _TestExpectation(
                 #     expectation=1,
@@ -158,83 +195,99 @@ def test_evaluates_for_default_model(
 
 
 @pytest.mark.parametrize(
-    "input_answer,input_expectation_number,config_data,expected_results,expected_sa_results",
+    "lesson, arch, input_answer,input_expectation_number,config_data,expected_results,expected_sa_results",
     [
         (
+            "question1",
+            "",
             "I dont know what you are talking about",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.85, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.55, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
             },
         ),
         (
+            "question1",
+            "",
             "I do not understand",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.87, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.56, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
             },
         ),
         (
+            "question1",
+            "",
             "I believe the answer is peer pressure can change your behavior",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.97, evaluation="Good")],
+            [_TestExpectation(expectation=0, score=0.84, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
             },
         ),
         (
+            "question1",
+            "",
             "Fuck you tutor",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.94, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.62, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
             },
         ),
         (
+            "question1",
+            "",
             "What the hell is that?",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.94, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.63, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
             },
         ),
         (
+            "question1",
+            "",
             "I dont know this shit",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.85, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.55, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
             },
         ),
         (
+            "question1",
+            "",
             "I dont know this shit but I guess the answer is peer pressure can change your behavior",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.97, evaluation="Good")],
+            [_TestExpectation(expectation=0, score=0.87, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
             },
         ),
         (
+            "question1",
+            "",
             "assistant, assistance",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.94, evaluation="Bad")],
+            [_TestExpectation(expectation=0, score=0.63, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -246,21 +299,17 @@ def test_evaluates_for_default_model(
 def test_evaluates_meta_cognitive_sentences(
     model_roots,
     shared_root,
+    lesson: str,
+    arch: str,
     input_answer: str,
     input_expectation_number: int,
     config_data: dict,
     expected_results: List[_TestExpectation],
     expected_sa_results: dict,
 ):
-    lesson = "question1"
     with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
-        classifier = ClassifierFactory().new_classifier(
-            ClassifierConfig(
-                dao=opentutor_classifier.dao.find_data_dao(),
-                model_name=lesson,
-                model_roots=model_roots,
-                shared_root=shared_root,
-            )
+        classifier = _find_or_train_classifier(
+            lesson, model_roots[0], model_roots[2], shared_root, arch=arch
         )
         result = classifier.evaluate(
             AnswerClassifierInput(

@@ -12,7 +12,6 @@ import responses
 
 from opentutor_classifier import (
     ExpectationTrainingResult,
-    ARCH_SVM_CLASSIFIER,
     ARCH_LR_CLASSIFIER,
     ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
 )
@@ -57,7 +56,6 @@ def test_outputs_models_at_specified_root(
 @pytest.mark.parametrize(
     "arch,expected_model_file_name",
     [
-        (ARCH_SVM_CLASSIFIER, "models_by_expectation_num.pkl"),
         (ARCH_LR_CLASSIFIER, "models_by_expectation_num.pkl"),
         (ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER, "models_by_expectation_num.pkl"),
     ],
@@ -103,77 +101,6 @@ def _test_train_and_predict(
             testset,
             expected_accuracy=expected_accuracy,
         )
-
-
-@pytest.mark.parametrize(
-    "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
-    [
-        (
-            "question1",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.8),
-                ExpectationTrainingResult(accuracy=0.7),
-                ExpectationTrainingResult(accuracy=0.98),
-            ],
-            0.33,
-        ),
-        (
-            "question2",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [ExpectationTrainingResult(accuracy=0.98)],
-            0.99,
-        ),
-        (
-            "ies-rectangle",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.92),
-                ExpectationTrainingResult(accuracy=0.93),
-                ExpectationTrainingResult(accuracy=0.93),
-            ],
-            0.8,
-        ),
-        (
-            "candles",
-            ARCH_SVM_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.84),
-                ExpectationTrainingResult(accuracy=0.87),
-                ExpectationTrainingResult(accuracy=0.80),
-                ExpectationTrainingResult(accuracy=0.96),
-            ],
-            0.8,
-        ),
-    ],
-)
-def test_train_and_predict(
-    example: str,
-    arch: str,
-    # confidence_threshold for now determines whether an answer
-    # is really classified as GOOD/BAD (confidence >= threshold)
-    # or whether it is interpretted as NEUTRAL (confidence < threshold)
-    confidence_threshold: float,
-    expected_training_result: List[ExpectationTrainingResult],
-    expected_accuracy: float,
-    tmpdir,
-    data_root: str,
-    shared_root: str,
-):
-    _test_train_and_predict(
-        example,
-        arch,
-        confidence_threshold,
-        expected_training_result,
-        expected_accuracy,
-        tmpdir,
-        data_root,
-        shared_root,
-    )
 
 
 @pytest.mark.parametrize(
@@ -270,44 +197,6 @@ def _test_train_and_predict_specific_answers_slow(
             )
 
 
-@pytest.mark.parametrize(
-    "lesson,arch,evaluate_input_list,expected_training_result,expected_evaluate_result",
-    [
-        (
-            "ies-rectangle",
-            ARCH_SVM_CLASSIFIER,
-            [
-                "37 x 40",
-            ],
-            [ExpectationTrainingResult(accuracy=0.90)],
-            [
-                _TestExpectation(evaluation="Good", score=0.80, expectation=2),
-            ],
-        ),
-    ],
-)
-def test_train_and_predict_specific_answers(
-    lesson: str,
-    arch: str,
-    evaluate_input_list: List[str],
-    expected_training_result: List[ExpectationTrainingResult],
-    expected_evaluate_result: List[_TestExpectation],
-    tmpdir,
-    data_root: str,
-    shared_root: str,
-):
-    _test_train_and_predict_specific_answers_slow(
-        lesson,
-        arch,
-        evaluate_input_list,
-        expected_training_result,
-        expected_evaluate_result,
-        tmpdir,
-        data_root,
-        shared_root,
-    )
-
-
 @pytest.mark.slow
 @pytest.mark.parametrize(
     "lesson,arch,evaluate_input_list,expected_training_result,expected_evaluate_result",
@@ -369,7 +258,6 @@ def test_train_and_predict_specific_answers_slow(
 @pytest.mark.parametrize(
     "arch",
     [
-        ARCH_SVM_CLASSIFIER,
         ARCH_LR_CLASSIFIER,
     ],
 )

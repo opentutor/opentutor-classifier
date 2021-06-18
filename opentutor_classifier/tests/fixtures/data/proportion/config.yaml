@@ -4,23 +4,13 @@
 ##
 ## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 ##
-question: What are the challenges to demonstrating integrity in a group?
+question: "This is a question?"
 expectations:
-  - ideal: peer pressure can cause you to allow inappropriate behavior
+  - ideal: it will be consistent and proportional
     features:
       bad:
-        - \brule\w*\b.*\bdiffer\w*\b
+        - incongruous
+        - disproportionate
       good:
-        - \b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b
-  - ideal: you may get them in trouble
-    features:
-      bad:
-        - \b(lov\w*|lik\w*|car)\b
-      good:
-        - \b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b
-  - ideal: enforcing the rule can make you unpopular
-    features:
-      bad:
-        - \b(super\w*|bette\w*)\b
-      good:
-        - \b(unpop\w*|hate\w*|unlik\w*|not\040popular)\b
+        - proportional
+        - consistent
