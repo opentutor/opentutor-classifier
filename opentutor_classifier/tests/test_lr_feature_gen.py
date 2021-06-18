@@ -8,7 +8,7 @@ from os import path
 
 import pytest
 
-from opentutor_classifier.lr.expectations import preprocess_sentence
+from opentutor_classifier.lr.features import preprocess_sentence
 from opentutor_classifier.lr.clustering_features import CustomAgglomerativeClustering
 
 from typing import List, Tuple
@@ -75,5 +75,52 @@ def test_unit_deduplication(
 ):
     patterns = CustomAgglomerativeClustering.deduplicate_patterns(
         input_patterns_with_fpr, cuttoff_fpr
+    )
+    assert patterns == expected_patterns, f"Expected {expected_patterns} got {patterns}"
+
+
+@pytest.mark.parametrize(
+    "patterns, input_x, input_y, n, expected_patterns",
+    [
+        (
+            ["37 + 40", "37", "sides + closer", "1 + ratio", "difference + length"],
+            [
+                "37 by 40 is the answer",
+                "37 x 40 rectangele looks more like square",
+                "rectangle with sides length closer to each other",
+                "more difference in sides length make it look like a square",
+                "rectangle with sides ratio close to 1 looks like a square",
+                "if difference in sides length is less then it is a square",
+                "lesser difference in side length make it a square",
+                "37 x 40 does not look like a square",
+                "the one with bigger sides",
+                "37 feet by 40 feet",
+            ],
+            [
+                "good",
+                "good",
+                "good",
+                "bad",
+                "good",
+                "good",
+                "good",
+                "bad",
+                "bad",
+                "good",
+            ],
+            4,
+            ["37 + 40", "37", "sides + closer", "1 + ratio"],
+        )
+    ],
+)
+def test_univariate_selection(
+    patterns: List[str],
+    input_x: List[str],
+    input_y: List[str],
+    n: int,
+    expected_patterns: List[str],
+):
+    patterns = CustomAgglomerativeClustering.univariate_feature_selection(
+        patterns, input_x, input_y, n
     )
     assert patterns == expected_patterns, f"Expected {expected_patterns} got {patterns}"

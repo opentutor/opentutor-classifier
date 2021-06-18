@@ -36,11 +36,8 @@ from opentutor_classifier.config import get_train_quality_default
 from opentutor_classifier.log import logger
 
 from .constants import FEATURE_LENGTH_RATIO
-from .expectations import (
-    preprocess_sentence,
-    LRExpectationClassifier,
-)
-from .features import feature_length_ratio_enabled
+from .expectations import LRExpectationClassifier
+from .features import feature_length_ratio_enabled, preprocess_sentence
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
@@ -179,7 +176,9 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                     np.array(processed_data)[np.array(train_y) == "bad"],
                     self.train_quality,
                 )
-                pattern = clustering.select_feature_candidates(data, candidates)
+                pattern = clustering.select_feature_candidates(
+                    data, candidates, train_x, train_y
+                )
 
             config_updated.get_expectation(exp_num).features = {
                 "good": good,
