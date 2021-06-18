@@ -9,7 +9,10 @@ from text_to_num import alpha2digit
 from opentutor_classifier import ClassifierMode, ExpectationConfig
 from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
 from . import features
+
 from opentutor_classifier.utils import prop_bool
+from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
+from . import features
 from .clustering_features import CustomAgglomerativeClustering
 from .constants import FEATURE_LENGTH_RATIO
 
@@ -75,7 +78,7 @@ class LRExpectationClassifier:
         elif mode == ClassifierMode.PREDICT:
             if not expectation_config:
                 raise Exception("predict mode must pass in ExpectationConfig")
-            if expectation_config.features[FEATURE_LENGTH_RATIO]:
+            if prop_bool(FEATURE_LENGTH_RATIO, expectation_config.features):
                 feat.append(features.length_ratio_feature(example, ideal))
             if prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, expectation_config.features):
                 feat = feat + regex_good + regex_bad

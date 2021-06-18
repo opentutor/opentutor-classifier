@@ -56,7 +56,7 @@ def test_returns_400_response_when_input_not_set(client):
             -1,
             [
                 ExpectationClassifierResult(
-                    expectation=0, evaluation="Good", score=1.0
+                    expectation=0, evaluation="Good", score=0.62
                 ),
             ],
         )
@@ -104,7 +104,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
             "peer pressure can change your behavior",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.99, evaluation="Good")],
+            [ExpectationClassifierResult(expectation=0, score=0.84, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -117,13 +117,13 @@ def test_evaluate_uses_default_model_when_question_untrained(
             {},
             [
                 ExpectationClassifierResult(
-                    expectation=0, score=0.99, evaluation="Good"
+                    expectation=0, score=0.84, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=1, score=0.50, evaluation="Bad"
+                    expectation=1, score=0.56, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation=2, score=0.57, evaluation="Bad"
+                    expectation=2, score=0.62, evaluation="Bad"
                 ),
             ],
             {
@@ -136,7 +136,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
             "I dont know what you are talking about",
             0,
             {},
-            [ExpectationClassifierResult(expectation=0, score=0.86, evaluation="Bad")],
+            [ExpectationClassifierResult(expectation=0, score=0.55, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),

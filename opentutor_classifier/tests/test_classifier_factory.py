@@ -7,20 +7,17 @@
 import pytest
 
 from opentutor_classifier import (
-    ARCH_SVM_CLASSIFIER,
     ARCH_LR_CLASSIFIER,
     ClassifierFactory,
     ClassifierConfig,
 )
 import opentutor_classifier.dao
 from opentutor_classifier.lr import LRAnswerClassifier
-from opentutor_classifier.svm import SVMAnswerClassifier
 
 
 @pytest.mark.parametrize(
     "arch,expected_classifier_type",
     [
-        (ARCH_SVM_CLASSIFIER, SVMAnswerClassifier),
         (ARCH_LR_CLASSIFIER, LRAnswerClassifier),
     ],
 )
