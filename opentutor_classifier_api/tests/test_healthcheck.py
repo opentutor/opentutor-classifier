@@ -41,21 +41,13 @@ def _mock_healthchecks(
         rsps.stop()
 
 
-@pytest.mark.parametrize(
-    "message,status",
-    [("pong!", "success")],
-)
-def test_healthcheck_returns_all_statuses(client, message, status):
+def test_healthcheck_returns_all_statuses(client):
     with _mock_healthchecks("admin_ok"):
         res = client.get("/classifier/healthcheck/")
         assert len(res.json.get("services")) == 5
 
 
-@pytest.mark.parametrize(
-    "message,status",
-    [("pong!", "success")],
-)
-def test_200_if_all_healthy(client, message, status):
+def test_200_if_all_healthy(client):
     with _mock_healthchecks("admin_ok"):
         res = client.get("/classifier/healthcheck/")
         assert res.json["services"]["graphql"]["status"] == 200
@@ -66,11 +58,7 @@ def test_200_if_all_healthy(client, message, status):
         assert res.status_code == 200
 
 
-@pytest.mark.parametrize(
-    "message,status",
-    [("pong!", "success")],
-)
-def test_503_if_not_healthy(client, message, status):
+def test_503_if_not_healthy(client):
     with _mock_healthchecks(
         "admin_bad", gql_status=404, admin_status=400, home_status=500, tutor_status=502
     ):
@@ -83,13 +71,7 @@ def test_503_if_not_healthy(client, message, status):
         assert res.status_code == 503
 
 
-@pytest.mark.parametrize(
-    "message,status",
-    [("pong!", "success")],
-)
-def test_can_override_healthcheck_admin_url(
-    client, message, status, monkeypatch
-) -> None:
+def test_can_override_healthcheck_admin_url(client, monkeypatch) -> None:
     with _mock_healthchecks("admin_ok", admin_url="http://someadmin", admin_status=418):
         monkeypatch.setenv("HEALTHCHECK_ADMIN", "http://someadmin")
         res = client.get("/classifier/healthcheck/")
@@ -97,13 +79,7 @@ def test_can_override_healthcheck_admin_url(
         assert res.status_code == 503
 
 
-@pytest.mark.parametrize(
-    "message,status",
-    [("pong!", "success")],
-)
-def test_can_override_healthcheck_home_url(
-    client, message, status, monkeypatch
-) -> None:
+def test_can_override_healthcheck_home_url(client, monkeypatch) -> None:
     with _mock_healthchecks("admin_ok", home_url="http://somehome", home_status=418):
         monkeypatch.setenv("HEALTHCHECK_HOME", "http://somehome")
         res = client.get("/classifier/healthcheck/")
@@ -111,13 +87,7 @@ def test_can_override_healthcheck_home_url(
         assert res.status_code == 503
 
 
-@pytest.mark.parametrize(
-    "message,status",
-    [("pong!", "success")],
-)
-def test_can_override_healthcheck_tutor_url(
-    client, message, status, monkeypatch
-) -> None:
+def test_can_override_healthcheck_tutor_url(client, monkeypatch) -> None:
     with _mock_healthchecks("admin_ok", tutor_url="http://sometutor", tutor_status=418):
         monkeypatch.setenv("HEALTHCHECK_TUTOR", "http://sometutor")
         res = client.get("/classifier/healthcheck/")
