@@ -11,7 +11,12 @@ from typing import List, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
+from nltk import pos_tag
+from nltk.tokenize import word_tokenize
 from scipy import spatial
+
+from opentutor_classifier.stopwords import STOPWORDS
+from text_to_num import alpha2digit
 
 from opentutor_classifier.utils import prop_bool
 from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
@@ -19,6 +24,52 @@ from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
 
 def feature_regex_aggregate_disabled() -> bool:
     return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
+
+
+word_mapper = {
+    "n't": "not",
+}
+
+
+def preprocess_punctuations(sentence: str) -> str:
+    sentence = re.sub(r"[\-=]", " ", sentence)
+    sentence = re.sub(r"[%]", " percent ", sentence)
+    sentence = re.sub("n't", " not", sentence)
+    sentence = re.sub(r"[()~!^,?.\'$]", "", sentence)
+    return sentence
+
+
+def preprocess_sentence(sentence: str) -> List[str]:
+    sentence = preprocess_punctuations(sentence.lower())
+    sentence = alpha2digit(sentence, "en")
+    word_tokens_groups: List[str] = [
+        word_tokenize(entry)
+        for entry in ([sentence] if isinstance(sentence, str) else sentence)
+    ]
+    result_words = []
+    for entry in word_tokens_groups:
+        for word, _ in pos_tag(entry):
+            if word not in STOPWORDS:
+                result_words.append(word)
+    return [word_mapper.get(word, word) for word in result_words]
+
+
+def check_is_pattern_match(sentence: str, pattern: str) -> int:
+    words = preprocess_sentence(sentence)  # sentence should be preprocessed
+    keywords = pattern.split("+")
+    is_there = True
+    for keyword in keywords:
+        keyword = keyword.strip()
+        if keyword == "[NEG]" and number_of_negatives(words)[0] == 0:
+            is_there = False
+            break
+        elif keyword != "[NEG]" and keyword not in words:
+            is_there = False
+            break
+    if is_there:
+        return 1
+    else:
+        return 0
 
 
 def feature_length_ratio_enabled() -> bool:

@@ -5,14 +5,18 @@ from typing import Dict, List, Tuple
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
+
 from scipy.optimize import linear_sum_assignment
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.metrics.pairwise import pairwise_distances
 
+from text_to_num import alpha2digit
 
 from .features import (
     number_of_negatives,
     word2vec_example_similarity,
+    check_is_pattern_match,
 )
 
 CLUSTERS_MIN = 1
@@ -210,7 +214,7 @@ class CustomAgglomerativeClustering:
     def deduplicate_patterns(
         patterns_with_fpr: List[Tuple[str, float]],
         fpr_cuttoff: float,
-        top_n=15,
+        top_n=20,
     ) -> List[str]:
         fpr_store: Dict[str, float] = dict()
         features: List[Tuple[float, str]] = []
@@ -233,11 +237,35 @@ class CustomAgglomerativeClustering:
         return top_features
 
     @staticmethod
+    def univariate_feature_selection(
+        patterns: List[str], input_x: List[str], input_y: List[str], n: int = 10
+    ) -> List[str]:
+        if len(patterns) <= n:
+            return patterns
+        train_x: List[List[int]] = []
+        train_y: List[int] = [1 * (x == "good") for x in input_y]
+
+        for raw_example in input_x:
+            raw_example = alpha2digit(raw_example, "en")
+            feat: List[int] = []
+            for pattern in patterns:
+                feat.append(check_is_pattern_match(raw_example, pattern))
+            train_x.append(feat)
+
+        skb = SelectKBest(chi2, k=min(n, len(patterns)))
+        skb.fit(train_x, train_y)
+        masks: List[bool] = skb.get_support()
+        return [pattern for mask, pattern in zip(masks, patterns) if mask]
+
+    @staticmethod
     def select_feature_candidates(
         data: pd.DataFrame,
         candidates: Dict[str, List[str]],
+        input_x: List[str],
+        input_y: List[str],
         fpr_cuttoff: float = 0.98,
     ) -> Dict[str, List[str]]:
+
         useful_features: Dict[str, List[str]] = dict()
         for label in ("good", "bad"):
             good, bad, patterns = [], [], []
@@ -257,6 +285,11 @@ class CustomAgglomerativeClustering:
             # ignores bigger pattern if indivudal words in pattern have higher (1-fpr)
             useful_features[label] = CustomAgglomerativeClustering.deduplicate_patterns(
                 patterns_with_fpr, fpr_cuttoff
+            )
+            useful_features[
+                label
+            ] = CustomAgglomerativeClustering.univariate_feature_selection(
+                useful_features[label], input_x, input_y
             )
 
         return useful_features
