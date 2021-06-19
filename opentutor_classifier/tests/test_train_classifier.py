@@ -14,6 +14,7 @@ from opentutor_classifier import (
     ExpectationTrainingResult,
     ARCH_LR_CLASSIFIER,
     ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+    ARCH_LR_TRANS_EMB_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
 from .utils import (
@@ -58,6 +59,7 @@ def test_outputs_models_at_specified_root(
     [
         (ARCH_LR_CLASSIFIER, "models_by_expectation_num.pkl"),
         (ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER, "models_by_expectation_num.pkl"),
+        (ARCH_LR_TRANS_EMB_CLASSIFIER, "models_by_expectation_num.pkl"),
     ],
 )
 def test_outputs_models_at_specified_model_root_for_default_model(
@@ -139,6 +141,17 @@ def _test_train_and_predict(
                 ExpectationTrainingResult(accuracy=0.95),
             ],
             0.7,
+        ),
+        (
+            "ies-rectangle",
+            ARCH_LR_TRANS_EMB_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.89),
+                ExpectationTrainingResult(accuracy=0.92),
+                ExpectationTrainingResult(accuracy=0.95),
+            ],
+            0.8,
         ),
     ],
 )

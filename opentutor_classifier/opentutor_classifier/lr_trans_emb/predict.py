@@ -4,14 +4,18 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from opentutor_classifier.utils import model_last_updated_at
+from os import path
 from typing import Dict, List, Optional, Tuple
 
+from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
-from os import path
 from sklearn import linear_model
+from sentence_transformers import SentenceTransformer
+
 
 from opentutor_classifier import (
-    ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+    ARCH_LR_TRANS_EMB_CLASSIFIER,
     AnswerClassifier,
     AnswerClassifierInput,
     AnswerClassifierResult,
@@ -19,14 +23,15 @@ from opentutor_classifier import (
     ExpectationClassifierResult,
     ModelRef,
     QuestionConfig,
+    ClassifierMode,
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier
-from opentutor_classifier.utils import model_last_updated_at
 from .constants import MODEL_FILE_NAME
+from .clustering_features import CustomAgglomerativeClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
-from .expectations import LRExpectationClassifier
-from .features import preprocess_sentence
+from .expectations import LRExpectationClassifier, preprocess_sentence
+from opentutor_classifier.word2vec import find_or_load_word2vec
 from opentutor_classifier.sentence_transformer import find_or_load_sentence_transformer
 
 
@@ -41,11 +46,11 @@ ModelAndConfig = Tuple[Dict[int, linear_model.LogisticRegression], QuestionConfi
 
 class LRAnswerClassifier(AnswerClassifier):
     def __init__(self):
-        self.sentence_transformer = None
+        self._word2vec = None
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
         self._model_and_config: ModelAndConfig = None
-        self.exp_ideal_answer = dict()
+        self.sentence_transformer: SentenceTransformer = None
 
     def configure(
         self,
@@ -62,7 +67,7 @@ class LRAnswerClassifier(AnswerClassifier):
         if not self._model_and_config:
             cm = find_predicton_config_and_pickle(
                 ModelRef(
-                    arch=ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+                    arch=ARCH_LR_TRANS_EMB_CLASSIFIER,
                     lesson=self.model_name,
                     filename=MODEL_FILE_NAME,
                 ),
@@ -87,6 +92,13 @@ class LRAnswerClassifier(AnswerClassifier):
         self.sentence_transformer = find_or_load_sentence_transformer(
             path.join(self.shared_root, "..", "sentence-transformer")
         )
+
+    def find_word2vec(self) -> Word2VecKeyedVectors:
+        if not self._word2vec:
+            self._word2vec = find_or_load_word2vec(
+                path.join(self.shared_root, "word2vec.bin")
+            )
+        return self._word2vec
 
     def find_score_and_class(
         self, classifier, exp_num_i: int, sent_features: np.ndarray
@@ -116,29 +128,34 @@ class LRAnswerClassifier(AnswerClassifier):
             )
         ]
         result = AnswerClassifierResult(input=answer, expectation_results=[])
+        word2vec = self.find_word2vec()
+        index2word = set(word2vec.index_to_key)
         result.speech_acts[
             "metacognitive"
         ] = self.speech_act_classifier.check_meta_cognitive(result)
         result.speech_acts["profanity"] = self.speech_act_classifier.check_profanity(
             result
         )
-
+        question_proc = preprocess_sentence(conf.question)
         self.find_sentence_transformer()
-
+        clustering = CustomAgglomerativeClustering(self.sentence_transformer)
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
-
-            if exp.expectation not in self.exp_ideal_answer:
-                self.exp_ideal_answer[
-                    exp.expectation
-                ] = LRExpectationClassifier.initialize_ideal_answer(
-                    [preprocess_sentence(exp_conf.ideal)], self.sentence_transformer
-                )
-
             sent_features = LRExpectationClassifier.calculate_features(
+                question_proc,
+                answer.input_sentence,
                 sent_proc,
-                self.exp_ideal_answer[exp.expectation],
-                self.sentence_transformer,
+                preprocess_sentence(exp_conf.ideal),
+                word2vec,
+                index2word,
+                exp_conf.features.get("good") or [],
+                exp_conf.features.get("bad") or [],
+                clustering,
+                mode=ClassifierMode.PREDICT,
+                expectation_config=conf.expectations[exp.expectation],
+                patterns=exp_conf.features.get("patterns_good", [])
+                + exp_conf.features.get("patterns_bad", [])
+                or [],
             )
             result.expectation_results.append(
                 self.find_score_and_class(
@@ -149,7 +166,7 @@ class LRAnswerClassifier(AnswerClassifier):
 
     def get_last_trained_at(self) -> float:
         return model_last_updated_at(
-            ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+            ARCH_LR_TRANS_EMB_CLASSIFIER,
             self.model_name,
             self.model_roots,
             MODEL_FILE_NAME,

@@ -9,7 +9,9 @@ import json
 from os import path
 
 from typing import Dict, List
-
+from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
+from .features import feature_regex_aggregate_disabled
+from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
 from sklearn import model_selection, linear_model
@@ -18,7 +20,8 @@ from sentence_transformers import SentenceTransformer
 
 from opentutor_classifier import DataDao
 from opentutor_classifier import (
-    ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+    ARCH_LR_TRANS_EMB_CLASSIFIER,
+    PROP_TRAIN_QUALITY,
     AnswerClassifierTraining,
     ArchLesson,
     DefaultModelSaveReq,
@@ -28,15 +31,23 @@ from opentutor_classifier import (
     TrainingConfig,
     TrainingInput,
     TrainingResult,
+    ClassifierMode,
 )
+from opentutor_classifier.config import get_train_quality_default
 from opentutor_classifier.log import logger
-from .expectations import LRExpectationClassifier
 
-from .features import (
+from .constants import FEATURE_LENGTH_RATIO
+from .expectations import (
     preprocess_sentence,
+    LRExpectationClassifier,
 )
+from .features import feature_length_ratio_enabled
 
+from opentutor_classifier.word2vec import find_or_load_word2vec
 from opentutor_classifier.sentence_transformer import find_or_load_sentence_transformer
+
+
+from .clustering_features import CustomAgglomerativeClustering
 
 
 def _preprocess_trainx(data: List[str]) -> List[List[str]]:
@@ -47,31 +58,53 @@ def _preprocess_trainx(data: List[str]) -> List[List[str]]:
 class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
         self.accuracy: Dict[int, int] = {}
+        self.word2vec: Word2VecKeyedVectors = None
         self.sentence_transformer: SentenceTransformer = None
+        self.train_quality = 1
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
+        self.word2vec = find_or_load_word2vec(
+            path.join(config.shared_root, "word2vec.bin")
+        )
         self.sentence_transformer = find_or_load_sentence_transformer(
             path.join(config.shared_root, "..", "sentence-transformer")
         )
+        self.train_quality = config.properties.get(
+            PROP_TRAIN_QUALITY, get_train_quality_default()
+        )
+
         return self
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         model = LRExpectationClassifier.initialize_model()
+        index2word_set = set(self.word2vec.index_to_key)
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
+        clustering = CustomAgglomerativeClustering(self.sentence_transformer)
 
-        def process_features(features, input_sentence):
+        def process_features(features, input_sentence, index2word_set):
+            processed_input_sentence = preprocess_sentence(input_sentence)
+            processed_question = preprocess_sentence(features["question"])
             processed_ia = preprocess_sentence(features["ideal"])
 
             features_list = LRExpectationClassifier.calculate_features(
+                processed_question,
                 input_sentence,
+                processed_input_sentence,
                 processed_ia,
-                self.sentence_transformer,
+                self.word2vec,
+                index2word_set,
+                [],
+                [],
+                clustering,
+                ClassifierMode.TRAIN,
             )
             return features_list
 
         all_features = list(
             data.apply(
-                lambda row: process_features(json.loads(row["exp_data"]), row["text"]),
+                lambda row: process_features(
+                    json.loads(row["exp_data"]), row["text"], index2word_set
+                ),
                 axis=1,
             )
         )
@@ -84,14 +117,13 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         expectation_models[data["exp_num"].iloc[0]] = model
         dao.save_default_pickle(
             DefaultModelSaveReq(
-                arch=ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+                arch=ARCH_LR_TRANS_EMB_CLASSIFIER,
                 filename="models_by_expectation_num.pkl",
                 model=expectation_models,
             )
         )
         return dao.create_default_training_result(
-            ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
-            ExpectationTrainingResult(accuracy=accuracy),
+            ARCH_LR_TRANS_EMB_CLASSIFIER, ExpectationTrainingResult(accuracy=accuracy)
         )
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
@@ -122,6 +154,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 str(train_data["text"][i]).lower().strip()
             )
             split_training_sets[exp_num][1].append(label)
+        index2word_set: set = set(self.word2vec.index_to_key)
+        clustering = CustomAgglomerativeClustering(self.sentence_transformer)
         config_updated = train_input.config.clone()
         expectation_results: List[ExpectationTrainingResult] = []
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
@@ -137,28 +171,49 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             train_x.append(supergoodanswer)
             train_y.append("good")
             processed_data = _preprocess_trainx(train_x)
+            processed_question = preprocess_sentence(question)
             ideal_answer = LRExpectationClassifier.initialize_ideal_answer(
-                processed_data, self.sentence_transformer
+                processed_data
             )
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
-            config_updated.expectations[exp_num].features = dict(
-                good=good,
-                bad=bad,
-                # pattern["good"],
-                # pattern["bad"],
-            )
+            pattern: Dict[str, List[str]] = {"good": [], "bad": []}
+            if self.train_quality > 0:
+                data, candidates = clustering.generate_feature_candidates(
+                    np.array(processed_data)[np.array(train_y) == "good"],
+                    np.array(processed_data)[np.array(train_y) == "bad"],
+                    self.train_quality,
+                )
+                pattern = clustering.select_feature_candidates(data, candidates)
+
+            config_updated.expectations[exp_num].features = {
+                "good": good,
+                "bad": bad,
+                "patterns_good": pattern["good"],
+                "patterns_bad": pattern["bad"],
+                FEATURE_LENGTH_RATIO: feature_length_ratio_enabled(),
+                FEATURE_REGEX_AGGREGATE_DISABLED: feature_regex_aggregate_disabled(),
+            }
 
             features = [
                 np.array(
                     LRExpectationClassifier.calculate_features(
+                        processed_question,
+                        raw_example,
                         example,
                         ideal_answer,
-                        self.sentence_transformer,
+                        self.word2vec,
+                        index2word_set,
+                        good,
+                        bad,
+                        clustering,
+                        mode=ClassifierMode.TRAIN,
+                        expectation_config=train_input.config.expectations[exp_num],
+                        patterns=pattern["good"] + pattern["bad"],
                     )
                 )
-                for _, example in zip(train_x, processed_data)
+                for raw_example, example in zip(train_x, processed_data)
             ]
             train_y = np.array(LRExpectationClassifier.encode_y(train_y))
             model = LRExpectationClassifier.initialize_model()
@@ -170,10 +225,9 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 ExpectationTrainingResult(accuracy=results_loocv.mean())
             )
             expectation_models[exp_num] = model
-
         dao.save_pickle(
             ModelSaveReq(
-                arch=ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+                arch=ARCH_LR_TRANS_EMB_CLASSIFIER,
                 lesson=train_input.lesson,
                 filename="models_by_expectation_num.pkl",
                 model=expectation_models,
@@ -181,7 +235,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         )
         dao.save_config(
             QuestionConfigSaveReq(
-                arch=ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+                arch=ARCH_LR_TRANS_EMB_CLASSIFIER,
                 lesson=train_input.lesson,
                 config=config_updated,
             )
@@ -190,8 +244,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             expectations=expectation_results,
             lesson=train_input.lesson,
             models=dao.get_model_root(
-                ArchLesson(
-                    arch=ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER, lesson=train_input.lesson
-                )
+                ArchLesson(arch=ARCH_LR_TRANS_EMB_CLASSIFIER, lesson=train_input.lesson)
             ),
         )

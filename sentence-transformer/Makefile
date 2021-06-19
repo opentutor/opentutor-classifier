@@ -22,3 +22,4 @@ virtualenv-installed:
 
 sentence_transformer: $(VENV)
 	. $(VENV)/bin/activate && python transformer_download.py
+	
