@@ -1,5 +1,6 @@
 from collections import defaultdict
 from typing import List
+from os import environ
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from sklearn import model_selection, linear_model
@@ -7,12 +8,20 @@ from sklearn.preprocessing import LabelEncoder
 from text_to_num import alpha2digit
 
 from opentutor_classifier import ClassifierMode, ExpectationConfig
-from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
 from . import features
 
 from opentutor_classifier.utils import prop_bool
 from .clustering_features import CustomAgglomerativeClustering
-from .constants import FEATURE_LENGTH_RATIO
+from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
+
+
+def feature_regex_aggregate_disabled() -> bool:
+    return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
+
+
+def feature_length_ratio_enabled() -> bool:
+    enabled = environ.get(FEATURE_LENGTH_RATIO, "")
+    return enabled == "1" or enabled.lower() == "true"
 
 
 class LRExpectationClassifier:
@@ -66,9 +75,9 @@ class LRExpectationClassifier:
             ),
         ]
         if mode == ClassifierMode.TRAIN:
-            if features.feature_length_ratio_enabled():
+            if feature_length_ratio_enabled():
                 feat.append(features.length_ratio_feature(example, ideal))
-            if features.feature_regex_aggregate_disabled():
+            if feature_regex_aggregate_disabled():
                 feat = feat + regex_good + regex_bad
             else:
                 feat.append(features.regex_match_ratio(raw_example, good))

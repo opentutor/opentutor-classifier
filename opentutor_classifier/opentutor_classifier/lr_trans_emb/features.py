@@ -5,26 +5,12 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import math
-from os import environ
 import re
 from typing import List, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 from scipy import spatial
-
-from opentutor_classifier.utils import prop_bool
-from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
-
-
-def feature_regex_aggregate_disabled() -> bool:
-    return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
-
-
-def feature_length_ratio_enabled() -> bool:
-    enabled = environ.get(FEATURE_LENGTH_RATIO, "")
-    return enabled == "1" or enabled.lower() == "true"
-
 
 def _avg_feature_vector(
     words: List[str],
@@ -41,7 +27,6 @@ def _avg_feature_vector(
     if nwords > 0:
         feature_vec = np.divide(feature_vec, nwords)
     return feature_vec
-
 
 def _calculate_similarity(a: float, b: float) -> float:
     similarity = 1 - spatial.distance.cosine(a, b)

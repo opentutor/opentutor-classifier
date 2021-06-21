@@ -18,14 +18,6 @@ from scipy import spatial
 from opentutor_classifier.stopwords import STOPWORDS
 from text_to_num import alpha2digit
 
-from opentutor_classifier.utils import prop_bool
-from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
-
-
-def feature_regex_aggregate_disabled() -> bool:
-    return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
-
-
 word_mapper = {
     "n't": "not",
 }

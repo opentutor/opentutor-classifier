@@ -6,11 +6,9 @@
 #
 from collections import defaultdict
 import json
-from os import path
+from os import path, environ
 
 from typing import Dict, List
-from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
-from .features import feature_regex_aggregate_disabled
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
@@ -34,19 +32,29 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.config import get_train_quality_default
 from opentutor_classifier.log import logger
+from opentutor_classifier.utils import prop_bool
 
-from .constants import FEATURE_LENGTH_RATIO
+
 from .expectations import LRExpectationClassifier
-from .features import feature_length_ratio_enabled, preprocess_sentence
+from .features import preprocess_sentence
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
 from .clustering_features import CustomAgglomerativeClustering
+from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
 
 
 def _preprocess_trainx(data: List[str]) -> List[List[str]]:
     pre_processed_dataset = [preprocess_sentence(entry) for entry in data]
     return np.array(pre_processed_dataset)
+
+def feature_regex_aggregate_disabled() -> bool:
+    return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
+
+
+def feature_length_ratio_enabled() -> bool:
+    enabled = environ.get(FEATURE_LENGTH_RATIO, "")
+    return enabled == "1" or enabled.lower() == "true"
 
 
 class LRAnswerClassifierTraining(AnswerClassifierTraining):
