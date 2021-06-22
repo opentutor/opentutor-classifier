@@ -48,6 +48,7 @@ def _preprocess_trainx(data: List[str]) -> List[List[str]]:
     pre_processed_dataset = [preprocess_sentence(entry) for entry in data]
     return np.array(pre_processed_dataset)
 
+
 def feature_regex_aggregate_disabled() -> bool:
     return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
 

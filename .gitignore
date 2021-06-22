@@ -23,4 +23,4 @@ docker-test-train-out
 htmlcov
 htmlcov
 models
-sentence-transformer/bert-base-nli-mean-tokens/*
+sentence-transformer/bert-base*

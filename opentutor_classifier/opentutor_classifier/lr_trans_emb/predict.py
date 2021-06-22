@@ -11,8 +11,6 @@ from typing import Dict, List, Optional, Tuple
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 from sklearn import linear_model
-from sentence_transformers import SentenceTransformer
-
 
 from opentutor_classifier import (
     ARCH_LR_TRANS_EMB_CLASSIFIER,
@@ -30,7 +28,8 @@ from opentutor_classifier.speechact import SpeechActClassifier
 from .constants import MODEL_FILE_NAME
 from .clustering_features import CustomAgglomerativeClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
-from .expectations import LRExpectationClassifier, preprocess_sentence
+from .expectations import LRExpectationClassifier
+from .features import preprocess_sentence, FeatureGenerator
 from opentutor_classifier.word2vec import find_or_load_word2vec
 from opentutor_classifier.sentence_transformer import find_or_load_sentence_transformer
 
@@ -47,10 +46,10 @@ ModelAndConfig = Tuple[Dict[int, linear_model.LogisticRegression], QuestionConfi
 class LRAnswerClassifier(AnswerClassifier):
     def __init__(self):
         self._word2vec = None
+        self.sentence_transformer = None
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
         self._model_and_config: ModelAndConfig = None
-        self.sentence_transformer: SentenceTransformer = None
 
     def configure(
         self,
@@ -136,9 +135,12 @@ class LRAnswerClassifier(AnswerClassifier):
         result.speech_acts["profanity"] = self.speech_act_classifier.check_profanity(
             result
         )
-        question_proc = preprocess_sentence(conf.question)
         self.find_sentence_transformer()
-        clustering = CustomAgglomerativeClustering(self.sentence_transformer)
+        question_proc = preprocess_sentence(conf.question)
+        feature_generator = FeatureGenerator()
+        clustering = CustomAgglomerativeClustering(
+            word2vec, index2word, self.sentence_transformer, feature_generator
+        )
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
             sent_features = LRExpectationClassifier.calculate_features(
@@ -148,6 +150,8 @@ class LRAnswerClassifier(AnswerClassifier):
                 preprocess_sentence(exp_conf.ideal),
                 word2vec,
                 index2word,
+                self.sentence_transformer,
+                feature_generator,
                 exp_conf.features.get("good") or [],
                 exp_conf.features.get("bad") or [],
                 clustering,

@@ -2,16 +2,22 @@ from itertools import combinations
 import heapq
 from typing import Dict, List, Tuple
 
+from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
+
+from scipy.optimize import linear_sum_assignment
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.metrics.pairwise import pairwise_distances
 from sentence_transformers import SentenceTransformer
-from scipy import spatial
 
+
+from text_to_num import alpha2digit
 
 from .features import (
-    number_of_negatives,
+    FeatureGenerator,
+    check_is_pattern_match,
 )
 
 CLUSTERS_MIN = 1
@@ -19,8 +25,17 @@ CLUSTERS_MAX = 5
 
 
 class CustomAgglomerativeClustering:
-    def __init__(self, sentence_transformer: SentenceTransformer):
-        self.sentence_transformer = sentence_transformer
+    def __init__(
+        self,
+        word2vec: Word2VecKeyedVectors,
+        index2word_set,
+        sentence_transformer: SentenceTransformer,
+        feature_generator: FeatureGenerator,
+    ):
+        self.word2vec = word2vec
+        self.index2word_set = index2word_set
+        self.model = sentence_transformer
+        self.feature_generator = feature_generator
         self.word_alignment_dp: Dict[
             Tuple[Tuple[str, ...], Tuple[str, ...]], float
         ] = dict()
@@ -30,12 +45,30 @@ class CustomAgglomerativeClustering:
         if key in self.word_alignment_dp:
             return self.word_alignment_dp[key]
 
-        example_emb = self.sentence_transformer.encode(
-            " ".join(example), show_progress_bar=False
+        cost = []
+        n_exact_matches = len(set(ia).intersection(set(example)))
+        ia_, example_ = (
+            list(set(ia).difference(example)),
+            list(set(example).difference(ia)),
         )
-        ia_emb = self.sentence_transformer.encode(" ".join(ia), show_progress_bar=False)
+        if not ia_:
+            return 1
 
-        self.word_alignment_dp[key] = 1 - spatial.distance.cosine(example_emb, ia_emb)
+        for ia_i in ia_:
+            inner_cost = []
+            for e in example_:
+                dist = self.feature_generator.word2vec_example_similarity(
+                    self.model,
+                    [e],
+                    [ia_i],
+                )
+                inner_cost.append(dist)
+            cost.append(inner_cost)
+        row_idx, col_idx = linear_sum_assignment(cost, maximize=True)
+
+        self.word_alignment_dp[key] = (
+            n_exact_matches + sum([cost[r][c] for r, c in zip(row_idx, col_idx)])
+        ) / float(len(ia_) + n_exact_matches)
         return self.word_alignment_dp[key]
 
     def alignment_metric(self, x, y) -> float:
@@ -118,7 +151,7 @@ class CustomAgglomerativeClustering:
         for label, best_target in best_targets:
             words = set()
             for word in best_target:
-                if number_of_negatives([word])[0] > 0:
+                if FeatureGenerator.number_of_negatives([word])[0] > 0:
                     words.add("[NEG]")
                 else:
                     words.add(word)
@@ -127,7 +160,7 @@ class CustomAgglomerativeClustering:
                 data[word] = data["[SENTENCES]"].apply(lambda x: 1 * (word in x))
 
             data["[NEG]"] = data["[SENTENCES]"].apply(
-                lambda x: 1 * (number_of_negatives(x)[0] > 0)
+                lambda x: 1 * (FeatureGenerator.number_of_negatives(x)[0] > 0)
             )
 
             # maximum pattern length will be 4
@@ -192,7 +225,7 @@ class CustomAgglomerativeClustering:
     def deduplicate_patterns(
         patterns_with_fpr: List[Tuple[str, float]],
         fpr_cuttoff: float,
-        top_n=15,
+        top_n=20,
     ) -> List[str]:
         fpr_store: Dict[str, float] = dict()
         features: List[Tuple[float, str]] = []
@@ -215,11 +248,35 @@ class CustomAgglomerativeClustering:
         return top_features
 
     @staticmethod
+    def univariate_feature_selection(
+        patterns: List[str], input_x: List[str], input_y: List[str], n: int = 10
+    ) -> List[str]:
+        if len(patterns) <= n:
+            return patterns
+        train_x: List[List[int]] = []
+        train_y: List[int] = [1 * (x == "good") for x in input_y]
+
+        for raw_example in input_x:
+            raw_example = alpha2digit(raw_example, "en")
+            feat: List[int] = []
+            for pattern in patterns:
+                feat.append(check_is_pattern_match(raw_example, pattern))
+            train_x.append(feat)
+
+        skb = SelectKBest(chi2, k=min(n, len(patterns)))
+        skb.fit(train_x, train_y)
+        masks: List[bool] = skb.get_support()
+        return [pattern for mask, pattern in zip(masks, patterns) if mask]
+
+    @staticmethod
     def select_feature_candidates(
         data: pd.DataFrame,
         candidates: Dict[str, List[str]],
+        input_x: List[str],
+        input_y: List[str],
         fpr_cuttoff: float = 0.98,
     ) -> Dict[str, List[str]]:
+
         useful_features: Dict[str, List[str]] = dict()
         for label in ("good", "bad"):
             good, bad, patterns = [], [], []
@@ -239,6 +296,11 @@ class CustomAgglomerativeClustering:
             # ignores bigger pattern if indivudal words in pattern have higher (1-fpr)
             useful_features[label] = CustomAgglomerativeClustering.deduplicate_patterns(
                 patterns_with_fpr, fpr_cuttoff
+            )
+            useful_features[
+                label
+            ] = CustomAgglomerativeClustering.univariate_feature_selection(
+                useful_features[label], input_x, input_y
             )
 
         return useful_features

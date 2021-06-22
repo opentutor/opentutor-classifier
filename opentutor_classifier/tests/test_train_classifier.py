@@ -105,7 +105,6 @@ def _test_train_and_predict(
         )
 
 
-@pytest.mark.only
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
@@ -132,27 +131,39 @@ def _test_train_and_predict(
             ],
             0.8,
         ),
-        # (
-        #     "ies-rectangle",
-        #     ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.94),
-        #         ExpectationTrainingResult(accuracy=0.96),
-        #         ExpectationTrainingResult(accuracy=0.95),
-        #     ],
-        #     0.7,
-        # ),
+        (
+            "ies-rectangle",
+            ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.94),
+                ExpectationTrainingResult(accuracy=0.96),
+                ExpectationTrainingResult(accuracy=0.95),
+            ],
+            0.7,
+        ),
         (
             "ies-rectangle",
             ARCH_LR_TRANS_EMB_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(accuracy=0.89),
-                ExpectationTrainingResult(accuracy=0.92),
+                ExpectationTrainingResult(accuracy=0.93),
                 ExpectationTrainingResult(accuracy=0.95),
             ],
-            0.95,
+            1.0,
+        ),
+        (
+            "candles",
+            ARCH_LR_TRANS_EMB_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.84),
+                ExpectationTrainingResult(accuracy=0.79),
+                ExpectationTrainingResult(accuracy=0.83),
+                ExpectationTrainingResult(accuracy=0.95),
+            ],
+            0.8,
         ),
     ],
 )

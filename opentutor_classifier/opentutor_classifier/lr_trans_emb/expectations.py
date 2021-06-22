@@ -1,25 +1,21 @@
 from collections import defaultdict
-import re
-from os import environ
 from typing import List
+from os import environ
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
-from nltk import pos_tag
-from nltk.tokenize import word_tokenize
 from sklearn import model_selection, linear_model
 from sklearn.preprocessing import LabelEncoder
+from sentence_transformers import SentenceTransformer
+
 from text_to_num import alpha2digit
 
 from opentutor_classifier import ClassifierMode, ExpectationConfig
-from opentutor_classifier.stopwords import STOPWORDS
-from opentutor_classifier.utils import prop_bool
 from . import features
+
+from opentutor_classifier.utils import prop_bool
 from .clustering_features import CustomAgglomerativeClustering
 from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
 
-word_mapper = {
-    "n't": "not",
-}
 
 def feature_regex_aggregate_disabled() -> bool:
     return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
@@ -30,50 +26,8 @@ def feature_length_ratio_enabled() -> bool:
     return enabled == "1" or enabled.lower() == "true"
 
 
-def preprocess_punctuations(sentence: str) -> str:
-    sentence = re.sub(r"[\-=]", " ", sentence)
-    sentence = re.sub(r"[%]", " percent ", sentence)
-    sentence = re.sub("n't", " not", sentence)
-    sentence = re.sub(r"[()~!^,?.\'$]", "", sentence)
-    return sentence
-
-
-def preprocess_sentence(sentence: str) -> List[str]:
-    sentence = preprocess_punctuations(sentence.lower())
-    sentence = alpha2digit(sentence, "en")
-    word_tokens_groups: List[str] = [
-        word_tokenize(entry)
-        for entry in ([sentence] if isinstance(sentence, str) else sentence)
-    ]
-    result_words = []
-    for entry in word_tokens_groups:
-        for word, _ in pos_tag(entry):
-            if word not in STOPWORDS:
-                result_words.append(word)
-    return [word_mapper.get(word, word) for word in result_words]
-
-
-def check_is_pattern_match(sentence: str, pattern: str) -> int:
-    words = preprocess_sentence(sentence)  # sentence should be preprocessed
-    keywords = pattern.split("+")
-    is_there = True
-    for keyword in keywords:
-        keyword = keyword.strip()
-        if keyword == "[NEG]" and features.number_of_negatives(words)[0] == 0:
-            is_there = False
-            break
-        elif keyword != "[NEG]" and keyword not in words:
-            is_there = False
-            break
-    if is_there:
-        return 1
-    else:
-        return 0
-
-
 class LRExpectationClassifier:
     def __init__(self):
-        self.model = None
         self.score_dictionary = defaultdict(int)
 
     @staticmethod
@@ -101,6 +55,8 @@ class LRExpectationClassifier:
         ideal: List[str],
         word2vec: Word2VecKeyedVectors,
         index2word_set: set,
+        model: SentenceTransformer,
+        feature_generator: features.FeatureGenerator,
         good: List[str],
         bad: List[str],
         clustering: CustomAgglomerativeClustering,
@@ -109,39 +65,47 @@ class LRExpectationClassifier:
         patterns: List[str] = None,
     ) -> List[float]:
         raw_example = alpha2digit(raw_example, "en")
-        regex_good = features.regex_match(raw_example, good)
-        regex_bad = features.regex_match(raw_example, bad)
+        regex_good = features.FeatureGenerator.regex_match(raw_example, good)
+        regex_bad = features.FeatureGenerator.regex_match(raw_example, bad)
         feat = [
-            *features.number_of_negatives(example),
+            *features.FeatureGenerator.number_of_negatives(example),
             clustering.word_alignment_feature(example, ideal),
-            features.word2vec_example_similarity(
-                word2vec, index2word_set, example, ideal
-            ),
-            features.word2vec_question_similarity(
-                word2vec, index2word_set, example, question
-            ),
+            feature_generator.word2vec_example_similarity(model, example, ideal),
+            feature_generator.word2vec_question_similarity(model, example, question),
         ]
         if mode == ClassifierMode.TRAIN:
             if feature_length_ratio_enabled():
-                feat.append(features.length_ratio_feature(example, ideal))
+                feat.append(
+                    features.FeatureGenerator.length_ratio_feature(example, ideal)
+                )
             if feature_regex_aggregate_disabled():
                 feat = feat + regex_good + regex_bad
             else:
-                feat.append(features.regex_match_ratio(raw_example, good))
-                feat.append(features.regex_match_ratio(raw_example, bad))
+                feat.append(
+                    features.FeatureGenerator.regex_match_ratio(raw_example, good)
+                )
+                feat.append(
+                    features.FeatureGenerator.regex_match_ratio(raw_example, bad)
+                )
         elif mode == ClassifierMode.PREDICT:
             if not expectation_config:
                 raise Exception("predict mode must pass in ExpectationConfig")
             if prop_bool(FEATURE_LENGTH_RATIO, expectation_config.features):
-                feat.append(features.length_ratio_feature(example, ideal))
+                feat.append(
+                    features.FeatureGenerator.length_ratio_feature(example, ideal)
+                )
             if prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, expectation_config.features):
                 feat = feat + regex_good + regex_bad
             else:
-                feat.append(features.regex_match_ratio(raw_example, good))
-                feat.append(features.regex_match_ratio(raw_example, bad))
+                feat.append(
+                    features.FeatureGenerator.regex_match_ratio(raw_example, good)
+                )
+                feat.append(
+                    features.FeatureGenerator.regex_match_ratio(raw_example, bad)
+                )
         if patterns:
             for pattern in patterns:
-                feat.append(check_is_pattern_match(raw_example, pattern))
+                feat.append(features.check_is_pattern_match(raw_example, pattern))
         return feat
 
     @staticmethod

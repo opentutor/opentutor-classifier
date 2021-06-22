@@ -5,7 +5,6 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import math
-from os import environ
 import re
 from typing import List, Tuple
 
@@ -62,11 +61,6 @@ def check_is_pattern_match(sentence: str, pattern: str) -> int:
         return 1
     else:
         return 0
-
-
-def feature_length_ratio_enabled() -> bool:
-    enabled = environ.get(FEATURE_LENGTH_RATIO, "")
-    return enabled == "1" or enabled.lower() == "true"
 
 
 def _avg_feature_vector(

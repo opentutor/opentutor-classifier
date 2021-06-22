@@ -9,7 +9,6 @@ import json
 from os import path, environ
 
 from typing import Dict, List
-from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
@@ -36,29 +35,29 @@ from opentutor_classifier.config import get_train_quality_default
 from opentutor_classifier.log import logger
 from opentutor_classifier.utils import prop_bool
 
-from .constants import FEATURE_LENGTH_RATIO
-from .expectations import (
-    preprocess_sentence,
-    LRExpectationClassifier,
-)
+
+from .expectations import LRExpectationClassifier
+from .features import preprocess_sentence, FeatureGenerator
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
 from opentutor_classifier.sentence_transformer import find_or_load_sentence_transformer
 
-
 from .clustering_features import CustomAgglomerativeClustering
+from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
+
+
+def _preprocess_trainx(data: List[str]) -> List[List[str]]:
+    pre_processed_dataset = [preprocess_sentence(entry) for entry in data]
+    return np.array(pre_processed_dataset)
 
 
 def feature_regex_aggregate_disabled() -> bool:
     return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
 
+
 def feature_length_ratio_enabled() -> bool:
     enabled = environ.get(FEATURE_LENGTH_RATIO, "")
     return enabled == "1" or enabled.lower() == "true"
-
-def _preprocess_trainx(data: List[str]) -> List[List[str]]:
-    pre_processed_dataset = [preprocess_sentence(entry) for entry in data]
-    return np.array(pre_processed_dataset)
 
 
 class LRAnswerClassifierTraining(AnswerClassifierTraining):
@@ -66,6 +65,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         self.accuracy: Dict[int, int] = {}
         self.word2vec: Word2VecKeyedVectors = None
         self.sentence_transformer: SentenceTransformer = None
+        self.feature_generator = FeatureGenerator()
         self.train_quality = 1
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
@@ -85,7 +85,12 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         model = LRExpectationClassifier.initialize_model()
         index2word_set = set(self.word2vec.index_to_key)
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
-        clustering = CustomAgglomerativeClustering(self.sentence_transformer)
+        clustering = CustomAgglomerativeClustering(
+            self.word2vec,
+            index2word_set,
+            self.sentence_transformer,
+            self.feature_generator,
+        )
 
         def process_features(features, input_sentence, index2word_set):
             processed_input_sentence = preprocess_sentence(input_sentence)
@@ -99,6 +104,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 processed_ia,
                 self.word2vec,
                 index2word_set,
+                self.sentence_transformer,
+                self.feature_generator,
                 [],
                 [],
                 clustering,
@@ -161,7 +168,12 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
             split_training_sets[exp_num][1].append(label)
         index2word_set: set = set(self.word2vec.index_to_key)
-        clustering = CustomAgglomerativeClustering(self.sentence_transformer)
+        clustering = CustomAgglomerativeClustering(
+            self.word2vec,
+            index2word_set,
+            self.sentence_transformer,
+            self.feature_generator,
+        )
         config_updated = train_input.config.clone()
         expectation_results: List[ExpectationTrainingResult] = []
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
@@ -191,7 +203,9 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                     np.array(processed_data)[np.array(train_y) == "bad"],
                     self.train_quality,
                 )
-                pattern = clustering.select_feature_candidates(data, candidates)
+                pattern = clustering.select_feature_candidates(
+                    data, candidates, train_x, train_y
+                )
 
             config_updated.expectations[exp_num].features = {
                 "good": good,
@@ -211,6 +225,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         ideal_answer,
                         self.word2vec,
                         index2word_set,
+                        self.sentence_transformer,
+                        self.feature_generator,
                         good,
                         bad,
                         clustering,
