@@ -9,7 +9,6 @@ import json
 from os import path, environ
 
 from typing import Dict, List
-from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
 from sklearn import model_selection, linear_model
@@ -39,7 +38,6 @@ from opentutor_classifier.utils import prop_bool
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence, FeatureGenerator
 
-from opentutor_classifier.word2vec import find_or_load_word2vec
 from opentutor_classifier.sentence_transformer import find_or_load_sentence_transformer
 
 from .clustering_features import CustomAgglomerativeClustering
@@ -63,15 +61,11 @@ def feature_length_ratio_enabled() -> bool:
 class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
         self.accuracy: Dict[int, int] = {}
-        self.word2vec: Word2VecKeyedVectors = None
         self.sentence_transformer: SentenceTransformer = None
         self.feature_generator = FeatureGenerator()
         self.train_quality = 1
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
-        self.word2vec = find_or_load_word2vec(
-            path.join(config.shared_root, "word2vec.bin")
-        )
         self.sentence_transformer = find_or_load_sentence_transformer(
             path.join(config.shared_root, "..", "sentence-transformer")
         )
@@ -83,16 +77,13 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         model = LRExpectationClassifier.initialize_model()
-        index2word_set = set(self.word2vec.index_to_key)
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
         clustering = CustomAgglomerativeClustering(
-            self.word2vec,
-            index2word_set,
             self.sentence_transformer,
             self.feature_generator,
         )
 
-        def process_features(features, input_sentence, index2word_set):
+        def process_features(features, input_sentence,):
             processed_input_sentence = preprocess_sentence(input_sentence)
             processed_question = preprocess_sentence(features["question"])
             processed_ia = preprocess_sentence(features["ideal"])
@@ -102,8 +93,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 input_sentence,
                 processed_input_sentence,
                 processed_ia,
-                self.word2vec,
-                index2word_set,
                 self.sentence_transformer,
                 self.feature_generator,
                 [],
@@ -116,7 +105,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         all_features = list(
             data.apply(
                 lambda row: process_features(
-                    json.loads(row["exp_data"]), row["text"], index2word_set
+                    json.loads(row["exp_data"]), row["text"]
                 ),
                 axis=1,
             )
@@ -167,10 +156,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 str(train_data["text"][i]).lower().strip()
             )
             split_training_sets[exp_num][1].append(label)
-        index2word_set: set = set(self.word2vec.index_to_key)
         clustering = CustomAgglomerativeClustering(
-            self.word2vec,
-            index2word_set,
             self.sentence_transformer,
             self.feature_generator,
         )
@@ -223,8 +209,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         raw_example,
                         example,
                         ideal_answer,
-                        self.word2vec,
-                        index2word_set,
                         self.sentence_transformer,
                         self.feature_generator,
                         good,

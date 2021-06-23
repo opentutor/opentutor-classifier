@@ -2,7 +2,7 @@ from itertools import combinations
 import heapq
 from typing import Dict, List, Tuple
 
-from gensim.models.keyedvectors import Word2VecKeyedVectors
+
 import numpy as np
 import pandas as pd
 
@@ -27,13 +27,9 @@ CLUSTERS_MAX = 5
 class CustomAgglomerativeClustering:
     def __init__(
         self,
-        word2vec: Word2VecKeyedVectors,
-        index2word_set,
         sentence_transformer: SentenceTransformer,
         feature_generator: FeatureGenerator,
     ):
-        self.word2vec = word2vec
-        self.index2word_set = index2word_set
         self.model = sentence_transformer
         self.feature_generator = feature_generator
         self.word_alignment_dp: Dict[
@@ -51,8 +47,7 @@ class CustomAgglomerativeClustering:
             list(set(ia).difference(example)),
             list(set(example).difference(ia)),
         )
-        if not ia_:
-            return 1
+        if not ia_: return 1
 
         for ia_i in ia_:
             inner_cost = []

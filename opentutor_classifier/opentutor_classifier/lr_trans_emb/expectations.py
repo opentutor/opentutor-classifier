@@ -2,7 +2,6 @@ from collections import defaultdict
 from typing import List
 from os import environ
 
-from gensim.models.keyedvectors import Word2VecKeyedVectors
 from sklearn import model_selection, linear_model
 from sklearn.preprocessing import LabelEncoder
 from sentence_transformers import SentenceTransformer
@@ -53,8 +52,6 @@ class LRExpectationClassifier:
         raw_example: str,
         example: List[str],
         ideal: List[str],
-        word2vec: Word2VecKeyedVectors,
-        index2word_set: set,
         model: SentenceTransformer,
         feature_generator: features.FeatureGenerator,
         good: List[str],

@@ -8,7 +8,6 @@ from opentutor_classifier.utils import model_last_updated_at
 from os import path
 from typing import Dict, List, Optional, Tuple
 
-from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 from sklearn import linear_model
 
@@ -30,7 +29,6 @@ from .clustering_features import CustomAgglomerativeClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence, FeatureGenerator
-from opentutor_classifier.word2vec import find_or_load_word2vec
 from opentutor_classifier.sentence_transformer import find_or_load_sentence_transformer
 
 
@@ -45,7 +43,6 @@ ModelAndConfig = Tuple[Dict[int, linear_model.LogisticRegression], QuestionConfi
 
 class LRAnswerClassifier(AnswerClassifier):
     def __init__(self):
-        self._word2vec = None
         self.sentence_transformer = None
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
@@ -92,12 +89,6 @@ class LRAnswerClassifier(AnswerClassifier):
             path.join(self.shared_root, "..", "sentence-transformer")
         )
 
-    def find_word2vec(self) -> Word2VecKeyedVectors:
-        if not self._word2vec:
-            self._word2vec = find_or_load_word2vec(
-                path.join(self.shared_root, "word2vec.bin")
-            )
-        return self._word2vec
 
     def find_score_and_class(
         self, classifier, exp_num_i: int, sent_features: np.ndarray
@@ -127,8 +118,6 @@ class LRAnswerClassifier(AnswerClassifier):
             )
         ]
         result = AnswerClassifierResult(input=answer, expectation_results=[])
-        word2vec = self.find_word2vec()
-        index2word = set(word2vec.index_to_key)
         result.speech_acts[
             "metacognitive"
         ] = self.speech_act_classifier.check_meta_cognitive(result)
@@ -139,7 +128,7 @@ class LRAnswerClassifier(AnswerClassifier):
         question_proc = preprocess_sentence(conf.question)
         feature_generator = FeatureGenerator()
         clustering = CustomAgglomerativeClustering(
-            word2vec, index2word, self.sentence_transformer, feature_generator
+            self.sentence_transformer, feature_generator
         )
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
@@ -148,8 +137,6 @@ class LRAnswerClassifier(AnswerClassifier):
                 answer.input_sentence,
                 sent_proc,
                 preprocess_sentence(exp_conf.ideal),
-                word2vec,
-                index2word,
                 self.sentence_transformer,
                 feature_generator,
                 exp_conf.features.get("good") or [],
