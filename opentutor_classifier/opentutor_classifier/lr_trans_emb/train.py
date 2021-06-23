@@ -83,7 +83,10 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             self.feature_generator,
         )
 
-        def process_features(features, input_sentence,):
+        def process_features(
+            features,
+            input_sentence,
+        ):
             processed_input_sentence = preprocess_sentence(input_sentence)
             processed_question = preprocess_sentence(features["question"])
             processed_ia = preprocess_sentence(features["ideal"])
@@ -104,9 +107,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
         all_features = list(
             data.apply(
-                lambda row: process_features(
-                    json.loads(row["exp_data"]), row["text"]
-                ),
+                lambda row: process_features(json.loads(row["exp_data"]), row["text"]),
                 axis=1,
             )
         )

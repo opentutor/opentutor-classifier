@@ -89,7 +89,6 @@ class LRAnswerClassifier(AnswerClassifier):
             path.join(self.shared_root, "..", "sentence-transformer")
         )
 
-
     def find_score_and_class(
         self, classifier, exp_num_i: int, sent_features: np.ndarray
     ):

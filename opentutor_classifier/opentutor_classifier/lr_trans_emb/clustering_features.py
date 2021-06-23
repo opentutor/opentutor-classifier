@@ -47,7 +47,8 @@ class CustomAgglomerativeClustering:
             list(set(ia).difference(example)),
             list(set(example).difference(ia)),
         )
-        if not ia_: return 1
+        if not ia_:
+            return 1
 
         for ia_i in ia_:
             inner_cost = []
