@@ -5,6 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import math
+from os import environ
 import re
 from typing import List, Tuple
 
@@ -16,6 +17,14 @@ from scipy import spatial
 
 from opentutor_classifier.stopwords import STOPWORDS
 from text_to_num import alpha2digit
+
+from opentutor_classifier.utils import prop_bool
+from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
+
+
+def feature_regex_aggregate_disabled() -> bool:
+    return prop_bool(FEATURE_REGEX_AGGREGATE_DISABLED, environ)
+
 
 word_mapper = {
     "n't": "not",
@@ -61,6 +70,11 @@ def check_is_pattern_match(sentence: str, pattern: str) -> int:
         return 1
     else:
         return 0
+
+
+def feature_length_ratio_enabled() -> bool:
+    enabled = environ.get(FEATURE_LENGTH_RATIO, "")
+    return enabled == "1" or enabled.lower() == "true"
 
 
 def _avg_feature_vector(

@@ -113,8 +113,8 @@ def _test_train_and_predict(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.89),
-                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.87),
+                ExpectationTrainingResult(accuracy=0.94),
                 ExpectationTrainingResult(accuracy=0.95),
             ],
             0.85,
@@ -124,9 +124,9 @@ def _test_train_and_predict(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.81),
-                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.79),
+                ExpectationTrainingResult(accuracy=0.84),
+                ExpectationTrainingResult(accuracy=0.76),
                 ExpectationTrainingResult(accuracy=0.95),
             ],
             0.8,
@@ -241,7 +241,7 @@ def _test_train_and_predict_specific_answers_slow(
                 # "37.0 by 40.000",
                 # "thirty seven by fourty",
             ],
-            [ExpectationTrainingResult(accuracy=0.89)],
+            [ExpectationTrainingResult(accuracy=0.87)],
             [
                 # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
                 # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
