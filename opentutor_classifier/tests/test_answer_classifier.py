@@ -195,7 +195,7 @@ def test_evaluates_for_default_model(
 
 
 @pytest.mark.parametrize(
-    "lesson, arch, input_answer,input_expectation_number,config_data,expected_results,expected_sa_results",
+    "lesson, arch, input_answer,input_expectation_number,config_data,expected_sa_results",
     [
         (
             "question1",
@@ -203,7 +203,6 @@ def test_evaluates_for_default_model(
             "I dont know what you are talking about",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.55, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -215,7 +214,6 @@ def test_evaluates_for_default_model(
             "I do not understand",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.56, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -227,7 +225,6 @@ def test_evaluates_for_default_model(
             "I believe the answer is peer pressure can change your behavior",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.84, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -239,7 +236,6 @@ def test_evaluates_for_default_model(
             "Fuck you tutor",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.62, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -251,7 +247,6 @@ def test_evaluates_for_default_model(
             "What the hell is that?",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.63, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -263,7 +258,6 @@ def test_evaluates_for_default_model(
             "I dont know this shit",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.55, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -275,7 +269,6 @@ def test_evaluates_for_default_model(
             "I dont know this shit but I guess the answer is peer pressure can change your behavior",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.87, evaluation="Good")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
                 "profanity": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -287,7 +280,6 @@ def test_evaluates_for_default_model(
             "assistant, assistance",
             0,
             {},
-            [_TestExpectation(expectation=0, score=0.63, evaluation="Bad")],
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
                 "profanity": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -304,7 +296,6 @@ def test_evaluates_meta_cognitive_sentences(
     input_answer: str,
     input_expectation_number: int,
     config_data: dict,
-    expected_results: List[_TestExpectation],
     expected_sa_results: dict,
 ):
     with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
@@ -318,7 +309,6 @@ def test_evaluates_meta_cognitive_sentences(
                 expectation=input_expectation_number,
             )
         )
-        assert len(result.expectation_results) == len(expected_results)
         assert (
             expected_sa_results["metacognitive"].evaluation
             == result.speech_acts["metacognitive"].evaluation
@@ -335,4 +325,3 @@ def test_evaluates_meta_cognitive_sentences(
             expected_sa_results["profanity"].score
             == result.speech_acts["profanity"].score
         )
-        assert_classifier_evaluate(result, expected_results)
