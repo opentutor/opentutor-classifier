@@ -17,7 +17,7 @@ from sentence_transformers import SentenceTransformer
 
 from opentutor_classifier import DataDao
 from opentutor_classifier import (
-    ARCH_LR_TRANS_EMB_CLASSIFIER,
+    ARCH_LR_BERT_EMB_CLASSIFIER,
     PROP_TRAIN_QUALITY,
     AnswerClassifierTraining,
     ArchLesson,
@@ -120,13 +120,13 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         expectation_models[data["exp_num"].iloc[0]] = model
         dao.save_default_pickle(
             DefaultModelSaveReq(
-                arch=ARCH_LR_TRANS_EMB_CLASSIFIER,
+                arch=ARCH_LR_BERT_EMB_CLASSIFIER,
                 filename="models_by_expectation_num.pkl",
                 model=expectation_models,
             )
         )
         return dao.create_default_training_result(
-            ARCH_LR_TRANS_EMB_CLASSIFIER, ExpectationTrainingResult(accuracy=accuracy)
+            ARCH_LR_BERT_EMB_CLASSIFIER, ExpectationTrainingResult(accuracy=accuracy)
         )
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
@@ -184,7 +184,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
             pattern: Dict[str, List[str]] = {"good": [], "bad": []}
-            self.train_quality = 0
+            # self.train_quality = 0
             if self.train_quality > 0:
                 data, candidates = clustering.generate_feature_candidates(
                     np.array(processed_data)[np.array(train_y) == "good"],
@@ -235,7 +235,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             expectation_models[exp_num] = model
         dao.save_pickle(
             ModelSaveReq(
-                arch=ARCH_LR_TRANS_EMB_CLASSIFIER,
+                arch=ARCH_LR_BERT_EMB_CLASSIFIER,
                 lesson=train_input.lesson,
                 filename="models_by_expectation_num.pkl",
                 model=expectation_models,
@@ -243,7 +243,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         )
         dao.save_config(
             QuestionConfigSaveReq(
-                arch=ARCH_LR_TRANS_EMB_CLASSIFIER,
+                arch=ARCH_LR_BERT_EMB_CLASSIFIER,
                 lesson=train_input.lesson,
                 config=config_updated,
             )
@@ -252,6 +252,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             expectations=expectation_results,
             lesson=train_input.lesson,
             models=dao.get_model_root(
-                ArchLesson(arch=ARCH_LR_TRANS_EMB_CLASSIFIER, lesson=train_input.lesson)
+                ArchLesson(arch=ARCH_LR_BERT_EMB_CLASSIFIER, lesson=train_input.lesson)
             ),
         )

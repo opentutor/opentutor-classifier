@@ -147,8 +147,8 @@ def _test_train_and_predict(
             ARCH_LR_TRANS_EMB_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.89),
-                ExpectationTrainingResult(accuracy=0.93),
+                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.92),
                 ExpectationTrainingResult(accuracy=0.95),
             ],
             1.0,
@@ -158,8 +158,8 @@ def _test_train_and_predict(
             ARCH_LR_TRANS_EMB_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.84),
-                ExpectationTrainingResult(accuracy=0.79),
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.77),
                 ExpectationTrainingResult(accuracy=0.83),
                 ExpectationTrainingResult(accuracy=0.95),
             ],
@@ -241,7 +241,7 @@ def _test_train_and_predict_specific_answers_slow(
                 # "37.0 by 40.000",
                 # "thirty seven by fourty",
             ],
-            [ExpectationTrainingResult(accuracy=0.87)],
+            [ExpectationTrainingResult(accuracy=0.89)],
             [
                 # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
                 # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),

@@ -323,6 +323,7 @@ def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
 ARCH_LR_CLASSIFIER = "opentutor_classifier.lr"
 ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER = "opentutor_classifier.lr_trans_emb_diff"
 ARCH_LR_TRANS_EMB_CLASSIFIER = "opentutor_classifier.lr_trans_emb"
+ARCH_LR_BERT_EMB_CLASSIFIER = "opentutor_classifier.lr_bert_emb"
 ARCH_DEFAULT = ARCH_LR_CLASSIFIER
 
 
