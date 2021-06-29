@@ -116,7 +116,7 @@ def regex_match(str_example: str, regexes: List[str]) -> List[int]:
         return []
     matches = []
     for r in regexes:
-        if re.search(r, str_example):
+        if re.search(r.lower(), str_example):
             matches.append(1)
         else:
             matches.append(0)
@@ -128,7 +128,7 @@ def regex_match_ratio(str_example: str, regexes: List[str]) -> float:
         return 0
     count = 0
     for r in regexes:
-        if re.search(r, str_example):
+        if re.search(r.lower(), str_example):
             count += 1
     return float(count / len(regexes))
 
