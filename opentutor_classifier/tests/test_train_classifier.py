@@ -13,6 +13,7 @@ import responses
 from opentutor_classifier import (
     ExpectationTrainingResult,
     ARCH_LR_CLASSIFIER,
+    ARCH_LR_REGEX_EMSEMBLE_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
 from .utils import (
@@ -56,6 +57,7 @@ def test_outputs_models_at_specified_root(
     "arch,expected_model_file_name",
     [
         (ARCH_LR_CLASSIFIER, "models_by_expectation_num.pkl"),
+        (ARCH_LR_REGEX_EMSEMBLE_CLASSIFIER, "models_by_expectation_num.pkl"),
     ],
 )
 def test_outputs_models_at_specified_model_root_for_default_model(
@@ -100,13 +102,13 @@ def _test_train_and_predict(
             expected_accuracy=expected_accuracy,
         )
 
-
+@pytest.mark.only
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
         (
             "ies-rectangle",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR_REGEX_EMSEMBLE_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(accuracy=0.89),
@@ -117,7 +119,7 @@ def _test_train_and_predict(
         ),
         (
             "candles",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR_REGEX_EMSEMBLE_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(accuracy=0.80),
