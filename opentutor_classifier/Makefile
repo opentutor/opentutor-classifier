@@ -95,7 +95,8 @@ test-types: $(VENV)
 
 .PHONY: update-deps
 update-deps: $(VENV)
-	. $(VENV)/bin/activate && pip-upgrade requirements*
+	# . $(VENV)/bin/activate && pip-upgrade requirements*
+	. $(VENV)/bin/activate && poetry update
 
 virtualenv-installed:
 	$(ROOT)/tools/virtualenv_ensure_installed.sh

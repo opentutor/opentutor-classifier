@@ -7,8 +7,10 @@ $(VENV):
 .PHONY: $(VENV)-update
 $(VENV)-update: virtualenv-installed
 	[ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
-	$(VENV)/bin/pip install --upgrade pip
-	$(VENV)/bin/pip install -r ./requirements.txt
+	# $(VENV)/bin/pip install --upgrade pip
+	# $(VENV)/bin/pip install -r ./requirements.txt
+	# add poetry here to replace requirements
+	poetry install
 
 .PHONY: docker-build
 docker-build:
