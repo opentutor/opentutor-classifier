@@ -106,6 +106,16 @@ class LRExpectationClassifier:
         return feat
 
     @staticmethod
+    def calculate_regex_feature(
+        raw_example: str, good: List[str], bad: List[str]
+    ) -> float:
+        raw_example = alpha2digit(raw_example, "en")
+        regex_good = features.FeatureGenerator.regex_match_ratio(raw_example, good)
+        regex_bad = features.FeatureGenerator.regex_match_ratio(raw_example, bad)
+
+        return regex_good - regex_bad
+
+    @staticmethod
     def initialize_model() -> linear_model.LogisticRegression:
         return linear_model.LogisticRegression(
             C=1.0, class_weight="balanced", solver="liblinear"

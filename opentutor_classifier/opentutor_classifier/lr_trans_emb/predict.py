@@ -72,6 +72,21 @@ class LRAnswerClassifier(AnswerClassifier):
             self._model_and_config = (cm.model, cm.config)
         return self._model_and_config
 
+    def find_score_and_class(
+        self,
+        classifier,
+        exp_num_i: int,
+        sent_features: np.ndarray,
+        regex_feature: float,
+    ):
+        _score = max(_confidence_score(classifier, sent_features), regex_feature)
+        _evaluation = "Good" if _score > 0.5 else "Bad"
+        return ExpectationClassifierResult(
+            expectation=exp_num_i,
+            evaluation=_evaluation,
+            score=_score if _evaluation == "Good" else 1 - _score,
+        )
+
     def find_model_for_expectation(
         self,
         m_by_e: Dict[int, linear_model.LogisticRegression],
@@ -87,17 +102,6 @@ class LRAnswerClassifier(AnswerClassifier):
     def find_sentence_transformer(self):
         self.sentence_transformer = find_or_load_sentence_transformer(
             path.join(self.shared_root, "..", "sentence-transformer")
-        )
-
-    def find_score_and_class(
-        self, classifier, exp_num_i: int, sent_features: np.ndarray
-    ):
-        _evaluation = "Good" if classifier.predict(sent_features)[0] == 1 else "Bad"
-        _score = _confidence_score(classifier, sent_features)
-        return ExpectationClassifierResult(
-            expectation=exp_num_i,
-            evaluation=_evaluation,
-            score=_score if _evaluation == "Good" else 1 - _score,
         )
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
@@ -149,7 +153,14 @@ class LRAnswerClassifier(AnswerClassifier):
             )
             result.expectation_results.append(
                 self.find_score_and_class(
-                    exp.classifier, exp.expectation, [sent_features]
+                    exp.classifier,
+                    exp.expectation,
+                    [sent_features],
+                    LRExpectationClassifier.calculate_regex_feature(
+                        answer.input_sentence,
+                        exp_conf.features.get("good") or [],
+                        exp_conf.features.get("bad") or [],
+                    ),
                 )
             )
         return result
