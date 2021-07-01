@@ -11,6 +11,7 @@ from celery.utils.log import get_task_logger
 
 from opentutor_classifier import TrainingConfig
 from opentutor_classifier.training import train, train_default
+from opentutor_classifier.config import PROP_TRAIN_QUALITY
 
 
 config = {
@@ -29,11 +30,14 @@ SHARED_ROOT = os.environ.get("SHARED_ROOT") or "shared"
 
 
 @celery.task()
-def train_task(lesson: str) -> dict:
+def train_task(lesson: str, train_quality: int) -> dict:
+
     try:
         return train(
             lesson,
-            config=TrainingConfig(shared_root=SHARED_ROOT),
+            config=TrainingConfig(
+                shared_root=SHARED_ROOT, properties={PROP_TRAIN_QUALITY: train_quality}
+            ),
         ).to_dict()
     except BaseException as ex:
         get_task_logger(__name__).exception(ex)

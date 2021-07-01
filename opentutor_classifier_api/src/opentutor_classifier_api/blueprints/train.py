@@ -22,12 +22,24 @@ def _to_status_url(root: str, id: str) -> str:
 @train_blueprint.route("", methods=["POST"])
 def train():
     lesson: str = request.json.get("lesson")
-    t = opentutor_classifier_tasks.tasks.train_task.apply_async(args=[lesson])
+    quality_str: str = request.json.get("quality")
+    quality: int = 1
+
+    if quality_str == "MEDIUM":
+        quality = 2
+    elif quality_str == "HIGH":
+        quality = 3
+
+    if quality == 1:
+        quality_str = "LOW"
+
+    t = opentutor_classifier_tasks.tasks.train_task.apply_async(args=[lesson, quality])
     return jsonify(
         {
             "data": {
                 "id": t.id,
                 "lesson": lesson,
+                "quality": quality_str,
                 "statusUrl": _to_status_url(request.url_root, t.id),
             }
         }

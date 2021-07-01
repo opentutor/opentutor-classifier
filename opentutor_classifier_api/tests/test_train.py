@@ -13,19 +13,22 @@ from . import Bunch
 
 
 @pytest.mark.parametrize(
-    "classifier_domain,input_lesson,fake_task_id",
+    "classifier_domain,input_lesson,fake_task_id,fake_quality",
     [
-        ("https://opentutor.org", "lesson_1", "fake_task_id_1"),
-        ("http://a.diff.org", "lesson_2", "fake_task_id_2"),
+        ("https://opentutor.org", "lesson_1", "fake_task_id_1", "HIGH"),
+        ("http://a.diff.org", "lesson_2", "fake_task_id_2", "MEDIUM"),
+        ("http://a.diff.org", "lesson_2", "fake_task_id_2", "LOW"),
     ],
 )
 @patch("opentutor_classifier_tasks.tasks.train_task")
-def test_train(mock_train_task, classifier_domain, input_lesson, fake_task_id, client):
+def test_train(
+    mock_train_task, classifier_domain, input_lesson, fake_task_id, fake_quality, client
+):
     mock_task = Bunch(id=fake_task_id)
     mock_train_task.apply_async.return_value = mock_task
     res = client.post(
         f"{classifier_domain}/classifier/train/",
-        data=json.dumps({"lesson": input_lesson}),
+        data=json.dumps({"lesson": input_lesson, "quality": fake_quality}),
         content_type="application/json",
     )
     assert res.status_code == 200
@@ -33,6 +36,33 @@ def test_train(mock_train_task, classifier_domain, input_lesson, fake_task_id, c
         "data": {
             "id": fake_task_id,
             "lesson": input_lesson,
+            "quality": fake_quality,
+            "statusUrl": f"{classifier_domain}/classifier/train/status/{fake_task_id}",
+        }
+    }
+
+
+@pytest.mark.parametrize(
+    "classifier_domain,input_lesson,fake_task_id,fake_quality",
+    [("https://opentutor.org", "lesson_1", "fake_task_id_1", "FAKEQUALITY")],
+)
+@patch("opentutor_classifier_tasks.tasks.train_task")
+def test_train_invalid_quality_defaults_low(
+    mock_train_task, classifier_domain, input_lesson, fake_task_id, fake_quality, client
+):
+    mock_task = Bunch(id=fake_task_id)
+    mock_train_task.apply_async.return_value = mock_task
+    res = client.post(
+        f"{classifier_domain}/classifier/train/",
+        data=json.dumps({"lesson": input_lesson, "quality": fake_quality}),
+        content_type="application/json",
+    )
+    assert res.status_code == 200
+    assert res.json == {
+        "data": {
+            "id": fake_task_id,
+            "lesson": input_lesson,
+            "quality": "LOW",
             "statusUrl": f"{classifier_domain}/classifier/train/status/{fake_task_id}",
         }
     }
@@ -63,13 +93,14 @@ def test_env_fixes_ssl_status_url(
 ):
     fake_task_id = "fake_task_id"
     fake_lesson_id = "lesson1"
+    fake_quality = "HIGH"
     if env_val is not None:
         monkeypatch.setenv("STATUS_URL_FORCE_HTTPS", env_val)
     mock_task = Bunch(id=fake_task_id)
     mock_train_task.apply_async.return_value = mock_task
     res = client.post(
         f"{request_root}/classifier/train/",
-        data=json.dumps({"lesson": fake_lesson_id}),
+        data=json.dumps({"lesson": fake_lesson_id, "quality": fake_quality}),
         content_type="application/json",
     )
     assert res.status_code == 200
@@ -77,6 +108,7 @@ def test_env_fixes_ssl_status_url(
         "data": {
             "id": fake_task_id,
             "lesson": fake_lesson_id,
+            "quality": fake_quality,
             "statusUrl": f"{expected_status_url_root}/classifier/train/status/fake_task_id",
         }
     }
