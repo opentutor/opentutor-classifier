@@ -195,7 +195,7 @@ def test_evaluates_for_default_model(
 
 
 @pytest.mark.parametrize(
-    "lesson, arch, input_answer,input_expectation_number,config_data,expected_results,expected_sa_results",
+    "lesson, arch, input_answer,input_expectation_number,config_data,expected_sa_results",
     [
         (
             "question1",
@@ -304,7 +304,6 @@ def test_evaluates_meta_cognitive_sentences(
     input_answer: str,
     input_expectation_number: str,
     config_data: dict,
-    expected_results: List[_TestExpectation],
     expected_sa_results: dict,
 ):
     with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
@@ -318,7 +317,6 @@ def test_evaluates_meta_cognitive_sentences(
                 expectation=input_expectation_number,
             )
         )
-        assert len(result.expectation_results) == len(expected_results)
         assert (
             expected_sa_results["metacognitive"].evaluation
             == result.speech_acts["metacognitive"].evaluation
@@ -335,4 +333,3 @@ def test_evaluates_meta_cognitive_sentences(
             expected_sa_results["profanity"].score
             == result.speech_acts["profanity"].score
         )
-        assert_classifier_evaluate(result, expected_results)
