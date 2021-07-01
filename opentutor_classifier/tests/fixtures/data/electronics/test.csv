@@ -1,0 +1,25 @@
+exp_num,text,label
+0,The current flows through the diode in reverse bias,good
+0,In reverse bias,good
+0,It's flowing in reverse bias mode,good
+0,The charge flows in reverse bias from anode to cathode,good
+0,It flows in forward bias,bad
+0,It flows the right way,bad
+0,It goes in avalanche mode,bad
+0,It went right to left,bad
+0,It went left to right,good
+0,It went in some direction,bad
+0,The current went rightwards,good
+0,The current went leftwards,bad
+0,"The current went left and right, then back again",bad
+0,It went in a circle,bad
+0,From anode to cathode,good
+0,The current went anode to cathode,good		
+0,Charge carriers go from anode to cathode,good		
+0,From cathode to anode,bad
+0,In the anode and out the cathode,good
+0,In the cathode,bad
+0,Out the anode,bad
+0,Cathode diode,bad
+0,"If the battery's polarity is reversed, the diode becomes reverse-biased, and drops all of the battery's voltage leaving none for the lamp.",bad
+0,"Diodes nominally conduct electricity in one direction, and the voltage they apply follows a so-called forward bias orientation. If the voltage moves in the opposite direction, we call that orientation a “reverse bias.” In reverse bias, current flow is nominally blocked as a sort of electronic check valve.",bad

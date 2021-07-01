@@ -1,0 +1,27 @@
+exp_num,text,label
+0,It was fast,Good
+0,Their dog was fast,Good
+0,The dog was speedy,Good
+0,The dog ran quick,Good
+0,This was one fast dog,Good
+0,Fast dog,Good
+0,Slow dog,Bad
+0,Not a fast dog,Bad
+0,Something this dog is fast,Good
+0,Never a fast dog,Bad
+0,No dog is fast,Bad
+0,The really isn't that fast,Bad
+0,that dog won't run,Bad
+0,This dog is super fast,Good
+0,This dog outran me,Good
+0,This dog arrived before me,Good
+0,This dog came in first in the race,Good
+0,This dog won the race,Good
+0,This dog was an amazing racer,Good
+0,I beat that dog,Bad
+0,That dog sucks,Bad
+0,that dog lost the race,Bad
+0,it lost the race,Bad
+0,it did not win,Bad
+0,it wins at losing,Bad
+0,i won the race,Bad
