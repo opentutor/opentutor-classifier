@@ -266,7 +266,7 @@ class ExpectationFeatures:
 @dataclass
 class TrainingConfig:
     shared_root: str = "shared"
-    properties = {PROP_TRAIN_QUALITY: 1}
+    properties: Dict[str, Any] = {PROP_TRAIN_QUALITY: 1}
 
 
 class AnswerClassifierTraining(ABC):
