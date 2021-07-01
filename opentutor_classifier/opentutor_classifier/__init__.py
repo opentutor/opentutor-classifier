@@ -268,6 +268,7 @@ class TrainingConfig:
     shared_root: str = "shared"
     properties: Dict[str, Any] = field(default_factory=lambda: {PROP_TRAIN_QUALITY: 1})
 
+
 class AnswerClassifierTraining(ABC):
     @abstractmethod
     def configure(self, config: TrainingConfig) -> "AnswerClassifierTraining":
