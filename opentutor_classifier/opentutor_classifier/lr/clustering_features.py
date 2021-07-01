@@ -207,8 +207,17 @@ class CustomAgglomerativeClustering:
         )
 
         data, candidates = self.generate_patterns_from_candidates(data, best_candidates)
+        print(best_candidates)
 
-        return data, candidates
+        return (
+            data,
+            candidates,
+            [
+                " ".join(candidate)
+                for _, candidate in best_candidates
+                if len(candidate) != 0
+            ],
+        )
 
     @staticmethod
     def deduplicate_patterns(

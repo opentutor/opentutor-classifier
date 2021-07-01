@@ -101,6 +101,7 @@ def _test_train_and_predict(
         )
 
 
+@pytest.mark.only
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
@@ -109,8 +110,8 @@ def _test_train_and_predict(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.89),
                 ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.92),
                 ExpectationTrainingResult(accuracy=0.95),
             ],
             0.85,
@@ -120,10 +121,10 @@ def _test_train_and_predict(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.80),
-                ExpectationTrainingResult(accuracy=0.80),
-                ExpectationTrainingResult(accuracy=0.75),
-                ExpectationTrainingResult(accuracy=0.89),
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.81),
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.95),
             ],
             0.8,
         ),

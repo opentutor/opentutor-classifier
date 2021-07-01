@@ -147,6 +147,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 patterns=exp_conf.features.get("patterns_good", [])
                 + exp_conf.features.get("patterns_bad", [])
                 or [],
+                archetypes=exp_conf.features.get("cluster_archetypes", []),
             )
             result.expectation_results.append(
                 self.find_score_and_class(

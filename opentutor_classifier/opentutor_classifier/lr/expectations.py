@@ -51,6 +51,7 @@ class LRExpectationClassifier:
         mode: ClassifierMode,
         expectation_config: ExpectationConfig = None,
         patterns: List[str] = None,
+        archetypes: List[str] = None,
     ) -> List[float]:
         raw_example = alpha2digit(raw_example, "en")
         regex_good = features.regex_match(raw_example, good)
@@ -86,6 +87,13 @@ class LRExpectationClassifier:
         if patterns:
             for pattern in patterns:
                 feat.append(features.check_is_pattern_match(raw_example, pattern))
+        if archetypes:
+            for archetype in archetypes:
+                feat.append(
+                    features.word2vec_example_similarity(
+                        word2vec, index2word_set, archetype.split(), example
+                    )
+                )
         return feat
 
     @staticmethod

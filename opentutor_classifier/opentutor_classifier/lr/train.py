@@ -169,8 +169,13 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
             pattern: Dict[str, List[str]] = {"good": [], "bad": []}
+            cluster_archetypes: List[str] = []
             if self.train_quality > 0:
-                data, candidates = clustering.generate_feature_candidates(
+                (
+                    data,
+                    candidates,
+                    cluster_archetypes,
+                ) = clustering.generate_feature_candidates(
                     np.array(processed_data)[np.array(train_y) == "good"],
                     np.array(processed_data)[np.array(train_y) == "bad"],
                     self.train_quality,
@@ -184,6 +189,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 "bad": bad,
                 "patterns_good": pattern["good"],
                 "patterns_bad": pattern["bad"],
+                "cluster_archetypes": cluster_archetypes,
                 FEATURE_LENGTH_RATIO: feature_length_ratio_enabled(),
                 FEATURE_REGEX_AGGREGATE_DISABLED: feature_regex_aggregate_disabled(),
             }
@@ -203,6 +209,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         mode=ClassifierMode.TRAIN,
                         expectation_config=train_input.config.expectations[exp_num],
                         patterns=pattern["good"] + pattern["bad"],
+                        archetypes=cluster_archetypes,
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)
