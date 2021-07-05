@@ -101,33 +101,32 @@ def _test_train_and_predict(
         )
 
 
-@pytest.mark.only
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
-        # (
-        #     "ies-rectangle",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.90),
-        #         ExpectationTrainingResult(accuracy=0.92),
-        #         ExpectationTrainingResult(accuracy=0.95),
-        #     ],
-        #     0.85,
-        # ),
-        # (
-        #     "candles",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.82),
-        #         ExpectationTrainingResult(accuracy=0.81),
-        #         ExpectationTrainingResult(accuracy=0.82),
-        #         ExpectationTrainingResult(accuracy=0.95),
-        #     ],
-        #     0.8,
-        # ),
+        (
+            "ies-rectangle",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.92),
+                ExpectationTrainingResult(accuracy=0.95),
+            ],
+            0.85,
+        ),
+        (
+            "candles",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.81),
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.95),
+            ],
+            0.8,
+        ),
         (
             "dog_toy",
             ARCH_LR_CLASSIFIER,
@@ -203,7 +202,6 @@ def _test_train_and_predict_specific_answers_slow(
             )
 
 
-@pytest.mark.slow
 @pytest.mark.parametrize(
     "lesson,arch,evaluate_input_list,expected_training_result,expected_evaluate_result",
     [
