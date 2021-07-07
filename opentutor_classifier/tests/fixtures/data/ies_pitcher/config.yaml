@@ -1,0 +1,31 @@
+##
+## This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved. 
+## Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
+##
+## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
+##
+question: "The red and blue pitchers in the figure contain sweetened iced tea that tastes the same. One scoop of sugar is added to the red pitcher and one scoop of sugar is added to the blue pitcher. Compare the sweetness of the iced tea in each pitcher and explain your answer."
+expectations:
+  - ideal: Adding one scoop of sugar increases the ratio of sugar to liquid more in the blue pitcher
+    features:        
+      bad:        
+        - not\\040change|each|both
+        - \b(same|both)\b
+      good:        
+        - (?=.*ratio)(?=.*blue)(?=.*(greater|more|high))|(?=.*ratio)(?=.*red)(?=.*low)  
+  - ideal: The blue pitcher is affected more because it has less liquid.
+    features: 
+      bad:        
+        - \b(same|both)\b
+        - red
+        - more
+        - liquid
+      good:
+        - (less|small|low|little).*(tea|liquid|quantity|water)|blue.*(less|small|low|little)
+  - ideal: The blue pitcher tastes sweeter
+    features:
+      bad:        
+        - red.*(more|greater|higher).*(sweet|sugary)|blue.*(less|lower).*(sweet|sugary)
+        - \b(same|both)\b
+      good:
+        - blue.*((more|greater|higher|sweeter).*(sweet|sugary)|sweeter)|red.*(less|lower).*(sweet|sugary)

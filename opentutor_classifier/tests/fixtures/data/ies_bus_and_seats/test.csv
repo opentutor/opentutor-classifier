@@ -1,0 +1,709 @@
+exp_num,text,label
+0,Yes it does. The ratio of seats to buses never changes even if the number of buses they make goes up or down,bad
+2,Yes it does. The ratio of seats to buses never changes even if the number of buses they make goes up or down,good
+3,Yes it does. The ratio of seats to buses never changes even if the number of buses they make goes up or down,good
+0,Its proportional because its always the same,bad
+1,Its proportional because its always the same,bad
+2,Its proportional because its always the same,good
+3,Its proportional because its always the same,good
+0,It is uniform,good
+1,It is uniform,bad
+2,It is uniform,bad
+3,It is uniform,bad
+0,They are the same,bad
+1,They are the same,bad
+2,They are the same,good
+0,The seats also change,bad
+1,The seats also change,good
+2,The seats also change,bad
+3,The seats also change,bad
+0,When you change the number of buses the number of seats changes too,bad
+1,When you change the number of buses the number of seats changes too,good
+2,When you change the number of buses the number of seats changes too,bad
+3,When you change the number of buses the number of seats changes too,bad
+0,The number of seats to buses stays the same,good
+1,The number of seats to buses stays the same,bad
+2,The number of seats to buses stays the same,good
+3,The number of seats to buses stays the same,bad
+0,It is a constant ratio,bad
+1,It is a constant ratio,bad
+2,It is a constant ratio,good
+3,It is a constant ratio,bad
+0,Yes,bad
+1,Yes,bad
+2,Yes,bad
+3,Yes,good
+0,The number of seats is always 30,good
+1,The number of seats is always 30,bad
+2,The number of seats is always 30,good
+3,The number of seats is always 30,bad
+0,The seats are the same in each bus,good
+1,The seats are the same in each bus,bad
+2,The seats are the same in each bus,bad
+3,The seats are the same in each bus,bad
+0,The total number of seats changes,bad
+1,The total number of seats changes,good
+2,The total number of seats changes,bad
+3,The total number of seats changes,bad
+0,The relationship is always the same,bad
+1,The relationship is always the same,bad
+2,The relationship is always the same,good
+0,The number of seats also increases,bad
+1,The number of seats also increases,good
+2,The number of seats also increases,bad
+3,The number of seats also increases,bad
+0,The number of seats per bus stays the same,good
+1,The number of seats per bus stays the same,bad
+2,The number of seats per bus stays the same,good
+3,The number of seats per bus stays the same,bad
+0,The ratio stays constant,bad
+1,The ratio stays constant,bad
+2,The ratio stays constant,good
+3,The ratio stays constant,bad
+0,It's not proportional because the number of buses and seats are going to be different,bad
+1,It's not proportional because the number of buses and seats are going to be different,bad
+2,It's not proportional because the number of buses and seats are going to be different,bad
+3,It's not proportional because the number of buses and seats are going to be different,bad
+0,I dont know,bad
+1,I dont know,bad
+2,I dont know,bad
+3,I dont know,bad
+0,I really don't know,bad
+1,I really don't know,bad
+2,I really don't know,bad
+0,The number of seats will be the same for each bus,good
+1,The number of seats will be the same for each bus,bad
+2,The number of seats will be the same for each bus,bad
+3,The number of seats will be the same for each bus,bad
+1,The same,bad
+3,The same,bad
+0,The total number of seats also changes,bad
+1,The total number of seats also changes,good
+2,The total number of seats also changes,bad
+3,The total number of seats also changes,bad
+0,As one goes up the other goes up,bad
+1,As one goes up the other goes up,good
+2,As one goes up the other goes up,bad
+3,As one goes up the other goes up,bad
+0,It increases,bad
+1,It increases,good
+2,It increases,bad
+3,It increases,bad
+0,The number of seats per bus,good
+1,The number of seats per bus,bad
+2,The number of seats per bus,good
+3,The number of seats per bus,bad
+0,The ratio stays constant,bad
+1,The ratio stays constant,bad
+2,The ratio stays constant,good
+3,The ratio stays constant,bad
+0,there is a proportional relationship between the number of buses and seats because the ratio between these two is constant.,bad
+1,there is a proportional relationship between the number of buses and seats because the ratio between these two is constant.,bad
+2,there is a proportional relationship between the number of buses and seats because the ratio between these two is constant.,good
+3,there is a proportional relationship between the number of buses and seats because the ratio between these two is constant.,good
+0,no,bad
+1,no,bad
+2,no,bad
+3,no,bad
+0,"Yes, because its the same each time. ",bad
+1,"Yes, because its the same each time. ",bad
+2,"Yes, because its the same each time. ",bad
+3,"Yes, because its the same each time. ",bad
+0,"The number of seats are the same on each bus, each bus has 30 seats. ",good
+0,same number of seats,good
+1,the number of seats increases,good
+1,as the number of busses increases the number of seats increases,good
+2,as the number of busses increases the number of seats increases,bad
+1,increase,bad
+2,THe ratio of 1 bus to 30 seats stays the same,good
+2,constant,bad
+0,the relationship is proportional,bad
+1,the relationship is proportional,bad
+2,the relationship is proportional,bad
+1,the relationship is uniform,bad
+2,the relationship is uniform,bad
+3,the relationship is uniform,bad
+0,all buses have the same seats,good
+1,all buses have the same seats,bad
+2,all buses have the same seats,bad
+3,all buses have the same seats,bad
+1,the total number of seats changes,good
+2,the total number of seats changes,bad
+3,the total number of seats changes,bad
+1,the relationship is uniform,bad
+2,the relationship is uniform,bad
+3,the relationship is uniform,bad
+0,the relationship is not uniform,bad
+1,the relationship is not uniform,bad
+2,the relationship is not uniform,bad
+3,the relationship is not uniform,bad
+0,the relationship is proportional,bad
+1,the relationship is proportional,bad
+2,the relationship is proportional,bad
+3,the relationship is proportional,good
+0,the relationship between buses and seats change together,bad
+1,the relationship between buses and seats change together,good
+2,the relationship between buses and seats change together,bad
+3,the relationship between buses and seats change together,bad
+0,same,bad
+1,same,bad
+2,same,bad
+3,same,bad
+0,the number of seats is constant,good
+1,the number of seats is constant,bad
+2,the number of seats is constant,bad
+3,the number of seats is constant,bad
+0,"if all the buses made have 30 seats, yes, there is a proportional relationship because the ratio of buses to seat is constant, which is 30. ",good
+1,"if all the buses made have 30 seats, yes, there is a proportional relationship because the ratio of buses to seat is constant, which is 30. ",bad
+2,"if all the buses made have 30 seats, yes, there is a proportional relationship because the ratio of buses to seat is constant, which is 30. ",good
+3,"if all the buses made have 30 seats, yes, there is a proportional relationship because the ratio of buses to seat is constant, which is 30. ",good
+0,"Yes, because the busses and seats are the same for all, the number of seats increases with the number of busses, and the ratio of seats to busses is constant. ",good
+1,"Yes, because the busses and seats are the same for all, the number of seats increases with the number of busses, and the ratio of seats to busses is constant. ",good
+2,"Yes, because the busses and seats are the same for all, the number of seats increases with the number of busses, and the ratio of seats to busses is constant. ",good
+3,"Yes, because the busses and seats are the same for all, the number of seats increases with the number of busses, and the ratio of seats to busses is constant. ",good
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+2,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+3,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+2,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+3,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+0,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+1,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+3,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+0,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+1,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+3,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+0,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+1,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+3,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+0,The relationship between the number of buses and seats is proportional.,bad
+1,The relationship between the number of buses and seats is proportional.,bad
+2,The relationship between the number of buses and seats is proportional.,bad
+3,The relationship between the number of buses and seats is proportional.,good
+0,The relationship between the number of buses and seats is proportional.,bad
+1,The relationship between the number of buses and seats is proportional.,bad
+2,The relationship between the number of buses and seats is proportional.,bad
+3,The relationship between the number of buses and seats is proportional.,good
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+2,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+3,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+1,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+3,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+0,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+1,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+3,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+0,The relationship between the number of buses and seats is proportional.,bad
+1,The relationship between the number of buses and seats is proportional.,bad
+2,The relationship between the number of buses and seats is proportional.,bad
+3,The relationship between the number of buses and seats is proportional.,good
+3,The relationship between the number of buses and seats is proportional.,good
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+1,The number of buses and seats are variable quantities and change together.,good
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+2,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+3,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+1,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+3,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+0,The relationship between the number of buses and seats is proportional.,bad
+1,The relationship between the number of buses and seats is proportional.,bad
+2,The relationship between the number of buses and seats is proportional.,bad
+3,The relationship between the number of buses and seats is proportional.,good
+0,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+1,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+3,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+0,constant,bad
+1,constant,bad
+2,constant,good
+3,constant,bad
+0,uniformity,good
+1,uniformity,bad
+2,uniformity,bad
+3,uniformity,bad
+0,identical,good
+1,identical,bad
+2,identical,bad
+3,identical,bad
+0,identical uniformity,good
+1,identical uniformity,bad
+2,identical uniformity,bad
+3,identical uniformity,bad
+0,variable quantities and change together,bad
+1,variable quantities and change together,good
+2,variable quantities and change together,bad
+3,variable quantities and change together,bad
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+1,increase,good
+2,constant,good
+3,proportional,good
+3,The relationship between the number of buses and seats is proportional.,good
+1,The number of buses and seats are variable quantities and change together.,good
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+1,The number of buses and seats are variable quantities and change together.,good
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+1,"When the number of buses increases, the total number of seats increases.",good
+0,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+2,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+3,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,buses and seats are variable quantities and change together.,bad
+1,buses and seats are variable quantities and change together.,good
+2,buses and seats are variable quantities and change together.,bad
+3,buses and seats are variable quantities and change together.,bad
+0,the seats increases,bad
+2,the seats increases,bad
+3,the seats increases,bad
+0,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+2,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+3,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,buses and seats are variable quantities and change together.,bad
+1,buses and seats are variable quantities and change together.,good
+2,buses and seats are variable quantities and change together.,bad
+3,buses and seats are variable quantities and change together.,bad
+0,the seats increases,bad
+1,the seats increases,good
+2,the seats increases,bad
+3,the seats increases,bad
+0,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+2,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+3,"Each bus is identical and has 30 seats, which indicates uniformity.
+The number of buses and seats are variable quantities and change together.
+The ratio of the number of buses to seats is constant, indicating invariance.
+The relationship between the number of buses and seats is proportional.",good
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+2,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+3,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+1,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+3,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+0,The relationship between the number of buses and seats is proportional.,bad
+1,The relationship between the number of buses and seats is proportional.,bad
+2,The relationship between the number of buses and seats is proportional.,bad
+3,The relationship between the number of buses and seats is proportional.,good
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+1,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+3,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+2,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+3,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+0,It increases in proportion to the number of buses.,bad
+1,It increases in proportion to the number of buses.,good
+2,It increases in proportion to the number of buses.,bad
+3,It increases in proportion to the number of buses.,bad
+0,The total number of seats divided by the number of buses is always 30,bad
+1,The total number of seats divided by the number of buses is always 30,bad
+2,The total number of seats divided by the number of buses is always 30,good
+3,The total number of seats divided by the number of buses is always 30,bad
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+2,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+3,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+0,a,bad
+1,a,bad
+2,a,bad
+3,a,bad
+0,b,bad
+1,b,bad
+2,b,bad
+3,b,bad
+0,c,bad
+1,c,bad
+2,c,bad
+3,c,bad
+0,d,bad
+1,d,bad
+2,d,bad
+3,d,bad
+0,e,bad
+1,e,bad
+2,e,bad
+3,e,bad
+0,f,bad
+1,f,bad
+2,f,bad
+3,f,bad
+0,g,bad
+1,g,bad
+2,g,bad
+3,g,bad
+0,h,bad
+1,h,bad
+2,h,bad
+3,h,bad
+0,i,bad
+1,i,bad
+2,i,bad
+3,i,bad
+0,a,bad
+1,a,bad
+2,a,bad
+3,a,bad
+0,a,bad
+1,a,bad
+2,a,bad
+3,a,bad
+0,b,bad
+1,b,bad
+2,b,bad
+3,b,bad
+0,c,bad
+1,c,bad
+2,c,bad
+3,c,bad
+0,d,bad
+1,d,bad
+2,d,bad
+3,d,bad
+0,e,bad
+1,e,bad
+2,e,bad
+3,e,bad
+0,f,bad
+1,f,bad
+2,f,bad
+3,f,bad
+0,g,bad
+1,g,bad
+2,g,bad
+3,g,bad
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+2,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+3,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+2,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+3,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+1,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+2,"The ratio of the number of buses to seats is constant, indicating invariance.",good
+3,"The ratio of the number of buses to seats is constant, indicating invariance.",bad
+0,The relationship between the number of buses and seats is proportional.,bad
+1,The relationship between the number of buses and seats is proportional.,bad
+2,The relationship between the number of buses and seats is proportional.,bad
+3,The relationship between the number of buses and seats is proportional.,good
+0,"Each bus is identical and has 30 seats, which indicates uniformity",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity",bad
+2,"Each bus is identical and has 30 seats, which indicates uniformity",bad
+3,"Each bus is identical and has 30 seats, which indicates uniformity",bad
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,"Each bus is identical and has 30 seats, which indicates uniformity.",good
+1,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+2,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+3,"Each bus is identical and has 30 seats, which indicates uniformity.",bad
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,yes,bad
+1,yes,bad
+2,yes,bad
+0,"Buses-R-Us makes school buses with 30 seats. As the company makes more buses, do the number of buses and the number of seats have a proportional relationship? Explain why or why not.",bad
+1,"Buses-R-Us makes school buses with 30 seats. As the company makes more buses, do the number of buses and the number of seats have a proportional relationship? Explain why or why not.",bad
+2,"Buses-R-Us makes school buses with 30 seats. As the company makes more buses, do the number of buses and the number of seats have a proportional relationship? Explain why or why not.",bad
+3,"Buses-R-Us makes school buses with 30 seats. As the company makes more buses, do the number of buses and the number of seats have a proportional relationship? Explain why or why not.",bad
+0,"Buses-R-Us makes school buses with 30 seats. As the company makes more buses, do the number of buses and the number of seats have a proportional relationship? Explain why or why not.",bad
+1,"Buses-R-Us makes school buses with 30 seats. As the company makes more buses, do the number of buses and the number of seats have a proportional relationship? Explain why or why not.",bad
+2,"Buses-R-Us makes school buses with 30 seats. As the company makes more buses, do the number of buses and the number of seats have a proportional relationship? Explain why or why not.",bad
+3,"Buses-R-Us makes school buses with 30 seats. As the company makes more buses, do the number of buses and the number of seats have a proportional relationship? Explain why or why not.",bad
+0,"It's proportional because the seats are the same and you add 30 for each bus, the seats and busses increase together, and the ratio of seats to busses is constant.",good
+1,"It's proportional because the seats are the same and you add 30 for each bus, the seats and busses increase together, and the ratio of seats to busses is constant.",good
+2,"It's proportional because the seats are the same and you add 30 for each bus, the seats and busses increase together, and the ratio of seats to busses is constant.",good
+3,"It's proportional because the seats are the same and you add 30 for each bus, the seats and busses increase together, and the ratio of seats to busses is constant.",good
+0,"It's not proportional because the seats are not the same for each bus, the seats and busses do not increase together, and the ratio of seats to busses is not constant.",bad
+1,"It's not proportional because the seats are not the same for each bus, the seats and busses do not increase together, and the ratio of seats to busses is not constant.",bad
+2,"It's not proportional because the seats are not the same for each bus, the seats and busses do not increase together, and the ratio of seats to busses is not constant.",bad
+3,"It's not proportional because the seats are not the same for each bus, the seats and busses do not increase together, and the ratio of seats to busses is not constant.",bad
+0,the relationship between buses and seats is proportional because the buses are all the same and the ratio is constant.,good
+1,the relationship between buses and seats is proportional because the buses are all the same and the ratio is constant.,bad
+2,the relationship between buses and seats is proportional because the buses are all the same and the ratio is constant.,good
+3,the relationship between buses and seats is proportional because the buses are all the same and the ratio is constant.,good
+0,it's not proportional,bad
+1,it's not proportional,bad
+2,it's not proportional,bad
+3,it's not proportional,bad
+1,the seats are always 30,bad
+2,the seats are always 30,bad
+3,the seats are always 30,bad
+0,"if the seats are always 30 for each bus, then the variables are uniform",good
+1,"if the seats are always 30 for each bus, then the variables are uniform",bad
+2,"if the seats are always 30 for each bus, then the variables are uniform",bad
+3,"if the seats are always 30 for each bus, then the variables are uniform",bad
+0,THe total number of seats increases,bad
+2,THe total number of seats increases,bad
+3,THe total number of seats increases,bad
+0,the number of seats increases as the number of buses increases,bad
+1,the number of seats increases as the number of buses increases,good
+2,the number of seats increases as the number of buses increases,bad
+3,the number of seats increases as the number of buses increases,bad
+0,It's not proportional,bad
+1,It's not proportional,bad
+2,It's not proportional,bad
+3,It's not proportional,bad
+0,"it's always 30, so the seats and buses are uniform",good
+1,"it's always 30, so the seats and buses are uniform",bad
+2,"it's always 30, so the seats and buses are uniform",bad
+3,"it's always 30, so the seats and buses are uniform",bad
+0,it means that the variable quantities are uniform,bad
+1,it means that the variable quantities are uniform,bad
+2,it means that the variable quantities are uniform,bad
+3,it means that the variable quantities are uniform,bad
+0,the total number of seats increases,bad
+2,the total number of seats increases,bad
+3,the total number of seats increases,bad
+0,the seats and buses increase together,bad
+1,the seats and buses increase together,good
+2,the seats and buses increase together,bad
+3,the seats and buses increase together,bad
+0,They aren't proportional. It's just 30 seats every time.,bad
+1,They aren't proportional. It's just 30 seats every time.,bad
+2,They aren't proportional. It's just 30 seats every time.,bad
+3,They aren't proportional. It's just 30 seats every time.,bad
+0,"There's probably a few designs, so it's going to change.",bad
+1,"There's probably a few designs, so it's going to change.",bad
+2,"There's probably a few designs, so it's going to change.",bad
+3,"There's probably a few designs, so it's going to change.",bad
+0,It is uniform. The number of seats is not going to change.,good
+1,It is uniform. The number of seats is not going to change.,bad
+2,It is uniform. The number of seats is not going to change.,bad
+3,It is uniform. The number of seats is not going to change.,bad
+0,"It is proportional. The total number of seats to buses will not change and each bus has the same number of seats, so as more buses are made more seats will be made as well.",good
+1,"It is proportional. The total number of seats to buses will not change and each bus has the same number of seats, so as more buses are made more seats will be made as well.",good
+2,"It is proportional. The total number of seats to buses will not change and each bus has the same number of seats, so as more buses are made more seats will be made as well.",bad
+3,"It is proportional. The total number of seats to buses will not change and each bus has the same number of seats, so as more buses are made more seats will be made as well.",good
+0,It's not proportional.,bad
+1,It's not proportional.,bad
+2,It's not proportional.,bad
+3,It's not proportional.,bad
+1,Every bus has 30 seats.,bad
+2,Every bus has 30 seats.,bad
+3,Every bus has 30 seats.,bad
+0,"Each bus has 30 seats and that won't change, so its uniform.",good
+1,"Each bus has 30 seats and that won't change, so its uniform.",bad
+2,"Each bus has 30 seats and that won't change, so its uniform.",bad
+3,"Each bus has 30 seats and that won't change, so its uniform.",bad
+0,More buses means more seats.,bad
+1,More buses means more seats.,good
+2,More buses means more seats.,bad
+3,More buses means more seats.,bad
+0,"You need more seats as you make more buses, so it changes together.",bad
+1,"You need more seats as you make more buses, so it changes together.",good
+2,"You need more seats as you make more buses, so it changes together.",bad
+3,"You need more seats as you make more buses, so it changes together.",bad
+0,"Not proportional. If you run out of seats, you can still make a bus with less seats.",bad
+1,"Not proportional. If you run out of seats, you can still make a bus with less seats.",bad
+2,"Not proportional. If you run out of seats, you can still make a bus with less seats.",bad
+3,"Not proportional. If you run out of seats, you can still make a bus with less seats.",bad
+0,Proportional. Uniform. Covarince. Invariance.,bad
+1,Proportional. Uniform. Covarince. Invariance.,bad
+2,Proportional. Uniform. Covarince. Invariance.,bad
+3,Proportional. Uniform. Covarince. Invariance.,good
+0,"Every bus has thirty seats, so its uniform.",good
+1,"Every bus has thirty seats, so its uniform.",bad
+2,"Every bus has thirty seats, so its uniform.",bad
+3,"Every bus has thirty seats, so its uniform.",bad
+0,"All the buses are the same, so its uniform.",good
+1,"All the buses are the same, so its uniform.",bad
+2,"All the buses are the same, so its uniform.",bad
+3,"All the buses are the same, so its uniform.",bad
+0,When you make more buses you have to make more seats.,bad
+1,When you make more buses you have to make more seats.,good
+2,When you make more buses you have to make more seats.,bad
+3,When you make more buses you have to make more seats.,bad
+0,"They both change together, so they covary.",bad
+1,"They both change together, so they covary.",good
+2,"They both change together, so they covary.",bad
+3,"They both change together, so they covary.",bad
+0,The ratio won't change. It's always 30:1.,bad
+1,The ratio won't change. It's always 30:1.,bad
+2,The ratio won't change. It's always 30:1.,good
+3,The ratio won't change. It's always 30:1.,bad
+0,"30:1 is the ratio no matter what, so it's invariant.",bad
+1,"30:1 is the ratio no matter what, so it's invariant.",bad
+2,"30:1 is the ratio no matter what, so it's invariant.",good
+3,"30:1 is the ratio no matter what, so it's invariant.",bad
+1,"Yes, the number of buses and seats are in a proportional relationship.  This is because when you have 0 buses you have 0 seats.  Then as you increase the number of buses the number of seats increases by 30 seats for every 1 bus.",good
+2,"Yes, the number of buses and seats are in a proportional relationship.  This is because when you have 0 buses you have 0 seats.  Then as you increase the number of buses the number of seats increases by 30 seats for every 1 bus.",bad
+3,"Yes, the number of buses and seats are in a proportional relationship.  This is because when you have 0 buses you have 0 seats.  Then as you increase the number of buses the number of seats increases by 30 seats for every 1 bus.",good
+0,"the number of seats are the same for any bus, indicating uniformity",good
+1,"the number of seats are the same for any bus, indicating uniformity",bad
+2,"the number of seats are the same for any bus, indicating uniformity",bad
+3,"the number of seats are the same for any bus, indicating uniformity",bad
+0,"Yes, the realtionship between buses and seats is constant, indicating that the relationship is invariant.",bad
+1,"Yes, the realtionship between buses and seats is constant, indicating that the relationship is invariant.",bad
+2,"Yes, the realtionship between buses and seats is constant, indicating that the relationship is invariant.",good
+3,"Yes, the realtionship between buses and seats is constant, indicating that the relationship is invariant.",bad
+0,"Yes, the relationship is proportional.",bad
+1,"Yes, the relationship is proportional.",bad
+2,"Yes, the relationship is proportional.",bad
+3,"Yes, the relationship is proportional.",good
+0,Yes they have a 1:30 proportional relationship as each bus is built 30 new seats become available,good
+1,Yes they have a 1:30 proportional relationship as each bus is built 30 new seats become available,bad
+2,Yes they have a 1:30 proportional relationship as each bus is built 30 new seats become available,good
+3,Yes they have a 1:30 proportional relationship as each bus is built 30 new seats become available,good
+0,The number of seats in any one bus will uniformly be 30,good
+1,The number of seats in any one bus will uniformly be 30,bad
+2,The number of seats in any one bus will uniformly be 30,bad
+3,The number of seats in any one bus will uniformly be 30,bad
+0,The number of seats increases proportionally by a 30 everytime the number of buses increases by 1,bad
+1,The number of seats increases proportionally by a 30 everytime the number of buses increases by 1,good
+2,The number of seats increases proportionally by a 30 everytime the number of buses increases by 1,bad
+3,The number of seats increases proportionally by a 30 everytime the number of buses increases by 1,bad
+0,"Yes, there is a scale factor",bad
+1,"Yes, there is a scale factor",bad
+2,"Yes, there is a scale factor",bad
+0,there is 30 on each bus,good
+1,there is 30 on each bus,bad
+2,there is 30 on each bus,bad
+3,there is 30 on each bus,bad
+0,Each bus is identical.,good
+1,Each bus is identical.,bad
+2,Each bus is identical.,bad
+3,Each bus is identical.,bad
+0,As the number of buses increase the total number of seats adds 30 each time.,bad
+1,As the number of buses increase the total number of seats adds 30 each time.,good
+2,As the number of buses increase the total number of seats adds 30 each time.,good
+3,As the number of buses increase the total number of seats adds 30 each time.,bad
+0,Yes the ration of the number of buses ot seats is constant. The relationship between the number of buses and seats is proportional.,bad
+1,Yes the ration of the number of buses ot seats is constant. The relationship between the number of buses and seats is proportional.,bad
+2,Yes the ration of the number of buses ot seats is constant. The relationship between the number of buses and seats is proportional.,good
+3,Yes the ration of the number of buses ot seats is constant. The relationship between the number of buses and seats is proportional.,good
+0,The number of buses and seats are variable quantities and change together.,bad
+1,The number of buses and seats are variable quantities and change together.,good
+2,The number of buses and seats are variable quantities and change together.,bad
+3,The number of buses and seats are variable quantities and change together.,bad
+0,"Yes. For every bus there are 30 seats, so the proportion remains 1:30",good
+1,"Yes. For every bus there are 30 seats, so the proportion remains 1:30",bad
+3,"Yes. For every bus there are 30 seats, so the proportion remains 1:30",good
+0,The number of seats on a bus remains the same,good
+1,The number of seats on a bus remains the same,bad
+2,The number of seats on a bus remains the same,bad
+3,The number of seats on a bus remains the same,bad
+0,it increases by multiples of 30,bad
+2,it increases by multiples of 30,bad
+3,it increases by multiples of 30,bad
+0,"Yes, because with 0 busses, there are 0 seats. As the number of busses increases by 1, the number of seats increases by 30. This also means you can multiply the number of busses by 30 to get the number of seats. s = 30b",bad
+1,"Yes, because with 0 busses, there are 0 seats. As the number of busses increases by 1, the number of seats increases by 30. This also means you can multiply the number of busses by 30 to get the number of seats. s = 30b",good
+2,"Yes, because with 0 busses, there are 0 seats. As the number of busses increases by 1, the number of seats increases by 30. This also means you can multiply the number of busses by 30 to get the number of seats. s = 30b",bad
+3,"Yes, because with 0 busses, there are 0 seats. As the number of busses increases by 1, the number of seats increases by 30. This also means you can multiply the number of busses by 30 to get the number of seats. s = 30b",good
+1,It is always 30,bad
+2,It is always 30,bad
+3,It is always 30,bad
+0,The number of  seats in each bus is always the same. This means the relationship is uniform.,good
+1,The number of  seats in each bus is always the same. This means the relationship is uniform.,bad
+2,The number of  seats in each bus is always the same. This means the relationship is uniform.,bad
+3,The number of  seats in each bus is always the same. This means the relationship is uniform.,bad
+0,"Yes, the number of seats is equal to the number of busses multiplied by 30. Each  has a quotient of 30 when seats are divided by busses.",bad
+1,"Yes, the number of seats is equal to the number of busses multiplied by 30. Each  has a quotient of 30 when seats are divided by busses.",bad
+2,"Yes, the number of seats is equal to the number of busses multiplied by 30. Each  has a quotient of 30 when seats are divided by busses.",good
+3,"Yes, the number of seats is equal to the number of busses multiplied by 30. Each  has a quotient of 30 when seats are divided by busses.",bad
+0,Yes,bad
+1,Yes,bad
+2,Yes,bad
+3,Yes,bad
+

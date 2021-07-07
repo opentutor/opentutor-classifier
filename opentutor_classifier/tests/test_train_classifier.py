@@ -100,50 +100,67 @@ def _test_train_and_predict(
             expected_accuracy=expected_accuracy,
         )
 
-
+@pytest.mark.only
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
         (
-            "ies-rectangle",
+            "ies_auction",
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.8),
+                ExpectationTrainingResult(accuracy=0.84),
+                ExpectationTrainingResult(accuracy=0.91),
                 ExpectationTrainingResult(accuracy=0.92),
-                ExpectationTrainingResult(accuracy=0.95),
             ],
-            0.85,
+            0.80,
         ),
         (
-            "candles",
+            "ies_bus_and_seats",
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.81),
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.95),
+                ExpectationTrainingResult(accuracy=0.91),
+                ExpectationTrainingResult(accuracy=0.94),
+                ExpectationTrainingResult(accuracy=0.91),
+                ExpectationTrainingResult(accuracy=0.94),
             ],
             0.8,
         ),
         (
-            "dog_toy",
+            "ies_house",
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.96),
+                ExpectationTrainingResult(accuracy=0.85),
+                ExpectationTrainingResult(accuracy=0.85),
+                ExpectationTrainingResult(accuracy=0.91),
             ],
-            0.69,
+            0.83,
         ),
         (
-            "electronics",
+            "ies_pitcher",
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.69),
+                ExpectationTrainingResult(accuracy=0.87),
+                ExpectationTrainingResult(accuracy=0.96),
+                ExpectationTrainingResult(accuracy=0.92),
             ],
-            0.25,
+            0.8,
+        ),
+        (
+            "ies_robot_remedy",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=1),
+                ExpectationTrainingResult(accuracy=0.66),
+                ExpectationTrainingResult(accuracy=0.97),
+            ],
+            0.8,
         ),
     ],
 )
