@@ -5,7 +5,6 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import json
-import os
 from typing import List
 
 import pytest
@@ -13,11 +12,6 @@ import pytest
 from opentutor_classifier import ExpectationClassifierResult, SpeechActClassifierResult  # type: ignore
 from . import fixture_path
 from .utils import mocked_data_dao
-
-
-@pytest.fixture(scope="module")
-def shared_root(word2vec) -> str:
-    return os.path.dirname(word2vec)
 
 
 @pytest.fixture(autouse=True)

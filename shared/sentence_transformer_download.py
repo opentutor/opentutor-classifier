@@ -14,14 +14,14 @@ DEFAULT_TO_PATH = os.path.join("installed", "sentence-transformer")
 
 def transformer_download(to_path=DEFAULT_TO_PATH, replace_existing=False) -> str:
     transformer_path = os.path.abspath(
-        os.path.join(to_path, "bert-base-nli-mean-tokens")
+        os.path.join(to_path, "distilbert-base-nli-mean-tokens")
     )
     if os.path.exists(transformer_path) and not replace_existing:
         print(f"already downloaded! {transformer_path}")
         return transformer_path
-    transformer_zip = os.path.join(to_path, "bert-base-nli-mean-tokens.zip")
+    transformer_zip = os.path.join(to_path, "distilbert-base-nli-mean-tokens.zip")
     download(
-        "https://public.ukp.informatik.tu-darmstadt.de/reimers/sentence-transformers/v0.2/bert-base-nli-mean-tokens.zip",
+        "https://public.ukp.informatik.tu-darmstadt.de/reimers/sentence-transformers/v0.2/distilbert-base-nli-mean-tokens.zip",
         transformer_zip,
     )
     with ZipFile(transformer_zip, "r") as z:

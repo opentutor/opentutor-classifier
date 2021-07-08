@@ -6,7 +6,7 @@
 #
 from collections import defaultdict
 import json
-from os import path, environ
+from os import environ
 
 from typing import Dict, List
 import numpy as np

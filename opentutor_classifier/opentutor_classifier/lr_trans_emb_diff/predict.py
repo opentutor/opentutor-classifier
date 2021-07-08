@@ -7,7 +7,6 @@
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
-from os import path
 from sklearn import linear_model
 
 from opentutor_classifier import (

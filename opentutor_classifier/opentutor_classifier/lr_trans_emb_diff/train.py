@@ -6,7 +6,6 @@
 #
 from collections import defaultdict
 import json
-from os import path
 
 from typing import Dict, List
 
