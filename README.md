@@ -10,7 +10,7 @@ This repo contains two subprojects:
 ## Requirements
 
 - [recommended] [penv](https://github.com/pyenv/pyenv-installer) to simplify python version management. 
-- python3.8 (must be in path as `python3.8` to build virtualenv)
+- python3.8 (must be in path as `python3.8` to build venv)
 - make
 
 ## Development

@@ -5,8 +5,8 @@ $(VENV):
 	$(MAKE) $(VENV)-update
 
 .PHONY: $(VENV)-update
-$(VENV)-update: virtualenv-installed
-	[ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
+$(VENV)-update:
+	[ -d $(VENV) ] || python3.8 -m venv $(VENV)
 	$(VENV)/bin/pip install --upgrade pip
 	$(VENV)/bin/pip install -r ./requirements.test.txt
 	$(VENV)/bin/python3.8 -m nltk.downloader punkt
@@ -98,6 +98,3 @@ test-types: $(VENV)
 .PHONY: update-deps
 update-deps: $(VENV)
 	. $(VENV)/bin/activate && pip-upgrade requirements*
-
-virtualenv-installed:
-	$(ROOT)/tools/virtualenv_ensure_installed.sh
