@@ -4,10 +4,31 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from os import path
-import pytest
+import os
+from zipfile import ZipFile
+
+from utils import download
+
+DEFAULT_TO_PATH = os.path.join("installed", "sentence-transformer")
 
 
-@pytest.fixture(scope="module", autouse=True)
-def shared_root() -> str:
-    return path.abspath(path.join("..", "shared", "installed"))
+def transformer_download(to_path=DEFAULT_TO_PATH, replace_existing=False) -> str:
+    transformer_path = os.path.abspath(
+        os.path.join(to_path, "bert-base-nli-mean-tokens")
+    )
+    if os.path.exists(transformer_path) and not replace_existing:
+        print(f"already downloaded! {transformer_path}")
+        return transformer_path
+    transformer_zip = os.path.join(to_path, "bert-base-nli-mean-tokens.zip")
+    download(
+        "https://public.ukp.informatik.tu-darmstadt.de/reimers/sentence-transformers/v0.2/bert-base-nli-mean-tokens.zip",
+        transformer_zip,
+    )
+    with ZipFile(transformer_zip, "r") as z:
+        z.extractall(transformer_path)
+    os.remove(transformer_zip)
+    return transformer_path
+
+
+if __name__ == "__main__":
+    transformer_download()

@@ -21,6 +21,6 @@ build
 dist
 docker-test-train-out
 htmlcov
-htmlcov
+installed
 models
-sentence-transformer/bert-base*
+shared/installed/sentence-transformer/bert-base-nli-mean-tokens/*

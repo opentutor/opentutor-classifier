@@ -48,11 +48,6 @@ def data_root() -> str:
     return fixture_path("data")
 
 
-@pytest.fixture(scope="module")
-def shared_root(word2vec) -> str:
-    return path.dirname(word2vec)
-
-
 def predict_replicate_model(
     lesson: str,
     arch: str,

@@ -31,11 +31,6 @@ def python_path_env(monkeypatch):
     monkeypatch.setenv("PYTHONPATH", ".")
 
 
-@pytest.fixture(scope="module")
-def shared_root(word2vec) -> str:
-    return path.dirname(word2vec)
-
-
 def capture(command):
     proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate()

@@ -35,7 +35,7 @@ license: LICENSE LICENSE_HEADER $(VENV)
 		&& python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/src $(args) \
 		&& python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/tests $(args) \
 		&& python -m licenseheaders -t LICENSE_HEADER -d tools $(args) \
-		&& python -m licenseheaders -t LICENSE_HEADER -d word2vec $(args)
+		&& python -m licenseheaders -t LICENSE_HEADER -d shared $(args)
 
 .PHONY: test
 test:
@@ -73,8 +73,7 @@ test-license: LICENSE LICENSE_HEADER
 test-types: $(VENV)
 	. $(VENV)/bin/activate \
 		&& mypy opentutor_classifier \
-		&& mypy opentutor_classifier_api  \
-		&& mypy word2vec
+		&& mypy opentutor_classifier_api
 
 virtualenv-installed:
 	tools/virtualenv_ensure_installed.sh

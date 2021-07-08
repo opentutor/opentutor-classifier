@@ -47,11 +47,6 @@ def model_roots() -> List[str]:
     ]
 
 
-@pytest.fixture(scope="module")
-def shared_root(word2vec) -> str:
-    return os.path.dirname(word2vec)
-
-
 def _find_or_train_classifier(
     lesson: str, model_root: str, data_root: str, shared_root: str, arch=""
 ) -> AnswerClassifier:

@@ -4,7 +4,6 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from os import path
 import pytest
 
 from opentutor_classifier import (
@@ -26,11 +25,6 @@ from .utils import (
 @pytest.fixture(scope="module")
 def data_root() -> str:
     return fixture_path("data")
-
-
-@pytest.fixture(scope="module")
-def shared_root(word2vec) -> str:
-    return path.dirname(word2vec)
 
 
 def _test_feature_length_ratio_enabled(

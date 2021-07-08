@@ -1,5 +1,9 @@
 FROM python:3.8-slim
 ENV STATUS_URL_FORCE_HTTPS=false
+RUN pip3 install \
+	torch==1.9.0+cpu \
+	torchvision==0.10.0+cpu \
+	-f https://download.pytorch.org/whl/torch_stable.html
 WORKDIR /tmp/build
 COPY opentutor_classifier opentutor_classifier
 RUN pwd

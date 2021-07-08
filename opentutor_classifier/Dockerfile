@@ -1,6 +1,10 @@
 FROM python:3.8-slim
 WORKDIR /opt/opentutor_classifier
 COPY . .
+RUN pip3 install \
+	torch==1.9.0+cpu \
+	torchvision==0.10.0+cpu \
+	-f https://download.pytorch.org/whl/torch_stable.html
 RUN pip install .
 WORKDIR /app
 RUN rm -rf /opt/opentutor_classifier

@@ -13,7 +13,6 @@ import responses
 from opentutor_classifier import (
     ExpectationTrainingResult,
     ARCH_LR_CLASSIFIER,
-    ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
     ARCH_LR_TRANS_EMB_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
@@ -37,11 +36,6 @@ def data_root() -> str:
     return fixture_path("data")
 
 
-@pytest.fixture(scope="module")
-def shared_root(word2vec) -> str:
-    return path.dirname(word2vec)
-
-
 @pytest.mark.parametrize("lesson", [("question1"), ("question2")])
 def test_outputs_models_at_specified_root(
     tmpdir, data_root: str, shared_root: str, lesson: str
@@ -58,7 +52,6 @@ def test_outputs_models_at_specified_root(
     "arch,expected_model_file_name",
     [
         (ARCH_LR_CLASSIFIER, "models_by_expectation_num.pkl"),
-        (ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER, "models_by_expectation_num.pkl"),
         (ARCH_LR_TRANS_EMB_CLASSIFIER, "models_by_expectation_num.pkl"),
     ],
 )
@@ -105,43 +98,33 @@ def _test_train_and_predict(
         )
 
 
+@pytest.mark.only
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
-        (
-            "ies-rectangle",
-            ARCH_LR_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.90),
-                ExpectationTrainingResult(accuracy=0.92),
-                ExpectationTrainingResult(accuracy=0.95),
-            ],
-            0.85,
-        ),
-        (
-            "candles",
-            ARCH_LR_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.81),
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.95),
-            ],
-            0.8,
-        ),
-        (
-            "ies-rectangle",
-            ARCH_LR_TRANS_EMB_DIFF_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.94),
-                ExpectationTrainingResult(accuracy=0.96),
-                ExpectationTrainingResult(accuracy=0.95),
-            ],
-            0.7,
-        ),
+        # (
+        #     "ies-rectangle",
+        #     ARCH_LR_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [
+        #         ExpectationTrainingResult(accuracy=0.90),
+        #         ExpectationTrainingResult(accuracy=0.92),
+        #         ExpectationTrainingResult(accuracy=0.95),
+        #     ],
+        #     0.85,
+        # ),
+        # (
+        #     "candles",
+        #     ARCH_LR_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [
+        #         ExpectationTrainingResult(accuracy=0.82),
+        #         ExpectationTrainingResult(accuracy=0.81),
+        #         ExpectationTrainingResult(accuracy=0.82),
+        #         ExpectationTrainingResult(accuracy=0.95),
+        #     ],
+        #     0.8,
+        # ),
         (
             "ies-rectangle",
             ARCH_LR_TRANS_EMB_CLASSIFIER,

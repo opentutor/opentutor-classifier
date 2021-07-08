@@ -5,8 +5,16 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from os import path
+from typing import Dict
 from sentence_transformers import SentenceTransformer
+
+SENTENCE_TRANSFORMER_MODELS: Dict[str, SentenceTransformer] = {}
 
 
 def find_or_load_sentence_transformer(file_path: str) -> SentenceTransformer:
-    return SentenceTransformer(path.join(file_path, "bert-base-nli-mean-tokens"))
+    abs_path = path.abspath(file_path)
+    if abs_path not in SENTENCE_TRANSFORMER_MODELS:
+        SENTENCE_TRANSFORMER_MODELS[abs_path] = SentenceTransformer(
+            path.join(file_path, "bert-base-nli-mean-tokens")
+        )
+    return SENTENCE_TRANSFORMER_MODELS[abs_path]
