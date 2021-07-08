@@ -1,0 +1,82 @@
+[[package]]
+name = "certifi"
+version = "2021.5.30"
+description = "Python package for providing Mozilla's CA Bundle."
+category = "main"
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/pypi/"
+reference = "pypi"
+
+[[package]]
+name = "chardet"
+version = "3.0.4"
+description = "Universal encoding detector for Python 2 and 3"
+category = "main"
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/pypi/"
+reference = "pypi"
+
+[[package]]
+name = "idna"
+version = "2.10"
+description = "Internationalized Domain Names in Applications (IDNA)"
+category = "main"
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/pypi/"
+reference = "pypi"
+
+[[package]]
+name = "urllib3"
+version = "1.26.6"
+description = "HTTP library with thread-safe connection pooling, file post, and more."
+category = "main"
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/pypi/"
+reference = "pypi"
+
+[[package]]
+name = "requests"
+version = "2.25.0"
+description = "Python HTTP for Humans."
+category = "main"
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/pypi/"
+reference = "pypi"
+
+[package.dependencies]
+chardet = "<4,>=3.0.2"
+idna = "<3,>=2.5"
+urllib3 = "<1.27,>=1.21.1"
+certifi = ">=2017.4.17"
+
+[[package]]
+name = "tqdm"
+version = "4.52.0"
+description = "Fast, Extensible Progress Meter"
+category = "main"
+
+[package.source]
+type = "legacy"
+url = "https://pypi.org/pypi/"
+reference = "pypi"
+
+[metadata]
+python-versions = ""
+
+[metadata.hashes]
+certifi = ["sha256:2bbf76fd432960138b3ef6dda3dde0544f27cbf8546c458e60baf371917ba9ee", "sha256:50b1e4f8446b06f41be7dd6338db18e0990601dce795c2b1686458aa7e8fa7d8"]
+chardet = ["sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae", "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"]
+idna = ["sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6", "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"]
+urllib3 = ["sha256:39fb8672126159acb139a7718dd10806104dec1e2f0f6c88aab05d17df10c8d4", "sha256:f57b4c16c62fa2760b7e3d97c35b255512fb6b59a259730f36ba32ce9f8e342f"]
+requests = ["sha256:7f1a0b932f4a60a1a65caa4263921bb7d9ee911957e0ae4a23a6dd08185ad5f8", "sha256:e786fa28d8c9154e6a4de5d46a1d921b8749f8b74e28bde23768e5e16eece998"]
+tqdm = ["sha256:18d6a615aedd09ec8456d9524489dab330af4bd5c2a14a76eb3f9a0e14471afe", "sha256:80d9d5165d678dbd027dd102dfb99f71bf05f333b61fb761dbba13b4ab719ead"]
