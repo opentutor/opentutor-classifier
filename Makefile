@@ -5,8 +5,8 @@ $(VENV):
 	$(MAKE) $(VENV)-update
 
 .PHONY: $(VENV)-update
-$(VENV)-update: virtualenv-installed
-	[ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
+$(VENV)-update:
+	[ -d $(VENV) ] || python3.8 -m venv $(VENV)
 	$(VENV)/bin/pip install --upgrade pip
 	$(VENV)/bin/pip install -r ./requirements.txt
 
@@ -74,9 +74,6 @@ test-types: $(VENV)
 	. $(VENV)/bin/activate \
 		&& mypy opentutor_classifier \
 		&& mypy opentutor_classifier_api
-
-virtualenv-installed:
-	tools/virtualenv_ensure_installed.sh
 
 .PHONY: update-deps
 update-deps: $(VENV)

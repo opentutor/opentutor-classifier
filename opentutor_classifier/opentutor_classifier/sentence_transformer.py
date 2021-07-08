@@ -11,10 +11,10 @@ from sentence_transformers import SentenceTransformer
 SENTENCE_TRANSFORMER_MODELS: Dict[str, SentenceTransformer] = {}
 
 
-def find_or_load_sentence_transformer(file_path: str) -> SentenceTransformer:
-    abs_path = path.abspath(file_path)
-    if abs_path not in SENTENCE_TRANSFORMER_MODELS:
-        SENTENCE_TRANSFORMER_MODELS[abs_path] = SentenceTransformer(
-            path.join(file_path, "bert-base-nli-mean-tokens")
+def find_or_load_sentence_transformer(shared_root: str) -> SentenceTransformer:
+    abs_root = path.abspath(shared_root)
+    if abs_root not in SENTENCE_TRANSFORMER_MODELS:
+        SENTENCE_TRANSFORMER_MODELS[abs_root] = SentenceTransformer(
+            path.join(abs_root, "sentence-transformer", "bert-base-nli-mean-tokens")
         )
-    return SENTENCE_TRANSFORMER_MODELS[abs_path]
+    return SENTENCE_TRANSFORMER_MODELS[abs_root]

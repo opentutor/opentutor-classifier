@@ -51,7 +51,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
         self.sentence_transformer = find_or_load_sentence_transformer(
-            path.join(config.shared_root, "..", "sentence-transformer")
+            config.shared_root
         )
         return self
 
