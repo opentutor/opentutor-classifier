@@ -58,9 +58,7 @@ license:
 PHONY: test
 test: $(VENV)
 	cd $(ROOT)/shared && $(MAKE) installed/word2vec.bin
-	
 	cd $(ROOT)/shared && $(MAKE) installed/sentence-transformer
-	
 	. $(VENV)/bin/activate \
 		&& coverage run \
 			--omit="$(PWD)/tests $(VENV)" \

@@ -100,9 +100,7 @@ class LRAnswerClassifier(AnswerClassifier):
         )
 
     def find_sentence_transformer(self):
-        self.sentence_transformer = find_or_load_sentence_transformer(
-            path.join(self.shared_root, "sentence-transformer")
-        )
+        self.sentence_transformer = find_or_load_sentence_transformer(self.shared_root)
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = preprocess_sentence(answer.input_sentence)
