@@ -6,9 +6,6 @@ $(VENV):
 
 .PHONY: $(VENV)-update
 $(VENV)-update: virtualenv-installed
-	# [ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
-	# $(VENV)/bin/pip install --upgrade pip
-	# $(VENV)/bin/pip install -r ./requirements.txt
 	poetry update
 	poetry install
 
@@ -32,13 +29,12 @@ LICENSE_HEADER:
 .PHONY: license
 license: LICENSE LICENSE_HEADER $(VENV)
 	# . $(VENV)/bin/activate \
-	# . poetry shell \
-	python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/src $(args) \
-	python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/tests $(args) \
-	python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/src $(args) \
-	python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/tests $(args) \
-	python -m licenseheaders -t LICENSE_HEADER -d tools $(args) \
-	python -m licenseheaders -t LICENSE_HEADER -d word2vec $(args)
+	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/src $(args)
+	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/tests $(args)
+	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/src $(args)
+	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/tests $(args)
+	poetry run python -m licenseheaders -t LICENSE_HEADER -d tools $(args)
+	poetry run python -m licenseheaders -t LICENSE_HEADER -d word2vec $(args)
 
 .PHONY: test
 test:
@@ -75,7 +71,6 @@ test-license: LICENSE LICENSE_HEADER
 .PHONY: test-types
 test-types: $(VENV)
 	# . $(VENV)/bin/activate \
-	# poetry shell \
 	poetry run mypy opentutor_classifier
 	poetry run mypy opentutor_classifier_api
 	poetry run mypy word2vec
