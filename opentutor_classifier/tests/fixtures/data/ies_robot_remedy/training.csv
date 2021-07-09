@@ -1,0 +1,194 @@
+exp_num,text,label
+0,0,Good
+1,0,Bad
+2,0,Bad
+0,origin,Good
+1,origin,Bad
+2,origin,Bad
+0,0,Good
+1,0,Bad
+2,0,Bad
+0,It is 0,Good
+1,It is 0,Bad
+2,It is 0,Bad
+0,Zero,Good
+1,Zero,Bad
+2,Zero,Bad
+0,Just take any y value and divide it by x,Bad
+1,Just take any y value and divide it by x,Good
+2,Just take any y value and divide it by x,Bad
+0,Divide the two values from any point,Bad
+2,Divide the two values from any point,Bad
+0,The unit rate and the slope are the same,Bad
+1,The unit rate and the slope are the same,Bad
+2,The unit rate and the slope are the same,Good
+0,"(0, 0)",Good
+1,"(0, 0)",Bad
+2,"(0, 0)",Bad
+0,zero,Good
+1,zero,Bad
+2,zero,Bad
+0,0,Good
+1,0,Bad
+2,0,Bad
+0,Just take y/x,Bad
+1,Just take y/x,Good
+2,Just take y/x,Bad
+0,"Just calculate y/x for any (x, y) point on the graph",Bad
+1,"Just calculate y/x for any (x, y) point on the graph",Good
+2,"Just calculate y/x for any (x, y) point on the graph",Bad
+0,The unit rate = the slop,Bad
+1,The unit rate = the slop,Bad
+2,The unit rate = the slop,Good
+0,They are the same,Bad
+1,They are the same,Bad
+2,They are the same,Good
+0,The point furthest to the left,Bad
+1,The point furthest to the left,Bad
+2,The point furthest to the left,Bad
+0,y/x,Bad
+1,y/x,Good
+2,y/x,Bad
+0,Divide the values in the point,Bad
+2,Divide the values in the point,Bad
+0,You can figure out one from the other,Bad
+1,You can figure out one from the other,Bad
+2,You can figure out one from the other,Bad
+0,slope=unit rate,Bad
+1,slope=unit rate,Bad
+2,slope=unit rate,Good
+0,y=0,Good
+1,y=0,Bad
+2,y=0,Bad
+0,0,Good
+1,0,Bad
+2,0,Bad
+0,The distance is zero,Good
+1,The distance is zero,Bad
+2,The distance is zero,Bad
+0,y over x,Bad
+1,y over x,Good
+2,y over x,Bad
+0,Divide any y value by the corresponding x value,Bad
+1,Divide any y value by the corresponding x value,Good
+2,Divide any y value by the corresponding x value,Bad
+0,They are equal,Bad
+1,They are equal,Bad
+2,They are equal,Good
+0,They are the same thing,Bad
+1,They are the same thing,Bad
+2,They are the same thing,Good
+0,"(0, 0)",Good
+1,"(0, 0)",Bad
+2,"(0, 0)",Bad
+0,It doesn't have a value. The distance is 0.,Good
+1,It doesn't have a value. The distance is 0.,Bad
+2,It doesn't have a value. The distance is 0.,Bad
+0,Rise over run,Bad
+1,Rise over run,Bad
+2,Rise over run,Bad
+0,y/x,Bad
+1,y/x,Good
+2,y/x,Bad
+0,They have the same value,Bad
+1,They have the same value,Bad
+2,They have the same value,Good
+0,"If the equation is proportional, they are the same thing",Bad
+1,"If the equation is proportional, they are the same thing",Bad
+2,"If the equation is proportional, they are the same thing",Good
+0,y=0,Good
+1,y=0,Bad
+2,y=0,Bad
+0,y is zero,Good
+1,y is zero,Bad
+2,y is zero,Bad
+0,Also 0,Good
+1,Also 0,Bad
+2,Also 0,Bad
+0,Just take the two values in any point and divide them,Bad
+2,Just take the two values in any point and divide them,Bad
+0,Y over x,Bad
+1,Y over x,Good
+2,Y over x,Bad
+0,"In a proportion, they are the same",Bad
+1,"In a proportion, they are the same",Bad
+2,"In a proportion, they are the same",Good
+0,They are equal to each other,Bad
+1,They are equal to each other,Bad
+2,They are equal to each other,Good
+0,"the origin (0,0)",Good
+1,"the origin (0,0)",Bad
+2,"the origin (0,0)",Bad
+1,0,Bad
+2,0,Bad
+1,distance is 0,Bad
+2,distance is 0,Bad
+0,divide the y-value by the x-value,Bad
+1,divide the y-value by the x-value,Good
+2,divide the y-value by the x-value,Bad
+0,use any point on the line,Bad
+2,use any point on the line,Bad
+0,the unit rate and slope are the the same thing,Bad
+1,the unit rate and slope are the the same thing,Bad
+2,the unit rate and slope are the the same thing,Good
+0,the y-intercept is 0,Good
+1,the y-intercept is 0,Bad
+2,the y-intercept is 0,Bad
+0,the y-value is 0,Good
+1,the y-value is 0,Bad
+2,the y-value is 0,Bad
+1,the distance is 0,Bad
+2,the distance is 0,Bad
+0,use any point on the line,Bad
+2,use any point on the line,Bad
+0,divide y/x,Bad
+2,divide y/x,Bad
+0,the unit rate and slop are the same thing for an equation,Bad
+1,the unit rate and slop are the same thing for an equation,Bad
+2,the unit rate and slop are the same thing for an equation,Good
+0,the y-intercept is the origin,Good
+1,the y-intercept is the origin,Bad
+2,the y-intercept is the origin,Bad
+1,0,Bad
+2,0,Bad
+1,distance = 0,Bad
+2,distance = 0,Bad
+0,use any point of the line and find the quotient y/x,Bad
+1,use any point of the line and find the quotient y/x,Good
+2,use any point of the line and find the quotient y/x,Bad
+0,use any point on the line,Bad
+2,use any point on the line,Bad
+0,the unit rate and slope are the same thing,Bad
+1,the unit rate and slope are the same thing,Bad
+2,the unit rate and slope are the same thing,Good
+0,"the y intercept is the origin, (0,0), or 0",Good
+1,"the y intercept is the origin, (0,0), or 0",Bad
+2,"the y intercept is the origin, (0,0), or 0",Bad
+0,the y-value is 0,Good
+1,the y-value is 0,Bad
+2,the y-value is 0,Bad
+1,the distance is 0,Bad
+2,the distance is 0,Bad
+0,use any point on the graph,Bad
+2,use any point on the graph,Bad
+0,divide y/x for any point,Bad
+1,divide y/x for any point,Good
+2,divide y/x for any point,Bad
+0,slop and unit rate are equal,Bad
+1,slop and unit rate are equal,Bad
+2,slop and unit rate are equal,Good
+0,the slop and unit rate are the same for proportional relationships,Bad
+1,the slop and unit rate are the same for proportional relationships,Bad
+2,the slop and unit rate are the same for proportional relationships,Good
+0,THe y-intercept is 0.  So the equation can be found by dividing y/x for any point on the graph,Good
+1,THe y-intercept is 0.  So the equation can be found by dividing y/x for any point on the graph,Bad
+2,THe y-intercept is 0.  So the equation can be found by dividing y/x for any point on the graph,Bad
+0,divide y/x for a point on the graph,Bad
+1,divide y/x for a point on the graph,Good
+2,divide y/x for a point on the graph,Bad
+0,divide y/x,Bad
+2,divide y/x,Bad
+0,slope = unit rate,Bad
+1,slope = unit rate,Bad
+2,slope = unit rate,Good
+

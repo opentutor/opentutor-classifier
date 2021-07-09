@@ -124,6 +124,64 @@ def _test_train_and_predict(
             ],
             0.8,
         ),
+        (
+            "ies_auction",
+            ARCH_LR_TRANS_EMB_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.78),
+                ExpectationTrainingResult(accuracy=0.80),
+                ExpectationTrainingResult(accuracy=0.79),
+                ExpectationTrainingResult(accuracy=0.94),
+            ],
+            0.67,
+        ),
+        (
+            "ies_bus_and_seats",
+            ARCH_LR_TRANS_EMB_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.82),
+                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.78),
+                ExpectationTrainingResult(accuracy=0.91),
+            ],
+            0.63,
+        ),
+        (
+            "ies_house",
+            ARCH_LR_TRANS_EMB_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.93),
+                ExpectationTrainingResult(accuracy=0.64),
+                ExpectationTrainingResult(accuracy=0.85),
+                ExpectationTrainingResult(accuracy=0.76),
+            ],
+            0.78,
+        ),
+        (
+            "ies_pitcher",
+            ARCH_LR_TRANS_EMB_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.84),
+                ExpectationTrainingResult(accuracy=0.93),
+                ExpectationTrainingResult(accuracy=0.92),
+            ],
+            0.87,
+        ),
+        (
+            "ies_robot_remedy",
+            ARCH_LR_TRANS_EMB_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=1.0),
+                ExpectationTrainingResult(accuracy=0.85),
+                ExpectationTrainingResult(accuracy=0.87),
+            ],
+            0.52,
+        ),
     ],
 )
 @pytest.mark.slow

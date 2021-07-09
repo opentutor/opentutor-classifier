@@ -1,0 +1,32 @@
+##
+## This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved. 
+## Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
+##
+## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
+##
+question: "Two paintings by a famous artist recently sold for a total of $120,000\n  at auction. How much will 6 paintings by the same artist sell for at auction? Explain your reasoning and how this situation relates to proportionality."
+expectations:
+  - ideal: Each painting might not sell for the same amount of money, which indicates non-uniformity.
+    features:        
+      bad:        
+        - same|identical|equal|uniform
+      good:        
+        - different|differ|unequal|(\b(isn't|not)\b.*(same|equal))  
+  - ideal: The number of paintings and the total selling price of the paintings co-vary, because both are variable quantities and change together. 
+    features: 
+      bad:        
+        - \b(not|isn't|no|without)\b.*\b(related|relationship|change)\b
+      good:
+        - (covary|covariance|co-variance|co-vary)|\b(same|equal|together)\b.*\b(change|increase|up|grow|vary|rate)\b|(increase|change|grow|up|vary|rate).*(same|together|equal)
+  - ideal: The ratio of the number of paintings and the total selling price of the paintings is not constant.
+    features:
+      bad:        
+        - multiples
+      good:
+        - (\b(not|isn't|no|without)\b.*(fixed|constant|same).*(ratio|rate|multiple))|((ratio|rate|multiple).*\b(not|isn't|no|without)\b.*(fixed|constant|same))
+  - ideal: The relationship between the number of paintings and the total selling price is not proportional.
+    features:
+      bad:        
+        - proportion
+      good:
+        - \b(no|not|isn't|hasn't|never|without)\b.*proportion

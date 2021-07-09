@@ -1,0 +1,35 @@
+##
+## This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved. 
+## Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
+##
+## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
+##
+question: "Buses-R-Us makes school buses with 30 seats. As the company makes more buses, is the relationship between the number of buses and the number of seats proportional? Explain why or why not."
+expectations:
+  - ideal: Each bus is identical and has 30 seats, which indicates uniformity.
+    features:
+      bad:
+        - different|differ|unequal|(\b(isn't|not)\b.*(same|equal))
+        - different
+      good:
+        - bus|seat(s)|30
+        - \\040same|identical|equal|uniform
+  - ideal: The number of buses and seats are variable quantities and change together.
+    features:        
+      bad:        
+        - not\\040change\\040together
+        - \b(not|isn't|no|without)\b.*\b(related|relationship|change)\b
+      good:        
+        - (covary|covariance|co-variance|co-vary)|\b(same|equal|together|30)\b.*\b(change|increase|up|grow|vary|rate)\b|(increase|change|grow|up|vary|rate).*(same|together|equal|30)  
+  - ideal: The ratio of the number of buses to seats is constant, indicating invariance.
+    features: 
+      bad:        
+        - not\\040multiples
+      good:
+        - ((same|invariance|invariant|fixed|constant|30).*(multiple|ratio|number|unit\\040rate))|1:30
+  - ideal: The relationship between the number of buses and seats is proportional.
+    features:
+      bad:        
+        - \b(no|not|isn't|hasn't|never|without)\b.*proportion
+      good:
+        - proportion

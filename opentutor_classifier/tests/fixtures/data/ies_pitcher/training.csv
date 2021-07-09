@@ -1,0 +1,554 @@
+exp_num,text,label
+0,They are equally sweet,Bad
+1,They are equally sweet,Bad
+2,They are equally sweet,Bad
+0,One is bigger than the other,Bad
+1,One is bigger than the other,Bad
+2,One is bigger than the other,Bad
+0,The blue pitcher,Bad
+1,The blue pitcher,Bad
+2,The blue pitcher,Good
+0,It makes them sweeter,Bad
+1,It makes them sweeter,Bad
+2,It makes them sweeter,Bad
+0,More liquid,Bad
+1,More liquid,Bad
+2,More liquid,Bad
+0,It is sweeter,Good
+1,It is sweeter,Bad
+2,It is sweeter,Bad
+0,The blue pitcher,Bad
+1,The blue pitcher,Bad
+2,The blue pitcher,Good
+0,The blue pitcher will be sweeter because there is less iced tea in the pitcher,Good
+1,The blue pitcher will be sweeter because there is less iced tea in the pitcher,Good
+2,The blue pitcher will be sweeter because there is less iced tea in the pitcher,Good
+0,The ratio in the blue pitcher is higher than the ratio in the red pitcher,Good
+1,The ratio in the blue pitcher is higher than the ratio in the red pitcher,Bad
+2,The ratio in the blue pitcher is higher than the ratio in the red pitcher,Bad
+0,The blue pitcher,Bad
+1,The blue pitcher,Bad
+2,The blue pitcher,Good
+0,The blue pitcher is sweeter because it has more sugar to liquid,Good
+1,The blue pitcher is sweeter because it has more sugar to liquid,Bad
+2,The blue pitcher is sweeter because it has more sugar to liquid,Good
+0,It's got more liquid,Bad
+1,It's got more liquid,Bad
+2,It's got more liquid,Bad
+0,The blue one,Bad
+1,The blue one,Bad
+2,The blue one,Good
+0,The red one is less sweet. The ratio of liquid to sugar in the red one is lower so it won't get effected as much,Good
+1,The red one is less sweet. The ratio of liquid to sugar in the red one is lower so it won't get effected as much,Good
+2,The red one is less sweet. The ratio of liquid to sugar in the red one is lower so it won't get effected as much,Good
+0,The blue one is higher,Good
+1,The blue one is higher,Bad
+2,The blue one is higher,Bad
+0,It has more sugar to liquid,Good
+1,It has more sugar to liquid,Good
+2,It has more sugar to liquid,Bad
+0,Blue,Bad
+1,Blue,Bad
+2,Blue,Good
+0,It's a higher number than the red,Good
+1,It's a higher number than the red,Bad
+2,It's a higher number than the red,Bad
+0,The blue one,Bad
+1,The blue one,Bad
+2,The blue one,Good
+0,"If there is les liquid, its going to effect it more",Good
+1,"If there is les liquid, its going to effect it more",Good
+2,"If there is les liquid, its going to effect it more",Bad
+0,Less,Bad
+1,Less,Bad
+2,Less,Bad
+0,The red one is less sweet,Good
+1,The red one is less sweet,Bad
+2,The red one is less sweet,Good
+0,Blue,Bad
+1,Blue,Bad
+2,Blue,Good
+0,The blue pitcher is going to be sweeter because it doesn't have as much liquid as the red one to begin with even though it has the same ratio,Good
+1,The blue pitcher is going to be sweeter because it doesn't have as much liquid as the red one to begin with even though it has the same ratio,Good
+2,The blue pitcher is going to be sweeter because it doesn't have as much liquid as the red one to begin with even though it has the same ratio,Good
+0,"The red pitcher is less sweet because it has more liquid than the blue one, so it won't be effected as much",Good
+1,"The red pitcher is less sweet because it has more liquid than the blue one, so it won't be effected as much",Good
+2,"The red pitcher is less sweet because it has more liquid than the blue one, so it won't be effected as much",Good
+0,Pretty sure they'r going to be the same,Bad
+1,Pretty sure they'r going to be the same,Bad
+2,Pretty sure they'r going to be the same,Bad
+0,Its way smaller than the red ratio,Bad
+1,Its way smaller than the red ratio,Bad
+2,Its way smaller than the red ratio,Bad
+0,The blue one ,Bad
+1,The blue one ,Bad
+2,The blue one ,Good
+0,They both get sweeter but the red one doesn't get as sweet,Bad
+1,They both get sweeter but the red one doesn't get as sweet,Good
+2,They both get sweeter but the red one doesn't get as sweet,Bad
+0,The red one is less sweet after adding the sugar,Bad
+1,The red one is less sweet after adding the sugar,Good
+2,The red one is less sweet after adding the sugar,Good
+0,tea in the blue pitcher tastes sweeter.,Bad
+1,tea in the blue pitcher tastes sweeter.,Bad
+2,tea in the blue pitcher tastes sweeter.,Good
+2,ratio in the blue pitcher is larger than that of red,Bad
+0,blue,Bad
+1,blue,Bad
+2,blue,Good
+0,The blue pitcher would be sweeter because the ratio of sugar to iced tea is closer to 1.,Bad
+1,The blue pitcher would be sweeter because the ratio of sugar to iced tea is closer to 1.,Bad
+2,The blue pitcher would be sweeter because the ratio of sugar to iced tea is closer to 1.,Bad
+0,"Becuase red pitcher has more liquid, the taste will be affected less. So blue pitcher will contain more sweet tea. ",Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the ratio of sugar in the blue pitcher is greater,Good
+1,the ratio of sugar in the blue pitcher is greater,Bad
+2,the ratio of sugar in the blue pitcher is greater,Bad
+2,it affects the blue pitcher more,Bad
+0,less,Bad
+1,less,Bad
+2,less,Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the ratio of sugar in the blue pitcher is greater,Good
+1,the ratio of sugar in the blue pitcher is greater,Bad
+2,the ratio of sugar in the blue pitcher is greater,Bad
+0,the less liquid the greater the effect,Bad
+1,the less liquid the greater the effect,Good
+2,the less liquid the greater the effect,Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the ratio of sugar to liquid in the blue pitcher is greater,Good
+1,the ratio of sugar to liquid in the blue pitcher is greater,Bad
+2,the ratio of sugar to liquid in the blue pitcher is greater,Bad
+0,the less liquid the greater the affect,Bad
+1,the less liquid the greater the affect,Good
+2,the less liquid the greater the affect,Bad
+0,"Becuase red pitcher has more liquid, the taste will be affected less. So blue pitcher will contain more sweet tea.",Bad
+1,"Becuase red pitcher has more liquid, the taste will be affected less. So blue pitcher will contain more sweet tea.",Good
+0,blue,Bad
+1,blue,Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the ratio is equal in both pitchers,Bad
+1,the ratio is equal in both pitchers,Bad
+2,the ratio is equal in both pitchers,Bad
+0,they're equal,Bad
+1,they're equal,Bad
+2,they're equal,Bad
+0,the more liquid the less of a difference,Bad
+1,the more liquid the less of a difference,Good
+2,the more liquid the less of a difference,Bad
+0,the blue pitcher has less liquid,Bad
+1,the blue pitcher has less liquid,Good
+2,the blue pitcher has less liquid,Bad
+2,blue sweeter,Good
+2,blue is sweeter,Good
+0,blue is sweeter,Bad
+1,blue is sweeter,Bad
+2,blue is sweeter,Good
+0,blue is sweeter,Bad
+1,blue is sweeter,Bad
+2,blue is sweeter,Good
+0,the ratio of sugar to liquid is less,Bad
+1,the ratio of sugar to liquid is less,Bad
+2,the ratio of sugar to liquid is less,Bad
+0,the blue pitcher has a greater ratio,Good
+1,the blue pitcher has a greater ratio,Bad
+2,the blue pitcher has a greater ratio,Bad
+0,the more liquid the less the effect,Bad
+1,the more liquid the less the effect,Good
+2,the more liquid the less the effect,Bad
+0,the blue pitcher has less liquid,Bad
+1,the blue pitcher has less liquid,Good
+2,the blue pitcher has less liquid,Bad
+0,blue is sweeter,Bad
+1,blue is sweeter,Bad
+2,blue is sweeter,Good
+0,the ratio of sugar to liquid for the blue pitcher is greater,Good
+1,the ratio of sugar to liquid for the blue pitcher is greater,Bad
+2,the ratio of sugar to liquid for the blue pitcher is greater,Bad
+0,it affects the taste more in the blue pitcher,Bad
+1,it affects the taste more in the blue pitcher,Good
+2,it affects the taste more in the blue pitcher,Bad
+0,the blue pitcher has less liquid,Bad
+1,the blue pitcher has less liquid,Good
+2,the blue pitcher has less liquid,Bad
+0,blue is sweeter,Bad
+1,blue is sweeter,Bad
+2,blue is sweeter,Good
+0,blue is sweeter,Bad
+1,blue is sweeter,Bad
+2,blue is sweeter,Good
+0,blue is sweeter,Bad
+1,blue is sweeter,Bad
+2,blue is sweeter,Good
+0,The blue pitcher will taste sweeter because the ratio of sugar to water is going to have more sugar than water for the blue pitcher than the red pitcher. ,Bad
+1,The blue pitcher will taste sweeter because the ratio of sugar to water is going to have more sugar than water for the blue pitcher than the red pitcher. ,Bad
+2,The blue pitcher will taste sweeter because the ratio of sugar to water is going to have more sugar than water for the blue pitcher than the red pitcher. ,Good
+0,Red is sweeter because it has more sugar.,Bad
+1,Red is sweeter because it has more sugar.,Bad
+2,Red is sweeter because it has more sugar.,Bad
+0,The blue pitcher has a ratio of sugar to liquid that's 20 to 1. ,Bad
+1,The blue pitcher has a ratio of sugar to liquid that's 20 to 1. ,Bad
+2,The blue pitcher has a ratio of sugar to liquid that's 20 to 1. ,Bad
+0,Red is sweeter because it has more sugar.,Bad
+1,Red is sweeter because it has more sugar.,Bad
+2,Red is sweeter because it has more sugar.,Bad
+0,The blue pitcher has a ratio of sugar to liquid that's 20 to 1.,Bad
+1,The blue pitcher has a ratio of sugar to liquid that's 20 to 1.,Bad
+2,The blue pitcher has a ratio of sugar to liquid that's 20 to 1.,Bad
+0,penguins,Bad
+1,penguins,Bad
+2,penguins,Bad
+0,The blue pitcher tastes sweeter,Bad
+1,The blue pitcher tastes sweeter,Bad
+2,The blue pitcher tastes sweeter,Good
+0,The blue pitcher will taste sweeter because the ratio of sugar to water is going to have more sugar than water for the blue pitcher than the red pitcher.,Good
+1,The blue pitcher will taste sweeter because the ratio of sugar to water is going to have more sugar than water for the blue pitcher than the red pitcher.,Bad
+2,The blue pitcher will taste sweeter because the ratio of sugar to water is going to have more sugar than water for the blue pitcher than the red pitcher.,Good
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the ratio of sugar in the blue pitcher is greater,Good
+1,the ratio of sugar in the blue pitcher is greater,Bad
+2,the ratio of sugar in the blue pitcher is greater,Good
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the blue pitcher has more sugar in it,Bad
+1,the blue pitcher has more sugar in it,Bad
+2,the blue pitcher has more sugar in it,Bad
+0,the blue pitcher has less liquid,Bad
+1,the blue pitcher has less liquid,Good
+2,the blue pitcher has less liquid,Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the blue pitcher has less liquid in it,Bad
+1,the blue pitcher has less liquid in it,Good
+2,the blue pitcher has less liquid in it,Bad
+0,the blue pitcher,Bad
+1,the blue pitcher,Bad
+2,dont know,Bad
+2,I don't know,Bad
+2,?,Bad
+0,I don't know,Bad
+1,I don't know,Bad
+2,I don't know,Bad
+0,the red pitcher,Bad
+1,the red pitcher,Bad
+2,the red pitcher,Bad
+0,the blue pitcher is affected more,Good
+1,the blue pitcher is affected more,Bad
+2,the blue pitcher is affected more,Bad
+0,the blue pitcher,Bad
+1,the blue pitcher,Bad
+2,the blue pitcher,Bad
+0,the blue pitcher tastes sweeter,Bad
+1,the blue pitcher tastes sweeter,Bad
+2,the blue pitcher tastes sweeter,Good
+0,the sugar will affect the blue pitcher more because it has less liquid,Good
+1,the sugar will affect the blue pitcher more because it has less liquid,Good
+2,the sugar will affect the blue pitcher more because it has less liquid,Bad
+0,the blue pitcher will have a greater ratio,Good
+1,the blue pitcher will have a greater ratio,Bad
+2,the blue pitcher will have a greater ratio,Bad
+0,the more liquid the less the effect,Bad
+1,the more liquid the less the effect,Good
+2,the more liquid the less the effect,Bad
+0,the blue pitcher has less liquid,Bad
+2,the blue pitcher has less liquid,Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the ratio is greater in the blue pitcher,Good
+1,the ratio is greater in the blue pitcher,Bad
+2,the ratio is greater in the blue pitcher,Bad
+0,the more liquid the less the effect,Bad
+1,the more liquid the less the effect,Good
+2,the more liquid the less the effect,Bad
+0,the blue pitcher has less liquid,Bad
+2,the blue pitcher has less liquid,Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the ratio is greater in the blue pitcher,Good
+1,the ratio is greater in the blue pitcher,Bad
+2,the ratio is greater in the blue pitcher,Bad
+0,the more liquid the less the effect,Bad
+1,the more liquid the less the effect,Good
+2,the more liquid the less the effect,Bad
+0,the blue pitcher has less liquid,Bad
+2,the blue pitcher has less liquid,Bad
+0,the blue pitcher tastes sweeter,Bad
+1,the blue pitcher tastes sweeter,Bad
+2,the blue pitcher tastes sweeter,Good
+0,the ratio is greater for the blue pitcher,Good
+1,the ratio is greater for the blue pitcher,Bad
+2,the ratio is greater for the blue pitcher,Bad
+0,the blue pitcher is affected more because it has less liquid,Bad
+1,the blue pitcher is affected more because it has less liquid,Good
+2,the blue pitcher is affected more because it has less liquid,Bad
+0,the blue pitcher has less liquid,Bad
+2,the blue pitcher has less liquid,Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the ratio is greater in the blue pitcher,Good
+1,the ratio is greater in the blue pitcher,Bad
+2,the ratio is greater in the blue pitcher,Bad
+0,the blue pitcher is affected more because it has less liquid,Bad
+1,the blue pitcher is affected more because it has less liquid,Good
+2,the blue pitcher is affected more because it has less liquid,Bad
+0,the blue pitcher is affected more because it has less liquid,Bad
+1,the blue pitcher is affected more because it has less liquid,Good
+2,the blue pitcher is affected more because it has less liquid,Bad
+0,the ratio is greater in the blue pitcher,Good
+1,the ratio is greater in the blue pitcher,Bad
+2,the ratio is greater in the blue pitcher,Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the ratio is greater in the blue pitcher,Good
+1,the ratio is greater in the blue pitcher,Bad
+2,the ratio is greater in the blue pitcher,Bad
+2,the blue pitcher is affected more,Bad
+0,the blue pitcher has less liquid,Bad
+1,the blue pitcher has less liquid,Good
+2,the blue pitcher has less liquid,Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the ratio of sugar is greater in the blue pitcher,Good
+1,the ratio of sugar is greater in the blue pitcher,Bad
+2,the ratio of sugar is greater in the blue pitcher,Bad
+0,the blue pitcher has less liquid so it is affected more,Bad
+1,the blue pitcher has less liquid so it is affected more,Good
+2,the blue pitcher has less liquid so it is affected more,Bad
+0,The red pitcher is sweeter.,Bad
+1,The red pitcher is sweeter.,Bad
+2,The red pitcher is sweeter.,Bad
+0,The blue pitcher has a ratio of sugar to liquid that's 20 to 1.,Bad
+1,The blue pitcher has a ratio of sugar to liquid that's 20 to 1.,Bad
+2,The blue pitcher has a ratio of sugar to liquid that's 20 to 1.,Bad
+0,the red pitcher is sweeter,Bad
+1,the red pitcher is sweeter,Bad
+2,the red pitcher is sweeter,Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the ratio is greater in the blue pitcher,Good
+1,the ratio is greater in the blue pitcher,Bad
+2,the ratio is greater in the blue pitcher,Bad
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,blue is sweeter,Bad
+1,blue is sweeter,Bad
+2,blue is sweeter,Good
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,the blue pitcher is sweeter,Bad
+1,the blue pitcher is sweeter,Bad
+2,the blue pitcher is sweeter,Good
+0,a,Bad
+1,a,Bad
+2,a,Bad
+0,b,Bad
+1,b,Bad
+2,b,Bad
+0,c,Bad
+1,c,Bad
+2,c,Bad
+0,ca,Bad
+1,ca,Bad
+2,ca,Bad
+0,a,Bad
+1,a,Bad
+2,a,Bad
+0,b,Bad
+1,b,Bad
+2,b,Bad
+0,c,Bad
+1,c,Bad
+2,c,Bad
+0,ca,Bad
+1,ca,Bad
+2,ca,Bad
+0,a,Bad
+1,a,Bad
+2,a,Bad
+0,b,Bad
+1,b,Bad
+2,b,Bad
+0,x,Bad
+1,x,Bad
+2,x,Bad
+0,a,Bad
+1,a,Bad
+2,a,Bad
+0,b,Bad
+1,b,Bad
+2,b,Bad
+0,a,Bad
+1,a,Bad
+2,a,Bad
+0,b,Bad
+1,b,Bad
+2,b,Bad
+0,c,Bad
+1,c,Bad
+2,c,Bad
+0,d,Bad
+1,d,Bad
+2,d,Bad
+0,a,Bad
+1,a,Bad
+2,a,Bad
+2,"The blue one is sweeter. If they start the same, they will end up different because the sugar will throw off the ratios.",Good
+0,"They're going to be the same. If they taste the same to start and then you add the same amount of sugar, it's still going to be the same.",Bad
+1,"They're going to be the same. If they taste the same to start and then you add the same amount of sugar, it's still going to be the same.",Bad
+2,"They're going to be the same. If they taste the same to start and then you add the same amount of sugar, it's still going to be the same.",Bad
+0,"It changes both of them, but not in the same way",Bad
+1,"It changes both of them, but not in the same way",Bad
+2,"It changes both of them, but not in the same way",Bad
+0,The blue pitcher did,Bad
+1,The blue pitcher did,Bad
+2,The blue pitcher did,Bad
+0,The blue one is sweeter because the ratio changed more.,Good
+1,The blue one is sweeter because the ratio changed more.,Bad
+2,The blue one is sweeter because the ratio changed more.,Good
+0,"The red one changed a little bit, but the blue one changed a lot more.",Good
+1,"The red one changed a little bit, but the blue one changed a lot more.",Bad
+2,"The red one changed a little bit, but the blue one changed a lot more.",Bad
+1,The blue one changed more.,Bad
+2,The blue one changed more.,Bad
+0,The red one is going to be sweeter because there is more total iced tea,Bad
+1,The red one is going to be sweeter because there is more total iced tea,Bad
+2,The red one is going to be sweeter because there is more total iced tea,Bad
+0,The blue one changed more,Good
+1,The blue one changed more,Bad
+2,The blue one changed more,Bad
+0,The blue one changed more because there was less iced tea to begin with,Bad
+1,The blue one changed more because there was less iced tea to begin with,Good
+2,The blue one changed more because there was less iced tea to begin with,Bad
+0,"Blue is sweeter. There is less to start out with, so its going to be effected more.",Bad
+1,"Blue is sweeter. There is less to start out with, so its going to be effected more.",Good
+2,"Blue is sweeter. There is less to start out with, so its going to be effected more.",Good
+1,It jumped up a lot higher in the blue one.,Bad
+2,It jumped up a lot higher in the blue one.,Bad
+0,Blue has the biggest change in its ratio.,Good
+1,Blue has the biggest change in its ratio.,Bad
+2,Blue has the biggest change in its ratio.,Bad
+0,The red one.,Bad
+1,The red one.,Bad
+2,The red one.,Bad
+0,Blue changed more,Good
+1,Blue changed more,Bad
+2,Blue changed more,Bad
+0,Blue had the most growth,Good
+1,Blue had the most growth,Bad
+2,Blue had the most growth,Bad
+0,Blue becomes sweeter since it started with less,Bad
+1,Blue becomes sweeter since it started with less,Good
+2,Blue becomes sweeter since it started with less,Good
+0,The blue pitcher would be sweeter than the red pitcher because the concentration of sugar is greater in the blue pitcher since the pitchers both started with the same taste of sweetness.  Meaning the ratio of sugar to liquid is greater in the blue pitcher than the red pitcher.,Good
+1,The blue pitcher would be sweeter than the red pitcher because the concentration of sugar is greater in the blue pitcher since the pitchers both started with the same taste of sweetness.  Meaning the ratio of sugar to liquid is greater in the blue pitcher than the red pitcher.,Good
+2,The blue pitcher would be sweeter than the red pitcher because the concentration of sugar is greater in the blue pitcher since the pitchers both started with the same taste of sweetness.  Meaning the ratio of sugar to liquid is greater in the blue pitcher than the red pitcher.,Good
+0,Red pitcher because it would have more tea.,Bad
+1,Red pitcher because it would have more tea.,Bad
+2,Red pitcher because it would have more tea.,Bad
+0,Adding one scoop of sugar made the ratio in the blue pitcher greater than the ratio of the red pitcher.,Good
+1,Adding one scoop of sugar made the ratio in the blue pitcher greater than the ratio of the red pitcher.,Bad
+2,Adding one scoop of sugar made the ratio in the blue pitcher greater than the ratio of the red pitcher.,Bad
+0,The sweetness would be the same because you're adding the same amount of sugar.,Bad
+1,The sweetness would be the same because you're adding the same amount of sugar.,Bad
+2,The sweetness would be the same because you're adding the same amount of sugar.,Bad
+0,"The ratios are different now, and the red pitcher has a higher concentration of sugar in the blue pitcher, causing the blue pitcher to taste sweeter.",Bad
+1,"The ratios are different now, and the red pitcher has a higher concentration of sugar in the blue pitcher, causing the blue pitcher to taste sweeter.",Bad
+2,"The ratios are different now, and the red pitcher has a higher concentration of sugar in the blue pitcher, causing the blue pitcher to taste sweeter.",Bad
+0,The sweetness is greater in the blue pitcher than the red pitcher because there's more sugar to tea in the red pitcher than the blue pitcher.,Good
+1,The sweetness is greater in the blue pitcher than the red pitcher because there's more sugar to tea in the red pitcher than the blue pitcher.,Bad
+2,The sweetness is greater in the blue pitcher than the red pitcher because there's more sugar to tea in the red pitcher than the blue pitcher.,Good
+0,similar taste of sweetness in red and blue pitcher.,Bad
+1,similar taste of sweetness in red and blue pitcher.,Bad
+2,similar taste of sweetness in red and blue pitcher.,Bad
+0,it increased the ratios in each pitcher.,Bad
+1,it increased the ratios in each pitcher.,Bad
+2,it increased the ratios in each pitcher.,Bad
+0,"the biggest change happened in the blue pitcher, where the ratio became 20 to 1.",Good
+1,"the biggest change happened in the blue pitcher, where the ratio became 20 to 1.",Bad
+2,"the biggest change happened in the blue pitcher, where the ratio became 20 to 1.",Bad
+0,They would both be the same because you added the same amount of sugar,Bad
+1,They would both be the same because you added the same amount of sugar,Bad
+2,They would both be the same because you added the same amount of sugar,Bad
+0,The blue pitcher's ratio changed more,Good
+1,The blue pitcher's ratio changed more,Bad
+2,The blue pitcher's ratio changed more,Bad
+0,The blue pitcher has the biggest change in its ratio of sugar to liquid,Good
+1,The blue pitcher has the biggest change in its ratio of sugar to liquid,Bad
+2,The blue pitcher has the biggest change in its ratio of sugar to liquid,Bad
+1,The blue pitcher is sweeter because it starts with less liquid,Good
+2,The blue pitcher is sweeter because it starts with less liquid,Good
+0,"The ratio of sugar to liquid for the blue pitcher increased more, because there was less liquid",Good
+1,"The ratio of sugar to liquid for the blue pitcher increased more, because there was less liquid",Good
+0,I think the tea would be sweeter in the blue pitcher because there's less liquid to absorb  the sugar.,Bad
+1,I think the tea would be sweeter in the blue pitcher because there's less liquid to absorb  the sugar.,Good
+2,I think the tea would be sweeter in the blue pitcher because there's less liquid to absorb  the sugar.,Good
+0,It made the blue pitcher have a greater ratio of sugar to liquid.,Good
+1,It made the blue pitcher have a greater ratio of sugar to liquid.,Bad
+2,It made the blue pitcher have a greater ratio of sugar to liquid.,Bad
+0,The blue pitcher tastes sweeter.,Bad
+1,The blue pitcher tastes sweeter.,Bad
+2,The blue pitcher tastes sweeter.,Good
+0,The blue pitcher of iced tea will taste sweeter than the red pitcher of iced tea,Bad
+1,The blue pitcher of iced tea will taste sweeter than the red pitcher of iced tea,Bad
+2,The blue pitcher of iced tea will taste sweeter than the red pitcher of iced tea,Good
+0,Adding one scoop of sugar changed the ratio of sugar to liquid in the red pitcher from 30g of sugar:3 litersof liquid to 40 grams of sugar:3 liters of liquid. It changed the ratio in the blue pitcher from 10 grams of sugar:1 liter of liquid to 20 grams of sugar: 1 liter of liquid.,Bad
+1,Adding one scoop of sugar changed the ratio of sugar to liquid in the red pitcher from 30g of sugar:3 litersof liquid to 40 grams of sugar:3 liters of liquid. It changed the ratio in the blue pitcher from 10 grams of sugar:1 liter of liquid to 20 grams of sugar: 1 liter of liquid.,Bad
+2,Adding one scoop of sugar changed the ratio of sugar to liquid in the red pitcher from 30g of sugar:3 litersof liquid to 40 grams of sugar:3 liters of liquid. It changed the ratio in the blue pitcher from 10 grams of sugar:1 liter of liquid to 20 grams of sugar: 1 liter of liquid.,Bad
+0,The blue pitcher has the biggest change in ratio.,Good
+1,The blue pitcher has the biggest change in ratio.,Bad
+2,The blue pitcher has the biggest change in ratio.,Bad
+0,The blue pitcher will taste sweeter than the red pitcher.,Bad
+1,The blue pitcher will taste sweeter than the red pitcher.,Bad
+2,The blue pitcher will taste sweeter than the red pitcher.,Good
+0,Because there was less liquid in the blue pitcher to begin with.,Bad
+1,Because there was less liquid in the blue pitcher to begin with.,Good
+2,Because there was less liquid in the blue pitcher to begin with.,Bad
+0,blue will taste sweeter after the sugar is added,Bad
+1,blue will taste sweeter after the sugar is added,Bad
+2,blue will taste sweeter after the sugar is added,Good
+1,the ratio increased,Bad
+2,the ratio increased,Bad
+1,the blue pitcher,Bad
+2,the blue pitcher,Bad
+0,the more sugar you add to a given amount of liquid increases the sugar to water ratio.  Therefore the higher sugar to water ratio would taste sweeter because there is more sugar per water.,Bad
+1,the more sugar you add to a given amount of liquid increases the sugar to water ratio.  Therefore the higher sugar to water ratio would taste sweeter because there is more sugar per water.,Bad
+2,the more sugar you add to a given amount of liquid increases the sugar to water ratio.  Therefore the higher sugar to water ratio would taste sweeter because there is more sugar per water.,Bad
+0,There is less water in the blue pitcher.,Bad
+1,There is less water in the blue pitcher.,Good
+2,There is less water in the blue pitcher.,Bad
+0,The blue pitcher would taste sweeter.  There would be more sugar added to less tea.,Bad
+1,The blue pitcher would taste sweeter.  There would be more sugar added to less tea.,Good
+2,The blue pitcher would taste sweeter.  There would be more sugar added to less tea.,Good
+0,The red pitcher becomes 40/3 and the blue becomes 20/1,Bad
+1,The red pitcher becomes 40/3 and the blue becomes 20/1,Bad
+2,The red pitcher becomes 40/3 and the blue becomes 20/1,Bad
+0,The ratio of sugar to tea in the blue pitcher doubles.,Bad
+1,The ratio of sugar to tea in the blue pitcher doubles.,Bad
+2,The ratio of sugar to tea in the blue pitcher doubles.,Bad
+0,"The iced tea in the blue pitcher is sweeter. This is because the blue pitcher started with less iced tea, but we added the same amount of sugar. The ratio of sugar to tea would be greater in the blue pitcher making it sweeter than the  red pitcher.",Good
+1,"The iced tea in the blue pitcher is sweeter. This is because the blue pitcher started with less iced tea, but we added the same amount of sugar. The ratio of sugar to tea would be greater in the blue pitcher making it sweeter than the  red pitcher.",Good
+2,"The iced tea in the blue pitcher is sweeter. This is because the blue pitcher started with less iced tea, but we added the same amount of sugar. The ratio of sugar to tea would be greater in the blue pitcher making it sweeter than the  red pitcher.",Good
+

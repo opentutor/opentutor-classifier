@@ -1,0 +1,480 @@
+exp_num,text,label
+0,"We can predict that it will be $360,000, but the other paintings might be more or less. This means that the relationship is not proportional because the variables are not uniform and the ratio is not constant.",good
+1,"We can predict that it will be $360,000, but the other paintings might be more or less. This means that the relationship is not proportional because the variables are not uniform and the ratio is not constant.",good
+2,"We can predict that it will be $360,000, but the other paintings might be more or less. This means that the relationship is not proportional because the variables are not uniform and the ratio is not constant.",good
+3,"We can predict that it will be $360,000, but the other paintings might be more or less. This means that the relationship is not proportional because the variables are not uniform and the ratio is not constant.",good
+0,They are proportional. There is a unit rate.,bad
+1,They are proportional. There is a unit rate.,bad
+2,They are proportional. There is a unit rate.,bad
+3,They are proportional. There is a unit rate.,bad
+0,They are the same,bad
+1,They are the same,bad
+2,They are the same,bad
+3,They are the same,bad
+0,Some paintings sell for more than others,good
+1,Some paintings sell for more than others,bad
+2,Some paintings sell for more than others,bad
+3,Some paintings sell for more than others,bad
+0,It also goes up,bad
+1,It also goes up,good
+2,It also goes up,bad
+3,It also goes up,bad
+0,More paintings means more overall money,bad
+1,More paintings means more overall money,good
+2,More paintings means more overall money,bad
+3,More paintings means more overall money,bad
+0,The total price also increases,bad
+1,The total price also increases,good
+2,The total price also increases,bad
+3,The total price also increases,bad
+0,The unit rates are different,bad
+1,The unit rates are different,bad
+2,The unit rates are different,good
+3,The unit rates are different,bad
+0,"No, the ratio always changes",bad
+1,"No, the ratio always changes",bad
+2,"No, the ratio always changes",good
+3,"No, the ratio always changes",good
+0,"It's proportional. It's 1 paintion per 60,000",bad
+1,"It's proportional. It's 1 paintion per 60,000",bad
+2,"It's proportional. It's 1 paintion per 60,000",bad
+3,"It's proportional. It's 1 paintion per 60,000",bad
+0,They are different,good
+1,They are different,bad
+2,They are different,bad
+3,They are different,bad
+0,Some paintings are higher and some are lower,good
+1,Some paintings are higher and some are lower,bad
+2,Some paintings are higher and some are lower,bad
+3,Some paintings are higher and some are lower,bad
+0,It also increases,bad
+1,It also increases,good
+2,It also increases,bad
+3,It also increases,bad
+0,The more paintings the more expensive the whole thing is,bad
+1,The more paintings the more expensive the whole thing is,good
+2,The more paintings the more expensive the whole thing is,bad
+3,The more paintings the more expensive the whole thing is,bad
+0,Stays the same,bad
+1,Stays the same,bad
+2,Stays the same,bad
+3,Stays the same,bad
+0,They are different than each other,good
+1,They are different than each other,bad
+3,They are different than each other,bad
+0,The ratio varies,bad
+1,The ratio varies,bad
+2,The ratio varies,good
+3,The ratio varies,bad
+0,More paintings means more money,bad
+1,More paintings means more money,good
+2,More paintings means more money,bad
+3,More paintings means more money,bad
+0,Non-proportional,bad
+1,Non-proportional,bad
+2,Non-proportional,bad
+3,Non-proportional,good
+0,Non-proportional. The paintings cost different amounts,good
+1,Non-proportional. The paintings cost different amounts,bad
+2,Non-proportional. The paintings cost different amounts,bad
+3,Non-proportional. The paintings cost different amounts,good
+0,They are different,good
+1,They are different,bad
+2,They are different,bad
+3,They are different,bad
+0,They don't have to be the same,good
+1,They don't have to be the same,bad
+2,They don't have to be the same,bad
+3,They don't have to be the same,bad
+0,The total also goes up,bad
+1,The total also goes up,good
+2,The total also goes up,bad
+3,The total also goes up,bad
+0,When you buy more paintings you spend more money,bad
+1,When you buy more paintings you spend more money,good
+2,When you buy more paintings you spend more money,bad
+3,When you buy more paintings you spend more money,bad
+0,Increase,bad
+1,Increase,good
+2,Increase,bad
+3,Increase,bad
+0,They are the same,bad
+1,They are the same,bad
+2,They are the same,bad
+3,They are the same,bad
+0,The ratios vary,bad
+1,The ratios vary,bad
+2,The ratios vary,good
+3,The ratios vary,bad
+0,The more you buy the more you spend,bad
+1,The more you buy the more you spend,good
+2,The more you buy the more you spend,bad
+3,The more you buy the more you spend,bad
+0,It is non-proportional,bad
+1,It is non-proportional,bad
+2,It is non-proportional,bad
+3,It is non-proportional,good
+1,They are not proportional. I don't know how much the paintings are.,bad
+2,They are not proportional. I don't know how much the paintings are.,bad
+3,They are not proportional. I don't know how much the paintings are.,good
+0,They aren't proportional. The paintings could be different amounts,good
+1,They aren't proportional. The paintings could be different amounts,bad
+2,They aren't proportional. The paintings could be different amounts,bad
+3,They aren't proportional. The paintings could be different amounts,good
+1,We don't know how much the paintings are,bad
+2,We don't know how much the paintings are,bad
+3,We don't know how much the paintings are,bad
+0,The paintings could cost different amounts,good
+1,The paintings could cost different amounts,bad
+2,The paintings could cost different amounts,bad
+3,The paintings could cost different amounts,bad
+0,We don't know what they are being sold for,good
+1,We don't know what they are being sold for,bad
+2,We don't know what they are being sold for,bad
+3,We don't know what they are being sold for,bad
+0,The prices are different,good
+1,The prices are different,bad
+2,The prices are different,bad
+3,The prices are different,bad
+0,The selling prices don't mathc,good
+1,The selling prices don't mathc,bad
+2,The selling prices don't mathc,bad
+3,The selling prices don't mathc,bad
+0,They are different,good
+1,They are different,bad
+2,They are different,bad
+3,They are different,bad
+0,It is not a proportional relationship because the price of each painting is not the same therefore the ratio of the number of painting sold and the selling price is not uniform and invariant,good
+1,It is not a proportional relationship because the price of each painting is not the same therefore the ratio of the number of painting sold and the selling price is not uniform and invariant,bad
+2,It is not a proportional relationship because the price of each painting is not the same therefore the ratio of the number of painting sold and the selling price is not uniform and invariant,good
+3,It is not a proportional relationship because the price of each painting is not the same therefore the ratio of the number of painting sold and the selling price is not uniform and invariant,good
+0,"6 paintings would sell for $720,000.  The relationship proportional because the paintings are from the same artist and cost the same.  The cost and number of paintings increase together and they do so at a constant ratio of 1 painting to $60,000.",bad
+1,"6 paintings would sell for $720,000.  The relationship proportional because the paintings are from the same artist and cost the same.  The cost and number of paintings increase together and they do so at a constant ratio of 1 painting to $60,000.",good
+2,"6 paintings would sell for $720,000.  The relationship proportional because the paintings are from the same artist and cost the same.  The cost and number of paintings increase together and they do so at a constant ratio of 1 painting to $60,000.",bad
+3,"6 paintings would sell for $720,000.  The relationship proportional because the paintings are from the same artist and cost the same.  The cost and number of paintings increase together and they do so at a constant ratio of 1 painting to $60,000.",bad
+0,"It's proportional and the cost is 720,000 for 6 paintings. ",bad
+1,"It's proportional and the cost is 720,000 for 6 paintings. ",bad
+2,"It's proportional and the cost is 720,000 for 6 paintings. ",bad
+3,"It's proportional and the cost is 720,000 for 6 paintings. ",bad
+0,"Each painting is 60,000.",bad
+1,"Each painting is 60,000.",bad
+2,"Each painting is 60,000.",bad
+3,"Each painting is 60,000.",bad
+0,It's possible that some may sell for more or less than others. ,good
+1,It's possible that some may sell for more or less than others. ,bad
+2,It's possible that some may sell for more or less than others. ,bad
+3,It's possible that some may sell for more or less than others. ,bad
+0,the price increases.,bad
+1,the price increases.,good
+2,the price increases.,bad
+3,the price increases.,bad
+0,"They are in a constant ratio of 1 to 60,000",bad
+1,"They are in a constant ratio of 1 to 60,000",bad
+2,"They are in a constant ratio of 1 to 60,000",bad
+3,"They are in a constant ratio of 1 to 60,000",bad
+0,Increase,bad
+1,Increase,good
+2,Increase,bad
+3,Increase,bad
+0,They are different.  ,bad
+1,They are different.  ,bad
+2,They are different.  ,good
+3,They are different.  ,bad
+0,the ratio varries,bad
+1,the ratio varries,bad
+2,the ratio varries,good
+3,the ratio varries,bad
+0,"No, the relationship is not proportional. ",bad
+1,"No, the relationship is not proportional. ",bad
+2,"No, the relationship is not proportional. ",bad
+3,"No, the relationship is not proportional. ",good
+0,"Yeah, it's proportional.  Let's go!",bad
+1,"Yeah, it's proportional.  Let's go!",bad
+2,"Yeah, it's proportional.  Let's go!",bad
+3,"Yeah, it's proportional.  Let's go!",bad
+0,"Unsure, it may be different since two sold for 120,000",good
+1,"Unsure, it may be different since two sold for 120,000",bad
+2,"Unsure, it may be different since two sold for 120,000",bad
+3,"Unsure, it may be different since two sold for 120,000",bad
+0,some may sell for higher or lower amount than others,good
+1,some may sell for higher or lower amount than others,bad
+2,some may sell for higher or lower amount than others,bad
+3,some may sell for higher or lower amount than others,bad
+0,selling price increases,bad
+1,selling price increases,good
+2,selling price increases,bad
+3,selling price increases,bad
+0,"it's not proportional, but it could be",bad
+1,"it's not proportional, but it could be",bad
+2,"it's not proportional, but it could be",bad
+3,"it's not proportional, but it could be",good
+0,it is not proportional because there is NO functional relationship between the number of paintings and the selling prices.,bad
+1,it is not proportional because there is NO functional relationship between the number of paintings and the selling prices.,bad
+2,it is not proportional because there is NO functional relationship between the number of paintings and the selling prices.,bad
+3,it is not proportional because there is NO functional relationship between the number of paintings and the selling prices.,good
+0,"Yes, because it is $60,000 per painting",bad
+1,"Yes, because it is $60,000 per painting",bad
+2,"Yes, because it is $60,000 per painting",bad
+3,"Yes, because it is $60,000 per painting",bad
+0,"I don't know how much each painting costs, so it could be different",good
+1,"I don't know how much each painting costs, so it could be different",bad
+2,"I don't know how much each painting costs, so it could be different",bad
+3,"I don't know how much each painting costs, so it could be different",bad
+0,They could be different,good
+1,They could be different,bad
+2,They could be different,bad
+3,They could be different,bad
+0,It increases,bad
+1,It increases,bad
+2,It increases,bad
+3,It increases,bad
+0,"As the number goes up, so does the cost",bad
+1,"As the number goes up, so does the cost",good
+2,"As the number goes up, so does the cost",bad
+3,"As the number goes up, so does the cost",bad
+0,increase,bad
+1,increase,bad
+2,increase,bad
+3,increase,bad
+0,They are different,bad
+1,They are different,bad
+2,They are different,bad
+3,They are different,bad
+0,Varies,bad
+1,Varies,bad
+2,Varies,bad
+3,Varies,bad
+0,The ratio is different every time,bad
+1,The ratio is different every time,bad
+2,The ratio is different every time,good
+3,The ratio is different every time,bad
+0,non-proportional,bad
+1,non-proportional,bad
+2,non-proportional,bad
+3,non-proportional,good
+0,"They will sell for $320,000. You just multiply it by three because the paintings and cost are in a proportional relationship.",bad
+1,"They will sell for $320,000. You just multiply it by three because the paintings and cost are in a proportional relationship.",bad
+2,"They will sell for $320,000. You just multiply it by three because the paintings and cost are in a proportional relationship.",bad
+3,"They will sell for $320,000. You just multiply it by three because the paintings and cost are in a proportional relationship.",bad
+0,"We don't know the selling price of either painting, so we can't guarantee uniformity.",good
+1,"We don't know the selling price of either painting, so we can't guarantee uniformity.",bad
+2,"We don't know the selling price of either painting, so we can't guarantee uniformity.",bad
+3,"We don't know the selling price of either painting, so we can't guarantee uniformity.",bad
+0,"We don't know the selling price of either painting, so we can't guarantee uniformity.",good
+1,"We don't know the selling price of either painting, so we can't guarantee uniformity.",bad
+2,"We don't know the selling price of either painting, so we can't guarantee uniformity.",bad
+3,"We don't know the selling price of either painting, so we can't guarantee uniformity.",bad
+0,"As paintings are added, the price goes up.",bad
+2,"As paintings are added, the price goes up.",bad
+3,"As paintings are added, the price goes up.",bad
+0,"As the number of paintings increases, the total price increases. So they covary.",bad
+1,"As the number of paintings increases, the total price increases. So they covary.",good
+2,"As the number of paintings increases, the total price increases. So they covary.",bad
+3,"As the number of paintings increases, the total price increases. So they covary.",bad
+0,They covary. More paintings means higher price tag.,bad
+1,They covary. More paintings means higher price tag.,good
+2,They covary. More paintings means higher price tag.,bad
+3,They covary. More paintings means higher price tag.,bad
+0,"I have no idea. We don't know how much each painting is, so it's not uniform and the ratio is not invariant. It does covary. Since it's not proportional, we can't solve this problem.",good
+1,"I have no idea. We don't know how much each painting is, so it's not uniform and the ratio is not invariant. It does covary. Since it's not proportional, we can't solve this problem.",good
+2,"I have no idea. We don't know how much each painting is, so it's not uniform and the ratio is not invariant. It does covary. Since it's not proportional, we can't solve this problem.",good
+3,"I have no idea. We don't know how much each painting is, so it's not uniform and the ratio is not invariant. It does covary. Since it's not proportional, we can't solve this problem.",good
+0,It's going to be 360000. You just multiply it by six.,bad
+1,It's going to be 360000. You just multiply it by six.,bad
+2,It's going to be 360000. You just multiply it by six.,bad
+3,It's going to be 360000. You just multiply it by six.,bad
+0,"We don't know how much they were, so we can't assume uniformity.",good
+1,"We don't know how much they were, so we can't assume uniformity.",bad
+2,"We don't know how much they were, so we can't assume uniformity.",bad
+3,"We don't know how much they were, so we can't assume uniformity.",bad
+0,We don't know. We would have to know how much each painting cost.,bad
+1,We don't know. We would have to know how much each painting cost.,bad
+3,We don't know. We would have to know how much each painting cost.,bad
+0,It's impossible to tell.,bad
+1,It's impossible to tell.,bad
+2,It's impossible to tell.,bad
+3,It's impossible to tell.,bad
+0,"Each painting is going to be different, so its not uniform.",good
+1,"Each painting is going to be different, so its not uniform.",bad
+2,"Each painting is going to be different, so its not uniform.",bad
+3,"Each painting is going to be different, so its not uniform.",bad
+0,Probably three times the amount,bad
+1,Probably three times the amount,bad
+2,Probably three times the amount,bad
+3,Probably three times the amount,bad
+0,We don't know if they are the same. So its not uniform.,good
+1,We don't know if they are the same. So its not uniform.,bad
+2,We don't know if they are the same. So its not uniform.,bad
+3,We don't know if they are the same. So its not uniform.,bad
+0,"The more paintings you sell, the more money it costs. So they covary.",bad
+1,"The more paintings you sell, the more money it costs. So they covary.",good
+2,"The more paintings you sell, the more money it costs. So they covary.",bad
+3,"The more paintings you sell, the more money it costs. So they covary.",bad
+0,"Each painting adds on more money, so they covary.",bad
+1,"Each painting adds on more money, so they covary.",good
+2,"Each painting adds on more money, so they covary.",bad
+3,"Each painting adds on more money, so they covary.",bad
+0,The total increases in both. So covariance holds.,bad
+1,The total increases in both. So covariance holds.,good
+2,The total increases in both. So covariance holds.,bad
+3,The total increases in both. So covariance holds.,bad
+0,The unit rate would be different depending on which picture you look at. So it is not invariant.,bad
+1,The unit rate would be different depending on which picture you look at. So it is not invariant.,bad
+2,The unit rate would be different depending on which picture you look at. So it is not invariant.,good
+3,The unit rate would be different depending on which picture you look at. So it is not invariant.,bad
+0,"They would sell for 360,000 because you multiply 2x3 and 120,000x3",bad
+1,"They would sell for 360,000 because you multiply 2x3 and 120,000x3",bad
+2,"They would sell for 360,000 because you multiply 2x3 and 120,000x3",bad
+3,"They would sell for 360,000 because you multiply 2x3 and 120,000x3",bad
+1,"we don't know individual prices, we just know two sold for 120k",bad
+2,"we don't know individual prices, we just know two sold for 120k",bad
+3,"we don't know individual prices, we just know two sold for 120k",bad
+0,"we don't know individual prices, we just know two sold for 120k, so the realtionship isn't known to be uniform",good
+1,"we don't know individual prices, we just know two sold for 120k, so the realtionship isn't known to be uniform",bad
+2,"we don't know individual prices, we just know two sold for 120k, so the realtionship isn't known to be uniform",bad
+3,"we don't know individual prices, we just know two sold for 120k, so the realtionship isn't known to be uniform",bad
+0,"the relationship isn't known to be uniform, we don't know individual prices, we just know two sold for 120k",good
+1,"the relationship isn't known to be uniform, we don't know individual prices, we just know two sold for 120k",bad
+2,"the relationship isn't known to be uniform, we don't know individual prices, we just know two sold for 120k",bad
+3,"the relationship isn't known to be uniform, we don't know individual prices, we just know two sold for 120k",bad
+0,"we don't know if they are each half of the total cost, so we can't say the variables are unifrom",good
+1,"we don't know if they are each half of the total cost, so we can't say the variables are unifrom",bad
+2,"we don't know if they are each half of the total cost, so we can't say the variables are unifrom",bad
+3,"we don't know if they are each half of the total cost, so we can't say the variables are unifrom",bad
+0,it's not uniform,good
+1,it's not uniform,bad
+2,it's not uniform,bad
+3,it's not uniform,bad
+0,"We know together they were sold for the total cost, but we do not know the selling price for each painting, so uniformity does not hold.",good
+1,"We know together they were sold for the total cost, but we do not know the selling price for each painting, so uniformity does not hold.",bad
+2,"We know together they were sold for the total cost, but we do not know the selling price for each painting, so uniformity does not hold.",bad
+3,"We know together they were sold for the total cost, but we do not know the selling price for each painting, so uniformity does not hold.",bad
+0,WE don't know how much it will cost for 6 paintings because we don't know if the cost of a single painting is uniform.,good
+1,WE don't know how much it will cost for 6 paintings because we don't know if the cost of a single painting is uniform.,bad
+2,WE don't know how much it will cost for 6 paintings because we don't know if the cost of a single painting is uniform.,bad
+3,WE don't know how much it will cost for 6 paintings because we don't know if the cost of a single painting is uniform.,bad
+0,"The cost is 360,000, but only if the cost of a painting is uniform.",bad
+1,"The cost is 360,000, but only if the cost of a painting is uniform.",bad
+2,"The cost is 360,000, but only if the cost of a painting is uniform.",bad
+3,"The cost is 360,000, but only if the cost of a painting is uniform.",bad
+0,"we know the cost is 60,000",bad
+1,"we know the cost is 60,000",bad
+2,"we know the cost is 60,000",bad
+3,"we know the cost is 60,000",bad
+0,it would cause the cost of a painting not to be uniform,good
+1,it would cause the cost of a painting not to be uniform,bad
+2,it would cause the cost of a painting not to be uniform,bad
+3,it would cause the cost of a painting not to be uniform,bad
+0,it's uniform,bad
+1,it's uniform,bad
+2,it's uniform,bad
+3,it's uniform,bad
+0,it's different,bad
+1,it's different,bad
+2,it's different,bad
+3,it's different,bad
+0,it's not uniform,good
+1,it's not uniform,bad
+2,it's not uniform,bad
+3,it's not uniform,bad
+0,the cost increases as the number of paintings increases.,bad
+1,the cost increases as the number of paintings increases.,good
+2,the cost increases as the number of paintings increases.,bad
+3,the cost increases as the number of paintings increases.,bad
+0,"I'd predict that the cost would increase, so the number of paintings increases the total selling price",bad
+1,"I'd predict that the cost would increase, so the number of paintings increases the total selling price",good
+2,"I'd predict that the cost would increase, so the number of paintings increases the total selling price",bad
+3,"I'd predict that the cost would increase, so the number of paintings increases the total selling price",bad
+0,"This relationship is not proportional.  Though the amount of paintings sold and dollars reveived covary, the rate per painting is not uniform and could potentially be invarient.",good
+1,"This relationship is not proportional.  Though the amount of paintings sold and dollars reveived covary, the rate per painting is not uniform and could potentially be invarient.",good
+3,"This relationship is not proportional.  Though the amount of paintings sold and dollars reveived covary, the rate per painting is not uniform and could potentially be invarient.",good
+0,In this situation the selling price per painting is not constant and therefore the relationship between paintings and price is not uniform.,good
+1,In this situation the selling price per painting is not constant and therefore the relationship between paintings and price is not uniform.,bad
+2,In this situation the selling price per painting is not constant and therefore the relationship between paintings and price is not uniform.,bad
+3,In this situation the selling price per painting is not constant and therefore the relationship between paintings and price is not uniform.,bad
+0,The price per painting is not invariant because it is not a constant price per painting,bad
+1,The price per painting is not invariant because it is not a constant price per painting,bad
+2,The price per painting is not invariant because it is not a constant price per painting,good
+3,The price per painting is not invariant because it is not a constant price per painting,bad
+0,"If 2 paintings sell for $120,000 then the unit rate would be $60,000. You can multiply the unit rate times the 6 paintings for the final price of $360,000.",bad
+1,"If 2 paintings sell for $120,000 then the unit rate would be $60,000. You can multiply the unit rate times the 6 paintings for the final price of $360,000.",bad
+2,"If 2 paintings sell for $120,000 then the unit rate would be $60,000. You can multiply the unit rate times the 6 paintings for the final price of $360,000.",bad
+3,"If 2 paintings sell for $120,000 then the unit rate would be $60,000. You can multiply the unit rate times the 6 paintings for the final price of $360,000.",bad
+0,"The sellign price could have been the same or different but added to $120,000.",bad
+1,"The sellign price could have been the same or different but added to $120,000.",bad
+2,"The sellign price could have been the same or different but added to $120,000.",bad
+3,"The sellign price could have been the same or different but added to $120,000.",bad
+0,The total selling price increases as the total number of paintings increases.,bad
+1,The total selling price increases as the total number of paintings increases.,good
+2,The total selling price increases as the total number of paintings increases.,bad
+3,The total selling price increases as the total number of paintings increases.,bad
+0,Increasing the number of paintings would keep the selling price constant,bad
+1,Increasing the number of paintings would keep the selling price constant,bad
+2,Increasing the number of paintings would keep the selling price constant,bad
+3,Increasing the number of paintings would keep the selling price constant,bad
+0,When the number of paintings increases the total selling price of the paintings increases. The individual painting prices may vary.,bad
+1,When the number of paintings increases the total selling price of the paintings increases. The individual painting prices may vary.,good
+2,When the number of paintings increases the total selling price of the paintings increases. The individual painting prices may vary.,bad
+3,When the number of paintings increases the total selling price of the paintings increases. The individual painting prices may vary.,bad
+0,The unit rate is not constant so the scenario is not proportional,bad
+1,The unit rate is not constant so the scenario is not proportional,bad
+2,The unit rate is not constant so the scenario is not proportional,good
+3,The unit rate is not constant so the scenario is not proportional,good
+0,"For this scenario to be proportional it needs to meet the criteria for 3 properties, one being invariance. The ratio needs to increase together at a constant rate. Here the unit rate is not constant so it is not invariant and not proportional.",bad
+2,"For this scenario to be proportional it needs to meet the criteria for 3 properties, one being invariance. The ratio needs to increase together at a constant rate. Here the unit rate is not constant so it is not invariant and not proportional.",good
+3,"For this scenario to be proportional it needs to meet the criteria for 3 properties, one being invariance. The ratio needs to increase together at a constant rate. Here the unit rate is not constant so it is not invariant and not proportional.",good
+1,This does not demonstrate proportionality because we don't know the price of one painting,bad
+2,This does not demonstrate proportionality because we don't know the price of one painting,bad
+3,This does not demonstrate proportionality because we don't know the price of one painting,good
+0,the prices of paintings are not uniform,good
+1,the prices of paintings are not uniform,bad
+2,the prices of paintings are not uniform,bad
+3,the prices of paintings are not uniform,bad
+0,the total selling price and number of paintings will rise together,bad
+1,the total selling price and number of paintings will rise together,good
+2,the total selling price and number of paintings will rise together,bad
+3,the total selling price and number of paintings will rise together,bad
+0,changing the number of paintings should increase the selling price,bad
+1,changing the number of paintings should increase the selling price,good
+2,changing the number of paintings should increase the selling price,bad
+3,changing the number of paintings should increase the selling price,bad
+0,increase,bad
+1,increase,bad
+2,increase,bad
+3,increase,bad
+0,got it,bad
+1,got it,bad
+2,got it,bad
+3,got it,bad
+0,there is no invariance in this example because the price of paintings are not uniform,bad
+1,there is no invariance in this example because the price of paintings are not uniform,bad
+3,there is no invariance in this example because the price of paintings are not uniform,bad
+0,"If the relationship between the number of paintings sold and price is proportional, I would say that 6 paintings would cost  $360,000. I say this  because in a proportional relationship, the relationship between dollars and paintings would be constant. In this case, that would be $60,000 per painting. This  would mean that 6  paintings would cost 360,000 dollars.",bad
+1,"If the relationship between the number of paintings sold and price is proportional, I would say that 6 paintings would cost  $360,000. I say this  because in a proportional relationship, the relationship between dollars and paintings would be constant. In this case, that would be $60,000 per painting. This  would mean that 6  paintings would cost 360,000 dollars.",bad
+2,"If the relationship between the number of paintings sold and price is proportional, I would say that 6 paintings would cost  $360,000. I say this  because in a proportional relationship, the relationship between dollars and paintings would be constant. In this case, that would be $60,000 per painting. This  would mean that 6  paintings would cost 360,000 dollars.",bad
+3,"If the relationship between the number of paintings sold and price is proportional, I would say that 6 paintings would cost  $360,000. I say this  because in a proportional relationship, the relationship between dollars and paintings would be constant. In this case, that would be $60,000 per painting. This  would mean that 6  paintings would cost 360,000 dollars.",bad
+0,"We don't know the selling price of each painting, so we do not know if they were uniform. We only know that two paintings  sold for $120,000.",good
+1,"We don't know the selling price of each painting, so we do not know if they were uniform. We only know that two paintings  sold for $120,000.",bad
+2,"We don't know the selling price of each painting, so we do not know if they were uniform. We only know that two paintings  sold for $120,000.",bad
+3,"We don't know the selling price of each painting, so we do not know if they were uniform. We only know that two paintings  sold for $120,000.",bad
+0,The selling price increases as the number of paintings sold increases. This means the relationship between selling price and paintings covaries.,bad
+1,The selling price increases as the number of paintings sold increases. This means the relationship between selling price and paintings covaries.,good
+2,The selling price increases as the number of paintings sold increases. This means the relationship between selling price and paintings covaries.,bad
+3,The selling price increases as the number of paintings sold increases. This means the relationship between selling price and paintings covaries.,bad
+0,The number of paintings sold should increase the total selling price.,bad
+1,The number of paintings sold should increase the total selling price.,good
+2,The number of paintings sold should increase the total selling price.,bad
+3,The number of paintings sold should increase the total selling price.,bad
+0,"As the number of paintings increases, the  total selling price also increases.",bad
+1,"As the number of paintings increases, the  total selling price also increases.",good
+2,"As the number of paintings increases, the  total selling price also increases.",bad
+3,"As the number of paintings increases, the  total selling price also increases.",bad
+0,The unit rate is not constant because the ratio between paintings and selling price is different. This tells us that the relationship between paintings and dollars is not invariant.,bad
+1,The unit rate is not constant because the ratio between paintings and selling price is different. This tells us that the relationship between paintings and dollars is not invariant.,bad
+2,The unit rate is not constant because the ratio between paintings and selling price is different. This tells us that the relationship between paintings and dollars is not invariant.,good
+3,The unit rate is not constant because the ratio between paintings and selling price is different. This tells us that the relationship between paintings and dollars is not invariant.,bad
+0,"The ratio between total paintings and  total selling price must  be a constant ratio. We cannot make this assumption because it did not state that the relationship between paintings and selling price is proportional. This means that the relationship does not have invariance, since the rate at which the dollar amount increases per painting is not constant.",bad
+1,"The ratio between total paintings and  total selling price must  be a constant ratio. We cannot make this assumption because it did not state that the relationship between paintings and selling price is proportional. This means that the relationship does not have invariance, since the rate at which the dollar amount increases per painting is not constant.",bad
+2,"The ratio between total paintings and  total selling price must  be a constant ratio. We cannot make this assumption because it did not state that the relationship between paintings and selling price is proportional. This means that the relationship does not have invariance, since the rate at which the dollar amount increases per painting is not constant.",good
+3,"The ratio between total paintings and  total selling price must  be a constant ratio. We cannot make this assumption because it did not state that the relationship between paintings and selling price is proportional. This means that the relationship does not have invariance, since the rate at which the dollar amount increases per painting is not constant.",bad
+

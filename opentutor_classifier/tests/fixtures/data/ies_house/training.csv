@@ -1,0 +1,388 @@
+exp_num,text,label
+0,"It is not proportional, because as the number of painters increases then the hours needed to paint the hosue will decrease",Bad
+1,"It is not proportional, because as the number of painters increases then the hours needed to paint the hosue will decrease",Good
+2,"It is not proportional, because as the number of painters increases then the hours needed to paint the hosue will decrease",Good
+3,"It is not proportional, because as the number of painters increases then the hours needed to paint the hosue will decrease",Good
+0,It is not proportional because as the number of workers increases the hours needed to paint the house decreases,Bad
+1,It is not proportional because as the number of workers increases the hours needed to paint the house decreases,Good
+2,It is not proportional because as the number of workers increases the hours needed to paint the house decreases,Good
+3,It is not proportional because as the number of workers increases the hours needed to paint the house decreases,Good
+0,it's not proportional. The rate is not constant and uniform.,Bad
+1,it's not proportional. The rate is not constant and uniform.,Bad
+2,it's not proportional. The rate is not constant and uniform.,Good
+3,it's not proportional. The rate is not constant and uniform.,Good
+0,"Yes, same rate, same worker.  Increase workers increase houses. Rate is constant.",Good
+1,"Yes, same rate, same worker.  Increase workers increase houses. Rate is constant.",Bad
+2,"Yes, same rate, same worker.  Increase workers increase houses. Rate is constant.",Bad
+3,"Yes, same rate, same worker.  Increase workers increase houses. Rate is constant.",Good
+0,the time decreases,Bad
+1,the time decreases,Good
+2,the time decreases,Bad
+3,the time decreases,Bad
+0,as the workers increase the time decreases,Bad
+1,as the workers increase the time decreases,Good
+2,as the workers increase the time decreases,Bad
+3,as the workers increase the time decreases,Bad
+0,yes,Bad
+1,yes,Bad
+2,yes,Bad
+3,yes,Bad
+0,they are different,Bad
+1,they are different,Bad
+2,they are different,Bad
+3,they are different,Bad
+0,no,Bad
+1,no,Bad
+2,no,Bad
+3,no,Bad
+0,"No, it is not. The more workers you have, the less time it will take overall. This means that the quotient between the workers and the time taken will not be equal for every amount of workers",Bad
+1,"No, it is not. The more workers you have, the less time it will take overall. This means that the quotient between the workers and the time taken will not be equal for every amount of workers",Bad
+2,"No, it is not. The more workers you have, the less time it will take overall. This means that the quotient between the workers and the time taken will not be equal for every amount of workers",Good
+3,"No, it is not. The more workers you have, the less time it will take overall. This means that the quotient between the workers and the time taken will not be equal for every amount of workers",Good
+0,Yes. Because as the amount of one changes so will the other,Bad
+1,Yes. Because as the amount of one changes so will the other,Good
+2,Yes. Because as the amount of one changes so will the other,Bad
+3,Yes. Because as the amount of one changes so will the other,Bad
+0,The rate is equal for each one,Good
+1,The rate is equal for each one,Bad
+2,The rate is equal for each one,Bad
+3,The rate is equal for each one,Bad
+0,"No it does not. As one changes, the rate changes as well",Bad
+1,"No it does not. As one changes, the rate changes as well",Bad
+2,"No it does not. As one changes, the rate changes as well",Good
+3,"No it does not. As one changes, the rate changes as well",Good
+0,proportional. It's a one to one thing.,Bad
+1,proportional. It's a one to one thing.,Bad
+2,proportional. It's a one to one thing.,Bad
+3,proportional. It's a one to one thing.,Bad
+0,they are the same,Good
+1,they are the same,Bad
+2,they are the same,Bad
+3,they are the same,Bad
+0,No it is not,Bad
+1,No it is not,Bad
+2,No it is not,Bad
+3,No it is not,Good
+0,Covary. Uniform. Invariance. Proportional.,Bad
+1,Covary. Uniform. Invariance. Proportional.,Bad
+2,Covary. Uniform. Invariance. Proportional.,Bad
+3,Covary. Uniform. Invariance. Proportional.,Bad
+0,Each rate is equal,Good
+1,Each rate is equal,Bad
+2,Each rate is equal,Bad
+3,Each rate is equal,Bad
+0,"No, that can change",Bad
+1,"No, that can change",Bad
+2,"No, that can change",Good
+3,"No, that can change",Bad
+0,They are different,Bad
+1,They are different,Bad
+2,They are different,Good
+3,They are different,Bad
+0,It will vary,Bad
+1,It will vary,Bad
+2,It will vary,Good
+3,It will vary,Bad
+0,decrease,Bad
+1,decrease,Good
+2,decrease,Good
+3,decrease,Bad
+0,The relationship is not proportional,Bad
+1,The relationship is not proportional,Bad
+2,The relationship is not proportional,Bad
+3,The relationship is not proportional,Good
+0,No because the more workers work together the sooner they finish the work. ,Bad
+1,No because the more workers work together the sooner they finish the work. ,Bad
+2,No because the more workers work together the sooner they finish the work. ,Bad
+3,No because the more workers work together the sooner they finish the work. ,Good
+0,It is proportional. It's 7 to 1.,Bad
+1,It is proportional. It's 7 to 1.,Bad
+2,It is proportional. It's 7 to 1.,Bad
+3,It is proportional. It's 7 to 1.,Bad
+0,"Each worker is different, so the rates are different.",Bad
+1,"Each worker is different, so the rates are different.",Bad
+2,"Each worker is different, so the rates are different.",Bad
+3,"Each worker is different, so the rates are different.",Bad
+0,"If they are all working at the same rate, then it is uniform.",Good
+1,"If they are all working at the same rate, then it is uniform.",Bad
+2,"If they are all working at the same rate, then it is uniform.",Bad
+3,"If they are all working at the same rate, then it is uniform.",Bad
+0,You probably will end up painting faster if there are more workers.,Bad
+2,You probably will end up painting faster if there are more workers.,Bad
+3,You probably will end up painting faster if there are more workers.,Bad
+0,"The change at the same time. As one increases, the other decreases. So they covary.",Bad
+1,"The change at the same time. As one increases, the other decreases. So they covary.",Good
+2,"The change at the same time. As one increases, the other decreases. So they covary.",Bad
+3,"The change at the same time. As one increases, the other decreases. So they covary.",Bad
+0,"The rates for each are different, so invariance does not hold.",Bad
+1,"The rates for each are different, so invariance does not hold.",Bad
+2,"The rates for each are different, so invariance does not hold.",Good
+3,"The rates for each are different, so invariance does not hold.",Bad
+0,Non-proportional. The rate changes.,Bad
+1,Non-proportional. The rate changes.,Bad
+2,Non-proportional. The rate changes.,Bad
+3,Non-proportional. The rate changes.,Good
+1,The rates won't change between workers.,Bad
+2,The rates won't change between workers.,Bad
+3,The rates won't change between workers.,Bad
+0,"If each worker is painting at the same speed, then it is uniform.",Good
+1,"If each worker is painting at the same speed, then it is uniform.",Bad
+2,"If each worker is painting at the same speed, then it is uniform.",Bad
+3,"If each worker is painting at the same speed, then it is uniform.",Bad
+0,More workers means a faster paint job.,Bad
+2,More workers means a faster paint job.,Bad
+3,More workers means a faster paint job.,Bad
+0,"When the # of workers goes up, then the time to paint the house goes down. So they change together.",Bad
+1,"When the # of workers goes up, then the time to paint the house goes down. So they change together.",Good
+2,"When the # of workers goes up, then the time to paint the house goes down. So they change together.",Bad
+3,"When the # of workers goes up, then the time to paint the house goes down. So they change together.",Bad
+0,The rates are different. So no invariance.,Bad
+1,The rates are different. So no invariance.,Bad
+2,The rates are different. So no invariance.,Good
+3,The rates are different. So no invariance.,Bad
+0,"It's not proportional. Adding more workers will decrease the time, so the ratio is going to change.",Bad
+1,"It's not proportional. Adding more workers will decrease the time, so the ratio is going to change.",Bad
+2,"It's not proportional. Adding more workers will decrease the time, so the ratio is going to change.",Good
+3,"It's not proportional. Adding more workers will decrease the time, so the ratio is going to change.",Good
+0,Non-proportional. The rate is going to keep going down.,Bad
+1,Non-proportional. The rate is going to keep going down.,Bad
+2,Non-proportional. The rate is going to keep going down.,Bad
+3,Non-proportional. The rate is going to keep going down.,Good
+0,Each worker paints at the same speed,Good
+1,Each worker paints at the same speed,Bad
+2,Each worker paints at the same speed,Bad
+3,Each worker paints at the same speed,Bad
+0,"The workers all work at the same pace, so its uniform.",Good
+1,"The workers all work at the same pace, so its uniform.",Bad
+2,"The workers all work at the same pace, so its uniform.",Bad
+3,"The workers all work at the same pace, so its uniform.",Bad
+0,More workers means less time. They change together.,Bad
+1,More workers means less time. They change together.,Good
+2,More workers means less time. They change together.,Bad
+3,More workers means less time. They change together.,Bad
+0,They are connected. As one goes up the other goes down and vice versa.,Bad
+1,They are connected. As one goes up the other goes down and vice versa.,Good
+2,They are connected. As one goes up the other goes down and vice versa.,Bad
+3,They are connected. As one goes up the other goes down and vice versa.,Bad
+0,The ratios will be different every time a worker joins in. So no invariance.,Bad
+1,The ratios will be different every time a worker joins in. So no invariance.,Bad
+2,The ratios will be different every time a worker joins in. So no invariance.,Good
+3,The ratios will be different every time a worker joins in. So no invariance.,Bad
+0,It's proportional. You can find the unit rate really easily by just dividing those values.,Bad
+1,It's proportional. You can find the unit rate really easily by just dividing those values.,Bad
+2,It's proportional. You can find the unit rate really easily by just dividing those values.,Bad
+3,It's proportional. You can find the unit rate really easily by just dividing those values.,Bad
+0,The workers all paint at the same pace.,Good
+1,The workers all paint at the same pace.,Bad
+2,The workers all paint at the same pace.,Bad
+3,The workers all paint at the same pace.,Bad
+0,It is uniform. All the workers are equal.,Good
+1,It is uniform. All the workers are equal.,Bad
+2,It is uniform. All the workers are equal.,Bad
+3,It is uniform. All the workers are equal.,Bad
+0,"As the amount of workers goes up, the time needed goes down",Bad
+1,"As the amount of workers goes up, the time needed goes down",Good
+2,"As the amount of workers goes up, the time needed goes down",Bad
+3,"As the amount of workers goes up, the time needed goes down",Bad
+0,One can't change without the other. So they covary.,Bad
+1,One can't change without the other. So they covary.,Good
+2,One can't change without the other. So they covary.,Bad
+3,One can't change without the other. So they covary.,Bad
+0,The unit rates are different.,Bad
+1,The unit rates are different.,Bad
+3,The unit rates are different.,Bad
+0,It is not invariant. The rates will change.,Bad
+1,It is not invariant. The rates will change.,Bad
+2,It is not invariant. The rates will change.,Good
+3,It is not invariant. The rates will change.,Bad
+0,It's proportional,Bad
+1,It's proportional,Bad
+2,It's proportional,Bad
+3,It's proportional,Bad
+0,house is the same and workers work at the same rate,Good
+1,house is the same and workers work at the same rate,Bad
+2,house is the same and workers work at the same rate,Bad
+3,house is the same and workers work at the same rate,Bad
+0,"the workers work at the same rate, indicating uniformity",Good
+1,"the workers work at the same rate, indicating uniformity",Bad
+2,"the workers work at the same rate, indicating uniformity",Bad
+3,"the workers work at the same rate, indicating uniformity",Bad
+0,the time increases,Bad
+1,the time increases,Bad
+2,the time increases,Bad
+3,the time increases,Bad
+0,they change together,Bad
+2,they change together,Bad
+3,they change together,Bad
+0,"the rates are different, indicating the relationship is not invariant",Bad
+1,"the rates are different, indicating the relationship is not invariant",Bad
+2,"the rates are different, indicating the relationship is not invariant",Good
+3,"the rates are different, indicating the relationship is not invariant",Bad
+0,it's not proportional,Bad
+1,it's not proportional,Bad
+2,it's not proportional,Bad
+3,it's not proportional,Good
+0,"the workers work at the same rate, indicating uniformity.",Good
+1,"the workers work at the same rate, indicating uniformity.",Bad
+2,"the workers work at the same rate, indicating uniformity.",Bad
+3,"the workers work at the same rate, indicating uniformity.",Bad
+0,"workers work at the same rate, indicating uniformity.",Good
+1,"workers work at the same rate, indicating uniformity.",Bad
+2,"workers work at the same rate, indicating uniformity.",Bad
+3,"workers work at the same rate, indicating uniformity.",Bad
+0,"the time decreases as the workers increase, they change together",Bad
+1,"the time decreases as the workers increase, they change together",Good
+2,"the time decreases as the workers increase, they change together",Bad
+3,"the time decreases as the workers increase, they change together",Bad
+0,they change together,Bad
+2,they change together,Bad
+3,they change together,Bad
+0,"It's proportional because it starts at (0,0)",Bad
+1,"It's proportional because it starts at (0,0)",Bad
+2,"It's proportional because it starts at (0,0)",Bad
+3,"It's proportional because it starts at (0,0)",Bad
+1,the rate of each worker is the same,Bad
+2,the rate of each worker is the same,Bad
+3,the rate of each worker is the same,Bad
+0,the rate is the same so its uniform for the number of workers and their rate,Good
+1,the rate is the same so its uniform for the number of workers and their rate,Bad
+2,the rate is the same so its uniform for the number of workers and their rate,Bad
+3,the rate is the same so its uniform for the number of workers and their rate,Bad
+0,time increases as workers increase,Bad
+1,time increases as workers increase,Good
+2,time increases as workers increase,Bad
+3,time increases as workers increase,Bad
+0,"they change in opposite directions, so the relationship is not proportional.",Bad
+1,"they change in opposite directions, so the relationship is not proportional.",Bad
+2,"they change in opposite directions, so the relationship is not proportional.",Bad
+3,"they change in opposite directions, so the relationship is not proportional.",Good
+0,It's not proportional,Bad
+1,It's not proportional,Bad
+2,It's not proportional,Bad
+3,It's not proportional,Bad
+1,workers are working at the same rate,Bad
+2,workers are working at the same rate,Bad
+3,workers are working at the same rate,Bad
+0,"same rate, so the relationship covaries",Bad
+1,"same rate, so the relationship covaries",Bad
+2,"same rate, so the relationship covaries",Bad
+3,"same rate, so the relationship covaries",Bad
+0,"the time decreases, so the variables change together",Bad
+1,"the time decreases, so the variables change together",Good
+2,"the time decreases, so the variables change together",Bad
+3,"the time decreases, so the variables change together",Bad
+0,"they change together, indicating covariance",Bad
+1,"they change together, indicating covariance",Good
+2,"they change together, indicating covariance",Bad
+3,"they change together, indicating covariance",Bad
+0,"It's not directly proportional.  I think that's because the variables go in different directions.  If you have more workers the time goes down, if you have less workers the time goes up, so they covary together, but in opposite directions.  Also, the ratios are different when that happens.  Finally, I think it'd be inversely proportional, not directly proportional.",Bad
+1,"It's not directly proportional.  I think that's because the variables go in different directions.  If you have more workers the time goes down, if you have less workers the time goes up, so they covary together, but in opposite directions.  Also, the ratios are different when that happens.  Finally, I think it'd be inversely proportional, not directly proportional.",Good
+2,"It's not directly proportional.  I think that's because the variables go in different directions.  If you have more workers the time goes down, if you have less workers the time goes up, so they covary together, but in opposite directions.  Also, the ratios are different when that happens.  Finally, I think it'd be inversely proportional, not directly proportional.",Good
+3,"It's not directly proportional.  I think that's because the variables go in different directions.  If you have more workers the time goes down, if you have less workers the time goes up, so they covary together, but in opposite directions.  Also, the ratios are different when that happens.  Finally, I think it'd be inversely proportional, not directly proportional.",Good
+0,"the rate of each worker is the same, so the variables are uniform",Good
+1,"the rate of each worker is the same, so the variables are uniform",Bad
+2,"the rate of each worker is the same, so the variables are uniform",Bad
+3,"the rate of each worker is the same, so the variables are uniform",Bad
+0,the time it takes to paint a house decreases,Bad
+2,the time it takes to paint a house decreases,Bad
+3,the time it takes to paint a house decreases,Bad
+0,"they change together, so the variables covary",Bad
+1,"they change together, so the variables covary",Good
+2,"they change together, so the variables covary",Bad
+3,"they change together, so the variables covary",Bad
+0,yes because all the workers work at the same rate,Good
+1,yes because all the workers work at the same rate,Bad
+2,yes because all the workers work at the same rate,Bad
+3,yes because all the workers work at the same rate,Bad
+0,When the number of workers increases the time to paint the house would decrease,Bad
+1,When the number of workers increases the time to paint the house would decrease,Good
+2,When the number of workers increases the time to paint the house would decrease,Bad
+3,When the number of workers increases the time to paint the house would decrease,Bad
+0,The workers and the hours to paint the house inversely proportional,Bad
+1,The workers and the hours to paint the house inversely proportional,Bad
+2,The workers and the hours to paint the house inversely proportional,Bad
+3,The workers and the hours to paint the house inversely proportional,Good
+0,This relationship does not have invariance because the relationship between workers and hours needed to paint a house are not proportional,Bad
+1,This relationship does not have invariance because the relationship between workers and hours needed to paint a house are not proportional,Bad
+2,This relationship does not have invariance because the relationship between workers and hours needed to paint a house are not proportional,Good
+3,This relationship does not have invariance because the relationship between workers and hours needed to paint a house are not proportional,Good
+0,No workers may paint at different rates,Bad
+1,No workers may paint at different rates,Bad
+2,No workers may paint at different rates,Bad
+3,No workers may paint at different rates,Bad
+0,The workers all paint at the same rate.,Good
+1,The workers all paint at the same rate.,Bad
+2,The workers all paint at the same rate.,Bad
+3,The workers all paint at the same rate.,Bad
+0,The time it takes to paint the house decrceases,Bad
+2,The time it takes to paint the house decrceases,Bad
+3,The time it takes to paint the house decrceases,Bad
+0,The variables will change together and be proportional,Bad
+1,The variables will change together and be proportional,Good
+2,The variables will change together and be proportional,Bad
+3,The variables will change together and be proportional,Bad
+0,The ratio between the workers and the time it takes them to paint the houses in not constant.,Bad
+1,The ratio between the workers and the time it takes them to paint the houses in not constant.,Bad
+2,The ratio between the workers and the time it takes them to paint the houses in not constant.,Good
+3,The ratio between the workers and the time it takes them to paint the houses in not constant.,Bad
+0,It is not invariant because it takes the two mentioned above a different amount of time to complete painting their houses.,Bad
+1,It is not invariant because it takes the two mentioned above a different amount of time to complete painting their houses.,Bad
+2,It is not invariant because it takes the two mentioned above a different amount of time to complete painting their houses.,Good
+3,It is not invariant because it takes the two mentioned above a different amount of time to complete painting their houses.,Bad
+0,"Adding workers would decrease the time it would take to paint the house, making the relationship proportional.",Bad
+1,"Adding workers would decrease the time it would take to paint the house, making the relationship proportional.",Good
+2,"Adding workers would decrease the time it would take to paint the house, making the relationship proportional.",Bad
+3,"Adding workers would decrease the time it would take to paint the house, making the relationship proportional.",Bad
+0,proportional,Bad
+1,proportional,Bad
+2,proportional,Bad
+3,proportional,Bad
+0,"Yes, because the relationship has invariance",Bad
+1,"Yes, because the relationship has invariance",Bad
+2,"Yes, because the relationship has invariance",Bad
+3,"Yes, because the relationship has invariance",Bad
+1,"Yes, because the relationship is uniform",Bad
+2,"Yes, because the relationship is uniform",Bad
+3,"Yes, because the relationship is uniform",Bad
+0,decreases,Bad
+1,decreases,Bad
+2,decreases,Bad
+3,decreases,Bad
+0,the variables change together,Bad
+1,the variables change together,Good
+2,the variables change together,Bad
+3,the variables change together,Bad
+0,just tell me what you mean,Bad
+1,just tell me what you mean,Bad
+2,just tell me what you mean,Bad
+3,just tell me what you mean,Bad
+0,"I don't know, just explain it to me please",Bad
+1,"I don't know, just explain it to me please",Bad
+2,"I don't know, just explain it to me please",Bad
+3,"I don't know, just explain it to me please",Bad
+0,increasing workers should make time decrease,Bad
+2,increasing workers should make time decrease,Bad
+3,increasing workers should make time decrease,Bad
+0,Different,Bad
+1,Different,Bad
+3,Different,Bad
+0,"Yes, because the ratio between the number of hours and number of workers stays constant throughout. This means that the relationship has invariance and also proportional",Bad
+1,"Yes, because the ratio between the number of hours and number of workers stays constant throughout. This means that the relationship has invariance and also proportional",Bad
+2,"Yes, because the ratio between the number of hours and number of workers stays constant throughout. This means that the relationship has invariance and also proportional",Bad
+3,"Yes, because the ratio between the number of hours and number of workers stays constant throughout. This means that the relationship has invariance and also proportional",Bad
+0,"The rate of each worker is the same at all times, or uniform.",Good
+1,"The rate of each worker is the same at all times, or uniform.",Bad
+2,"The rate of each worker is the same at all times, or uniform.",Bad
+3,"The rate of each worker is the same at all times, or uniform.",Bad
+0,"When the number of workers increases, the  time it takes to  paint the house decreases.  This  means that it does not have covariance.",Bad
+1,"When the number of workers increases, the  time it takes to  paint the house decreases.  This  means that it does not have covariance.",Bad
+2,"When the number of workers increases, the  time it takes to  paint the house decreases.  This  means that it does not have covariance.",Bad
+3,"When the number of workers increases, the  time it takes to  paint the house decreases.  This  means that it does not have covariance.",Bad
+0,"When the number of workers increases, the number of time decreases. For a relationship to be proportional, both variables must increase together.",Bad
+1,"When the number of workers increases, the number of time decreases. For a relationship to be proportional, both variables must increase together.",Good
+2,"When the number of workers increases, the number of time decreases. For a relationship to be proportional, both variables must increase together.",Bad
+3,"When the number of workers increases, the number of time decreases. For a relationship to be proportional, both variables must increase together.",Bad
+0,"No, the relationship is not proportional because the number of hours it takes to paint the house decreases as the number of workers increases. This means the relationship between the two would not be constant or have a consistent ratio.",Bad
+2,"No, the relationship is not proportional because the number of hours it takes to paint the house decreases as the number of workers increases. This means the relationship between the two would not be constant or have a consistent ratio.",Good
+3,"No, the relationship is not proportional because the number of hours it takes to paint the house decreases as the number of workers increases. This means the relationship between the two would not be constant or have a consistent ratio.",Good
+
