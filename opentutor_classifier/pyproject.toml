@@ -1,10 +1,13 @@
 [tool]
 [tool.poetry]
 name = "opentutor_classifier"
-version = "0.0.0"
+version = "1.0.0"
+description="train and run inference for open tutor"
+authors=[]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+# python = "^3.8"
+python = ">=3.8,<3.10"
 celery = "==5.0.5"
 click = "<8"
 coverage = "==5.5"

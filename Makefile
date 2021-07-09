@@ -76,8 +76,8 @@ test-license: LICENSE LICENSE_HEADER
 test-types: $(VENV)
 	# . $(VENV)/bin/activate \
 	# poetry shell \
-	poetry run mypy opentutor_classifier &&
-	poetry run mypy opentutor_classifier_api  &&
+	poetry run mypy opentutor_classifier
+	poetry run mypy opentutor_classifier_api
 	poetry run mypy word2vec
 
 virtualenv-installed:

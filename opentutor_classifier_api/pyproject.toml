@@ -2,6 +2,8 @@
 [tool.poetry]
 name = "opentutor_classifier_api"
 version = "0.0.0"
+description="opentutor_classifier_api"
+authors=[]
 
 [tool.poetry.dependencies]
 python = "^3.8"

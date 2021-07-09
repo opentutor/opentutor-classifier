@@ -1,22 +1,21 @@
 DOCKER_IMAGE?=opentutor-classifier
 ROOT=$(shell dirname ${PWD})
-VENV=.venv
-$(VENV):
-	$(MAKE) $(VENV)-update
+# VENV=.venv
+$(POETRY):
+	$(MAKE) $(POETRY)-update
 
-.PHONY: $(VENV)-update
-$(VENV)-update: virtualenv-installed
-	[ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
-	$(VENV)/bin/pip install --upgrade pip
-	$(VENV)/bin/pip install -r ./requirements.test.txt
-	$(VENV)/bin/python3.8 -m nltk.downloader punkt
-	$(VENV)/bin/python3.8 -m nltk.downloader wordnet
-	$(VENV)/bin/python3.8 -m nltk.downloader averaged_perceptron_tagger
-	$(VENV)/bin/python3.8 -m nltk.downloader stopwords
+.PHONY: $(POETRY)-update
+$(POETRY)-update: virtualenv-installed
+	poetry update
+	poetry install
+	poetry run python -m nltk.downloader punkt
+	poetry run python -m nltk.downloader wordnet
+	poetry run python -m nltk.downloader averaged_perceptron_tagger
+	poetry run python -m nltk.downloader stopwords
 
 .PHONY clean:
 clean:
-	rm -rf .venv htmlcov .coverage tests/fixtures/shared/word2vec.bin
+	rm -rf htmlcov .coverage tests/fixtures/shared/word2vec.bin
 
 .PHONY docker-build:
 docker-build:
@@ -48,7 +47,7 @@ docker-train-default:
 	$(DOCKER_IMAGE) traindefault --data /data/ --shared /shared --output /output 
 
 .PHONY: format
-format: $(VENV)
+format: $(POETRY)
 	cd $(ROOT) && $(MAKE) format
 
 .PHONY: license
@@ -56,16 +55,15 @@ license:
 	cd $(ROOT) && make license
 
 PHONY: test
-test: $(VENV)
+test: $(POETRY)
 	cd $(ROOT)/word2vec/ \
 		&& $(MAKE) word2vec.bin
-	. $(VENV)/bin/activate \
-		&& coverage run \
-			--omit="$(PWD)/tests $(VENV)" \
-			-m py.test -vv $(args)
+	poetry run coverage run \
+		--omit="$(PWD)/tests" \
+		-m py.test -vv $(args)
 
 PHONY: test
-test-not-slow: $(VENV)
+test-not-slow: $(POETRY)
 	args="-m '(not slow)'" $(MAKE) test
 
 
@@ -78,25 +76,24 @@ test-all-not-slow:
 
 
 .PHONY: test-format
-test-format: $(VENV)
+test-format: $(POETRY)
 	cd $(ROOT) && $(MAKE) test-format
 
 .PHONY: test-license
-test-license: $(LICENSE) $(LICENSE_HEADER) $(VENV)
+test-license: $(LICENSE) $(LICENSE_HEADER) $(POETRY)
 	cd $(ROOT) && $(MAKE) test-license
 
 .PHONY: test-lint
-test-lint: $(VENV)
+test-lint: $(POETRY)
 	cd $(ROOT) && $(MAKE) test-lint
 
 .PHONY: test-types
-test-types: $(VENV)
+test-types: $(POETRY)
 	cd $(ROOT) && $(MAKE) test-types
 
 .PHONY: update-deps
-update-deps: $(VENV)
-	# . $(VENV)/bin/activate && pip-upgrade requirements*
-	. $(VENV)/bin/activate && poetry update
+update-deps: $(POETRY)
+	poetry update
 
 virtualenv-installed:
 	$(ROOT)/tools/virtualenv_ensure_installed.sh

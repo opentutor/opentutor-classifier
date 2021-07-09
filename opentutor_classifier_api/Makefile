@@ -14,14 +14,21 @@ $(VENV)-installed:
 
 .PHONY: $(VENV)-update
 $(VENV)-update: $(VENV)-installed
-	[ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
-	$(VENV_PIP) install --upgrade pip
-	$(VENV_PIP) install -r requirements.test.txt
-	$(VENV_PIP) install ../opentutor_classifier
-	$(VENV)/bin/python3.8 -m nltk.downloader punkt
-	$(VENV)/bin/python3.8 -m nltk.downloader wordnet
-	$(VENV)/bin/python3.8 -m nltk.downloader averaged_perceptron_tagger
-	$(VENV)/bin/python3.8 -m nltk.downloader stopwords
+	# [ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
+	# $(VENV_PIP) install --upgrade pip
+	# $(VENV_PIP) install -r requirements.test.txt
+	# $(VENV_PIP) install ../opentutor_classifier
+	# $(VENV)/bin/python3.8 -m nltk.downloader punkt
+	# $(VENV)/bin/python3.8 -m nltk.downloader wordnet
+	# $(VENV)/bin/python3.8 -m nltk.downloader averaged_perceptron_tagger
+	# $(VENV)/bin/python3.8 -m nltk.downloader stopwords
+	poetry update
+	poetry install
+	# install opentutor_classifier
+	poetry run python -m nltk.downloader punkt
+	poetry run python -m nltk.downloader wordnet
+	poetry run python -m nltk.downloader averaged_perceptron_tagger
+	poetry run python -m nltk.downloader stopwords
 
 .PHONY clean:
 clean:
@@ -64,8 +71,8 @@ license:
 test: $(VENV)
 	cd $(ROOT)/word2vec/ \
 		&& $(MAKE) word2vec.bin
-	. $(VENV)/bin/activate \
-		&& export PYTHONPATH=$${PYTHONPATH}:$(PWD)/src \
+	# . $(VENV)/bin/activate \
+	poetry run export PYTHONPATH=$${PYTHONPATH}:$(PWD)/src \
 		&& coverage run \
 			--omit="$(PWD)/tests $(VENV)" \
 			-m py.test -vv $(args)
@@ -99,4 +106,5 @@ test-types: $(VENV)
 
 .PHONY: update-deps
 update-deps: $(VENV)
-	. $(VENV)/bin/activate && pip-upgrade requirements*
+	# . $(VENV)/bin/activate && pip-upgrade requirements*
+	poetry update

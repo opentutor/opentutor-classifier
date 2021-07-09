@@ -1,7 +1,9 @@
 [tool]
 [tool.poetry]
-name = "root"
+name = "word2vec"
 version = "0.0.0"
+description="word2vec"
+authors=[]
 
 [tool.poetry.dependencies]
 python = "^3.8"
