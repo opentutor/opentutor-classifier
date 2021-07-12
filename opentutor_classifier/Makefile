@@ -1,6 +1,5 @@
 DOCKER_IMAGE?=opentutor-classifier
 ROOT=$(shell dirname ${PWD})
-# VENV=.venv
 $(POETRY):
 	$(MAKE) $(POETRY)-update
 

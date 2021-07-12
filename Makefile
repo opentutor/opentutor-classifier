@@ -1,11 +1,10 @@
 LICENSE=LICENSE
 LICENSE_HEADER=LICENSE_HEADER
-# VENV=.venv
-$(VENV):
-	$(MAKE) $(VENV)-update
+$(POETRY):
+	$(MAKE) $(POETRY)-update
 
-.PHONY: $(VENV)-update
-$(VENV)-update: virtualenv-installed
+.PHONY: $(POETRY)-update
+$(POETRY)-update: virtualenv-installed
 	poetry update
 	poetry install
 
@@ -15,8 +14,7 @@ docker-build:
 	cd opentutor_classifier_api && $(MAKE) docker-build
 
 .PHONY: format
-format: $(VENV)
-	# $(VENV)/bin/black .
+format: $(POETRY)
 	poetry run black .
 
 LICENSE:
@@ -28,7 +26,7 @@ LICENSE_HEADER:
 	exit 1
 
 .PHONY: license
-license: LICENSE LICENSE_HEADER $(VENV)
+license: LICENSE LICENSE_HEADER $(POETRY)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/src $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/tests $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/src $(args)
@@ -57,13 +55,11 @@ test-all-not-slow:
 	cd opentutor_classifier_api && $(MAKE) test-all-not-slow
 
 .PHONY: test-format
-test-format: $(VENV)
-	# $(VENV)/bin/black --check .
+test-format: $(POETRY)
 	poetry run black --check .
 
 .PHONY: test-lint
-test-lint: $(VENV)
-	# $(VENV)/bin/flake8 .
+test-lint: $(POETRY)
 	poetry run flake8 .
 
 .PHONY: test-license
@@ -71,8 +67,7 @@ test-license: LICENSE LICENSE_HEADER
 	args="--check" $(MAKE) license
 
 .PHONY: test-types
-test-types: $(VENV)
-	# . $(VENV)/bin/activate \
+test-types: $(POETRY)
 	poetry run mypy opentutor_classifier
 	poetry run mypy opentutor_classifier_api
 	poetry run mypy word2vec
@@ -81,6 +76,5 @@ virtualenv-installed:
 	tools/virtualenv_ensure_installed.sh
 
 .PHONY: update-deps
-update-deps: $(VENV)
-	# . $(VENV)/bin/activate && pip-upgrade requirements*
+update-deps: $(POETRY)
 	poetry update

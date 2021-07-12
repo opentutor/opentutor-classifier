@@ -3,8 +3,6 @@ DOCKER_IMAGE?=opentutor-classifier-api
 DOCKER_IMAGE_ID=$(shell docker images -q ${DOCKER_IMAGE} 2> /dev/null)
 ROOT=$(shell dirname ${PWD})
 OPENTUTOR_CLASSIFIER_SRC=$(ROOT)/opentutor_classifier
-# VENV=.venv
-# VENV_PIP=$(VENV)/bin/pip
 $(POETRY):
 	$(MAKE) $(POETRY)-update
 
@@ -99,5 +97,4 @@ test-types: $(POETRY)
 
 .PHONY: update-deps
 update-deps: $(POETRY)
-	# . $(VENV)/bin/activate && pip-upgrade requirements*
 	poetry update
