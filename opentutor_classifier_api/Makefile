@@ -3,28 +3,23 @@ DOCKER_IMAGE?=opentutor-classifier-api
 DOCKER_IMAGE_ID=$(shell docker images -q ${DOCKER_IMAGE} 2> /dev/null)
 ROOT=$(shell dirname ${PWD})
 OPENTUTOR_CLASSIFIER_SRC=$(ROOT)/opentutor_classifier
-VENV=.venv
-VENV_PIP=$(VENV)/bin/pip
-$(VENV):
-	$(MAKE) $(VENV)-update
+# VENV=.venv
+# VENV_PIP=$(VENV)/bin/pip
+$(POETRY):
+	$(MAKE) $(POETRY)-update
 
-.PHONY $(VENV)-installed:
-$(VENV)-installed:
+.PHONY $(POETRY)-installed:
+$(POETRY)-installed:
 	$(ROOT)/tools/virtualenv_ensure_installed.sh
 
-.PHONY: $(VENV)-update
-$(VENV)-update: $(VENV)-installed
-	# [ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
-	# $(VENV_PIP) install --upgrade pip
-	# $(VENV_PIP) install -r requirements.test.txt
-	# $(VENV_PIP) install ../opentutor_classifier
-	# $(VENV)/bin/python3.8 -m nltk.downloader punkt
-	# $(VENV)/bin/python3.8 -m nltk.downloader wordnet
-	# $(VENV)/bin/python3.8 -m nltk.downloader averaged_perceptron_tagger
-	# $(VENV)/bin/python3.8 -m nltk.downloader stopwords
+.PHONY: $(POETRY)-update
+$(POETRY)-update: $(POETRY)-installed
 	poetry update
 	poetry install
-	# install opentutor_classifier
+
+	# cd $(ROOT)/opentutor_classifier \
+	# 	&& $(MAKE) poetry-build-classifier
+
 	poetry run python -m nltk.downloader punkt
 	poetry run python -m nltk.downloader wordnet
 	poetry run python -m nltk.downloader averaged_perceptron_tagger
@@ -60,7 +55,7 @@ docker-run:
 	$(DOCKER_IMAGE)
 
 .PHONY: format
-format: $(VENV)
+format: $(POETRY)
 	cd $(ROOT) && $(MAKE) format
 
 .PHONY: license
@@ -68,17 +63,15 @@ license:
 	cd $(ROOT) && make license
 
 .PHONY: test
-test: $(VENV)
+test: $(POETRY)
 	cd $(ROOT)/word2vec/ \
 		&& $(MAKE) word2vec.bin
-	# . $(VENV)/bin/activate \
-	poetry run export PYTHONPATH=$${PYTHONPATH}:$(PWD)/src \
-		&& coverage run \
-			--omit="$(PWD)/tests $(VENV)" \
-			-m py.test -vv $(args)
+	poetry run	coverage run \
+		--omit="$(PWD)/tests" \
+		-m py.test -vv $(args)
 
 PHONY: test
-test-not-slow: $(VENV)
+test-not-slow: $(POETRY)
 	args="-m '(not slow)'" $(MAKE) test
 
 .PHONY: test-all
@@ -89,7 +82,7 @@ test-all-not-slow:
 	args="-m '(not slow)'" $(MAKE) test-all
 
 .PHONY: test-format
-test-format: $(VENV)
+test-format: $(POETRY)
 	cd $(ROOT) && $(MAKE) test-format
 
 .PHONY: test-license
@@ -97,14 +90,14 @@ test-license:
 	cd $(ROOT) && make test-license
 	
 .PHONY: test-lint
-test-lint: $(VENV)
+test-lint: $(POETRY)
 	cd $(ROOT) && $(MAKE) test-lint
 
 .PHONY: test-types
-test-types: $(VENV)
+test-types: $(POETRY)
 	cd $(ROOT) && $(MAKE) test-types
 
 .PHONY: update-deps
-update-deps: $(VENV)
+update-deps: $(POETRY)
 	# . $(VENV)/bin/activate && pip-upgrade requirements*
 	poetry update
