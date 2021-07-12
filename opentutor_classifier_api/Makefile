@@ -17,8 +17,8 @@ $(POETRY)-update: $(POETRY)-installed
 	poetry update
 	poetry install
 
-	# cd $(ROOT)/opentutor_classifier \
-	# 	&& $(MAKE) poetry-build-classifier
+	cd $(ROOT)/opentutor_classifier \
+		&& $(MAKE) poetry-build-classifier
 
 	poetry run python -m nltk.downloader punkt
 	poetry run python -m nltk.downloader wordnet

@@ -4,11 +4,6 @@ name = "opentutor_classifier_api"
 version = "1.0.0"
 description="opentutor_classifier_api"
 authors=[]
-packages = [
-#    { include = "opentutor_classifier_api" },
-#    { include = "opentutor_classifier" }
-#    {include = "opentutor_classifier-1.0.0.tar.gz"}
-]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.10"

@@ -50,7 +50,6 @@ def __train_model(
     )
     command = [
         # ".venv/bin/python3.8",
-        # path.expanduser("~") + "/.cache/pypoetry/virtualenvs/opentutor-classifier-D_wtV1a--py3.8",
         "bin/opentutor_classifier",
         "train",
         "--data",

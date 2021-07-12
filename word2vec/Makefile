@@ -1,5 +1,5 @@
 ROOT=$(shell dirname ${PWD})
-VENV=.venv
+# VENV=.venv
 $(POETRY):
 	$(MAKE) $(POETRY)-update
 

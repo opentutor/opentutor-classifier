@@ -1,6 +1,6 @@
 LICENSE=LICENSE
 LICENSE_HEADER=LICENSE_HEADER
-VENV=.venv
+# VENV=.venv
 $(VENV):
 	$(MAKE) $(VENV)-update
 
@@ -16,7 +16,8 @@ docker-build:
 
 .PHONY: format
 format: $(VENV)
-	$(VENV)/bin/black .
+	# $(VENV)/bin/black .
+	poetry run black .
 
 LICENSE:
 	@echo "you must have a LICENSE file" 1>&2
@@ -28,7 +29,6 @@ LICENSE_HEADER:
 
 .PHONY: license
 license: LICENSE LICENSE_HEADER $(VENV)
-	# . $(VENV)/bin/activate \
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/src $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/tests $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/src $(args)
@@ -58,11 +58,13 @@ test-all-not-slow:
 
 .PHONY: test-format
 test-format: $(VENV)
-	$(VENV)/bin/black --check .
+	# $(VENV)/bin/black --check .
+	poetry run black --check .
 
 .PHONY: test-lint
 test-lint: $(VENV)
-	$(VENV)/bin/flake8 .
+	# $(VENV)/bin/flake8 .
+	poetry run flake8 .
 
 .PHONY: test-license
 test-license: LICENSE LICENSE_HEADER

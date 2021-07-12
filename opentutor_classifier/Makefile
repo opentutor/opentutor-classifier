@@ -13,6 +13,10 @@ $(POETRY)-update: virtualenv-installed
 	poetry run python -m nltk.downloader averaged_perceptron_tagger
 	poetry run python -m nltk.downloader stopwords
 
+.PHONY: poetry-build-classifier
+poetry-build-classifier: $(POETRY)
+	poetry build
+
 .PHONY clean:
 clean:
 	rm -rf htmlcov .coverage tests/fixtures/shared/word2vec.bin

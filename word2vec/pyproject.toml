@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "word2vec"
-version = "0.0.0"
+version = "1.0.0"
 description="word2vec"
 authors=[]
 
