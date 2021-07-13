@@ -4,8 +4,8 @@ $(POETRY):
 	$(MAKE) $(POETRY)-update
 
 .PHONY: $(POETRY)-update
-$(POETRY)-update: virtualenv-installed
-	poetry update
+$(POETRY)-update:
+	poetry env use python3.8
 	poetry install
 
 .PHONY: docker-build
@@ -70,11 +70,8 @@ test-license: LICENSE LICENSE_HEADER
 test-types: $(POETRY)
 	poetry run mypy opentutor_classifier
 	poetry run mypy opentutor_classifier_api
-	poetry run mypy word2vec
-
-virtualenv-installed:
-	tools/virtualenv_ensure_installed.sh
+	poetry run mypy shared
 
 .PHONY: update-deps
-update-deps: $(POETRY)
+update-deps:
 	poetry update

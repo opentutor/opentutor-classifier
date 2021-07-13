@@ -1,11 +1,10 @@
 DOCKER_IMAGE?=opentutor-classifier
 ROOT=$(shell dirname ${PWD})
-$(POETRY):
-	$(MAKE) $(POETRY)-update
+POETRY=install
 
-.PHONY: $(POETRY)-update
-$(POETRY)-update: virtualenv-installed
-	poetry update
+.PHONY: install
+$(POETRY):
+	poetry env use python3.8
 	poetry install
 	poetry run python -m nltk.downloader punkt
 	poetry run python -m nltk.downloader wordnet
@@ -95,8 +94,5 @@ test-types: $(POETRY)
 	cd $(ROOT) && $(MAKE) test-types
 
 .PHONY: update-deps
-update-deps: $(POETRY)
+update-deps:
 	poetry update
-
-virtualenv-installed:
-	$(ROOT)/tools/virtualenv_ensure_installed.sh

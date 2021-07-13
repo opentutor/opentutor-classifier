@@ -3,21 +3,15 @@ DOCKER_IMAGE?=opentutor-classifier-api
 DOCKER_IMAGE_ID=$(shell docker images -q ${DOCKER_IMAGE} 2> /dev/null)
 ROOT=$(shell dirname ${PWD})
 OPENTUTOR_CLASSIFIER_SRC=$(ROOT)/opentutor_classifier
+OPENTUTOR_CLASSIFIER_DIST=$(ROOT)/opentutor_classifier/dist/opentutor_classifier-1.0.0.tar.gz
+POETRY=install
+
+.PHONY: $(POETRY)
 $(POETRY):
-	$(MAKE) $(POETRY)-update
-
-.PHONY $(POETRY)-installed:
-$(POETRY)-installed:
-	$(ROOT)/tools/virtualenv_ensure_installed.sh
-
-.PHONY: $(POETRY)-update
-$(POETRY)-update: $(POETRY)-installed
-	poetry update
-	poetry install
-
 	cd $(ROOT)/opentutor_classifier \
 		&& $(MAKE) poetry-build-classifier
-
+	poetry env use python3.8
+	poetry install
 	poetry run python -m nltk.downloader punkt
 	poetry run python -m nltk.downloader wordnet
 	poetry run python -m nltk.downloader averaged_perceptron_tagger
@@ -96,5 +90,5 @@ test-types: $(POETRY)
 	cd $(ROOT) && $(MAKE) test-types
 
 .PHONY: update-deps
-update-deps: $(POETRY)
+update-deps:
 	poetry update

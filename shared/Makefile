@@ -1,9 +1,8 @@
-$(POETRY):
-	$(MAKE) $(POETRY)-update
+ROOT=$(shell dirname ${PWD})
+POETRY=install
 
-.PHONY: $(POETRY)-update
-$(POETRY)-update:
-	poetry update
+.PHONY: $(POETRY)
+$(POETRY):
 	poetry install
 
 .PHONY clean:
@@ -15,8 +14,8 @@ installed:
 
 installed/word2vec.bin: $(POETRY)
 	$(MAKE) installed
-	poetry run python word2vec_download.py
+	poetry run word2vec_download.py 
 
 .PHONY: update-deps
-update-deps: $(POETRY)
+update-deps:
 	poetry update
