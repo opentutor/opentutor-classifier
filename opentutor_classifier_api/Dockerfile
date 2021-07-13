@@ -4,9 +4,17 @@ WORKDIR /tmp/build
 COPY opentutor_classifier opentutor_classifier
 RUN pwd
 RUN ls -la /tmp/build
-ADD opentutor_classifier_api/requirements.txt opentutor_classifier_api/requirements.txt
-RUN cd opentutor_classifier_api && pip install -r requirements.txt
+# ADD opentutor_classifier_api/requirements.txt opentutor_classifier_api/requirements.txt
+# RUN cd opentutor_classifier_api && pip install -r requirements.txt
+
 WORKDIR /app
+COPY opentutor_classifier_api/poetry.lock opentutor_classifier_api/pyproject.toml /app/
+COPY opentutor_classifier/poetry.lock opentutor_classifier/pyproject.toml /app/
+
+RUN pip install poetry 
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-dev
+
 RUN rm -rf /tmp/build
 # COPY build /tmp/build
 # RUN pip install /tmp/build/opentutor_classifier
