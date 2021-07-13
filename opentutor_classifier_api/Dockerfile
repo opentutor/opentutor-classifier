@@ -22,9 +22,13 @@ RUN rm -rf /tmp/build
 ENV FLASK_APP=opentutor_classifier_api
 WORKDIR /app
 COPY opentutor_classifier_api/src .
-RUN python -m nltk.downloader punkt \
-	&& python -m nltk.downloader wordnet \
-	&& python -m nltk.downloader averaged_perceptron_tagger \
-	&& python -m nltk.downloader stopwords
+# RUN python -m nltk.downloader punkt \
+# 	&& python -m nltk.downloader wordnet \
+# 	&& python -m nltk.downloader averaged_perceptron_tagger \
+# 	&& python -m nltk.downloader stopwords
+RUN poetry run python -m nltk.downloader punkt \
+	&& poetry run python -m nltk.downloader wordnet \
+	&& poetry run python -m nltk.downloader averaged_perceptron_tagger \
+	&& poetry run python -m nltk.downloader stopwords
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
