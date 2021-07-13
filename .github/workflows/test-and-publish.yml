@@ -11,7 +11,11 @@ jobs:
         with:
           python-version: 3.8
       - name: poetry install
-        run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+          source $HOME/.poetry/env
+          echo "PATH=$HOME/.poetry/bin:$PATH" >> $HOME/.profile
+          echo "PATH=$HOME/.poetry/bin:$PATH" >> $HOME/.bash_profile
       - name: test format
         run: make test-format
       - name: test lint
