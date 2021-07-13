@@ -9,6 +9,8 @@ clean:
 
 .PHONY: install
 install:
+	poetry config --local virtualenvs.in-project true
+	poetry env use python3.8
 	poetry install
 
 installed:

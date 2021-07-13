@@ -4,6 +4,7 @@ POETRY=install
 
 .PHONY: install
 $(POETRY):
+	poetry config --local virtualenvs.in-project true
 	poetry env use python3.8
 	poetry install
 	poetry run python -m nltk.downloader punkt

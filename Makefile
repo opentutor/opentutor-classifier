@@ -5,6 +5,7 @@ $(POETRY):
 
 .PHONY: $(POETRY)-update
 $(POETRY)-update:
+	poetry config --local virtualenvs.in-project true
 	poetry env use python3.8
 	poetry install
 
