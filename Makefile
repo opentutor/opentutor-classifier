@@ -74,7 +74,7 @@ test-types: $(VENV)
 	. $(VENV)/bin/activate \
 		&& mypy opentutor_classifier \
 		&& mypy opentutor_classifier_api  \
-		&& mypy word2vec
+		&& mypy shared
 
 virtualenv-installed:
 	tools/virtualenv_ensure_installed.sh
