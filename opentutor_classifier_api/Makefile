@@ -62,8 +62,8 @@ license:
 
 .PHONY: test
 test: $(VENV)
-	cd $(ROOT)/word2vec/ \
-		&& $(MAKE) word2vec.bin
+	cd $(ROOT)/shared/ \
+		&& $(MAKE) installed/word2vec.bin
 	. $(VENV)/bin/activate \
 		&& export PYTHONPATH=$${PYTHONPATH}:$(PWD)/src \
 		&& coverage run \

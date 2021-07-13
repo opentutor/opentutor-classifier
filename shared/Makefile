@@ -4,21 +4,22 @@ $(VENV):
 	$(MAKE) $(VENV)-update
 
 .PHONY: $(VENV)-update
-$(VENV)-update: virtualenv-installed
-	[ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
+$(VENV)-update:
+	[ -d $(VENV) ] || python3.8 -m venv $(VENV)
 	$(VENV)/bin/pip install --upgrade pip
 	$(VENV)/bin/pip install -r ./requirements.txt
 
 .PHONY clean:
 clean:
-	rm -rf .venv word2vec.bin word2vec.zip
+	rm -rf .venv installed
+
+installed:
+	mkdir -p installed
+
+installed/word2vec.bin: $(VENV)
+	$(MAKE) installed
+	. $(VENV)/bin/activate && python word2vec_download.py 
 
 .PHONY: update-deps
 update-deps: $(VENV)
 	. $(VENV)/bin/activate && pip-upgrade requirements*
-
-virtualenv-installed:
-	$(ROOT)/tools/virtualenv_ensure_installed.sh
-
-word2vec.bin: $(VENV)
-	. $(VENV)/bin/activate && python word2vec_download.py 
