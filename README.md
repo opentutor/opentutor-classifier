@@ -1,5 +1,14 @@
 # opentutor-classifier
 
+## TODO
+
+Converting to poetry
+
+ - [ ] make classifier cli tests pass (remove xfail)
+ - [ ] docker build for api and classifier
+ - [ ] docker images work in integration
+ - [ ] docker images no larger than pre-poetry version
+
 A short answer classifier service focused on cold-start performance
 
 This repo contains two subprojects:
