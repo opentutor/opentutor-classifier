@@ -2,8 +2,11 @@ DOCKER_IMAGE?=opentutor-classifier
 ROOT=$(shell dirname ${PWD})
 VENV=.venv
 
-.PHONY: install
 $(VENV):
+	$(MAKE) install
+	
+.PHONY: install
+install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
 	poetry env use python3.8
 	poetry install
@@ -15,6 +18,10 @@ $(VENV):
 .PHONY: poetry-build-classifier
 poetry-build-classifier: $(VENV)
 	poetry build
+
+.PHONY: poetry-ensure-installed
+poetry-ensure-installed:
+	sh $(ROOT)/tools/poetry_ensure_installed.sh
 
 .PHONY clean:
 clean:

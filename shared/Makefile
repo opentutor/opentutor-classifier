@@ -1,3 +1,4 @@
+ROOT=$(shell dirname ${PWD})
 VENV=.venv
 
 $(VENV):
@@ -8,7 +9,7 @@ clean:
 	rm -rf installed
 
 .PHONY: install
-install:
+install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
 	poetry env use python3.8
 	poetry install
@@ -19,6 +20,11 @@ installed:
 installed/word2vec.bin: $(VENV)
 	$(MAKE) installed
 	poetry run python word2vec_download.py 
+
+
+.PHONY: poetry-ensure-installed
+poetry-ensure-installed:
+	sh $(ROOT)/tools/poetry_ensure_installed.sh
 
 .PHONY: update-deps
 update-deps:
