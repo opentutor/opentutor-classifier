@@ -1,34 +1,29 @@
+FROM python:3.8 as builder
+WORKDIR /build
+RUN pip install poetry
+COPY opentutor_classifier ./opentutor_classifier
+# build opentutor-classifier as something api can install
+RUN cd opentutor_classifier \
+	&& make poetry-build-classifier
 FROM python:3.8-slim
 ENV STATUS_URL_FORCE_HTTPS=false
-WORKDIR /tmp/build
-COPY opentutor_classifier opentutor_classifier
-RUN pwd
-RUN ls -la /tmp/build
-# ADD opentutor_classifier_api/requirements.txt opentutor_classifier_api/requirements.txt
-# RUN cd opentutor_classifier_api && pip install -r requirements.txt
-
 WORKDIR /app
-COPY opentutor_classifier_api/poetry.lock opentutor_classifier_api/pyproject.toml /app/
-COPY opentutor_classifier/poetry.lock opentutor_classifier/pyproject.toml /app/
-
-RUN pip install poetry 
-RUN poetry config virtualenvs.create false
-RUN poetry install --no-dev
-
-RUN rm -rf /tmp/build
-# COPY build /tmp/build
-# RUN pip install /tmp/build/opentutor_classifier
-# RUN rm -rf /tmp/build
+RUN pip install poetry
+WORKDIR /app/opentutor_classifier
+# the only thing we need from opentutor_classifier is the built .gz (to install)
+COPY --from=builder /build/opentutor_classifier/dist ./dist
+WORKDIR /app
+COPY opentutor_classifier_api ./opentutor_classifier_api
+RUN cd opentutor_classifier_api \
+	&& poetry config virtualenvs.create false \
+	&& poetry install --no-dev \
+	&& pip uninstall -y poetry
+RUN python -m nltk.downloader punkt \
+	&& python -m nltk.downloader wordnet \
+	&& python -m nltk.downloader averaged_perceptron_tagger \
+	&& python -m nltk.downloader stopwords
 ENV FLASK_APP=opentutor_classifier_api
 WORKDIR /app
 COPY opentutor_classifier_api/src .
-# RUN python -m nltk.downloader punkt \
-# 	&& python -m nltk.downloader wordnet \
-# 	&& python -m nltk.downloader averaged_perceptron_tagger \
-# 	&& python -m nltk.downloader stopwords
-RUN poetry run python -m nltk.downloader punkt \
-	&& poetry run python -m nltk.downloader wordnet \
-	&& poetry run python -m nltk.downloader averaged_perceptron_tagger \
-	&& poetry run python -m nltk.downloader stopwords
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]

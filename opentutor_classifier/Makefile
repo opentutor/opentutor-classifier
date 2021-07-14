@@ -1,11 +1,14 @@
 DOCKER_IMAGE?=opentutor-classifier
 ROOT=$(shell dirname ${PWD})
-$(POETRY):
-	$(MAKE) $(POETRY)-update
+VENV=.venv
 
-.PHONY: $(POETRY)-update
-$(POETRY)-update: virtualenv-installed
-	poetry update
+$(VENV):
+	$(MAKE) install
+	
+.PHONY: install
+install: poetry-ensure-installed
+	poetry config --local virtualenvs.in-project true
+	poetry env use python3.8
 	poetry install
 	poetry run python -m nltk.downloader punkt
 	poetry run python -m nltk.downloader wordnet
@@ -13,8 +16,12 @@ $(POETRY)-update: virtualenv-installed
 	poetry run python -m nltk.downloader stopwords
 
 .PHONY: poetry-build-classifier
-poetry-build-classifier: $(POETRY)
+poetry-build-classifier: $(VENV)
 	poetry build
+
+.PHONY: poetry-ensure-installed
+poetry-ensure-installed:
+	sh $(ROOT)/tools/poetry_ensure_installed.sh
 
 .PHONY clean:
 clean:
@@ -50,7 +57,7 @@ docker-train-default:
 	$(DOCKER_IMAGE) traindefault --data /data/ --shared /shared --output /output 
 
 .PHONY: format
-format: $(POETRY)
+format:
 	cd $(ROOT) && $(MAKE) format
 
 .PHONY: license
@@ -58,15 +65,15 @@ license:
 	cd $(ROOT) && make license
 
 PHONY: test
-test: $(POETRY)
-	cd $(ROOT)/word2vec/ \
-		&& $(MAKE) word2vec.bin
+test: $(VENV)
+	cd $(ROOT)/shared/ \
+		&& $(MAKE) installed/word2vec.bin
 	poetry run coverage run \
 		--omit="$(PWD)/tests" \
 		-m py.test -vv $(args)
 
 PHONY: test
-test-not-slow: $(POETRY)
+test-not-slow: $(VENV)
 	args="-m '(not slow)'" $(MAKE) test
 
 
@@ -79,24 +86,21 @@ test-all-not-slow:
 
 
 .PHONY: test-format
-test-format: $(POETRY)
+test-format:
 	cd $(ROOT) && $(MAKE) test-format
 
 .PHONY: test-license
-test-license: $(LICENSE) $(LICENSE_HEADER) $(POETRY)
+test-license: $(LICENSE) $(LICENSE_HEADER)
 	cd $(ROOT) && $(MAKE) test-license
 
 .PHONY: test-lint
-test-lint: $(POETRY)
+test-lint:
 	cd $(ROOT) && $(MAKE) test-lint
 
 .PHONY: test-types
-test-types: $(POETRY)
+test-types:
 	cd $(ROOT) && $(MAKE) test-types
 
 .PHONY: update-deps
-update-deps: $(POETRY)
+update-deps:
 	poetry update
-
-virtualenv-installed:
-	$(ROOT)/tools/virtualenv_ensure_installed.sh

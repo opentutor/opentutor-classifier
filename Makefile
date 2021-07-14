@@ -1,11 +1,13 @@
 LICENSE=LICENSE
 LICENSE_HEADER=LICENSE_HEADER
-$(POETRY):
-	$(MAKE) $(POETRY)-update
+VENV=.venv
+$(VENV):
+	$(MAKE) install
 
-.PHONY: $(POETRY)-update
-$(POETRY)-update: virtualenv-installed
-	poetry update
+.PHONY: install
+install: poetry-ensure-installed
+	poetry config --local virtualenvs.in-project true
+	poetry env use python3.8
 	poetry install
 
 .PHONY: docker-build
@@ -14,7 +16,7 @@ docker-build:
 	cd opentutor_classifier_api && $(MAKE) docker-build
 
 .PHONY: format
-format: $(POETRY)
+format: $(VENV)
 	poetry run black .
 
 LICENSE:
@@ -26,13 +28,17 @@ LICENSE_HEADER:
 	exit 1
 
 .PHONY: license
-license: LICENSE LICENSE_HEADER $(POETRY)
+license: LICENSE LICENSE_HEADER $(VENV)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/src $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/tests $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/src $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/tests $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d tools $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d word2vec $(args)
+
+.PHONY: poetry-ensure-installed
+poetry-ensure-installed:
+	sh ./tools/poetry_ensure_installed.sh
 
 .PHONY: test
 test:
@@ -55,11 +61,11 @@ test-all-not-slow:
 	cd opentutor_classifier_api && $(MAKE) test-all-not-slow
 
 .PHONY: test-format
-test-format: $(POETRY)
+test-format: $(VENV)
 	poetry run black --check .
 
 .PHONY: test-lint
-test-lint: $(POETRY)
+test-lint: $(VENV)
 	poetry run flake8 .
 
 .PHONY: test-license
@@ -67,14 +73,11 @@ test-license: LICENSE LICENSE_HEADER
 	args="--check" $(MAKE) license
 
 .PHONY: test-types
-test-types: $(POETRY)
+test-types: $(VENV)
 	poetry run mypy opentutor_classifier
 	poetry run mypy opentutor_classifier_api
-	poetry run mypy word2vec
-
-virtualenv-installed:
-	tools/virtualenv_ensure_installed.sh
+	poetry run mypy shared
 
 .PHONY: update-deps
-update-deps: $(POETRY)
+update-deps:
 	poetry update
