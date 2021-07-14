@@ -5,7 +5,7 @@ $(VENV):
 	$(MAKE) install
 
 .PHONY: install
-install:
+install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
 	poetry env use python3.8
 	poetry install
@@ -35,6 +35,10 @@ license: LICENSE LICENSE_HEADER $(VENV)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/tests $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d tools $(args)
 	poetry run python -m licenseheaders -t LICENSE_HEADER -d word2vec $(args)
+
+.PHONY: poetry-ensure-installed
+poetry-ensure-installed:
+	sh ./tools/poetry_ensure_installed.sh
 
 .PHONY: test
 test:
