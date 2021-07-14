@@ -1,7 +1,5 @@
 DOCKER_IMAGE?=opentutor-classifier-api
 ROOT=$(shell dirname ${PWD})
-OPENTUTOR_CLASSIFIER_SRC=$(ROOT)/opentutor_classifier
-OPENTUTOR_CLASSIFIER_DIST=$(ROOT)/opentutor_classifier/dist/opentutor_classifier-1.0.0.tar.gz
 VENV=.venv
 
 $(VENV):
