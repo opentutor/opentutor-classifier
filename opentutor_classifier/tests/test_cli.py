@@ -51,6 +51,7 @@ def __train_model(
     command = [
         "poetry",
         "run",
+        "python",
         "bin/opentutor_classifier",
         "train",
         "--data",
@@ -62,7 +63,6 @@ def __train_model(
     ]
     out, err, exitcode = capture(command)
     return out, err, exitcode, config
-
 
 @pytest.mark.parametrize(
     "lesson,no_of_expectations",
