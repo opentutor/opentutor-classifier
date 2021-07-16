@@ -64,8 +64,6 @@ def __train_model(
     return out, err, exitcode, config
 
 
-# TODO: fix these cli tests so they can run (with poetry?)
-@pytest.mark.xfail
 @pytest.mark.parametrize(
     "lesson,no_of_expectations",
     [("question1", 3), ("question2", 1)],
@@ -90,7 +88,6 @@ def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_roo
         )
 
 
-@pytest.mark.xfail
 @pytest.mark.slow
 @pytest.mark.parametrize(
     "lesson,answer,arch,expected_results",
