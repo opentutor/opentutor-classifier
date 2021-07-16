@@ -3,8 +3,16 @@ WORKDIR /build
 RUN pip install poetry
 COPY opentutor_classifier ./opentutor_classifier
 # build opentutor-classifier as something api can install
+# RUN cd opentutor_classifier \
+# 	&& make poetry-build-classifier
 RUN cd opentutor_classifier \
-	&& make poetry-build-classifier
+	&& poetry config virtualenvs.create false \
+	&& poetry install --no-dev \
+	&& python -m nltk.downloader punkt \
+	&& python -m nltk.downloader wordnet \
+	&& python -m nltk.downloader averaged_perceptron_tagger \
+	&& python -m nltk.downloader stopwords \
+	&& poetry build
 FROM python:3.8-slim
 ENV STATUS_URL_FORCE_HTTPS=false
 WORKDIR /app
