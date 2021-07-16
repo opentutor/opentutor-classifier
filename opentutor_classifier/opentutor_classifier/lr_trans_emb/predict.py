@@ -78,7 +78,8 @@ class LRAnswerClassifier(AnswerClassifier):
         sent_features: np.ndarray,
         regex_feature: float,
     ):
-        _score = max(_confidence_score(classifier, sent_features), regex_feature)
+        # _score = max(_confidence_score(classifier, sent_features), regex_feature)
+        _score = _confidence_score(classifier, sent_features)
         _evaluation = "Good" if _score > 0.5 else "Bad"
         return ExpectationClassifierResult(
             expectation=exp_num_i,
@@ -148,6 +149,14 @@ class LRAnswerClassifier(AnswerClassifier):
                 + exp_conf.features.get("patterns_bad", [])
                 or [],
             )
+            patterns = (
+                exp_conf.features.get("patterns_good", [])
+                + exp_conf.features.get("patterns_bad", [])
+                or []
+            )
+            # print(
+            #     f"Trans {exp.expectation} {answer.input_sentence}  {sent_features}, {len(patterns)}"
+            # )
             result.expectation_results.append(
                 self.find_score_and_class(
                     exp.classifier,

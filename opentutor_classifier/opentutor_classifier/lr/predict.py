@@ -148,6 +148,12 @@ class LRAnswerClassifier(AnswerClassifier):
                 + exp_conf.features.get("patterns_bad", [])
                 or [],
             )
+            patterns = (
+                exp_conf.features.get("patterns_good", [])
+                + exp_conf.features.get("patterns_bad", [])
+                or []
+            )
+            #print(f"LR {exp.expectation} {sent_features}, {len(patterns)}")
             result.expectation_results.append(
                 self.find_score_and_class(
                     exp.classifier, exp.expectation, [sent_features]

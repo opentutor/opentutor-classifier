@@ -16,7 +16,7 @@ def find_or_load_sentence_transformer(shared_root: str) -> SentenceTransformer:
     if abs_root not in SENTENCE_TRANSFORMER_MODELS:
         SENTENCE_TRANSFORMER_MODELS[abs_root] = SentenceTransformer(
             path.join(
-                abs_root, "sentence-transformer", "distilbert-base-nli-mean-tokens"
+                abs_root, "sentence-transformer", "paraphrase-mpnet-base-v2"
             )
         )
     return SENTENCE_TRANSFORMER_MODELS[abs_root]

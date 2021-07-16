@@ -35,16 +35,13 @@ def preprocess_punctuations(sentence: str) -> str:
 def preprocess_sentence(sentence: str) -> List[str]:
     sentence = preprocess_punctuations(sentence.lower())
     sentence = alpha2digit(sentence, "en")
-    word_tokens_groups: List[str] = [
-        word_tokenize(entry)
-        for entry in ([sentence] if isinstance(sentence, str) else sentence)
-    ]
-    result_words = []
-    for entry in word_tokens_groups:
-        for word, _ in pos_tag(entry):
-            if word not in STOPWORDS:
-                result_words.append(word)
-    return [word_mapper.get(word, word) for word in result_words]
+    word_tokens_groups = word_tokenize(sentence)
+    # result_words = []
+    # for entry in word_tokens_groups:
+    #     for word, _ in pos_tag(entry):
+    #         if word not in STOPWORDS:
+    #             result_words.append(word)
+    return [word_mapper.get(word, word) for word in word_tokens_groups]
 
 
 def check_is_pattern_match(sentence: str, pattern: str) -> int:

@@ -1,0 +1,47 @@
+exp_num,text,label
+0,they will have a lower risk than before and will probably not commit suicide,good
+1,they will have a lower risk than before and will probably not commit suicide,bad
+0,They will have a higher risk,bad
+0,"They will probably find another way, yah",bad
+1,"They will probably find another way, yah",bad
+0,Their risk is the same,bad
+1,Their risk is the same,bad
+0,They will be more likely to commit suicide,bad
+1,They will be more likely to commit suicide,good
+0,"compared to other people, they'll be more likely to suicidie",bad
+1,"compared to other people, they'll be more likely to suicidie",good
+0,They'll be higher risk to commit suicide than other people,bad
+1,They'll be higher risk to commit suicide than other people,good
+0,They'll probably find another way,bad
+1,They'll probably find another way,bad
+0,They'll be less likely to commit suicide than before,good
+1,They'll be less likely to commit suicide than before,bad
+0,"If they lose their gun, they're less likely to commit suicide",good
+1,"If they lose their gun, they're less likely to commit suicide",bad
+0,"they're still more likely, I think",bad
+1,"they're still more likely, I think",good
+1,they're more likely than me,good
+0,it doesn't really,bad
+1,it doesn't really,bad
+0,"they have the same risk, you can't change it. it's genetic.",bad
+1,"they have the same risk, you can't change it. it's genetic.",bad
+0,"their risk is lower than it was before, I'd bet",good
+1,"their risk is lower than it was before, I'd bet",bad
+0,they're less likely now,good
+1,they're less likely now,bad
+1,"probably less likely than other people, who have means to commit suicide",bad
+0,they're less likely to commit suicide than before,good
+0,"Yes, they're less likely to have a suicide attempt",good
+1,"Yes, they're less likely to have a suicide attempt",bad
+0,Long term they probably won't commit suicide,good
+1,Long term they probably won't commit suicide,bad
+0,their risk goes down,good
+0,They're more likely to commit suicide still,bad
+1,They're more likely to commit suicide still,good
+0,they're still a bit more likely than others,bad
+1,they're still a bit more likely than others,good
+0,It is less,good
+1,It is less,bad
+0,more likely even without a gun,bad
+1,more likely even without a gun,good
+
