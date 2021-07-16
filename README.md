@@ -1,15 +1,5 @@
 # opentutor-classifier
 
-## TODO
-
-Converting to poetry
-
- - [ ] make classifier cli tests pass (remove xfail)
- - [ ] docker build for api and classifier
- - [ ] docker images work in integration
- - [ ] docker images no larger than pre-poetry version
- - [ ] works in gha w poetry
-
 A short answer classifier service focused on cold-start performance
 
 This repo contains two subprojects:
@@ -22,7 +12,7 @@ This repo contains two subprojects:
 - [recommended] [penv](https://github.com/pyenv/pyenv-installer) to simplify python version management. 
 - python3.8 (must be in path as `python3.8` to build virtualenv)
 - make
-- poetry
+- [poetry](https://python-poetry.org/docs/) for dependency management
 
 ## Development
 
