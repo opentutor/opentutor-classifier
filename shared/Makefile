@@ -6,7 +6,7 @@ $(VENV):
 
 .PHONY clean:
 clean:
-	rm -rf installed
+	rm -rf installed $(VENV)
 
 .PHONY: install
 install: poetry-ensure-installed

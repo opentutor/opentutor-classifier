@@ -6,7 +6,7 @@ description="train and run inference for open tutor"
 authors=[]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8.4"
 celery = "==5.0.5"
 click = "<8"
 gensim = "==4.0.1"
