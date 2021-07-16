@@ -7,7 +7,7 @@ $(VENV):
 
 .PHONY clean:
 clean:
-	rm -rf .pytest_cache .mypy_cache
+	rm -rf .pytest_cache .mypy_cache $(VENV)
 
 .PHONY docker-build:
 docker-build: clean

@@ -25,7 +25,7 @@ poetry-ensure-installed:
 
 .PHONY clean:
 clean:
-	rm -rf htmlcov .coverage tests/fixtures/shared/word2vec.bin
+	rm -rf htmlcov .coverage tests/fixtures/shared/word2vec.bin $(VENV)
 
 .PHONY docker-build:
 docker-build:

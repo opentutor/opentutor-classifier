@@ -3,8 +3,6 @@ WORKDIR /build
 RUN pip install poetry
 COPY opentutor_classifier ./opentutor_classifier
 # build opentutor-classifier as something api can install
-# RUN cd opentutor_classifier \
-# 	&& make poetry-build-classifier
 RUN cd opentutor_classifier \
 	&& poetry config virtualenvs.create false \
 	&& poetry install --no-dev \
