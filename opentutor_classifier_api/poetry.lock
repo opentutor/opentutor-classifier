@@ -13,7 +13,7 @@ vine = "5.0.0"
 name = "atomicwrites"
 version = "1.4.0"
 description = "Atomic file writes."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -21,7 +21,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 name = "attrs"
 version = "21.2.0"
 description = "Classes Without Boilerplate"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -173,7 +173,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "colorclass"
 version = "2.2.0"
 description = "Colorful worry-free console applications for Linux, Mac OS X, and Windows."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -181,7 +181,7 @@ python-versions = "*"
 name = "coverage"
 version = "5.5"
 description = "Code coverage measurement for Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 
@@ -200,7 +200,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "docopt"
 version = "0.6.2"
 description = "Pythonic argument parser, that will make you smile"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -233,17 +233,6 @@ python-versions = "*"
 [package.dependencies]
 Flask = ">=0.9"
 Six = "*"
-
-[[package]]
-name = "freezegun"
-version = "1.1.0"
-description = "Let your Python tests travel through time"
-category = "main"
-optional = false
-python-versions = ">=3.5"
-
-[package.dependencies]
-python-dateutil = ">=2.7"
 
 [[package]]
 name = "gensim"
@@ -291,7 +280,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 name = "iniconfig"
 version = "1.1.1"
 description = "iniconfig: brain-dead simple config-ini parsing"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -397,32 +386,23 @@ version = "1.0.0"
 description = "train and run inference for open tutor"
 category = "main"
 optional = false
-python-versions = ">=3.8,<3.10"
+python-versions = ">=3.8.4,<3.9.0"
 
 [package.dependencies]
 celery = "5.0.5"
 click = "<8"
-coverage = "5.5"
-freezegun = "1.1.0"
 gensim = "4.0.1"
 nltk = "3.6.2"
 numpy = "1.21.0"
 pandas = "1.2.4"
-pip-upgrader = "*"
 pylru = "1.2.0"
-pytest = "6.2.4"
-pytest-env = "0.6.2"
-pytest-mock = "3.6.1"
-pytest-only = "1.2.2"
 python-dotenv = ">=0.17.1"
 pyyaml = "5.4.1"
 redis = "3.5.3"
 requests = "2.25.1"
-responses = "0.13.3"
 scikit-learn = "0.24.2"
 scipy = "1.6.3"
 text2num = "2.2.1"
-tqdm = "4.60.0"
 werkzeug = "2.0.1"
 
 [package.source]
@@ -433,7 +413,7 @@ url = "../opentutor_classifier/dist/opentutor_classifier-1.0.0.tar.gz"
 name = "packaging"
 version = "21.0"
 description = "Core utilities for Python packages"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -460,7 +440,7 @@ test = ["pytest (>=5.0.1)", "pytest-xdist", "hypothesis (>=3.58)"]
 name = "pip-upgrader"
 version = "1.4.15"
 description = "An interactive pip requirements upgrader. It also updates the version in your requirements.txt file."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -478,7 +458,7 @@ test = ["coverage", "pytest", "pytest-cov", "pytest-pep8", "mock", "responses"]
 name = "pluggy"
 version = "0.13.1"
 description = "plugin and hook calling mechanisms for python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -500,7 +480,7 @@ wcwidth = "*"
 name = "py"
 version = "1.10.0"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -516,7 +496,7 @@ python-versions = "*"
 name = "pyparsing"
 version = "2.4.7"
 description = "Python parsing module"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -524,7 +504,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "pytest"
 version = "6.2.4"
 description = "pytest: simple powerful testing with Python"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -545,7 +525,7 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xm
 name = "pytest-env"
 version = "0.6.2"
 description = "py.test plugin that allows you to add environment variables."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -556,7 +536,7 @@ pytest = ">=2.6.0"
 name = "pytest-flask"
 version = "1.2.0"
 description = "A set of py.test fixtures to test Flask applications."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.5"
 
@@ -572,7 +552,7 @@ docs = ["sphinx", "sphinx-rtd-theme"]
 name = "pytest-mock"
 version = "3.6.1"
 description = "Thin-wrapper around the mock package for easier use with pytest"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -586,7 +566,7 @@ dev = ["pre-commit", "tox", "pytest-asyncio"]
 name = "pytest-only"
 version = "1.2.2"
 description = "Use @pytest.mark.only to run a single test"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -595,7 +575,7 @@ pytest = ">=2.6"
 
 [[package]]
 name = "python-dateutil"
-version = "2.8.1"
+version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
 category = "main"
 optional = false
@@ -672,7 +652,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 name = "responses"
 version = "0.13.3"
 description = "A utility library for mocking out the `requests` Python library."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -744,7 +724,7 @@ webhdfs = ["requests"]
 name = "terminaltables"
 version = "3.1.0"
 description = "Generate simple tables in terminals from a nested list of strings."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -768,17 +748,20 @@ python-versions = ">=3.6"
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "tqdm"
-version = "4.60.0"
+version = "4.61.2"
 description = "Fast, Extensible Progress Meter"
 category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [package.extras]
 dev = ["py-make (>=0.1.0)", "twine", "wheel"]
@@ -827,8 +810,8 @@ watchdog = ["watchdog"]
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.8,<3.10"
-content-hash = "baf4b17adac34a531e4ffdd5ce1641faaa40e1edcdaeda9097f2c3689eefc546"
+python-versions = "~3.8.4"
+content-hash = "ee2c05eb7d86be98701bec637ebaa019e2e3514e37fac3477d44da8fcf96f11f"
 
 [metadata.files]
 amqp = [
@@ -986,10 +969,6 @@ flask-cors = [
     {file = "Flask-Cors-3.0.10.tar.gz", hash = "sha256:b60839393f3b84a0f3746f6cdca56c1ad7426aa738b70d6c61375857823181de"},
     {file = "Flask_Cors-3.0.10-py2.py3-none-any.whl", hash = "sha256:74efc975af1194fc7891ff5cd85b0f7478be4f7f59fe158102e91abb72bb4438"},
 ]
-freezegun = [
-    {file = "freezegun-1.1.0-py2.py3-none-any.whl", hash = "sha256:2ae695f7eb96c62529f03a038461afe3c692db3465e215355e1bb4b0ab408712"},
-    {file = "freezegun-1.1.0.tar.gz", hash = "sha256:177f9dd59861d871e27a484c3332f35a6e3f5d14626f2bf91be37891f18927f3"},
-]
 gensim = [
     {file = "gensim-4.0.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:17375b33685d0b36646ff6cec5c9e54c7384d3a7c583cbb4480a8ceb9d811221"},
     {file = "gensim-4.0.1-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:4cb1761a76338abd6c9345cfacdb75173961e238e01258e0c0e599341d397016"},
@@ -1101,7 +1080,7 @@ numpy = [
     {file = "numpy-1.21.0.zip", hash = "sha256:e80fe25cba41c124d04c662f33f6364909b985f2eb5998aaa5ae4b9587242cce"},
 ]
 opentutor-classifier = [
-    {file = "opentutor_classifier-1.0.0.tar.gz", hash = "sha256:59248259fba9d6c79ba4a8440415bb93c93ab848a00658af7ae5ebeb9748f9b0"},
+    {file = "opentutor_classifier-1.0.0.tar.gz", hash = "sha256:014c3c9169148ca3694b5a2101b59bd0d198d68f543830c77973ac08f710c7eb"},
 ]
 packaging = [
     {file = "packaging-21.0-py3-none-any.whl", hash = "sha256:c86254f9220d55e31cc94d69bade760f0847da8000def4dfe1c6b872fd14ff14"},
@@ -1167,8 +1146,8 @@ pytest-only = [
     {file = "pytest-only-1.2.2.tar.gz", hash = "sha256:90789b1f6d867f14ad2935f6499f44b66338a92d6d6aa53819203c8411c59ba3"},
 ]
 python-dateutil = [
-    {file = "python-dateutil-2.8.1.tar.gz", hash = "sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c"},
-    {file = "python_dateutil-2.8.1-py2.py3-none-any.whl", hash = "sha256:75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"},
+    {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
+    {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
 ]
 python-dotenv = [
     {file = "python-dotenv-0.18.0.tar.gz", hash = "sha256:effaac3c1e58d89b3ccb4d04a40dc7ad6e0275fda25fd75ae9d323e2465e202d"},
@@ -1343,8 +1322,8 @@ toml = [
     {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
 ]
 tqdm = [
-    {file = "tqdm-4.60.0-py2.py3-none-any.whl", hash = "sha256:daec693491c52e9498632dfbe9ccfc4882a557f5fa08982db1b4d3adbe0887c3"},
-    {file = "tqdm-4.60.0.tar.gz", hash = "sha256:ebdebdb95e3477ceea267decfc0784859aa3df3e27e22d23b83e9b272bf157ae"},
+    {file = "tqdm-4.61.2-py2.py3-none-any.whl", hash = "sha256:5aa445ea0ad8b16d82b15ab342de6b195a722d75fc1ef9934a46bba6feafbc64"},
+    {file = "tqdm-4.61.2.tar.gz", hash = "sha256:8bb94db0d4468fea27d004a0f1d1c02da3cdedc00fe491c0de986b76a04d6b0a"},
 ]
 urllib3 = [
     {file = "urllib3-1.26.6-py2.py3-none-any.whl", hash = "sha256:39fb8672126159acb139a7718dd10806104dec1e2f0f6c88aab05d17df10c8d4"},
