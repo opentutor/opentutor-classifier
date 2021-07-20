@@ -9,6 +9,18 @@ $(VENV):
 clean:
 	rm -rf .pytest_cache .mypy_cache $(VENV)
 
+.PHONY: deps-show
+deps-show:
+	poetry show
+
+.PHONY: deps-show
+deps-show-outdated:
+	poetry show --outdated
+
+.PHONY: deps-update
+deps-update:
+	poetry update
+
 .PHONY docker-build:
 docker-build: clean
 	cd .. \
@@ -80,8 +92,3 @@ test-lint:
 .PHONY: test-types
 test-types:
 	cd $(ROOT) && $(MAKE) test-types
-
-.PHONY: update-deps
-update-deps:
-	poetry update
-	

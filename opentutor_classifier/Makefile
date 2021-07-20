@@ -27,6 +27,18 @@ poetry-ensure-installed:
 clean:
 	rm -rf htmlcov .coverage tests/fixtures/shared/word2vec.bin $(VENV)
 
+.PHONY: deps-show
+deps-show:
+	poetry show
+
+.PHONY: deps-show
+deps-show-outdated:
+	poetry show --outdated
+
+.PHONY: deps-update
+deps-update:
+	poetry update
+
 .PHONY docker-build:
 docker-build:
 	docker build -t $(DOCKER_IMAGE) .
@@ -100,7 +112,3 @@ test-lint:
 .PHONY: test-types
 test-types:
 	cd $(ROOT) && $(MAKE) test-types
-
-.PHONY: update-deps
-update-deps:
-	poetry update

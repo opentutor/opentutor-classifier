@@ -8,16 +8,28 @@ $(VENV):
 clean:
 	rm -rf .venv
 
-.PHONY: install
-install: poetry-ensure-installed
-	poetry config --local virtualenvs.in-project true
-	poetry env use python3.8
-	poetry install
+.PHONY: deps-show
+deps-show:
+	poetry show
+
+.PHONY: deps-show
+deps-show-outdated:
+	poetry show --outdated
+
+.PHONY: deps-update
+deps-update:
+	poetry update
 
 .PHONY: docker-build
 docker-build:
 	cd opentutor_classifier && $(MAKE) docker-build
 	cd opentutor_classifier_api && $(MAKE) docker-build
+
+.PHONY: install
+install: poetry-ensure-installed
+	poetry config --local virtualenvs.in-project true
+	poetry env use python3.8
+	poetry install
 
 .PHONY: format
 format: $(VENV)
@@ -81,7 +93,3 @@ test-types: $(VENV)
 	poetry run mypy opentutor_classifier
 	poetry run mypy opentutor_classifier_api
 	poetry run mypy shared
-
-.PHONY: update-deps
-update-deps:
-	poetry update

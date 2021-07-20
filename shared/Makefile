@@ -8,6 +8,18 @@ $(VENV):
 clean:
 	rm -rf installed $(VENV)
 
+.PHONY: deps-show
+deps-show:
+	poetry show
+
+.PHONY: deps-show
+deps-show-outdated:
+	poetry show --outdated
+
+.PHONY: deps-update
+deps-update:
+	poetry update
+
 .PHONY: install
 install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
@@ -25,7 +37,3 @@ installed/word2vec.bin: $(VENV)
 .PHONY: poetry-ensure-installed
 poetry-ensure-installed:
 	sh $(ROOT)/tools/poetry_ensure_installed.sh
-
-.PHONY: update-deps
-update-deps:
-	poetry update
