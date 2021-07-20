@@ -4,6 +4,10 @@ VENV=.venv
 $(VENV):
 	$(MAKE) install
 
+.PHONY: clean
+clean:
+	rm -rf .venv
+
 .PHONY: install
 install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
