@@ -1,0 +1,11 @@
+[tool]
+[tool.poetry]
+name = "word2vec"
+version = "1.0.0"
+description="word2vec"
+authors=[]
+
+[tool.poetry.dependencies]
+python = "~3.8.4"
+requests = "^2.25.0"
+tqdm = "^4.52.0"

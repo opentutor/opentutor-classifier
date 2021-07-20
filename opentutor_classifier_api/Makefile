@@ -1,48 +1,30 @@
-BLACK_EXCLUDES="/(\.venv|build)/"
 DOCKER_IMAGE?=opentutor-classifier-api
-DOCKER_IMAGE_ID=$(shell docker images -q ${DOCKER_IMAGE} 2> /dev/null)
 ROOT=$(shell dirname ${PWD})
-OPENTUTOR_CLASSIFIER_SRC=$(ROOT)/opentutor_classifier
 VENV=.venv
-VENV_PIP=$(VENV)/bin/pip
+
 $(VENV):
-	$(MAKE) $(VENV)-update
-
-.PHONY $(VENV)-installed:
-$(VENV)-installed:
-	$(ROOT)/tools/virtualenv_ensure_installed.sh
-
-.PHONY: $(VENV)-update
-$(VENV)-update: $(VENV)-installed
-	[ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
-	$(VENV_PIP) install --upgrade pip
-	$(VENV_PIP) install -r requirements.test.txt
-	$(VENV_PIP) install ../opentutor_classifier
-	$(VENV)/bin/python3.8 -m nltk.downloader punkt
-	$(VENV)/bin/python3.8 -m nltk.downloader wordnet
-	$(VENV)/bin/python3.8 -m nltk.downloader averaged_perceptron_tagger
-	$(VENV)/bin/python3.8 -m nltk.downloader stopwords
+	$(MAKE) install
 
 .PHONY clean:
 clean:
-	rm -rf .pytest_cache .mypy_cache build
+	rm -rf .pytest_cache .mypy_cache $(VENV)
 
-build/opentutor_classifier:
-	mkdir -p build
-	rsync -rv \
-			--exclude .venv \
-			--exclude htmlcov \
-			--exclude .pytest_cache \
-			--exclude tests \
-			--exclude __pycache__ \
-		$(OPENTUTOR_CLASSIFIER_SRC) build
+.PHONY: deps-show
+deps-show:
+	poetry show
 
+.PHONY: deps-show
+deps-show-outdated:
+	poetry show --outdated
+
+.PHONY: deps-update
+deps-update:
+	poetry update
 
 .PHONY docker-build:
 docker-build: clean
 	cd .. \
 		&& docker build -t $(DOCKER_IMAGE) -f ./opentutor_classifier_api/Dockerfile .
-
 
 .PHONY docker-build:
 docker-run:
@@ -56,19 +38,33 @@ docker-run:
 format: $(VENV)
 	cd $(ROOT) && $(MAKE) format
 
+.PHONY: install
+install: poetry-ensure-installed
+	cd $(ROOT)/opentutor_classifier \
+		&& $(MAKE) poetry-build-classifier
+	poetry config --local virtualenvs.in-project true
+	poetry env use python3.8
+	poetry install
+	poetry run python -m nltk.downloader punkt
+	poetry run python -m nltk.downloader wordnet
+	poetry run python -m nltk.downloader averaged_perceptron_tagger
+	poetry run python -m nltk.downloader stopwords
+
 .PHONY: license
 license:
 	cd $(ROOT) && make license
+
+.PHONY: poetry-ensure-installed
+poetry-ensure-installed:
+	sh $(ROOT)/tools/poetry_ensure_installed.sh
 
 .PHONY: test
 test: $(VENV)
 	cd $(ROOT)/shared/ \
 		&& $(MAKE) installed/word2vec.bin
-	. $(VENV)/bin/activate \
-		&& export PYTHONPATH=$${PYTHONPATH}:$(PWD)/src \
-		&& coverage run \
-			--omit="$(PWD)/tests $(VENV)" \
-			-m py.test -vv $(args)
+	poetry run	coverage run \
+		--omit="$(PWD)/tests" \
+		-m py.test -vv $(args)
 
 PHONY: test
 test-not-slow: $(VENV)
@@ -82,7 +78,7 @@ test-all-not-slow:
 	args="-m '(not slow)'" $(MAKE) test-all
 
 .PHONY: test-format
-test-format: $(VENV)
+test-format:
 	cd $(ROOT) && $(MAKE) test-format
 
 .PHONY: test-license
@@ -90,13 +86,9 @@ test-license:
 	cd $(ROOT) && make test-license
 	
 .PHONY: test-lint
-test-lint: $(VENV)
+test-lint:
 	cd $(ROOT) && $(MAKE) test-lint
 
 .PHONY: test-types
-test-types: $(VENV)
+test-types:
 	cd $(ROOT) && $(MAKE) test-types
-
-.PHONY: update-deps
-update-deps: $(VENV)
-	. $(VENV)/bin/activate && pip-upgrade requirements*

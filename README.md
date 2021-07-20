@@ -12,6 +12,7 @@ This repo contains two subprojects:
 - [recommended] [penv](https://github.com/pyenv/pyenv-installer) to simplify python version management. 
 - python3.8 (must be in path as `python3.8` to build virtualenv)
 - make
+- [poetry](https://python-poetry.org/docs/) for dependency management
 
 ## Development
 
