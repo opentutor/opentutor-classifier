@@ -102,17 +102,17 @@ def _test_train_and_predict(
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
-        # (
-        #     "ies-rectangle",
-        #     ARCH_LR_TRANS_EMB_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.89),
-        #         ExpectationTrainingResult(accuracy=0.92),
-        #         ExpectationTrainingResult(accuracy=0.95),
-        #     ],
-        #     1,
-        # ),
+        (
+            "ies-rectangle",
+            ARCH_LR_TRANS_EMB_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.89),
+                ExpectationTrainingResult(accuracy=0.92),
+                ExpectationTrainingResult(accuracy=0.95),
+            ],
+            1,
+        ),
         # (
         #     "candles",
         #     ARCH_LR_TRANS_EMB_CLASSIFIER,
@@ -172,38 +172,38 @@ def _test_train_and_predict(
         #     ],
         #     0.87,
         # ),
-        (
-            "ies_robot_remedy",
-            ARCH_LR_TRANS_EMB_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=1.0),
-                ExpectationTrainingResult(accuracy=0.69),
-                ExpectationTrainingResult(accuracy=0.87),
-            ],
-            0.42,
-        ),
-        (
-            "navy_integrity",
-            ARCH_LR_TRANS_EMB_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.83),
-                ExpectationTrainingResult(accuracy=0.75),
-                ExpectationTrainingResult(accuracy=0.86),
-            ],
-            0.62,
-        ),
-        (
-            "suicide",
-            ARCH_LR_TRANS_EMB_CLASSIFIER,
-            CONFIDENCE_THRESHOLD_DEFAULT,
-            [
-                ExpectationTrainingResult(accuracy=0.88),
-                ExpectationTrainingResult(accuracy=0.91),
-            ],
-            0.91,
-        ),
+        # (
+        #     "ies_robot_remedy",
+        #     ARCH_LR_TRANS_EMB_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [
+        #         ExpectationTrainingResult(accuracy=1.0),
+        #         ExpectationTrainingResult(accuracy=0.69),
+        #         ExpectationTrainingResult(accuracy=0.87),
+        #     ],
+        #     0.42,
+        # ),
+        # (
+        #     "navy_integrity",
+        #     ARCH_LR_TRANS_EMB_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [
+        #         ExpectationTrainingResult(accuracy=0.83),
+        #         ExpectationTrainingResult(accuracy=0.75),
+        #         ExpectationTrainingResult(accuracy=0.86),
+        #     ],
+        #     0.62,
+        # ),
+        # (
+        #     "suicide",
+        #     ARCH_LR_TRANS_EMB_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [
+        #         ExpectationTrainingResult(accuracy=0.88),
+        #         ExpectationTrainingResult(accuracy=0.91),
+        #     ],
+        #     0.91,
+        # ),
         # (
         #     "ies-rectangle",
         #     ARCH_LR_CLASSIFIER,

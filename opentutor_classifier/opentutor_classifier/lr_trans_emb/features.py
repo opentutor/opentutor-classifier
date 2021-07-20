@@ -122,6 +122,13 @@ class FeatureGenerator:
                 count += 1
         return float(count / len(regexes))
 
+    def generate_emb(self, model: SentenceTransformer, sample:Tuple[Tuple[str, ...]]):
+        if tuple(sample) not in self.embedding_dp:
+            self.embedding_dp[ tuple(sample) ] = model.encode(
+                " ".join(sample), show_progress_bar=False
+            )
+        return self.embedding_dp[ tuple(sample) ]
+
     def word2vec_example_similarity(
         self,
         model: SentenceTransformer,
@@ -129,33 +136,13 @@ class FeatureGenerator:
         ideal: List[str],
     ) -> float:
 
-        if tuple(example) not in self.embedding_dp:
-            self.embedding_dp[tuple(example)] = model.encode(
-                " ".join(example), show_progress_bar=False
-            )
-
-        if tuple(ideal) not in self.embedding_dp:
-            self.embedding_dp[tuple(ideal)] = model.encode(
-                " ".join(ideal), show_progress_bar=False
-            )
-
         return FeatureGenerator._calculate_similarity(
-            self.embedding_dp[tuple(example)], self.embedding_dp[tuple(ideal)]
+            self.generate_emb(model, example), self.generate_emb(model, ideal)
         )
 
     def word2vec_question_similarity(
         self, model: SentenceTransformer, example, question
     ):
-        if tuple(example) not in self.embedding_dp:
-            self.embedding_dp[tuple(example)] = model.encode(
-                " ".join(example), show_progress_bar=False
-            )
-
-        if tuple(question) not in self.embedding_dp:
-            self.embedding_dp[tuple(question)] = model.encode(
-                " ".join(question), show_progress_bar=False
-            )
-
         return FeatureGenerator._calculate_similarity(
-            self.embedding_dp[tuple(example)], self.embedding_dp[tuple(question)]
+            self.generate_emb(model, example), self.generate_emb(model, question)
         )

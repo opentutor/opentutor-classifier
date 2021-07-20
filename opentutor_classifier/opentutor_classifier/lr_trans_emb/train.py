@@ -40,7 +40,7 @@ from .features import preprocess_sentence, FeatureGenerator
 
 from opentutor_classifier.sentence_transformer import find_or_load_sentence_transformer
 
-from .clustering_features import CustomAgglomerativeClustering
+from .clustering_features import CustomAgglomerativeClustering, CustomKMeansClustering
 from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
 
 
@@ -157,7 +157,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 str(train_data["text"][i]).lower().strip()
             )
             split_training_sets[exp_num][1].append(label)
-        clustering = CustomAgglomerativeClustering(
+        clustering = CustomKMeansClustering(
             self.sentence_transformer,
             self.feature_generator,
         )
@@ -184,7 +184,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
             pattern: Dict[str, List[str]] = {"good": [], "bad": []}
-            self.train_quality = 0
+            self.train_quality = 2
             if self.train_quality > 0:
                 data, candidates = clustering.generate_feature_candidates(
                     np.array(processed_data)[np.array(train_y) == "good"],
