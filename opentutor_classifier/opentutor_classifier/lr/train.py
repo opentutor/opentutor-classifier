@@ -32,20 +32,20 @@ from opentutor_classifier import (
     TrainingResult,
     ClassifierMode,
 )
+from opentutor_classifier.spacy_preprocessor import SpacyPreprocessor
 from opentutor_classifier.config import get_train_quality_default
 from opentutor_classifier.log import logger
 
 from .constants import FEATURE_LENGTH_RATIO
 from .expectations import LRExpectationClassifier
 from .features import feature_length_ratio_enabled, preprocess_sentence
-
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
 from .clustering_features import CustomAgglomerativeClustering
 
 
-def _preprocess_trainx(data: List[str]) -> List[List[str]]:
-    pre_processed_dataset = [preprocess_sentence(entry) for entry in data]
+def _preprocess_trainx(data: List[str], preprocessor: SpacyPreprocessor) -> np.ndarray:
+    pre_processed_dataset = [preprocess_sentence(entry, preprocessor) for entry in data]
     return np.array(pre_processed_dataset)
 
 
@@ -54,6 +54,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         self.accuracy: Dict[int, int] = {}
         self.word2vec: Word2VecKeyedVectors = None
         self.train_quality = 1
+        self.shared_root = None
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
         self.word2vec = find_or_load_word2vec(
@@ -62,7 +63,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         self.train_quality = config.properties.get(
             PROP_TRAIN_QUALITY, get_train_quality_default()
         )
-
+        self.shared_root = config.shared_root
         return self
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
@@ -70,11 +71,12 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         index2word_set = set(self.word2vec.index_to_key)
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
         clustering = CustomAgglomerativeClustering(self.word2vec, index2word_set)
+        preprocessor = SpacyPreprocessor(self.shared_root)
 
-        def process_features(features, input_sentence, index2word_set):
-            processed_input_sentence = preprocess_sentence(input_sentence)
-            processed_question = preprocess_sentence(features["question"])
-            processed_ia = preprocess_sentence(features["ideal"])
+        def process_features(features, input_sentence, index2word_set, preprocessor):
+            processed_input_sentence = preprocess_sentence(input_sentence, preprocessor)
+            processed_question = preprocess_sentence(features["question"], preprocessor)
+            processed_ia = preprocess_sentence(features["ideal"], preprocessor)
 
             features_list = LRExpectationClassifier.calculate_features(
                 processed_question,
@@ -87,13 +89,17 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 [],
                 clustering,
                 ClassifierMode.TRAIN,
+                preprocessor,
             )
             return features_list
 
         all_features = list(
             data.apply(
                 lambda row: process_features(
-                    json.loads(row["exp_data"]), row["text"], index2word_set
+                    json.loads(row["exp_data"]),
+                    row["text"],
+                    index2word_set,
+                    preprocessor,
                 ),
                 axis=1,
             )
@@ -156,12 +162,14 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 supergoodanswer = supergoodanswer + ideal
             else:
                 supergoodanswer = supergoodanswer + split_training_sets[exp_num][0][0]
+
+        preprocessor = SpacyPreprocessor(self.shared_root)
         for exp_num, (train_x, train_y) in split_training_sets.items():
 
             train_x.append(supergoodanswer)
             train_y.append("good")
-            processed_data = _preprocess_trainx(train_x)
-            processed_question = preprocess_sentence(question)
+            processed_data = _preprocess_trainx(train_x, preprocessor)
+            processed_question = preprocess_sentence(question, preprocessor)
             ideal_answer = LRExpectationClassifier.initialize_ideal_answer(
                 processed_data
             )
@@ -176,7 +184,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                     self.train_quality,
                 )
                 pattern = clustering.select_feature_candidates(
-                    data, candidates, train_x, train_y
+                    data, candidates, train_x, train_y, preprocessor=preprocessor
                 )
 
             config_updated.expectations[exp_num].features = {
@@ -201,6 +209,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         bad,
                         clustering,
                         mode=ClassifierMode.TRAIN,
+                        preprocessor=preprocessor,
                         expectation_config=train_input.config.expectations[exp_num],
                         patterns=pattern["good"] + pattern["bad"],
                     )

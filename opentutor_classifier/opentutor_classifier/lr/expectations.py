@@ -1,4 +1,5 @@
 from collections import defaultdict
+from opentutor_classifier.spacy_preprocessor import SpacyPreprocessor
 from typing import List
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
@@ -49,6 +50,7 @@ class LRExpectationClassifier:
         bad: List[str],
         clustering: CustomAgglomerativeClustering,
         mode: ClassifierMode,
+        preprocessor: SpacyPreprocessor,
         expectation_config: ExpectationConfig = None,
         patterns: List[str] = None,
     ) -> List[float]:
@@ -85,7 +87,9 @@ class LRExpectationClassifier:
                 feat.append(features.regex_match_ratio(raw_example, bad))
         if patterns:
             for pattern in patterns:
-                feat.append(features.check_is_pattern_match(raw_example, pattern))
+                feat.append(
+                    features.check_is_pattern_match(raw_example, pattern, preprocessor)
+                )
         return feat
 
     @staticmethod

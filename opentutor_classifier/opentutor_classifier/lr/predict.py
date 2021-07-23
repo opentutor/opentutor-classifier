@@ -6,7 +6,7 @@
 #
 from opentutor_classifier.utils import model_last_updated_at
 from os import path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
@@ -24,7 +24,9 @@ from opentutor_classifier import (
     ClassifierMode,
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
+from opentutor_classifier.spacy_preprocessor import SpacyPreprocessor
 from opentutor_classifier.speechact import SpeechActClassifier
+
 from .constants import MODEL_FILE_NAME
 from .clustering_features import CustomAgglomerativeClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
@@ -34,7 +36,7 @@ from opentutor_classifier.word2vec import find_or_load_word2vec
 
 
 def _confidence_score(
-    model: linear_model.LogisticRegression, sentence: List[List[float]]
+    model: linear_model.LogisticRegression, sentence: np.ndarray
 ) -> float:
     return model.predict_proba(sentence)[0, 1]
 
@@ -104,7 +106,8 @@ class LRAnswerClassifier(AnswerClassifier):
         )
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
-        sent_proc = preprocess_sentence(answer.input_sentence)
+        preprocessor = SpacyPreprocessor(self.shared_root)
+        sent_proc = preprocess_sentence(answer.input_sentence, preprocessor)
         m_by_e, conf = self.model_and_config
         expectations = [
             ExpectationToEvaluate(
@@ -128,7 +131,7 @@ class LRAnswerClassifier(AnswerClassifier):
         result.speech_acts["profanity"] = self.speech_act_classifier.check_profanity(
             result
         )
-        question_proc = preprocess_sentence(conf.question)
+        question_proc = preprocess_sentence(conf.question, preprocessor)
         clustering = CustomAgglomerativeClustering(word2vec, index2word)
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
@@ -136,13 +139,14 @@ class LRAnswerClassifier(AnswerClassifier):
                 question_proc,
                 answer.input_sentence,
                 sent_proc,
-                preprocess_sentence(exp_conf.ideal),
+                preprocess_sentence(exp_conf.ideal, preprocessor),
                 word2vec,
                 index2word,
                 exp_conf.features.get("good") or [],
                 exp_conf.features.get("bad") or [],
                 clustering,
                 mode=ClassifierMode.PREDICT,
+                preprocessor=preprocessor,
                 expectation_config=conf.expectations[exp.expectation],
                 patterns=exp_conf.features.get("patterns_good", [])
                 + exp_conf.features.get("patterns_bad", [])
@@ -150,7 +154,7 @@ class LRAnswerClassifier(AnswerClassifier):
             )
             result.expectation_results.append(
                 self.find_score_and_class(
-                    exp.classifier, exp.expectation, [sent_features]
+                    exp.classifier, exp.expectation, np.array([sent_features])
                 )
             )
         return result

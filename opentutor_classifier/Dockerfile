@@ -4,10 +4,6 @@ COPY poetry.lock pyproject.toml ./
 RUN pip install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev
-RUN python -m nltk.downloader punkt \
-	&& python -m nltk.downloader wordnet \
-	&& python -m nltk.downloader averaged_perceptron_tagger \
-	&& python -m nltk.downloader stopwords
 COPY opentutor_classifier ./opentutor_classifier
 COPY opentutor_classifier_tasks ./opentutor_classifier_tasks
 COPY opentutor_classifier_tasks .

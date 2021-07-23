@@ -10,6 +10,7 @@ import pytest
 
 from opentutor_classifier.lr.features import preprocess_sentence
 from opentutor_classifier.lr.clustering_features import CustomAgglomerativeClustering
+from opentutor_classifier.spacy_preprocessor import SpacyPreprocessor
 
 from typing import List, Tuple
 from .utils import fixture_path
@@ -41,8 +42,13 @@ def shared_root(word2vec) -> str:
         ),
     ],
 )
-def test_text2num(sentence: str, expected_transformation: str):
-    transformed_tranform = preprocess_sentence(sentence)
+def test_text2num(
+    sentence: str,
+    expected_transformation: str,
+    shared_root: str,
+):
+    preprocessor = SpacyPreprocessor(shared_root)
+    transformed_tranform = preprocess_sentence(sentence, preprocessor)
     assert (
         expected_transformation == transformed_tranform
     ), f"Expected {expected_transformation} got {transformed_tranform}"
@@ -109,7 +115,7 @@ def test_unit_deduplication(
                 "good",
             ],
             4,
-            ["37 + 40", "37", "sides + closer", "1 + ratio"],
+            ["37 + 40", "37", "1 + ratio", "difference + length"],
         )
     ],
 )
@@ -119,8 +125,10 @@ def test_univariate_selection(
     input_y: List[str],
     n: int,
     expected_patterns: List[str],
+    shared_root: str,
 ):
+    preprocessor = SpacyPreprocessor(shared_root)
     patterns = CustomAgglomerativeClustering.univariate_feature_selection(
-        patterns, input_x, input_y, n
+        patterns, input_x, input_y, preprocessor, n
     )
     assert patterns == expected_patterns, f"Expected {expected_patterns} got {patterns}"
