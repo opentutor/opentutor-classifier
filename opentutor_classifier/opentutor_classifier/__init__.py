@@ -297,7 +297,7 @@ def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
         question=d.get("question") or "",
         expectations=[
             ExpectationConfig(
-                expectation_id=x.get("expectation_id"),
+                expectation_id=x.get("expectationId"),
                 ideal=x.get("ideal") or "",
                 features=x.get("features") or {},
             )

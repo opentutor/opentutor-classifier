@@ -8,14 +8,14 @@ from opentutor_classifier.api import fetch_training_data
 from flask import Blueprint, make_response
 
 
-trainingdata_blueprint = Blueprint("trainingdata", __name__)
+trainingconfig_blueprint = Blueprint("trainingconfig", __name__)
 
 
-@trainingdata_blueprint.route("/<lesson_id>", methods=["GET"])
+@trainingconfig_blueprint.route("/<lesson_id>", methods=["GET"])
 def get_data(lesson_id: str):
     data = fetch_training_data(lesson_id)
-    data_csv = data.data.to_csv(index=False)
-    output = make_response(data_csv)
+    data_config = data.config.to_dict()
+    output = make_response(data_config)
     output.headers["Content-Disposition"] = "attachment; filename=mentor.csv"
     output.headers["Content-type"] = "text/csv"
     return (
