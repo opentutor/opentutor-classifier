@@ -49,7 +49,9 @@ def __train_model(
         tmpdir, fixture_path("data"), shared_root, lesson=lesson
     )
     command = [
-        ".venv/bin/python3.8",
+        "poetry",
+        "run",
+        "python",
         "bin/opentutor_classifier",
         "train",
         "--data",

@@ -1,22 +1,43 @@
 DOCKER_IMAGE?=opentutor-classifier
 ROOT=$(shell dirname ${PWD})
 VENV=.venv
-$(VENV):
-	$(MAKE) $(VENV)-update
 
-.PHONY: $(VENV)-update
-$(VENV)-update: virtualenv-installed
-	[ -d $(VENV) ] || virtualenv -p python3.8 $(VENV)
-	$(VENV)/bin/pip install --upgrade pip
-	$(VENV)/bin/pip install -r ./requirements.test.txt
-	$(VENV)/bin/python3.8 -m nltk.downloader punkt
-	$(VENV)/bin/python3.8 -m nltk.downloader wordnet
-	$(VENV)/bin/python3.8 -m nltk.downloader averaged_perceptron_tagger
-	$(VENV)/bin/python3.8 -m nltk.downloader stopwords
+$(VENV):
+	$(MAKE) install
+	
+.PHONY: install
+install: poetry-ensure-installed
+	poetry config --local virtualenvs.in-project true
+	poetry env use python3.8
+	poetry install
+	poetry run python -m nltk.downloader punkt
+	poetry run python -m nltk.downloader wordnet
+	poetry run python -m nltk.downloader averaged_perceptron_tagger
+	poetry run python -m nltk.downloader stopwords
+
+.PHONY: poetry-build-classifier
+poetry-build-classifier: $(VENV)
+	poetry build
+
+.PHONY: poetry-ensure-installed
+poetry-ensure-installed:
+	sh $(ROOT)/tools/poetry_ensure_installed.sh
 
 .PHONY clean:
 clean:
-	rm -rf .venv htmlcov .coverage tests/fixtures/shared/word2vec.bin
+	rm -rf htmlcov .coverage tests/fixtures/shared/word2vec.bin $(VENV)
+
+.PHONY: deps-show
+deps-show:
+	poetry show
+
+.PHONY: deps-show
+deps-show-outdated:
+	poetry show --outdated
+
+.PHONY: deps-update
+deps-update:
+	poetry update
 
 .PHONY docker-build:
 docker-build:
@@ -48,7 +69,7 @@ docker-train-default:
 	$(DOCKER_IMAGE) traindefault --data /data/ --shared /shared --output /output 
 
 .PHONY: format
-format: $(VENV)
+format:
 	cd $(ROOT) && $(MAKE) format
 
 .PHONY: license
@@ -57,12 +78,11 @@ license:
 
 PHONY: test
 test: $(VENV)
-	cd $(ROOT)/word2vec/ \
-		&& $(MAKE) word2vec.bin
-	. $(VENV)/bin/activate \
-		&& coverage run \
-			--omit="$(PWD)/tests $(VENV)" \
-			-m py.test -vv $(args)
+	cd $(ROOT)/shared/ \
+		&& $(MAKE) installed/word2vec.bin
+	poetry run coverage run \
+		--omit="$(PWD)/tests" \
+		-m py.test -vv $(args)
 
 PHONY: test
 test-not-slow: $(VENV)
@@ -78,24 +98,17 @@ test-all-not-slow:
 
 
 .PHONY: test-format
-test-format: $(VENV)
+test-format:
 	cd $(ROOT) && $(MAKE) test-format
 
 .PHONY: test-license
-test-license: $(LICENSE) $(LICENSE_HEADER) $(VENV)
+test-license: $(LICENSE) $(LICENSE_HEADER)
 	cd $(ROOT) && $(MAKE) test-license
 
 .PHONY: test-lint
-test-lint: $(VENV)
+test-lint:
 	cd $(ROOT) && $(MAKE) test-lint
 
 .PHONY: test-types
-test-types: $(VENV)
+test-types:
 	cd $(ROOT) && $(MAKE) test-types
-
-.PHONY: update-deps
-update-deps: $(VENV)
-	. $(VENV)/bin/activate && pip-upgrade requirements*
-
-virtualenv-installed:
-	$(ROOT)/tools/virtualenv_ensure_installed.sh

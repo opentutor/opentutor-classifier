@@ -6,11 +6,23 @@
 ## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 ##
 
-if ! [ -x "$(command -v pip)" ]; then
-    echo 'Error: pip is not installed.' >&2
-    exit 1
+
+if [ -x "$(command -v pyenv)" ]; then
+    # if we're using pyenv,
+    # make sure the version specified in the .python-version file
+    # is installed
+    pyenv install --skip-existing
 fi
 
-if ! [ $(pip freeze | grep virtualenv) ]; then
-    pip install virtualenv
+
+if ! [ -x "$(command -v poetry)" ]; then
+    # if poetry is not installed (and we're on linux or mac), then install it
+    if ! [ -x "$(command -v curl)" ]; then
+        # ...unless you don't have curl, in which case, install poetry yourself
+        echo "You need to install poetry to develop on this project."
+        echo "https://python-poetry.org/docs/"
+        exit 1
+    fi
+    curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+    . $HOME/.poetry/env
 fi
