@@ -59,6 +59,8 @@ def create_app():
 
     from opentutor_classifier_api.blueprints.training_data import trainingdata_blueprint
 
-    app.register_blueprint(trainingdata_blueprint, url_prefix="/classifier/training_data")
+    app.register_blueprint(
+        trainingdata_blueprint, url_prefix="/classifier/training_data"
+    )
 
     return app
