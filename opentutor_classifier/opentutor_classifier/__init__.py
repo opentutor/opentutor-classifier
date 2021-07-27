@@ -13,8 +13,9 @@ import pandas as pd
 from typing import Any, Dict, List, Optional
 import yaml
 
-from opentutor_classifier.speechact import SpeechActClassifierResult
+from opentutor_classifier.camelcase import dict_camel_to_snake
 from opentutor_classifier.config import PROP_TRAIN_QUALITY
+from opentutor_classifier.speechact import SpeechActClassifierResult
 
 
 @dataclass
@@ -38,7 +39,9 @@ class QuestionConfig:
 
     def __post_init__(self):
         self.expectations = [
-            x if isinstance(x, ExpectationConfig) else ExpectationConfig(**x)
+            x
+            if isinstance(x, ExpectationConfig)
+            else ExpectationConfig(**dict_camel_to_snake(x))
             for x in self.expectations or []
         ]
 
