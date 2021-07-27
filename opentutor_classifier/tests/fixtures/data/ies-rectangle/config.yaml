@@ -6,21 +6,21 @@
 ##
 question: "The dimensions of four rectangles are given above. Which rectangle do you think looks most like a square? Explain your reasoning using complete sentences."
 expectations:
-  - expectation_id: "0"
+  - expectationId: "0"
     ideal: The closer a ratio of the sides in a rectangle is to one, the more it looks like a square.
     features:        
       bad:        
         - less|different|any
       good:        
         - 1|more  
-  - expectation_id: "1"
+  - expectationId: "1"
     ideal: The larger the sides of the rectangle, the less effect a 3 unit difference will have on the ratio of the sides.
     features: 
       bad:        
         - same
       good:
         - less
-  - expectation_id: "2"
+  - expectationId: "2"
     ideal: The correct answer is the rectangle with dimensions 37 ft by 40 ft.
     features:
       bad:        
