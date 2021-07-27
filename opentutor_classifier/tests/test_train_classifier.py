@@ -130,6 +130,7 @@ def _test_train_and_predict(
     ],
 )
 @pytest.mark.slow
+@pytest.mark.only
 def test_train_and_predict_slow(
     example: str,
     arch: str,
