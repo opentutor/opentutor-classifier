@@ -6,10 +6,6 @@ COPY opentutor_classifier ./opentutor_classifier
 RUN cd opentutor_classifier \
 	&& poetry config virtualenvs.create false \
 	&& poetry install --no-dev \
-	&& python -m nltk.downloader punkt \
-	&& python -m nltk.downloader wordnet \
-	&& python -m nltk.downloader averaged_perceptron_tagger \
-	&& python -m nltk.downloader stopwords \
 	&& poetry build
 FROM python:3.8-slim
 ENV STATUS_URL_FORCE_HTTPS=false
@@ -24,10 +20,6 @@ RUN cd opentutor_classifier_api \
 	&& poetry config virtualenvs.create false \
 	&& poetry install --no-dev \
 	&& pip uninstall -y poetry
-RUN python -m nltk.downloader punkt \
-	&& python -m nltk.downloader wordnet \
-	&& python -m nltk.downloader averaged_perceptron_tagger \
-	&& python -m nltk.downloader stopwords
 ENV FLASK_APP=opentutor_classifier_api
 WORKDIR /app
 COPY opentutor_classifier_api/src .
