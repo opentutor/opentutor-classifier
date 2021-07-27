@@ -6,7 +6,7 @@
 ##
 question: "With a DC input source, does current flow in the same or the opposite direction of the diode arrow?"
 expectations:
-  - expectation_id: "0"
+  - expectationId: "0"
     features:
       good:
         - '\b(sam\w*|const\w*|on\w*|eq(?!uip)\w*|id\w*n\w*[ck]\w*)\b'

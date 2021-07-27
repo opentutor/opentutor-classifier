@@ -6,14 +6,14 @@
 ##
 question: "If a person loses the means to commit suicide, such as not having their gun, how does this affect their suicide risk?"
 expectations:
-  - expectation_id: "0"
+  - expectationId: "0"
     ideal: They will be much less likely to commit suicide and will probably not attempt suicide later.
     features:        
       bad:        
         - 
       good:        
         - less|lower
-  - expectation_id: "1"
+  - expectationId: "1"
     ideal: The person is still at risk compared to other people.
     features: 
       bad:        
