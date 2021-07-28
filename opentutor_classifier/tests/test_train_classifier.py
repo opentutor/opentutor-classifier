@@ -257,7 +257,7 @@ def test_train_and_predict_specific_answers_slow(
             ARCH_LR_CLASSIFIER,
             ["a"],
             [
-                _TestExpectation(evaluation="Good", score=0.50, expectation=2),
+                _TestExpectation(evaluation="Good", score=0.50, expectation="2"),
             ],
         )
     ],
