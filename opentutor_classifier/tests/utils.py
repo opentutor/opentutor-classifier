@@ -144,7 +144,7 @@ def run_classifier_tests_default(
         arch=arch,
     )
     for ex in examples:
-        assert_classifier_evaluate(classifier.evaluate(ex.input), ex.expectations)
+        assert_classifier_evaluate(classifier.evaluate_default(ex.input), ex.expectations)
 
 
 def run_classifier_testset(
