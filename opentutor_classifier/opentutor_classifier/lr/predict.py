@@ -48,6 +48,7 @@ class LRAnswerClassifier(AnswerClassifier):
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
         self._model_and_config: ModelAndConfig = None
+        self._is_default = False
 
     def configure(
         self,
@@ -71,6 +72,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 self.dao,
             )
             self._model_and_config = (cm.model, cm.config)
+            self._is_default = cm.is_default
         return self._model_and_config
 
     def find_model_for_expectation(
