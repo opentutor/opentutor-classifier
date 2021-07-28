@@ -248,7 +248,14 @@ def test_train_and_predict_specific_answers_slow(
     "lesson,arch,evaluate_input_list,expected_evaluate_result",
     [
         (
-            "ies-mixture",
+            # It's important to test what would happen
+            # if--in the past--we had trained a model for a lesson
+            # but then subsequently lost the actual trained model.
+            # This is an important case, because having trained the model
+            # might have generated features which would live on in the config/db,
+            # and those generated features would cause shape-errors at prediction time
+            # when used with the default model
+            "ies-mixture-with-trained-features-but-model-is-lost",
             ARCH_LR_CLASSIFIER,
             ["a"],
             [

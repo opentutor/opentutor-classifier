@@ -34,3 +34,6 @@ expectations:
         - same
       good:
         - A
+      patterns_bad:
+        # this represents a generated feature to make sure it will not cause errors again default model
+        - +good
