@@ -19,7 +19,6 @@ from .utils import (
     assert_testset_accuracy,
     assert_train_expectation_results,
     create_and_test_classifier,
-    create_and_test_classifier_default,
     fixture_path,
     read_example_testset,
     test_env_isolated,
@@ -242,7 +241,6 @@ def test_train_and_predict_specific_answers_slow(
     )
 
 
-@pytest.mark.only
 @responses.activate
 @pytest.mark.parametrize(
     "lesson,arch,evaluate_input_list,expected_evaluate_result",
@@ -292,4 +290,3 @@ def test_default_classifier_train_and_predict(
                 [ans],
                 arch=arch,
             )
-

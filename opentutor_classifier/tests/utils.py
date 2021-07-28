@@ -129,27 +129,6 @@ def run_classifier_tests(
         assert_classifier_evaluate(classifier.evaluate(ex.input), ex.expectations)
 
 
-def run_classifier_tests_default(
-    arch: str,
-    model_root: str,
-    shared_root: str,
-    examples: List[_TestExample],
-):
-    classifier = ClassifierFactory().new_classifier(
-        ClassifierConfig(
-            dao=opentutor_classifier.dao.find_data_dao(),
-            model_name="",
-            model_roots=[model_root],
-            shared_root=shared_root,
-        ),
-        arch=arch,
-    )
-    for ex in examples:
-        assert_classifier_evaluate(
-            classifier.evaluate_default(ex.input), ex.expectations
-        )
-
-
 def run_classifier_testset(
     arch: str, model_path: str, shared_root: str, testset: _TestSet
 ) -> _TestSetResult:
@@ -182,26 +161,6 @@ def assert_testset_accuracy(
         return
     logging.warning("ERRORS:\n" + "\n".join(ex.errors() for ex in result.results))
     assert metrics.accuracy >= expected_accuracy
-
-
-def create_and_test_classifier_default(
-    model_root: str,
-    shared_root: str,
-    evaluate_input: str,
-    expected_evaluate_result: List[_TestExpectation],
-    arch: str = "",
-):
-    run_classifier_tests_default(
-        arch,
-        model_root,
-        shared_root,
-        [
-            _TestExample(
-                input=AnswerClassifierInput(input_sentence=evaluate_input),
-                expectations=expected_evaluate_result,
-            )
-        ],
-    )
 
 
 def create_and_test_classifier(

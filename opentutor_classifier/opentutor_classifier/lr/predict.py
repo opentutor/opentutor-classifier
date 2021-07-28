@@ -198,7 +198,8 @@ class LRAnswerClassifier(AnswerClassifier):
                 expectation_config=conf.get_expectation(exp.expectation),
                 patterns=exp_conf.features.get("patterns_good", [])
                 + exp_conf.features.get("patterns_bad", [])
-                or [],
+                if not self._is_default
+                else [],
             )
             result.expectation_results.append(
                 self.find_score_and_class(
