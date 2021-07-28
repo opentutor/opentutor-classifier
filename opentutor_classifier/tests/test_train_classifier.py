@@ -19,6 +19,7 @@ from .utils import (
     assert_testset_accuracy,
     assert_train_expectation_results,
     create_and_test_classifier,
+    create_and_test_classifier_default,
     fixture_path,
     read_example_testset,
     test_env_isolated,
@@ -241,15 +242,26 @@ def test_train_and_predict_specific_answers_slow(
     )
 
 
+@pytest.mark.only
 @responses.activate
 @pytest.mark.parametrize(
-    "arch",
+    "arch,evaluate_input_list,expected_evaluate_result",
     [
-        ARCH_LR_CLASSIFIER,
+        (
+            ARCH_LR_CLASSIFIER,
+            [
+                "a"
+            ],
+            [
+                _TestExpectation(evaluation="Good", score=0.50, expectation=2),
+            ]
+        )
     ],
 )
 def test_train_default(
     arch: str,
+    evaluate_input_list: List[str],
+    expected_evaluate_result: List[_TestExpectation],
     data_root: str,
     shared_root: str,
     tmpdir,
@@ -262,4 +274,26 @@ def test_train_default(
         is_default_model=True,
         lesson="default",
     ) as config:
-        train_default_classifier(config=config)
+        train_result = train_default_classifier(config=config)
+        assert path.exists(train_result.models)
+
+        for evaluate_input, ans in zip(evaluate_input_list, expected_evaluate_result):
+            create_and_test_classifier_default(
+                path.split(path.abspath(train_result.models))[0],
+                shared_root,
+                evaluate_input,
+                [ans],
+                arch=arch,
+            )
+
+    #     print(testset)
+    #     assert 1==2
+        # 
+        
+        # assert_testset_accuracy(
+        #     arch,
+        #     train_result.models,
+        #     shared_root,
+        #     testset,
+        #     expected_accuracy=expected_accuracy,
+        # )
