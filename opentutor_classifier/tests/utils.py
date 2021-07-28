@@ -218,6 +218,10 @@ def copy_test_env_to_tmp(
         shared_root=shared_root,
     )
     copy_tree(path.join(data_root, lesson), path.join(config.data_root, lesson))
+    if is_default_model:
+        copy_tree(
+            path.join(data_root, "default"), path.join(config.data_root, "default")
+        )
     return config
 
 
