@@ -107,54 +107,6 @@ class LRAnswerClassifier(AnswerClassifier):
             score=_score if _evaluation == "Good" else 1 - _score,
         )
 
-    def evaluate_default(self, answer: AnswerClassifier) -> AnswerClassifierResult:
-        sent_proc = preprocess_sentence(answer.input_sentence)
-        m_by_e, conf = self.model_and_config
-        expectations = [
-            ExpectationToEvaluate(
-                expectation=i,
-                classifier=self.find_model_for_expectation(
-                    m_by_e, i, return_first_model_if_only_one=True
-                ),
-            )
-            for i in (
-                [answer.expectation]
-                if answer.expectation != ""
-                else conf.get_all_expectation_names()
-            )
-        ]
-        result = AnswerClassifierResult(input=answer, expectation_results=[])
-        word2vec = self.find_word2vec()
-        index2word = set(word2vec.index_to_key)
-        result.speech_acts[
-            "metacognitive"
-        ] = self.speech_act_classifier.check_meta_cognitive(result)
-        result.speech_acts["profanity"] = self.speech_act_classifier.check_profanity(
-            result
-        )
-        question_proc = preprocess_sentence(conf.question)
-        clustering = CustomAgglomerativeClustering(word2vec, index2word)
-        for exp in expectations:
-            exp_conf = conf.get_expectation(exp.expectation)
-            sent_features = LRExpectationClassifier.calculate_features(
-                question_proc,
-                answer.input_sentence,
-                sent_proc,
-                preprocess_sentence(exp_conf.ideal),
-                word2vec,
-                index2word,
-                [],
-                [],
-                clustering,
-                mode=ClassifierMode.PREDICT,
-            )
-            result.expectation_results.append(
-                self.find_score_and_class(
-                    exp.classifier, exp.expectation, [sent_features]
-                )
-            )
-        return result
-
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = preprocess_sentence(answer.input_sentence)
         m_by_e, conf = self.model_and_config
