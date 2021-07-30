@@ -13,4 +13,4 @@ def confidence_threshold_default() -> float:
 
 
 def get_train_quality_default() -> int:
-    return int(environ.get("TRAIN_QUALITY_DEFAULT", 1))
+    return int(environ.get("TRAIN_QUALITY_DEFAULT", 4))

@@ -13,6 +13,8 @@ from sklearn.metrics.pairwise import pairwise_distances
 
 from text_to_num import alpha2digit
 
+from .optimal_clusters import OptimalClusterUsingKMeansWord2vec, OptimalClusterUsingDbScanWord2vec
+
 from .features import (
     number_of_negatives,
     word2vec_example_similarity,
@@ -86,6 +88,14 @@ class CustomAgglomerativeClustering:
     ):
         if train_quality == 1:
             return np.zeros_like(good_answers), np.zeros_like(bad_answers)
+        elif train_quality > 3:
+            # train_quality_good = OptimalClusterUsingDbScanWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(good_answers)
+            # train_quality_bad = OptimalClusterUsingDbScanWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(bad_answers)
+            train_quality_good = OptimalClusterUsingDbScanWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(good_answers)
+            train_quality_bad = OptimalClusterUsingDbScanWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(bad_answers)
+            good_labels = self.fit_predict(good_answers, train_quality_good)
+            bad_labels = self.fit_predict(bad_answers, train_quality_bad)
+            return good_labels, bad_labels
         else:
             good_labels = self.fit_predict(good_answers, train_quality)
             bad_labels = self.fit_predict(bad_answers, train_quality)
@@ -206,6 +216,7 @@ class CustomAgglomerativeClustering:
             }
         )
 
+        print(best_candidates)
         data, candidates = self.generate_patterns_from_candidates(data, best_candidates)
 
         return data, candidates

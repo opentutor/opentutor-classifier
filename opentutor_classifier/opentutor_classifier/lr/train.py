@@ -169,6 +169,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
             pattern: Dict[str, List[str]] = {"good": [], "bad": []}
+            self.train_quality = 4
             if self.train_quality > 0:
                 data, candidates = clustering.generate_feature_candidates(
                     np.array(processed_data)[np.array(train_y) == "good"],
@@ -217,6 +218,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 ExpectationTrainingResult(accuracy=results_loocv.mean())
             )
             expectation_models[exp_num] = model
+
+        assert 1 == 2
         dao.save_pickle(
             ModelSaveReq(
                 arch=ARCH_LR_CLASSIFIER,
