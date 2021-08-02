@@ -91,7 +91,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
         results = res.json["output"]["expectationResults"]
         assert len(results) == len(expected_results)
         for res, res_expected in zip(results, expected_results):
-            assert res["expectation_id"] == res_expected.expectation_id
+            assert res["expectationId"] == res_expected.expectation_id
             assert round(float(res["score"]), 2) == res_expected.score
             assert res["evaluation"] == res_expected.evaluation
 
@@ -190,6 +190,6 @@ def test_evaluate_classifies_user_answers(
     results = res.json["output"]["expectationResults"]
     assert len(results) == len(expected_results)
     for res, res_expected in zip(results, expected_results):
-        assert res["expectation_id"] == res_expected.expectation_id
+        assert res["expectationId"] == res_expected.expectation_id
         assert round(float(res["score"]), 2) == res_expected.score
         assert res["evaluation"] == res_expected.evaluation
