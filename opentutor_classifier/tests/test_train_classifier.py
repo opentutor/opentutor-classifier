@@ -102,29 +102,29 @@ def _test_train_and_predict(
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
-        # (
-        #     "ies-rectangle",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.89),
-        #         ExpectationTrainingResult(accuracy=0.92),
-        #         ExpectationTrainingResult(accuracy=0.95),
-        #     ],
-        #     1,
-        # ),
         (
-            "candles",
+            "ies-rectangle",
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.70),
-                ExpectationTrainingResult(accuracy=0.76),
-                ExpectationTrainingResult(accuracy=0.82),
-                ExpectationTrainingResult(accuracy=0.75),
+                ExpectationTrainingResult(accuracy=0.89),
+                ExpectationTrainingResult(accuracy=0.92),
+                ExpectationTrainingResult(accuracy=0.95),
             ],
-            0.44,
+            1,
         ),
+        # (
+        #     "candles",
+        #     ARCH_LR_CLASSIFIER,
+        #     CONFIDENCE_THRESHOLD_DEFAULT,
+        #     [
+        #         ExpectationTrainingResult(accuracy=0.70),
+        #         ExpectationTrainingResult(accuracy=0.76),
+        #         ExpectationTrainingResult(accuracy=0.82),
+        #         ExpectationTrainingResult(accuracy=0.75),
+        #     ],
+        #     0.44,
+        # ),
         # (
         #     "ies_auction",
         #     ARCH_LR_CLASSIFIER,

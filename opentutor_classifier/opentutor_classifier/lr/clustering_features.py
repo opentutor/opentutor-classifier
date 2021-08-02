@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from scipy.optimize import linear_sum_assignment
-from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import AgglomerativeClustering, DBSCAN
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.metrics.pairwise import pairwise_distances
 
@@ -19,6 +19,7 @@ from .features import (
     number_of_negatives,
     word2vec_example_similarity,
     check_is_pattern_match,
+    _avg_feature_vector
 )
 
 CLUSTERS_MIN = 1
@@ -75,13 +76,24 @@ class CustomAgglomerativeClustering:
 
         # Calculate pairwise distances with the new metric.'
         m = pairwise_distances(x, x, metric=self.alignment_metric)
-
+        
         agg = AgglomerativeClustering(
             n_clusters=min(CLUSTERS_MAX, max(train_quality, CLUSTERS_MIN)),
             affinity="precomputed",
             linkage="average",
         )
         return agg.fit_predict(m)
+
+    # def fit_predict(self, data: np.ndarray, train_quality: int):
+    #     self.data = data
+        
+    #     # Calculate pairwise distances with the new metric.'
+    #     #m = pairwise_distances(x, x, metric=self.alignment_metric)
+    #     agg = DBSCAN(eps=0.5)
+    #     return agg.fit_predict(data)
+
+    def getEmbedding(self, sentence: List[str]):
+        return _avg_feature_vector( words=sentence, model=self.word2vec, num_features=300, index2word_set=self.index2word_set)
 
     def get_clusters(
         self, good_answers: np.array, bad_answers: np.array, train_quality: int
@@ -91,8 +103,12 @@ class CustomAgglomerativeClustering:
         elif train_quality > 3:
             # train_quality_good = OptimalClusterUsingDbScanWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(good_answers)
             # train_quality_bad = OptimalClusterUsingDbScanWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(bad_answers)
-            train_quality_good = OptimalClusterUsingDbScanWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(good_answers)
-            train_quality_bad = OptimalClusterUsingDbScanWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(bad_answers)
+            train_quality_good = OptimalClusterUsingKMeansWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(good_answers)
+            train_quality_bad = OptimalClusterUsingKMeansWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(bad_answers)
+            # # train_quality_good, train_quality_bad = 0, 0
+            # good_answers = [ self.getEmbedding(example) for example in good_answers ]
+            # bad_answers = [ self.getEmbedding(example) for example in bad_answers ]
+
             good_labels = self.fit_predict(good_answers, train_quality_good)
             bad_labels = self.fit_predict(bad_answers, train_quality_bad)
             return good_labels, bad_labels

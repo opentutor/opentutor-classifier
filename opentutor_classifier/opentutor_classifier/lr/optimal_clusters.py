@@ -42,7 +42,7 @@ class OptimalClusterUsingKMeansWord2vec(OptimalCluster):
 
     def fit_and_get_inertia(self, k: int) -> int:
         return KMeans(n_clusters=k).fit(self.data).inertia_
-
+    
     def getEmbedding(self, sentence: List[str]):
         return _avg_feature_vector( words=sentence, model=self.word2vec, num_features=300, index2word_set=self.index2word)
         
