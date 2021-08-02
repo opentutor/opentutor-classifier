@@ -29,7 +29,12 @@ def underscore_to_camel(name: str) -> str:
 def to_camelcase(d: dict) -> dict:
     new_d = {}
     for k, v in d.items():
-        new_d[underscore_to_camel(k)] = to_camelcase(v) if isinstance(v, dict) else v
+        if isinstance(v, dict):
+            new_d[underscore_to_camel(k)] = to_camelcase(v)
+        elif isinstance(v, list):
+            new_d[underscore_to_camel(k)] = [to_camelcase(x) for x in v]
+        else:
+            new_d[underscore_to_camel(k)] = v
     return new_d
 
 
