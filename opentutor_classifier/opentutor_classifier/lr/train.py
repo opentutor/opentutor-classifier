@@ -14,7 +14,7 @@ from .features import feature_regex_aggregate_disabled
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
-from sklearn import model_selection, linear_model
+from sklearn import cluster, model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
 
 from opentutor_classifier import DataDao
@@ -41,7 +41,7 @@ from .features import feature_length_ratio_enabled, preprocess_sentence
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
-from .clustering_features import CustomAgglomerativeClustering
+from .clustering_features import CustomDBScanClustering
 
 
 def _preprocess_trainx(data: List[str]) -> List[List[str]]:
@@ -69,7 +69,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         model = LRExpectationClassifier.initialize_model()
         index2word_set = set(self.word2vec.index_to_key)
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
-        clustering = CustomAgglomerativeClustering(self.word2vec, index2word_set)
+        clustering = CustomDBScanClustering(self.word2vec, index2word_set)
 
         def process_features(features, input_sentence, index2word_set):
             processed_input_sentence = preprocess_sentence(input_sentence)
@@ -145,7 +145,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
             split_training_sets[exp_num][1].append(label)
         index2word_set: set = set(self.word2vec.index_to_key)
-        clustering = CustomAgglomerativeClustering(self.word2vec, index2word_set)
+        clustering = CustomDBScanClustering(self.word2vec, index2word_set)
         config_updated = train_input.config.clone()
         expectation_results: List[ExpectationTrainingResult] = []
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
@@ -169,9 +169,17 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
             pattern: Dict[str, List[str]] = {"good": [], "bad": []}
-            self.train_quality = 4
-            if self.train_quality > 0:
-                data, candidates = clustering.generate_feature_candidates(
+            cluster_archetype: Dict[str, List[str]] = {"good": [], "bad": []}
+            self.train_quality = 3
+            if self.train_quality == 1:
+                cluster_archetype = clustering.generate_feature_candidates(
+                    np.array(processed_data)[np.array(train_y) == "good"],
+                    np.array(processed_data)[np.array(train_y) == "bad"],
+                    self.train_quality,
+                )
+                
+            elif self.train_quality > 1:
+                data, candidates, cluster_archetype = clustering.generate_feature_candidates(
                     np.array(processed_data)[np.array(train_y) == "good"],
                     np.array(processed_data)[np.array(train_y) == "bad"],
                     self.train_quality,
@@ -185,6 +193,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 "bad": bad,
                 "patterns_good": pattern["good"],
                 "patterns_bad": pattern["bad"],
+                "archetype_good": cluster_archetype["good"],
+                "archetype_bad": cluster_archetype["bad"],
                 FEATURE_LENGTH_RATIO: feature_length_ratio_enabled(),
                 FEATURE_REGEX_AGGREGATE_DISABLED: feature_regex_aggregate_disabled(),
             }
@@ -204,6 +214,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         mode=ClassifierMode.TRAIN,
                         expectation_config=train_input.config.expectations[exp_num],
                         patterns=pattern["good"] + pattern["bad"],
+                        archetypes=cluster_archetype["good"]+cluster_archetype["bad"]
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)
@@ -219,7 +230,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
             expectation_models[exp_num] = model
 
-        assert 1 == 2
         dao.save_pickle(
             ModelSaveReq(
                 arch=ARCH_LR_CLASSIFIER,

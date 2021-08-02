@@ -7,13 +7,10 @@ import numpy as np
 import pandas as pd
 
 from scipy.optimize import linear_sum_assignment
-from sklearn.cluster import AgglomerativeClustering, DBSCAN
+from sklearn.cluster import DBSCAN
 from sklearn.feature_selection import SelectKBest, chi2
-from sklearn.metrics.pairwise import pairwise_distances
 
 from text_to_num import alpha2digit
-
-from .optimal_clusters import OptimalClusterUsingKMeansWord2vec, OptimalClusterUsingDbScanWord2vec
 
 from .features import (
     number_of_negatives,
@@ -26,7 +23,7 @@ CLUSTERS_MIN = 1
 CLUSTERS_MAX = 5
 
 
-class CustomAgglomerativeClustering:
+class CustomDBScanClustering:
     def __init__(self, word2vec: Word2VecKeyedVectors, index2word_set):
         self.word2vec = word2vec
         self.index2word_set = index2word_set
@@ -70,53 +67,21 @@ class CustomAgglomerativeClustering:
             self.data[int(y[0])], self.data[int(x[0])]
         )
 
-    def fit_predict(self, data: np.ndarray, train_quality: int):
-        self.data = data
-        x = np.arange(len(self.data)).reshape(-1, 1)
-
+    def fit_predict(self, data: np.ndarray):
         # Calculate pairwise distances with the new metric.'
-        m = pairwise_distances(x, x, metric=self.alignment_metric)
-        
-        agg = AgglomerativeClustering(
-            n_clusters=min(CLUSTERS_MAX, max(train_quality, CLUSTERS_MIN)),
-            affinity="precomputed",
-            linkage="average",
-        )
-        return agg.fit_predict(m)
-
-    # def fit_predict(self, data: np.ndarray, train_quality: int):
-    #     self.data = data
-        
-    #     # Calculate pairwise distances with the new metric.'
-    #     #m = pairwise_distances(x, x, metric=self.alignment_metric)
-    #     agg = DBSCAN(eps=0.5)
-    #     return agg.fit_predict(data)
+        agg = DBSCAN(eps=0.5)
+        return agg.fit_predict(data)
 
     def getEmbedding(self, sentence: List[str]):
         return _avg_feature_vector( words=sentence, model=self.word2vec, num_features=300, index2word_set=self.index2word_set)
 
     def get_clusters(
-        self, good_answers: np.array, bad_answers: np.array, train_quality: int
+        self, good_answers: np.array, bad_answers: np.array
     ):
-        if train_quality == 1:
-            return np.zeros_like(good_answers), np.zeros_like(bad_answers)
-        elif train_quality > 3:
-            # train_quality_good = OptimalClusterUsingDbScanWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(good_answers)
-            # train_quality_bad = OptimalClusterUsingDbScanWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(bad_answers)
-            train_quality_good = OptimalClusterUsingKMeansWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(good_answers)
-            train_quality_bad = OptimalClusterUsingKMeansWord2vec(self.word2vec, self.index2word_set).getOptimalClusters(bad_answers)
-            # # train_quality_good, train_quality_bad = 0, 0
-            # good_answers = [ self.getEmbedding(example) for example in good_answers ]
-            # bad_answers = [ self.getEmbedding(example) for example in bad_answers ]
-
-            good_labels = self.fit_predict(good_answers, train_quality_good)
-            bad_labels = self.fit_predict(bad_answers, train_quality_bad)
-            return good_labels, bad_labels
-        else:
-            good_labels = self.fit_predict(good_answers, train_quality)
-            bad_labels = self.fit_predict(bad_answers, train_quality)
-            return good_labels, bad_labels
-
+        good_labels = self.fit_predict([ self.getEmbedding(example) for example in good_answers ] )
+        bad_labels = self.fit_predict([ self.getEmbedding(example) for example in bad_answers ])
+        return good_labels, bad_labels
+      
     def get_best_candidate(
         self, sentence_cluster: np.array, cuttoff_length: int = 20, batch_size=10
     ) -> List[str]:
@@ -200,8 +165,7 @@ class CustomAgglomerativeClustering:
     ):
         good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
         good_labels, bad_labels = self.get_clusters(
-            good_answers, bad_answers, train_quality
-        )
+            good_answers, bad_answers )
 
         best_candidates = []
 
@@ -231,11 +195,16 @@ class CustomAgglomerativeClustering:
                 "[LABELS]": [1] * len(good_answers) + [0] * len(bad_answers),
             }
         )
+        archetype = {
+            "good": [ " ".join(archetype) for label, archetype in best_candidates if label=="good" and archetype != [""] ],
+            "bad": [ " ".join(archetype) for label, archetype in best_candidates if label=="bad" and archetype != [""] ]
+        }
 
-        print(best_candidates)
-        data, candidates = self.generate_patterns_from_candidates(data, best_candidates)
-
-        return data, candidates
+        if train_quality > 1:
+            data, candidates = self.generate_patterns_from_candidates(data, best_candidates)
+            return data, candidates, archetype
+        else:
+            return archetype
 
     @staticmethod
     def deduplicate_patterns(
@@ -310,12 +279,12 @@ class CustomAgglomerativeClustering:
             patterns_with_fpr = list(zip(patterns, one_fpr))
             patterns_with_fpr.sort(key=lambda x: len(x[0]))
             # ignores bigger pattern if indivudal words in pattern have higher (1-fpr)
-            useful_features[label] = CustomAgglomerativeClustering.deduplicate_patterns(
+            useful_features[label] = CustomDBScanClustering.deduplicate_patterns(
                 patterns_with_fpr, fpr_cuttoff
             )
             useful_features[
                 label
-            ] = CustomAgglomerativeClustering.univariate_feature_selection(
+            ] = CustomDBScanClustering.univariate_feature_selection(
                 useful_features[label], input_x, input_y
             )
 

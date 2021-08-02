@@ -98,7 +98,6 @@ def _test_train_and_predict(
         )
 
 
-@pytest.mark.only
 @pytest.mark.parametrize(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
@@ -108,102 +107,102 @@ def _test_train_and_predict(
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(accuracy=0.89),
-                ExpectationTrainingResult(accuracy=0.92),
+                ExpectationTrainingResult(accuracy=0.96),
                 ExpectationTrainingResult(accuracy=0.95),
             ],
             1,
         ),
-        # (
-        #     "candles",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.70),
-        #         ExpectationTrainingResult(accuracy=0.76),
-        #         ExpectationTrainingResult(accuracy=0.82),
-        #         ExpectationTrainingResult(accuracy=0.75),
-        #     ],
-        #     0.44,
-        # ),
-        # (
-        #     "ies_auction",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.79),
-        #         ExpectationTrainingResult(accuracy=0.78),
-        #         ExpectationTrainingResult(accuracy=0.92),
-        #         ExpectationTrainingResult(accuracy=0.92),
-        #     ],
-        #     0.73,
-        # ),
-        # (
-        #     "ies_bus_and_seats",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.90),
-        #         ExpectationTrainingResult(accuracy=0.84),
-        #         ExpectationTrainingResult(accuracy=0.91),
-        #         ExpectationTrainingResult(accuracy=0.92),
-        #     ],
-        #     0.84,
-        # ),
-        # (
-        #     "ies_house",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.92),
-        #         ExpectationTrainingResult(accuracy=0.84),
-        #         ExpectationTrainingResult(accuracy=0.85),
-        #         ExpectationTrainingResult(accuracy=0.80),
-        #     ],
-        #     0.83,
-        # ),
-        # (
-        #     "ies_pitcher",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.81),
-        #         ExpectationTrainingResult(accuracy=0.95),
-        #         ExpectationTrainingResult(accuracy=0.68),
-        #     ],
-        #     0.62,
-        # ),
-        # (
-        #     "ies_robot_remedy",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.93),
-        #         ExpectationTrainingResult(accuracy=0.64),
-        #         ExpectationTrainingResult(accuracy=0.97),
-        #     ],
-        #     0.82,
-        # ),
-        # (
-        #     "navy_integrity",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.93),
-        #         ExpectationTrainingResult(accuracy=0.64),
-        #         ExpectationTrainingResult(accuracy=0.93),
-        #     ],
-        #     0.90,
-        # ),
-        # (
-        #     "suicide",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(accuracy=0.76),
-        #         ExpectationTrainingResult(accuracy=0.70),
-        #     ],
-        #     0.53,
-        # ),
+        (
+            "candles",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.84),
+                ExpectationTrainingResult(accuracy=0.86),
+                ExpectationTrainingResult(accuracy=0.83),
+                ExpectationTrainingResult(accuracy=0.95),
+            ],
+            0.85,
+        ),
+        (
+            "ies_auction",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.8),
+                ExpectationTrainingResult(accuracy=0.90),
+                ExpectationTrainingResult(accuracy=0.93),
+                ExpectationTrainingResult(accuracy=0.95),
+            ],
+            0.85,
+        ),
+        (
+            "ies_bus_and_seats",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.93),
+                ExpectationTrainingResult(accuracy=0.94),
+                ExpectationTrainingResult(accuracy=0.75),
+                ExpectationTrainingResult(accuracy=0.94),
+            ],
+            0.81,
+        ),
+        (
+            "ies_house",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.96),
+                ExpectationTrainingResult(accuracy=0.72),
+                ExpectationTrainingResult(accuracy=0.84),
+                ExpectationTrainingResult(accuracy=0.92),
+            ],
+            0.81,
+        ),
+        (
+            "ies_pitcher",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.87),
+                ExpectationTrainingResult(accuracy=0.96),
+                ExpectationTrainingResult(accuracy=0.92),
+            ],
+            0.88,
+        ),
+        (
+            "ies_robot_remedy",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=1),
+                ExpectationTrainingResult(accuracy=0.88),
+                ExpectationTrainingResult(accuracy=0.97),
+            ],
+            0.91,
+        ),
+        (
+            "navy_integrity",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=1),
+                ExpectationTrainingResult(accuracy=0.87),
+                ExpectationTrainingResult(accuracy=0.86),
+            ],
+            0.90,
+        ),
+        (
+            "suicide",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(accuracy=0.84),
+                ExpectationTrainingResult(accuracy=0.95),
+            ],
+            0.91,
+        )
     ],
 )
 @pytest.mark.slow

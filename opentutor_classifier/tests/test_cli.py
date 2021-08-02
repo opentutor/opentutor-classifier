@@ -91,7 +91,7 @@ def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_roo
             "peer pressure can change your behavior",
             ARCH_DEFAULT,
             [
-                _TestExpectation(expectation=0, score=0.8, evaluation="Good"),
+                _TestExpectation(expectation=0, score=0.78, evaluation="Good"),
                 # _TestExpectation(
                 #     expectation=1,
                 #     score=CONFIDENCE_THRESHOLD_DEFAULT,

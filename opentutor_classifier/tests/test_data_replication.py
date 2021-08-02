@@ -40,7 +40,7 @@ from .utils import (
 
 
 CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
-_REP_FACTOR = [1, 2, 5, 10]
+_REP_FACTOR = [1, 2, 7, 10]
 
 
 @pytest.fixture(scope="module")

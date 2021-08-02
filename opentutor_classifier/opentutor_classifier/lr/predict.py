@@ -26,7 +26,7 @@ from opentutor_classifier import (
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier
 from .constants import MODEL_FILE_NAME
-from .clustering_features import CustomAgglomerativeClustering
+from .clustering_features import CustomDBScanClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
@@ -129,7 +129,7 @@ class LRAnswerClassifier(AnswerClassifier):
             result
         )
         question_proc = preprocess_sentence(conf.question)
-        clustering = CustomAgglomerativeClustering(word2vec, index2word)
+        clustering = CustomDBScanClustering(word2vec, index2word)
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
             sent_features = LRExpectationClassifier.calculate_features(
@@ -147,13 +147,11 @@ class LRAnswerClassifier(AnswerClassifier):
                 patterns=exp_conf.features.get("patterns_good", [])
                 + exp_conf.features.get("patterns_bad", [])
                 or [],
+                archetypes=exp_conf.features.get("archetype_good", []) 
+                + exp_conf.features.get("archetype_bad", []) 
+                or [],
             )
-            patterns = (
-                exp_conf.features.get("patterns_good", [])
-                + exp_conf.features.get("patterns_bad", [])
-                or []
-            )
-            #print(f"LR {exp.expectation} {sent_features}, {len(patterns)}")
+
             result.expectation_results.append(
                 self.find_score_and_class(
                     exp.classifier, exp.expectation, [sent_features]
