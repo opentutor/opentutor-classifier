@@ -38,7 +38,7 @@ def _confidence_score(
     return model.predict_proba(sentence)[0, 1]
 
 
-ModelAndConfig = Tuple[Dict[int, linear_model.LogisticRegression], QuestionConfig]
+ModelAndConfig = Tuple[Dict[str, linear_model.LogisticRegression], QuestionConfig]
 
 
 class LRAnswerClassifier(AnswerClassifier):
@@ -47,6 +47,7 @@ class LRAnswerClassifier(AnswerClassifier):
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
         self._model_and_config: ModelAndConfig = None
+        self._is_default = False
 
     def configure(
         self,
@@ -70,19 +71,22 @@ class LRAnswerClassifier(AnswerClassifier):
                 self.dao,
             )
             self._model_and_config = (cm.model, cm.config)
+            self._is_default = cm.is_default
         return self._model_and_config
 
     def find_model_for_expectation(
         self,
-        m_by_e: Dict[int, linear_model.LogisticRegression],
-        expectation: int,
+        m_by_e: Dict[str, linear_model.LogisticRegression],
+        expectation: str,
         return_first_model_if_only_one=False,
     ) -> linear_model.LogisticRegression:
-        return (
-            m_by_e[0]
-            if expectation >= len(m_by_e) and return_first_model_if_only_one
-            else m_by_e[expectation]
-        )
+        if expectation in m_by_e:
+            return m_by_e[expectation]
+        elif return_first_model_if_only_one and len(m_by_e) == 1:
+            key = list(m_by_e.keys())[0]
+            return m_by_e[key]
+        else:
+            return m_by_e[expectation]
 
     def find_word2vec(self) -> Word2VecKeyedVectors:
         if not self._word2vec:
@@ -92,12 +96,12 @@ class LRAnswerClassifier(AnswerClassifier):
         return self._word2vec
 
     def find_score_and_class(
-        self, classifier, exp_num_i: int, sent_features: List[List[float]]
+        self, classifier, exp_num_i: str, sent_features: List[List[float]]
     ):
         _evaluation = "Good" if classifier.predict(sent_features)[0] == 1 else "Bad"
         _score = _confidence_score(classifier, sent_features)
         return ExpectationClassifierResult(
-            expectation=exp_num_i,
+            expectation_id=exp_num_i,
             evaluation=_evaluation,
             score=_score if _evaluation == "Good" else 1 - _score,
         )
@@ -114,8 +118,8 @@ class LRAnswerClassifier(AnswerClassifier):
             )
             for i in (
                 [answer.expectation]
-                if answer.expectation != -1
-                else range(len(conf.expectations))
+                if answer.expectation != ""
+                else conf.get_all_expectation_names()
             )
         ]
         result = AnswerClassifierResult(input=answer, expectation_results=[])
@@ -130,7 +134,7 @@ class LRAnswerClassifier(AnswerClassifier):
         question_proc = preprocess_sentence(conf.question)
         clustering = CustomDBScanClustering(word2vec, index2word)
         for exp in expectations:
-            exp_conf = conf.expectations[exp.expectation]
+            exp_conf = conf.get_expectation(exp.expectation)
             sent_features = LRExpectationClassifier.calculate_features(
                 question_proc,
                 answer.input_sentence,
@@ -142,13 +146,11 @@ class LRAnswerClassifier(AnswerClassifier):
                 exp_conf.features.get("bad") or [],
                 clustering,
                 mode=ClassifierMode.PREDICT,
-                expectation_config=conf.expectations[exp.expectation],
+                expectation_config=conf.get_expectation(exp.expectation),
                 patterns=exp_conf.features.get("patterns_good", [])
-                + exp_conf.features.get("patterns_bad", [])
-                or [],
+                + exp_conf.features.get("patterns_bad", []) if not self._is_default else [],
                 archetypes=exp_conf.features.get("archetype_good", [])
-                + exp_conf.features.get("archetype_bad", [])
-                or [],
+                + exp_conf.features.get("archetype_bad", []) if not self._is_default else []
             )
             result.expectation_results.append(
                 self.find_score_and_class(

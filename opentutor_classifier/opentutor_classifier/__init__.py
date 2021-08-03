@@ -13,19 +13,21 @@ import pandas as pd
 from typing import Any, Dict, List, Optional
 import yaml
 
-from opentutor_classifier.speechact import SpeechActClassifierResult
+from opentutor_classifier.camelcase import dict_camel_to_snake
 from opentutor_classifier.config import PROP_TRAIN_QUALITY
+from opentutor_classifier.speechact import SpeechActClassifierResult
 
 
 @dataclass
 class ExpectationClassifierResult:
-    expectation: int = -1
+    expectation_id: str = ""
     evaluation: str = ""
     score: float = 0.0
 
 
 @dataclass
 class ExpectationConfig:
+    expectation_id: str = ""
     ideal: str = ""
     features: Dict[str, Any] = field(default_factory=dict)
 
@@ -37,7 +39,9 @@ class QuestionConfig:
 
     def __post_init__(self):
         self.expectations = [
-            x if isinstance(x, ExpectationConfig) else ExpectationConfig(**x)
+            x
+            if isinstance(x, ExpectationConfig)
+            else ExpectationConfig(**dict_camel_to_snake(x))
             for x in self.expectations or []
         ]
 
@@ -45,20 +49,27 @@ class QuestionConfig:
         return QuestionConfig(**self.to_dict())
 
     def get_expectation_feature(
-        self, exp: int, feature_name: str, dft: Any = None
+        self, exp: str, feature_name: str, dft: Any = None
     ) -> Any:
+        expectation_list = [x for x in self.expectations if exp == x.expectation_id]
         return (
-            self.expectations[exp].features.get(feature_name, dft)
-            if exp >= 0 and exp < len(self.expectations)
+            expectation_list[0].features.get(feature_name, dft)
+            if len(expectation_list) > 0
             else dft
         )
 
-    def get_expectation_ideal(self, exp: int) -> Any:
-        return (
-            self.expectations[exp].ideal
-            if exp >= 0 and exp < len(self.expectations)
-            else ""
-        )
+    def get_all_expectation_names(self) -> List[str]:
+        return [x.expectation_id for x in self.expectations]
+
+    def get_expectation(
+        self, exp: str, dft: ExpectationConfig = ExpectationConfig()
+    ) -> ExpectationConfig:
+        expectation_list = [x for x in self.expectations if exp == x.expectation_id]
+        return expectation_list[0] if len(expectation_list) > 0 else dft
+
+    def get_expectation_ideal(self, exp: str) -> Any:
+        expectation_list = [x for x in self.expectations if exp == x.expectation_id]
+        return expectation_list[0].ideal if len(expectation_list) > 0 else ""
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -114,6 +125,7 @@ class TrainingInput:
 
 @dataclass
 class ExpectationTrainingResult:
+    expectation_id: str
     accuracy: float = 0
 
 
@@ -214,7 +226,7 @@ class DataDao(ABC):
 class AnswerClassifierInput:
     input_sentence: str
     config_data: Optional[QuestionConfig] = None
-    expectation: int = -1
+    expectation: str = ""
 
     def to_dict(self) -> Dict:
         return asdict(self)
@@ -288,7 +300,9 @@ def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
         question=d.get("question") or "",
         expectations=[
             ExpectationConfig(
-                ideal=x.get("ideal") or "", features=x.get("features") or {}
+                expectation_id=x.get("expectationId"),
+                ideal=x.get("ideal") or "",
+                features=x.get("features") or {},
             )
             for x in d.get("expectations") or []
         ],

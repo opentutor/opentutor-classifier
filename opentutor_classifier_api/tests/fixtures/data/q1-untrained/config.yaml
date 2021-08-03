@@ -6,7 +6,8 @@
 ##
 question: What are the challenges to demonstrating integrity in a group?
 expectations:
-  - ideal: peer pressure cause allow inappropriate behavior
+  - expectation_id: "0"
+    ideal: peer pressure cause allow inappropriate behavior
     features:
       bad:
         - \brule\w*\b.*\bdiffer\w*\b

@@ -113,7 +113,7 @@ def test_evaluate_example(
     [
         (
             "peer pressure leads you to allow bad behavior",
-            -1,
+            "",
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
                 "expectations": [
@@ -124,7 +124,7 @@ def test_evaluate_example(
                 ],
             },
             [
-                _TestExpectation(expectation=0, evaluation="Good", score=0.65),
+                _TestExpectation(expectation="0", evaluation="Good", score=0.65),
                 # # NOTE: this exp is incorrectly getting GOOD with very high confidence
                 # _TestExpectation(
                 #     expectation=1,
@@ -140,7 +140,7 @@ def test_evaluate_example(
         ),
         (
             "this answer should get a neutral response",
-            -1,
+            "",
             {
                 "question": "What are the challenges to demonstrating integrity in a group?",
                 "expectations": [
@@ -152,7 +152,7 @@ def test_evaluate_example(
             },
             [
                 _TestExpectation(
-                    expectation=0,
+                    expectation="0",
                     score=CONFIDENCE_THRESHOLD_DEFAULT,
                     comparison=ComparisonType.LT,
                 ),
@@ -164,7 +164,7 @@ def test_evaluates_for_default_model(
     model_roots: List[str],
     shared_root: str,
     input_answer: str,
-    input_expectation_number: int,
+    input_expectation_number: str,
     config_data: dict,
     expected_results: List[_TestExpectation],
 ):
@@ -201,7 +201,7 @@ def test_evaluates_for_default_model(
             "question1",
             "",
             "I dont know what you are talking about",
-            0,
+            "0",
             {},
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -212,7 +212,7 @@ def test_evaluates_for_default_model(
             "question1",
             "",
             "I do not understand",
-            0,
+            "0",
             {},
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -223,7 +223,7 @@ def test_evaluates_for_default_model(
             "question1",
             "",
             "I believe the answer is peer pressure can change your behavior",
-            0,
+            "0",
             {},
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -234,7 +234,7 @@ def test_evaluates_for_default_model(
             "question1",
             "",
             "Fuck you tutor",
-            0,
+            "0",
             {},
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -245,7 +245,7 @@ def test_evaluates_for_default_model(
             "question1",
             "",
             "What the hell is that?",
-            0,
+            "0",
             {},
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -256,7 +256,7 @@ def test_evaluates_for_default_model(
             "question1",
             "",
             "I dont know this shit",
-            0,
+            "0",
             {},
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -267,7 +267,7 @@ def test_evaluates_for_default_model(
             "question1",
             "",
             "I dont know this shit but I guess the answer is peer pressure can change your behavior",
-            0,
+            "0",
             {},
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Good", score=1),
@@ -278,7 +278,7 @@ def test_evaluates_for_default_model(
             "question1",
             "",
             "assistant, assistance",
-            0,
+            "0",
             {},
             {
                 "metacognitive": SpeechActClassifierResult(evaluation="Bad", score=0),
@@ -294,7 +294,7 @@ def test_evaluates_meta_cognitive_sentences(
     lesson: str,
     arch: str,
     input_answer: str,
-    input_expectation_number: int,
+    input_expectation_number: str,
     config_data: dict,
     expected_sa_results: dict,
 ):

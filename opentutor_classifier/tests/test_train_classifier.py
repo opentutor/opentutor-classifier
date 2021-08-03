@@ -109,9 +109,9 @@ def _test_train_and_predict(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.90),
-                ExpectationTrainingResult(accuracy=0.95),
-                ExpectationTrainingResult(accuracy=0.96),
+                ExpectationTrainingResult(expectation_id="0", accuracy=0.90),
+                ExpectationTrainingResult(expectation_id="1", accuracy=0.95),
+                ExpectationTrainingResult(expectation_id="2", accuracy=0.96),
             ],
             1,
         ),
@@ -120,10 +120,10 @@ def _test_train_and_predict(
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(accuracy=0.81),
-                ExpectationTrainingResult(accuracy=0.81),
-                ExpectationTrainingResult(accuracy=0.83),
-                ExpectationTrainingResult(accuracy=0.95),
+                ExpectationTrainingResult(expectation_id="0", accuracy=0.81),
+                ExpectationTrainingResult(expectation_id="1", accuracy=0.81),
+                ExpectationTrainingResult(expectation_id="2", accuracy=0.83),
+                ExpectationTrainingResult(expectation_id="3", accuracy=0.95),
             ],
             0.95,
         ),
@@ -203,13 +203,13 @@ def _test_train_and_predict_specific_answers_slow(
                 # "37.0 by 40.000",
                 # "thirty seven by fourty",
             ],
-            [ExpectationTrainingResult(accuracy=0.89)],
+            [ExpectationTrainingResult(expectation_id="2", accuracy=0.89)],
             [
                 # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
                 # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
                 # _TestExpectation(evaluation="Bad", score=0.80, expectation=2),
                 # _TestExpectation(evaluation="Good", score=0.80, expectation=2),
-                _TestExpectation(evaluation="Good", score=0.80, expectation=2),
+                _TestExpectation(evaluation="Good", score=0.80, expectation="2"),
                 # _TestExpectation(evaluation="Good", score=0.80, expectation=2),
                 # _TestExpectation(evaluation="Good", score=0.80, expectation=2),
                 # _TestExpectation(evaluation="Good", score=0.80, expectation=2),
@@ -243,13 +243,30 @@ def test_train_and_predict_specific_answers_slow(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "arch",
+    "lesson,arch,evaluate_input_list,expected_evaluate_result",
     [
-        ARCH_LR_CLASSIFIER,
+        (
+            # It's important to test what would happen
+            # if--in the past--we had trained a model for a lesson
+            # but then subsequently lost the actual trained model.
+            # This is an important case, because having trained the model
+            # might have generated features which would live on in the config/db,
+            # and those generated features would cause shape-errors at prediction time
+            # when used with the default model
+            "ies-mixture-with-trained-features-but-model-is-lost",
+            ARCH_LR_CLASSIFIER,
+            ["a"],
+            [
+                _TestExpectation(evaluation="Bad", score=0.50, expectation="2"),
+            ],
+        )
     ],
 )
-def test_train_default(
+def test_default_classifier_train_and_predict(
+    lesson: str,
     arch: str,
+    evaluate_input_list: List[str],
+    expected_evaluate_result: List[_TestExpectation],
     data_root: str,
     shared_root: str,
     tmpdir,
@@ -260,6 +277,16 @@ def test_train_default(
         shared_root,
         arch=arch,
         is_default_model=True,
-        lesson="default",
+        lesson=lesson,
     ) as config:
-        train_default_classifier(config=config)
+        train_result = train_default_classifier(config=config)
+        assert path.exists(train_result.models)
+        for evaluate_input, ans in zip(evaluate_input_list, expected_evaluate_result):
+            create_and_test_classifier(
+                lesson,
+                path.split(path.abspath(train_result.models))[0],
+                shared_root,
+                evaluate_input,
+                [ans],
+                arch=arch,
+            )
