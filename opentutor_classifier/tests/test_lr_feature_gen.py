@@ -9,7 +9,7 @@ from os import path
 import pytest
 
 from opentutor_classifier.lr.features import preprocess_sentence
-from opentutor_classifier.lr.clustering_features import CustomAgglomerativeClustering
+from opentutor_classifier.lr.clustering_features import CustomDBScanClustering
 
 from typing import List, Tuple
 from .utils import fixture_path
@@ -73,7 +73,7 @@ def test_unit_deduplication(
     expected_patterns: List[str],
     cuttoff_fpr: float,
 ):
-    patterns = CustomAgglomerativeClustering.deduplicate_patterns(
+    patterns = CustomDBScanClustering.deduplicate_patterns(
         input_patterns_with_fpr, cuttoff_fpr
     )
     assert patterns == expected_patterns, f"Expected {expected_patterns} got {patterns}"
@@ -120,7 +120,7 @@ def test_univariate_selection(
     n: int,
     expected_patterns: List[str],
 ):
-    patterns = CustomAgglomerativeClustering.univariate_feature_selection(
+    patterns = CustomDBScanClustering.univariate_feature_selection(
         patterns, input_x, input_y, n
     )
     assert patterns == expected_patterns, f"Expected {expected_patterns} got {patterns}"

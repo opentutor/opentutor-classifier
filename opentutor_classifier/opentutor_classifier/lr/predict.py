@@ -9,7 +9,6 @@ from os import path
 from typing import Dict, List, Optional, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
-import numpy as np
 from sklearn import linear_model
 
 from opentutor_classifier import (
@@ -26,7 +25,7 @@ from opentutor_classifier import (
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier
 from .constants import MODEL_FILE_NAME
-from .clustering_features import CustomAgglomerativeClustering
+from .clustering_features import CustomDBScanClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
@@ -93,7 +92,7 @@ class LRAnswerClassifier(AnswerClassifier):
         return self._word2vec
 
     def find_score_and_class(
-        self, classifier, exp_num_i: int, sent_features: np.ndarray
+        self, classifier, exp_num_i: int, sent_features: List[List[float]]
     ):
         _evaluation = "Good" if classifier.predict(sent_features)[0] == 1 else "Bad"
         _score = _confidence_score(classifier, sent_features)
@@ -129,7 +128,7 @@ class LRAnswerClassifier(AnswerClassifier):
             result
         )
         question_proc = preprocess_sentence(conf.question)
-        clustering = CustomAgglomerativeClustering(word2vec, index2word)
+        clustering = CustomDBScanClustering(word2vec, index2word)
         for exp in expectations:
             exp_conf = conf.expectations[exp.expectation]
             sent_features = LRExpectationClassifier.calculate_features(
@@ -146,6 +145,9 @@ class LRAnswerClassifier(AnswerClassifier):
                 expectation_config=conf.expectations[exp.expectation],
                 patterns=exp_conf.features.get("patterns_good", [])
                 + exp_conf.features.get("patterns_bad", [])
+                or [],
+                archetypes=exp_conf.features.get("archetype_good", [])
+                + exp_conf.features.get("archetype_bad", [])
                 or [],
             )
             result.expectation_results.append(
