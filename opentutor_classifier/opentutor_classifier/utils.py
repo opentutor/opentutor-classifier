@@ -59,7 +59,7 @@ def load_config(config_file: str) -> QuestionConfig:
 
 
 def load_data(filename: str) -> pd.DataFrame:
-    return pd.read_csv(filename, encoding="latin-1")
+    return pd.read_csv(filename, encoding="latin-1", dtype={"exp_num": str})
 
 
 def load_yaml(file_path: str) -> Dict[str, Any]:

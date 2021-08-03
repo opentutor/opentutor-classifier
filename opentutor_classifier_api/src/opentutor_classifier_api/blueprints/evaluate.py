@@ -29,7 +29,12 @@ def underscore_to_camel(name: str) -> str:
 def to_camelcase(d: dict) -> dict:
     new_d = {}
     for k, v in d.items():
-        new_d[underscore_to_camel(k)] = to_camelcase(v) if isinstance(v, dict) else v
+        if isinstance(v, dict):
+            new_d[underscore_to_camel(k)] = to_camelcase(v)
+        elif isinstance(v, list):
+            new_d[underscore_to_camel(k)] = [to_camelcase(x) for x in v]
+        else:
+            new_d[underscore_to_camel(k)] = v
     return new_d
 
 
@@ -53,9 +58,9 @@ def evaluate():
             "input": {"required": True, "type": "string"},
             "expectation": {
                 "required": False,
-                "type": "integer",
-                "coerce": int,
-                "default": -1,
+                "type": "string",
+                "coerce": str,
+                "default": "",
             },
         },
         allow_unknown=True,
@@ -70,7 +75,7 @@ def evaluate():
         os.environ.get("MODEL_DEPLOYED_ROOT") or "models_deployed",
     ]
     input_sentence = args.get("input")
-    exp_num = int(args.get("expectation", -1))
+    exp_num = args.get("expectation", "")
     shared_root = os.environ.get("SHARED_ROOT") or "shared"
     classifier = _get_dao().find_classifier(
         ClassifierConfig(

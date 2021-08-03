@@ -4,21 +4,21 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from dataclasses import dataclass
-from typing import Dict
-
-from sklearn import linear_model
-
-from opentutor_classifier import QuestionConfig
+from opentutor_classifier.api import fetch_training_data
+from flask import Blueprint, make_response
 
 
-@dataclass
-class ExpectationToEvaluate:
-    expectation: str
-    classifier: linear_model.LogisticRegression
+trainingdata_blueprint = Blueprint("trainingdata", __name__)
 
 
-@dataclass
-class InstanceModels:
-    models_by_expectation_num: Dict[int, linear_model.LogisticRegression]
-    config: QuestionConfig
+@trainingdata_blueprint.route("/<lesson_id>", methods=["GET"])
+def get_data(lesson_id: str):
+    data = fetch_training_data(lesson_id)
+    data_csv = data.data.to_csv(index=False)
+    output = make_response(data_csv)
+    output.headers["Content-Disposition"] = "attachment; filename=mentor.csv"
+    output.headers["Content-type"] = "text/csv"
+    return (
+        output,
+        200,
+    )

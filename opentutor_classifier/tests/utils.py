@@ -91,6 +91,10 @@ def to_expectation_result(
         errors.append(
             f"expected evaluation '{observed.evaluation}' to be '{expected.evaluation}'"
         )
+    if expected.expectation != observed.expectation_id:
+        errors.append(
+            f"expected expectation_id '{observed.expectation_id}'' to be '{expected.expectation}"
+        )
     return _TestExpectationResult(expected=expected, observed=observed, errors=errors)
 
 
@@ -214,6 +218,10 @@ def copy_test_env_to_tmp(
         shared_root=shared_root,
     )
     copy_tree(path.join(data_root, lesson), path.join(config.data_root, lesson))
+    if is_default_model:
+        copy_tree(
+            path.join(data_root, "default"), path.join(config.data_root, "default")
+        )
     return config
 
 
@@ -378,7 +386,7 @@ def read_test_set_from_csv(csv_path: str, confidence_threshold=-1.0) -> _TestSet
         if confidence_threshold >= 0.0
         else confidence_threshold_default()
     )
-    df = pd.read_csv(csv_path, header=0)
+    df = pd.read_csv(csv_path, header=0, dtype={"exp_num": str})
     df.fillna("", inplace=True)
     testset = _TestSet()
     for _, row in df.iterrows():
@@ -418,7 +426,7 @@ def to_example_result(
     result_expectations = []
     for e in expected.expectations:
         for o in observed.expectation_results:
-            if e.expectation == o.expectation:
+            if e.expectation == o.expectation_id:
                 result_expectations.append(to_expectation_result(e, o))
     return _TestExampleResult(
         expected=expected, observed=observed, expectations=result_expectations
