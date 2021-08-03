@@ -7,7 +7,6 @@
 from os import path
 from contextlib import contextmanager
 from distutils.dir_util import copy_tree
-import logging
 from pathlib import Path
 from typing import Any, List
 from unittest.mock import patch
@@ -155,7 +154,6 @@ def assert_testset_accuracy(
     metrics = result.metrics()
     if metrics.accuracy >= expected_accuracy:
         return
-    logging.warning("ERRORS:\n" + "\n".join(ex.errors() for ex in result.results))
     assert metrics.accuracy >= expected_accuracy
 
 

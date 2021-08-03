@@ -53,7 +53,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
         self.accuracy: Dict[int, int] = {}
         self.word2vec: Word2VecKeyedVectors = None
-        self.train_quality = 1
+        self.train_quality = 3
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
         self.word2vec = find_or_load_word2vec(
@@ -170,15 +170,11 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
             pattern: Dict[str, List[str]] = {"good": [], "bad": []}
             cluster_archetype: Dict[str, List[str]] = {"good": [], "bad": []}
-            self.train_quality = 3
-            if self.train_quality > 1:
-                data, candidates = clustering.generate_feature_candidates(
+            if self.train_quality == 1:
+                cluster_archetype = clustering.generate_feature_candidates(
                     np.array(processed_data)[np.array(train_y) == "good"],
                     np.array(processed_data)[np.array(train_y) == "bad"],
                     self.train_quality,
-                )
-                pattern = clustering.select_feature_candidates(
-                    data, candidates, train_x, train_y
                 )
             elif self.train_quality > 1:
                 (
