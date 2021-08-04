@@ -148,9 +148,13 @@ class LRAnswerClassifier(AnswerClassifier):
                 mode=ClassifierMode.PREDICT,
                 expectation_config=conf.get_expectation(exp.expectation),
                 patterns=exp_conf.features.get("patterns_good", [])
-                + exp_conf.features.get("patterns_bad", []) if not self._is_default else [],
+                + exp_conf.features.get("patterns_bad", [])
+                if not self._is_default
+                else [],
                 archetypes=exp_conf.features.get("archetype_good", [])
-                + exp_conf.features.get("archetype_bad", []) if not self._is_default else []
+                + exp_conf.features.get("archetype_bad", [])
+                if not self._is_default
+                else [],
             )
             result.expectation_results.append(
                 self.find_score_and_class(
