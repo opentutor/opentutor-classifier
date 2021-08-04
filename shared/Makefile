@@ -29,11 +29,14 @@ install: poetry-ensure-installed
 installed:
 	mkdir -p installed
 
+installed/spacy-model: $(VENV)
+	$(MAKE) installed
+	. $(VENV)/bin/activate && python spacy_download.py 
+
 installed/word2vec.bin: $(VENV)
 	$(MAKE) installed
 	poetry run python word2vec_download.py 
-
-
+	
 .PHONY: poetry-ensure-installed
 poetry-ensure-installed:
 	sh $(ROOT)/tools/poetry_ensure_installed.sh
