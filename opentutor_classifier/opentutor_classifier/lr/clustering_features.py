@@ -122,7 +122,7 @@ class CustomAgglomerativeClustering:
                         ) * self.word_alignment_feature(row1, row2)
 
                 avg_proximity /= len(current_batch)
-                best_idx = np.argmax(avg_proximity)
+                best_idx = int(np.argmax(avg_proximity))
                 final_candidates.append(current_batch[best_idx])
             final_candidates = final_candidates[total_sentences:]
             total_sentences = len(final_candidates)
