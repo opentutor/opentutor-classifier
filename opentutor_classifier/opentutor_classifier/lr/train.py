@@ -51,7 +51,7 @@ def _preprocess_trainx(data: List[str], preprocessor: SpacyPreprocessor) -> np.n
 
 class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
-        self.accuracy: Dict[int, int] = {}
+        self.accuracy: Dict[str, int] = {}
         self.word2vec: Word2VecKeyedVectors = None
         self.train_quality = 1
         self.shared_root = None
@@ -69,7 +69,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         model = LRExpectationClassifier.initialize_model()
         index2word_set = set(self.word2vec.index_to_key)
-        expectation_models: Dict[int, linear_model.LogisticRegression] = {}
+        expectation_models: Dict[str, linear_model.LogisticRegression] = {}
         clustering = CustomAgglomerativeClustering(self.word2vec, index2word_set)
         preprocessor = SpacyPreprocessor(self.shared_root)
 
@@ -119,7 +119,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
         )
         return dao.create_default_training_result(
-            ARCH_LR_CLASSIFIER, ExpectationTrainingResult(accuracy=accuracy)
+            ARCH_LR_CLASSIFIER,
+            ExpectationTrainingResult(expectation_id="", accuracy=accuracy),
         )
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
@@ -129,7 +130,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         train_data = (
             pd.DataFrame(
                 [
-                    [i, x.ideal, "good"]
+                    [x.expectation_id, x.ideal, "good"]
                     for i, x in enumerate(train_input.config.expectations)
                     if x.ideal
                 ],
@@ -154,7 +155,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         clustering = CustomAgglomerativeClustering(self.word2vec, index2word_set)
         config_updated = train_input.config.clone()
         expectation_results: List[ExpectationTrainingResult] = []
-        expectation_models: Dict[int, linear_model.LogisticRegression] = {}
+        expectation_models: Dict[str, linear_model.LogisticRegression] = {}
         supergoodanswer = ""
         for exp_num in split_training_sets.keys():
             ideal = train_input.config.get_expectation_ideal(exp_num)
@@ -187,7 +188,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                     data, candidates, train_x, train_y, preprocessor=preprocessor
                 )
 
-            config_updated.expectations[exp_num].features = {
+            config_updated.get_expectation(exp_num).features = {
                 "good": good,
                 "bad": bad,
                 "patterns_good": pattern["good"],
@@ -210,7 +211,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         clustering,
                         mode=ClassifierMode.TRAIN,
                         preprocessor=preprocessor,
-                        expectation_config=train_input.config.expectations[exp_num],
+                        expectation_config=train_input.config.get_expectation(exp_num),
                         patterns=pattern["good"] + pattern["bad"],
                     )
                 )
@@ -223,7 +224,9 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 model, features, train_y, cv=LeaveOneOut(), scoring="accuracy"
             )
             expectation_results.append(
-                ExpectationTrainingResult(accuracy=results_loocv.mean())
+                ExpectationTrainingResult(
+                    expectation_id=exp_num, accuracy=results_loocv.mean()
+                )
             )
             expectation_models[exp_num] = model
         dao.save_pickle(

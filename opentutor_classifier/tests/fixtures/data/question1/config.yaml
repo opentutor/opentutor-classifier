@@ -6,19 +6,22 @@
 ##
 question: "What are the challenges to demonstrating integrity in a group?"
 expectations:
-  - ideal: peer pressure can cause you to allow inappropriate behavior
+  - expectationId: "0"
+    ideal: peer pressure can cause you to allow inappropriate behavior
     features:
       good:
         - '\b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b'
       bad:
         - '\brule\w*\b.*\bdiffer\w*\b'
-  - ideal: you may get them in trouble
+  - expectationId: "1"
+    ideal: you may get them in trouble
     features:
       good:
         - '\b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b'
       bad:
         - '\b(lov\w*|lik\w*|car)\b'
-  - ideal: enforcing the rule can make you unpopular
+  - expectationId: "2"
+    ideal: enforcing the rule can make you unpopular
     features:
       good:
         - '\b(unpop\w*|hate\w*|unlik\w*|not\040popular)\b'

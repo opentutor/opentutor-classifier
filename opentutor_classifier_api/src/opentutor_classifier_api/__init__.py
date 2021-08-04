@@ -57,4 +57,18 @@ def create_app():
 
     app.register_blueprint(healthcheck_blueprint, url_prefix="/classifier/healthcheck")
 
+    from opentutor_classifier_api.blueprints.training_data import trainingdata_blueprint
+
+    app.register_blueprint(
+        trainingdata_blueprint, url_prefix="/classifier/training_data"
+    )
+
+    from opentutor_classifier_api.blueprints.training_config import (
+        trainingconfig_blueprint,
+    )
+
+    app.register_blueprint(
+        trainingconfig_blueprint, url_prefix="/classifier/training_config"
+    )
+
     return app

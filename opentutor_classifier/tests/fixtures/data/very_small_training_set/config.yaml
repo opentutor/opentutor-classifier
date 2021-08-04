@@ -6,7 +6,8 @@
 ##
 question: "What are the challenges to demonstrating integrity in a group?"
 expectations:
-  - ideal: peer pressure can cause you to allow inappropriate behavior
+  - expectationId: "0"
+    ideal: peer pressure can cause you to allow inappropriate behavior
     features:
       good:
         - '\b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b'
