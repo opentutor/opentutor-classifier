@@ -5,7 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR_NEW_CLASSIFIER,
     AnswerClassifier,
     AnswerClassifierTraining,
     ArchClassifierFactory,
@@ -22,7 +22,7 @@ from .train import LRAnswerClassifierTraining
 class __ArchClassifierFactory(ArchClassifierFactory):
     def has_trained_model(self, lesson: str, config: ClassifierConfig) -> bool:
         return config.dao.trained_model_exists(
-            ModelRef(arch=ARCH_LR_CLASSIFIER, lesson=lesson, filename=MODEL_FILE_NAME)
+            ModelRef(arch=ARCH_LR_NEW_CLASSIFIER, lesson=lesson, filename=MODEL_FILE_NAME)
         )
 
     def new_classifier(self, config: ClassifierConfig) -> AnswerClassifier:
@@ -37,4 +37,4 @@ class __ArchClassifierFactory(ArchClassifierFactory):
         return LRAnswerClassifierTraining().configure(config)
 
 
-register_classifier_factory(ARCH_LR_CLASSIFIER, __ArchClassifierFactory())
+register_classifier_factory(ARCH_LR_NEW_CLASSIFIER, __ArchClassifierFactory())

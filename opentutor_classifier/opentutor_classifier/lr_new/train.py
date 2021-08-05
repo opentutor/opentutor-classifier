@@ -19,7 +19,7 @@ from sklearn.model_selection import LeaveOneOut
 
 from opentutor_classifier import DataDao
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR_NEW_CLASSIFIER,
     PROP_TRAIN_QUALITY,
     AnswerClassifierTraining,
     ArchLesson,
@@ -108,13 +108,13 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         expectation_models[data["exp_num"].iloc[0]] = model
         dao.save_default_pickle(
             DefaultModelSaveReq(
-                arch=ARCH_LR_CLASSIFIER,
+                arch=ARCH_LR_NEW_CLASSIFIER,
                 filename="models_by_expectation_num.pkl",
                 model=expectation_models,
             )
         )
         return dao.create_default_training_result(
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR_NEW_CLASSIFIER,
             ExpectationTrainingResult(expectation_id="", accuracy=accuracy),
         )
 
@@ -224,7 +224,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             expectation_models[exp_num] = model
         dao.save_pickle(
             ModelSaveReq(
-                arch=ARCH_LR_CLASSIFIER,
+                arch=ARCH_LR_NEW_CLASSIFIER,
                 lesson=train_input.lesson,
                 filename="models_by_expectation_num.pkl",
                 model=expectation_models,
@@ -232,7 +232,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         )
         dao.save_config(
             QuestionConfigSaveReq(
-                arch=ARCH_LR_CLASSIFIER,
+                arch=ARCH_LR_NEW_CLASSIFIER,
                 lesson=train_input.lesson,
                 config=config_updated,
             )
@@ -241,6 +241,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             expectations=expectation_results,
             lesson=train_input.lesson,
             models=dao.get_model_root(
-                ArchLesson(arch=ARCH_LR_CLASSIFIER, lesson=train_input.lesson)
+                ArchLesson(arch=ARCH_LR_NEW_CLASSIFIER, lesson=train_input.lesson)
             ),
         )

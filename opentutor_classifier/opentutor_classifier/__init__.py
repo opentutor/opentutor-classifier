@@ -335,6 +335,7 @@ def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
 
 
 ARCH_LR_CLASSIFIER = "opentutor_classifier.lr"
+ARCH_LR_NEW_CLASSIFIER = "opentutor_classifier.lr_new"
 ARCH_DEFAULT = ARCH_LR_CLASSIFIER
 
 
