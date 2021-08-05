@@ -13,6 +13,7 @@ import responses
 from opentutor_classifier import (
     ExpectationTrainingResult,
     ARCH_LR_CLASSIFIER,
+    ARCH_LR_NEW_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
 from .utils import (
@@ -106,7 +107,7 @@ def _test_train_and_predict(
     [
         (
             "ies-rectangle",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR_NEW_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(expectation_id="0", accuracy=0.89),
@@ -117,7 +118,7 @@ def _test_train_and_predict(
         ),
         (
             "candles",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR_NEW_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(expectation_id="0", accuracy=0.80),

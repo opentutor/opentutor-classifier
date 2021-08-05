@@ -8,11 +8,13 @@ from os import path
 
 import pytest
 
-from opentutor_classifier.lr.features import (
+from opentutor_classifier.lr_new.features import (
     preprocess_sentence,
     feature_number_alignment,
 )
-from opentutor_classifier.lr.clustering_features import CustomAgglomerativeClustering
+from opentutor_classifier.lr_new.clustering_features import (
+    CustomAgglomerativeClustering,
+)
 from opentutor_classifier.word2vec import find_or_load_word2vec
 
 from typing import List, Tuple
@@ -140,7 +142,7 @@ def test_univariate_selection(
         )
     ],
 )
-def test_univariate_selection(
+def test_feature_number_alignment(
     example: str, ideal: str, alignment: float, shared_root: str
 ):
     word2vec = find_or_load_word2vec(path.join(shared_root, "word2vec.bin"))
