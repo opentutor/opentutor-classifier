@@ -65,9 +65,7 @@ class LRExpectationClassifier:
             features.word2vec_question_similarity(
                 word2vec, index2word_set, example, question
             ),
-            features.feature_number_alignment(
-                raw_example, raw_ideal, clustering
-            )
+            features.feature_number_alignment(raw_example, raw_ideal, clustering),
         ]
         if mode == ClassifierMode.TRAIN:
             if features.feature_length_ratio_enabled():
