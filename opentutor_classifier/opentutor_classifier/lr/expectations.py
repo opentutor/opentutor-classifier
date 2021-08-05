@@ -42,6 +42,7 @@ class LRExpectationClassifier:
         question: List[str],
         raw_example: str,
         example: List[str],
+        raw_ideal: str,
         ideal: List[str],
         word2vec: Word2VecKeyedVectors,
         index2word_set: set,
@@ -64,6 +65,9 @@ class LRExpectationClassifier:
             features.word2vec_question_similarity(
                 word2vec, index2word_set, example, question
             ),
+            features.feature_number_alignment(
+                raw_example, raw_ideal, clustering
+            )
         ]
         if mode == ClassifierMode.TRAIN:
             if features.feature_length_ratio_enabled():

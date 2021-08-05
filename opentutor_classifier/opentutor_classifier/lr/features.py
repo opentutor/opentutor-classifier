@@ -93,6 +93,14 @@ def _avg_feature_vector(
         feature_vec = np.divide(feature_vec, nwords)
     return feature_vec
 
+def feature_number_alignment( 
+    raw_example: str, 
+    raw_ideal: str, 
+    clustering 
+    ) -> float:
+    ex = re.findall("[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?", alpha2digit(raw_example, 'en'))
+    ia = re.findall("[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?", alpha2digit(raw_ideal, 'en'))
+    return clustering.word_alignment_feature(ex, ia)
 
 def _calculate_similarity(a: float, b: float) -> float:
     similarity = 1 - spatial.distance.cosine(a, b)

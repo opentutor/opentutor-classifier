@@ -140,6 +140,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 question_proc,
                 answer.input_sentence,
                 sent_proc,
+                exp_conf.ideal,
                 preprocess_sentence(exp_conf.ideal),
                 word2vec,
                 index2word,
