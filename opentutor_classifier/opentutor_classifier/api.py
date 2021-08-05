@@ -5,6 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from dataclasses import dataclass
+from datetime import datetime
 from io import StringIO
 import json
 import os
@@ -50,6 +51,15 @@ class GQLQueryBody(TypedDict):
     query: str
     variables: dict
 
+GQL_QUERY_LESSON_UPDATED_AT = """
+query LessonUpdatedAt($lessonId: String!) {
+    me {
+        lesson(lessonId: $lessonId) {
+            updatedAt
+        }
+    }
+}
+"""
 
 GQL_QUERY_LESSON_CONFIG = """
 query LessonConfig($lessonId: String!) {
@@ -104,6 +114,13 @@ mutation UpdateLessonFeatures(
     }
 }"""
 
+def query_lesson_updated_at(lesson:str) -> GQLQueryBody:
+    return {
+        "query": GQL_QUERY_LESSON_UPDATED_AT,
+        "variables": {
+            "lessonId": lesson,
+        }
+    }
 
 def query_all_training_data_gql() -> GQLQueryBody:
     return {"query": GQL_QUERY_ALL_TRAINING_DATA, "variables": {}}
@@ -180,6 +197,14 @@ def fetch_config(lesson: str) -> QuestionConfig:
         raise Exception(json.dumps(tdjson.get("errors")))
     data = tdjson["data"]["me"]["config"]
     return dict_to_question_config(yaml.safe_load(data.get("stringified") or ""))
+
+
+def fetch_lesson_updated_at(lesson:str) -> datetime:
+    tdjson = __auth_gql(query_lesson_updated_at(lesson))
+    if "errors" in tdjson:
+        raise Exception(json.dumps(tdjson.get("errors")))
+    data = tdjson["data"]["me"]["lesson"]["updatedAt"]
+    return datetime.fromisoformat(data)
 
 
 def fetch_training_data(lesson: str, url="") -> TrainingInput:

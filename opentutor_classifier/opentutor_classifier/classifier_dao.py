@@ -4,6 +4,8 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from datetime import datetime
+from opentutor_classifier.api import fetch_lesson_updated_at
 from os import environ
 
 import pylru
@@ -16,9 +18,10 @@ from opentutor_classifier import (
 
 
 class Entry:
-    def __init__(self, classifier: AnswerClassifier):
+    def __init__(self, classifier: AnswerClassifier, lesson_updated_at: datetime):
         self.classifier = classifier
         self.last_trained_at = self.classifier.get_last_trained_at()
+        self.lesson_updated_at = lesson_updated_at
 
 
 class ClassifierDao:
@@ -26,15 +29,16 @@ class ClassifierDao:
         self.cache = pylru.lrucache(int(environ.get("CACHE_MAX_SIZE", "100")))
 
     def find_classifier(
-        self, config: ClassifierConfig, arch: str = ""
+        self, lesson:str, config: ClassifierConfig, arch: str = ""
     ) -> AnswerClassifier:
+        lesson_updated_at = fetch_lesson_updated_at(lesson)
         if config.model_name in self.cache:
             e = self.cache[config.model_name]
-            if e and e.last_trained_at >= e.classifier.get_last_trained_at():
+            if e and e.last_trained_at >= e.classifier.get_last_trained_at() and e.lesson_updated_at >= lesson_updated_at:
                 return e.classifier
         c = ClassifierFactory().new_classifier(
             config=config, arch=arch or get_classifier_arch()
         )
 
-        self.cache[config.model_name] = Entry(c)
+        self.cache[config.model_name] = Entry(lesson_updated_at, c)
         return c
