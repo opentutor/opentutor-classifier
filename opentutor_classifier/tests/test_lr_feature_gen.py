@@ -8,8 +8,12 @@ from os import path
 
 import pytest
 
-from opentutor_classifier.lr.features import preprocess_sentence
+from opentutor_classifier.lr.features import (
+    preprocess_sentence,
+    feature_number_alignment,
+)
 from opentutor_classifier.lr.clustering_features import CustomAgglomerativeClustering
+from opentutor_classifier.word2vec import find_or_load_word2vec
 
 from typing import List, Tuple
 from .utils import fixture_path
@@ -124,3 +128,24 @@ def test_univariate_selection(
         patterns, input_x, input_y, n
     )
     assert patterns == expected_patterns, f"Expected {expected_patterns} got {patterns}"
+
+
+@pytest.mark.parametrize(
+    "example,ideal,alignment",
+    [
+        (
+            "the width will be -30 and height will be 40",
+            "the width will be minus thirty and height will be plus forty",
+            0.7,
+        )
+    ],
+)
+def test_univariate_selection(
+    example: str, ideal: str, alignment: float, shared_root: str
+):
+    word2vec = find_or_load_word2vec(path.join(shared_root, "word2vec.bin"))
+    index2word = set(word2vec.index_to_key)
+    clustering = CustomAgglomerativeClustering(word2vec, index2word)
+
+    result = feature_number_alignment(example, ideal, clustering)
+    assert result >= alignment, f"Expected {result} >= {alignment}"

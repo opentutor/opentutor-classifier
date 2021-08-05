@@ -1,11 +1,5 @@
-##
-## This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved. 
-## Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
-##
-## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
-##
 expectations:
-- expectationId: '0'
+- expectation_id: '0'
   features:
     bad:
     - \brule\w*\b.*\bdiffer\w*\b
@@ -21,7 +15,7 @@ expectations:
     - peer
     - pressure
   ideal: peer pressure can cause you to allow inappropriate behavior
-- expectationId: '1'
+- expectation_id: '1'
   features:
     bad:
     - \b(lov\w*|lik\w*|car)\b
@@ -33,8 +27,6 @@ expectations:
     - caring
     - people
     patterns_good:
-    - allow
-    - behavioryou
     - cause
     - get
     - inappropriate
@@ -46,7 +38,7 @@ expectations:
     - troubleenforcing
     - unpopular
   ideal: you may get them in trouble
-- expectationId: '2'
+- expectation_id: '2'
   features:
     bad:
     - \b(super\w*|bette\w*)\b
