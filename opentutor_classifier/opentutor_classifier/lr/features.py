@@ -96,17 +96,17 @@ def _avg_feature_vector(
 
 def feature_number_alignment(raw_example: str, raw_ideal: str, clustering) -> float:
     ex = re.findall(
-        "[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?",
+        "[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?",  # noqa W605
         alpha2digit(raw_example, "en"),
     )
     ia = re.findall(
-        "[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?",
+        "[-+]?[.]?[\d]+(?:,\d\d\d)*[\.]?\d*(?:[eE][-+]?\d+)?",  # noqa W605
         alpha2digit(raw_ideal, "en"),
     )
     return clustering.word_alignment_feature(ex, ia)
 
 
-def _calculate_similarity(a: float, b: float) -> float:
+def _calculate_similarity(a: np.ndarray, b: np.ndarray) -> float:
     similarity = 1 - spatial.distance.cosine(a, b)
     return similarity if not math.isnan(similarity) else 0
 

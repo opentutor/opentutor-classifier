@@ -9,7 +9,6 @@ from os import path
 from typing import Dict, List, Optional, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
-import numpy as np
 from sklearn import linear_model
 
 from opentutor_classifier import (
@@ -97,7 +96,7 @@ class LRAnswerClassifier(AnswerClassifier):
         return self._word2vec
 
     def find_score_and_class(
-        self, classifier, exp_num_i: str, sent_features: np.ndarray
+        self, classifier, exp_num_i: str, sent_features: List[List[float]]
     ):
         _evaluation = "Good" if classifier.predict(sent_features)[0] == 1 else "Bad"
         _score = _confidence_score(classifier, sent_features)

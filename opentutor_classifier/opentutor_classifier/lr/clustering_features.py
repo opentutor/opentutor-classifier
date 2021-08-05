@@ -82,7 +82,7 @@ class CustomAgglomerativeClustering:
         return agg.fit_predict(m)
 
     def get_clusters(
-        self, good_answers: np.array, bad_answers: np.array, train_quality: int
+        self, good_answers: np.ndarray, bad_answers: np.ndarray, train_quality: int
     ):
         if train_quality == 1:
             return np.zeros_like(good_answers), np.zeros_like(bad_answers)
@@ -92,7 +92,7 @@ class CustomAgglomerativeClustering:
             return good_labels, bad_labels
 
     def get_best_candidate(
-        self, sentence_cluster: np.array, cuttoff_length: int = 20, batch_size=10
+        self, sentence_cluster: np.ndarray, cuttoff_length: int = 20, batch_size=10
     ) -> List[str]:
         sentence_cluster = sentence_cluster[
             np.vectorize(lambda x: len(x) < cuttoff_length)(sentence_cluster)
@@ -121,7 +121,7 @@ class CustomAgglomerativeClustering:
                         ) * self.word_alignment_feature(row1, row2)
 
                 avg_proximity /= len(current_batch)
-                best_idx = np.argmax(avg_proximity)
+                best_idx = int(np.argmax(avg_proximity))
                 final_candidates.append(list(current_batch[best_idx]))
             final_candidates = final_candidates[total_sentences:]
             total_sentences = len(final_candidates)
@@ -168,8 +168,8 @@ class CustomAgglomerativeClustering:
 
     def generate_feature_candidates(
         self,
-        good_answers: np.array,
-        bad_answers: np.array,
+        good_answers: np.ndarray,
+        bad_answers: np.ndarray,
         train_quality: int,
     ):
         good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
@@ -273,12 +273,11 @@ class CustomAgglomerativeClustering:
                 good.append(np.sum(data[candidate] * data["[LABELS]"]))
                 bad.append(np.sum(data[candidate] * (1 - data["[LABELS]"])))
                 patterns.append(str(candidate))
-            good, bad = np.array(good), np.array(bad)
             one_fpr = None
             if label == "good":
-                one_fpr = 1 - (bad / np.sum(1 - data["[LABELS]"]))
+                one_fpr = 1 - (np.array(bad) / np.sum(1 - data["[LABELS]"]))
             else:
-                one_fpr = 1 - (good / np.sum(data["[LABELS]"]))
+                one_fpr = 1 - (np.array(good) / np.sum(data["[LABELS]"]))
 
             patterns_with_fpr = list(zip(patterns, one_fpr))
             patterns_with_fpr.sort(key=lambda x: len(x[0]))
