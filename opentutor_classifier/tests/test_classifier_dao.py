@@ -4,7 +4,6 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from opentutor_classifier.api import get_graphql_endpoint, query_lesson_updated_at
 import responses
 from opentutor_classifier.dao import find_data_dao
 from opentutor_classifier.classifier_dao import ClassifierDao
