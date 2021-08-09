@@ -51,6 +51,7 @@ class GQLQueryBody(TypedDict):
     query: str
     variables: dict
 
+
 GQL_QUERY_LESSON_UPDATED_AT = """
 query LessonUpdatedAt($lessonId: String!) {
     me {
@@ -114,13 +115,15 @@ mutation UpdateLessonFeatures(
     }
 }"""
 
-def query_lesson_updated_at(lesson:str) -> GQLQueryBody:
+
+def query_lesson_updated_at(lesson: str) -> GQLQueryBody:
     return {
         "query": GQL_QUERY_LESSON_UPDATED_AT,
         "variables": {
             "lessonId": lesson,
-        }
+        },
     }
+
 
 def query_all_training_data_gql() -> GQLQueryBody:
     return {"query": GQL_QUERY_ALL_TRAINING_DATA, "variables": {}}
@@ -199,7 +202,7 @@ def fetch_config(lesson: str) -> QuestionConfig:
     return dict_to_question_config(yaml.safe_load(data.get("stringified") or ""))
 
 
-def fetch_lesson_updated_at(lesson:str) -> datetime:
+def fetch_lesson_updated_at(lesson: str) -> datetime:
     tdjson = __auth_gql(query_lesson_updated_at(lesson))
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))

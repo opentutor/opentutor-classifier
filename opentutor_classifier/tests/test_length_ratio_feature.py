@@ -6,6 +6,7 @@
 #
 from os import path
 import pytest
+import responses
 
 from opentutor_classifier import (
     ARCH_LR_CLASSIFIER,
@@ -87,6 +88,7 @@ def test_feature_length_ratio_can_be_enabled_w_env_var(
         )
     ],
 )
+@responses.activate
 def test_feature_length_ratio_disabled_by_default(
     lesson: str, arch: str, tmpdir, data_root: str, shared_root: str
 ):
@@ -130,7 +132,7 @@ def _train_classifier_and_get_confidence(
         )
         from opentutor_classifier.classifier_dao import ClassifierDao
 
-        classifier = ClassifierDao().find_classifier(classifier_config, arch)
+        classifier = ClassifierDao().find_classifier(lesson, classifier_config, arch)
 
         answer_classifier_result = classifier.evaluate(
             AnswerClassifierInput(
@@ -150,6 +152,7 @@ def _train_classifier_and_get_confidence(
         ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "The answer is mixture A"),
     ],
 )
+@responses.activate
 def test_using_feature_length_ratio_lowers_confidence_w_long_ideal_answers(
     lesson: str,
     arch: str,
@@ -195,6 +198,7 @@ def test_using_feature_length_ratio_lowers_confidence_w_long_ideal_answers(
         ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "Mixture A", True, False),
     ],
 )
+@responses.activate
 def test_feature_length_ratio_used_for_prediction_only_when_trained_in(
     lesson: str,
     arch: str,

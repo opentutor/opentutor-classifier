@@ -10,7 +10,8 @@ from typing import List
 
 import pytest
 
-from opentutor_classifier import ExpectationClassifierResult, SpeechActClassifierResult  # type: ignore
+from opentutor_classifier import ExpectationClassifierResult, SpeechActClassifierResult
+import responses  # type: ignore
 from . import fixture_path
 from .utils import mocked_data_dao
 
@@ -62,6 +63,7 @@ def test_returns_400_response_when_input_not_set(client):
         )
     ],
 )
+@responses.activate
 def test_evaluate_uses_default_model_when_question_untrained(
     client,
     lesson: str,
@@ -152,6 +154,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
         ),
     ],
 )
+@responses.activate
 def test_evaluate_classifies_user_answers(
     client,
     lesson,
@@ -161,35 +164,43 @@ def test_evaluate_classifies_user_answers(
     expected_results,
     expected_sa_results,
 ):
-    res = client.post(
-        "/classifier/evaluate/",
-        data=json.dumps(
-            {
-                "lesson": lesson,
-                "input": answer,
-                "expectation": expectation,
-                "config": config_data,
-            }
-        ),
-        content_type="application/json",
-    )
-    speech_acts = res.json["output"]["speechActs"]
-    assert (
-        speech_acts["metacognitive"]["evaluation"]
-        == expected_sa_results["metacognitive"].evaluation
-    )
-    assert (
-        speech_acts["metacognitive"]["score"]
-        == expected_sa_results["metacognitive"].score
-    )
-    assert (
-        speech_acts["profanity"]["evaluation"]
-        == expected_sa_results["profanity"].evaluation
-    )
-    assert speech_acts["profanity"]["score"] == expected_sa_results["profanity"].score
-    results = res.json["output"]["expectationResults"]
-    assert len(results) == len(expected_results)
-    for res, res_expected in zip(results, expected_results):
-        assert res["expectationId"] == res_expected.expectation_id
-        assert round(float(res["score"]), 2) == res_expected.score
-        assert res["evaluation"] == res_expected.evaluation
+    with mocked_data_dao(
+        lesson,
+        fixture_path("data"),
+        fixture_path("models"),
+        fixture_path("models_deployed"),
+    ):
+        res = client.post(
+            "/classifier/evaluate/",
+            data=json.dumps(
+                {
+                    "lesson": lesson,
+                    "input": answer,
+                    "expectation": expectation,
+                    "config": config_data,
+                }
+            ),
+            content_type="application/json",
+        )
+        speech_acts = res.json["output"]["speechActs"]
+        assert (
+            speech_acts["metacognitive"]["evaluation"]
+            == expected_sa_results["metacognitive"].evaluation
+        )
+        assert (
+            speech_acts["metacognitive"]["score"]
+            == expected_sa_results["metacognitive"].score
+        )
+        assert (
+            speech_acts["profanity"]["evaluation"]
+            == expected_sa_results["profanity"].evaluation
+        )
+        assert (
+            speech_acts["profanity"]["score"] == expected_sa_results["profanity"].score
+        )
+        results = res.json["output"]["expectationResults"]
+        assert len(results) == len(expected_results)
+        for res, res_expected in zip(results, expected_results):
+            assert res["expectationId"] == res_expected.expectation_id
+            assert round(float(res["score"]), 2) == res_expected.score
+            assert res["evaluation"] == res_expected.evaluation

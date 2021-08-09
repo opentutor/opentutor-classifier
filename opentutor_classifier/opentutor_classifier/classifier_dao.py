@@ -29,16 +29,20 @@ class ClassifierDao:
         self.cache = pylru.lrucache(int(environ.get("CACHE_MAX_SIZE", "100")))
 
     def find_classifier(
-        self, lesson:str, config: ClassifierConfig, arch: str = ""
+        self, lesson: str, config: ClassifierConfig, arch: str = ""
     ) -> AnswerClassifier:
         lesson_updated_at = fetch_lesson_updated_at(lesson)
         if config.model_name in self.cache:
             e = self.cache[config.model_name]
-            if e and e.last_trained_at >= e.classifier.get_last_trained_at() and e.lesson_updated_at >= lesson_updated_at:
+            if (
+                e
+                and e.last_trained_at >= e.classifier.get_last_trained_at()
+                and e.lesson_updated_at >= lesson_updated_at
+            ):
                 return e.classifier
         c = ClassifierFactory().new_classifier(
             config=config, arch=arch or get_classifier_arch()
         )
 
-        self.cache[config.model_name] = Entry(lesson_updated_at, c)
+        self.cache[config.model_name] = Entry(c, lesson_updated_at)
         return c
