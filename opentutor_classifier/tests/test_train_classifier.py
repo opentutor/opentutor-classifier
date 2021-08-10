@@ -111,7 +111,7 @@ def _test_train_and_predict(
             [
                 ExpectationTrainingResult(expectation_id="0", accuracy=0.90),
                 ExpectationTrainingResult(expectation_id="1", accuracy=0.95),
-                ExpectationTrainingResult(expectation_id="2", accuracy=0.96),
+                ExpectationTrainingResult(expectation_id="2", accuracy=0.95),
             ],
             1,
         ),
