@@ -10,7 +10,7 @@ from typing import List
 
 import pytest
 
-from opentutor_classifier import ExpectationClassifierResult, SpeechActClassifierResult # type: ignore 
+from opentutor_classifier import ExpectationClassifierResult, SpeechActClassifierResult # type: ignore
 import responses  # type: ignore
 from . import fixture_path
 from .utils import mocked_data_dao
