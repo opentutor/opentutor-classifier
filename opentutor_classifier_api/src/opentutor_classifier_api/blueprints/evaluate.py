@@ -76,14 +76,16 @@ def evaluate():
     ]
     input_sentence = args.get("input")
     exp_num = args.get("expectation", "")
+    lesson = args.get("lesson")
     shared_root = os.environ.get("SHARED_ROOT") or "shared"
     classifier = _get_dao().find_classifier(
+        lesson,
         ClassifierConfig(
             dao=opentutor_classifier.dao.find_data_dao(),
             model_name=model_name,
             model_roots=model_roots,
             shared_root=shared_root,
-        )
+        ),
     )
     _model_op = classifier.evaluate(
         AnswerClassifierInput(

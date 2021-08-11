@@ -4,6 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+import responses
 from opentutor_classifier.dao import find_data_dao
 from opentutor_classifier.classifier_dao import ClassifierDao
 from opentutor_classifier import (
@@ -38,6 +39,7 @@ def shared_root(word2vec) -> str:
         ("question1", ARCH_LR_CLASSIFIER),
     ],
 )
+@responses.activate
 def test_classifier_cache(arch: str, lesson: str, tmpdir, data_root, shared_root):
     with test_env_isolated(
         tmpdir, data_root, shared_root, arch=arch, lesson=lesson
@@ -58,11 +60,11 @@ def test_classifier_cache(arch: str, lesson: str, tmpdir, data_root, shared_root
         )
 
         dao = ClassifierDao()
-        classifier1 = dao.find_classifier(config, arch)
-        classifier2 = dao.find_classifier(config, arch)
+        classifier1 = dao.find_classifier(lesson, config, arch)
+        classifier2 = dao.find_classifier(lesson, config, arch)
         assert classifier1 == classifier2
 
         train_classifier(lesson, test_config)
 
-        classifier3 = dao.find_classifier(config, arch)
+        classifier3 = dao.find_classifier(lesson, config, arch)
         assert classifier3 != classifier1
