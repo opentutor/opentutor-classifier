@@ -6,6 +6,7 @@
 #
 from dataclasses import dataclass
 from datetime import datetime
+from dateutil import parser
 from io import StringIO
 import json
 import os
@@ -207,7 +208,8 @@ def fetch_lesson_updated_at(lesson: str) -> datetime:
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
     data = tdjson["data"]["me"]["lesson"]["updatedAt"]
-    return datetime.fromisoformat(data)
+    # can't use date.fromisoformat because it doesn't handle Z suffix
+    return parser.isoparse(data)
 
 
 def fetch_training_data(lesson: str, url="") -> TrainingInput:
