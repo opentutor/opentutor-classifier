@@ -72,7 +72,7 @@ def test_text2num(sentence: str, expected_transformation: str):
         ),
         (
             [("uniform", 0.8), ("burn", 0.5), ("candles + burn + uniform", 0.75)],
-            ["candles + burn + uniform", "uniform"],
+            ["uniform"],
             0.7,
         ),
     ],
