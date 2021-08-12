@@ -105,37 +105,28 @@ def _test_train_and_predict(
     "example,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
         (
-            "shapes",
+            "ies-rectangle",
             ARCH_LR_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(expectation_id="0", accuracy=1.1),
+                ExpectationTrainingResult(expectation_id="0", accuracy=0.90),
+                ExpectationTrainingResult(expectation_id="1", accuracy=0.95),
+                ExpectationTrainingResult(expectation_id="2", accuracy=0.95),
             ],
             1,
         ),
-        # (
-        #     "ies-rectangle",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(expectation_id="0", accuracy=0.90),
-        #         ExpectationTrainingResult(expectation_id="1", accuracy=0.95),
-        #         ExpectationTrainingResult(expectation_id="2", accuracy=0.95),
-        #     ],
-        #     1,
-        # ),
-        # (
-        #     "candles",
-        #     ARCH_LR_CLASSIFIER,
-        #     CONFIDENCE_THRESHOLD_DEFAULT,
-        #     [
-        #         ExpectationTrainingResult(expectation_id="0", accuracy=0.81),
-        #         ExpectationTrainingResult(expectation_id="1", accuracy=0.81),
-        #         ExpectationTrainingResult(expectation_id="2", accuracy=0.83),
-        #         ExpectationTrainingResult(expectation_id="3", accuracy=0.95),
-        #     ],
-        #     0.95,
-        # ),
+        (
+            "candles",
+            ARCH_LR_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(expectation_id="0", accuracy=0.85),
+                ExpectationTrainingResult(expectation_id="1", accuracy=0.81),
+                ExpectationTrainingResult(expectation_id="2", accuracy=0.81),
+                ExpectationTrainingResult(expectation_id="3", accuracy=0.95),
+            ],
+            0.90,
+        ),
     ],
 )
 @pytest.mark.slow

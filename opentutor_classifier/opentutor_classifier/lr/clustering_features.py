@@ -85,7 +85,7 @@ class CustomDBScanClustering:
         sentence_cluster = sentence_cluster[
             np.vectorize(lambda x: len(x) < cuttoff_length)(sentence_cluster)
         ]
-        if len(sentence_cluster) < 4:
+        if len(sentence_cluster) < 5:
             return [""]
 
         final_candidates: List[List[str]] = list(sentence_cluster)
@@ -221,7 +221,7 @@ class CustomDBScanClustering:
         fpr_store: Dict[str, float] = dict()
         features: List[Tuple[float, str]] = []
         for pattern, fpr in set(patterns_with_fpr):
-            if fpr < fpr_cuttoff:
+            if fpr <= fpr_cuttoff:
                 continue
             ok = True
             for word in pattern.split("+"):
@@ -265,7 +265,7 @@ class CustomDBScanClustering:
         candidates: Dict[str, List[str]],
         input_x: List[str],
         input_y: List[str],
-        fpr_cuttoff: float = 0.8,
+        fpr_cuttoff: float = 0.80,
     ) -> Dict[str, List[str]]:
 
         useful_features: Dict[str, List[str]] = dict()

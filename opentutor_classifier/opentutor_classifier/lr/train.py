@@ -20,7 +20,6 @@ from sklearn.model_selection import LeaveOneOut
 from opentutor_classifier import DataDao
 from opentutor_classifier import (
     ARCH_LR_CLASSIFIER,
-    PROP_TRAIN_QUALITY,
     AnswerClassifierTraining,
     ArchLesson,
     DefaultModelSaveReq,
@@ -32,7 +31,7 @@ from opentutor_classifier import (
     TrainingResult,
     ClassifierMode,
 )
-from opentutor_classifier.config import get_train_quality_default
+from opentutor_classifier.config import get_train_quality_default, PROP_TRAIN_QUALITY
 from opentutor_classifier.log import logger
 
 from .constants import FEATURE_LENGTH_RATIO
@@ -171,14 +170,21 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             good = train_input.config.get_expectation_feature(exp_num, "good", [])
             bad = train_input.config.get_expectation_feature(exp_num, "bad", [])
 
-            pattern: Dict[str, List[str]] = {"good": [], "bad": []}
-            cluster_archetype: Dict[str, List[str]] = {"good": [], "bad": []}
+            config_features = {
+                "good": good,
+                "bad": bad,
+                FEATURE_LENGTH_RATIO: feature_length_ratio_enabled(),
+                FEATURE_REGEX_AGGREGATE_DISABLED: feature_regex_aggregate_disabled(),
+            }
+
             if self.train_quality == 1:
                 cluster_archetype = clustering.generate_feature_candidates(
                     np.array(processed_data)[np.array(train_y) == "good"],
                     np.array(processed_data)[np.array(train_y) == "bad"],
                     self.train_quality,
                 )
+                config_features["archetype_good"] = cluster_archetype["good"]
+                config_features["archetype_bad"] = cluster_archetype["bad"]
             elif self.train_quality > 1:
                 (
                     data,
@@ -193,16 +199,12 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                     data, candidates, train_x, train_y
                 )
 
-            config_updated.get_expectation(exp_num).features = {
-                "good": good,
-                "bad": bad,
-                "patterns_good": pattern["good"],
-                "patterns_bad": pattern["bad"],
-                "archetype_good": cluster_archetype["good"],
-                "archetype_bad": cluster_archetype["bad"],
-                FEATURE_LENGTH_RATIO: feature_length_ratio_enabled(),
-                FEATURE_REGEX_AGGREGATE_DISABLED: feature_regex_aggregate_disabled(),
-            }
+                config_features["archetype_good"] = cluster_archetype["good"]
+                config_features["archetype_bad"] = cluster_archetype["bad"]
+                config_features["patterns_good"] = pattern["good"]
+                config_features["patterns_bad"] = pattern["bad"]
+
+            config_updated.get_expectation(exp_num).features = config_features
 
             features = [
                 np.array(
@@ -218,8 +220,10 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         clustering,
                         mode=ClassifierMode.TRAIN,
                         expectation_config=train_input.config.get_expectation(exp_num),
-                        patterns=pattern["good"] + pattern["bad"],
-                        archetypes=cluster_archetype["good"] + cluster_archetype["bad"],
+                        patterns=config_features.get("patterns_good", [])
+                        + config_features.get("patterns_bad", []),
+                        archetypes=config_features.get("archetype_good", [])
+                        + config_features.get("archetype_bad", []),
                     )
                 )
                 for raw_example, example in zip(train_x, processed_data)

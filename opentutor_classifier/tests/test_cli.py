@@ -123,7 +123,7 @@ def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_roo
             "question2",
             "Current flows in the same direction as the arrow",
             ARCH_DEFAULT,
-            [_TestExpectation(expectation="0", score=0.65, evaluation="Good")],
+            [_TestExpectation(expectation="0", score=0.64, evaluation="Good")],
         ),
     ],
 )

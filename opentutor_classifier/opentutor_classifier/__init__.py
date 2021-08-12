@@ -14,8 +14,8 @@ from typing import Any, Dict, List, Optional
 import yaml
 
 from opentutor_classifier.camelcase import dict_camel_to_snake
-from opentutor_classifier.config import PROP_TRAIN_QUALITY
 from opentutor_classifier.speechact import SpeechActClassifierResult
+from opentutor_classifier.config import PROP_TRAIN_QUALITY, get_train_quality_default
 
 
 @dataclass
@@ -278,7 +278,7 @@ class ExpectationFeatures:
 @dataclass
 class TrainingConfig:
     shared_root: str = "shared"
-    properties = {PROP_TRAIN_QUALITY: 3}
+    properties = {"PLACEHOLDER": 0}
 
 
 class AnswerClassifierTraining(ABC):
