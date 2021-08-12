@@ -8,7 +8,7 @@ from os import path
 from contextlib import contextmanager
 from distutils.dir_util import copy_tree
 from pathlib import Path
-from typing import Any, List
+from typing import Any, Callable, List, Optional
 from unittest.mock import patch
 
 import pandas as pd
@@ -199,6 +199,7 @@ def copy_test_env_to_tmp(
     tmpdir,
     data_root: str,
     shared_root: str,
+    find_data_dao: Callable[[], DataDao],
     arch="",
     deployed_models="",
     lesson="",
@@ -210,6 +211,7 @@ def copy_test_env_to_tmp(
         data_root=path.join(testdir, "data"),
         deployed_models=deployed_models or fixture_path("models_deployed"),
         is_default_model=is_default_model,
+        find_data_dao=find_data_dao,
         output_dir=path.join(
             testdir, "model_root", path.basename(path.normpath(data_root))
         ),
@@ -335,10 +337,18 @@ def test_env_isolated(
     lesson="",
     is_default_model=False,
 ):
+    data_dao_ref: Optional[DataDao] = None
+
+    def find_data_dao() -> DataDao:
+        if data_dao_ref is None:
+            raise Exception("data dao not set")
+        return data_dao_ref
+
     config = copy_test_env_to_tmp(
         tmpdir,
         data_root,
         shared_root,
+        find_data_dao,
         arch=arch,
         is_default_model=is_default_model,
         lesson=lesson,
@@ -350,11 +360,12 @@ def test_env_isolated(
     )
     patcher = patch("opentutor_classifier.dao.find_data_dao")
     try:
-        mock_find_data_dao = patcher.start()
-        mock_find_data_dao.return_value = _TestDataDao(
+        data_dao_ref = _TestDataDao(
             FileDataDao(config.data_root, model_root=config.output_dir),
             config.is_default_model,
         )
+        mock_find_data_dao = patcher.start()
+        mock_find_data_dao.return_value = data_dao_ref
         yield config
     finally:
         patcher.stop()
