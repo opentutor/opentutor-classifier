@@ -15,7 +15,6 @@ import yaml
 
 from opentutor_classifier.camelcase import dict_camel_to_snake
 from opentutor_classifier.speechact import SpeechActClassifierResult
-from opentutor_classifier.config import PROP_TRAIN_QUALITY, get_train_quality_default
 
 
 @dataclass
