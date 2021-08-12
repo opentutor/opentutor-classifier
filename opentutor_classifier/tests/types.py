@@ -6,7 +6,8 @@
 #
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import List, Tuple
+from opentutor_classifier.dao import DataDao
+from typing import Callable, List, Tuple
 
 from opentutor_classifier import (
     AnswerClassifierInput,
@@ -25,6 +26,7 @@ class ComparisonType(Enum):
 class _TestConfig:
     data_root: str
     deployed_models: str
+    find_data_dao: Callable[[], DataDao]
     output_dir: str
     shared_root: str
     arch: str = ""

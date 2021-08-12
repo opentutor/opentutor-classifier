@@ -5,14 +5,24 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from os import path
-
 import pytest
+import responses
+from typing import List, Tuple
 
+from opentutor_classifier import (
+    ARCH_LR_CLASSIFIER,
+    ModelRef,
+)
+from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.lr.features import preprocess_sentence
 from opentutor_classifier.lr.clustering_features import CustomDBScanClustering
-
-from typing import List, Tuple
-from .utils import fixture_path
+from opentutor_classifier.lr.constants import MODEL_FILE_NAME
+from opentutor_classifier.config import PROP_TRAIN_QUALITY
+from .utils import (
+    fixture_path,
+    test_env_isolated,
+    train_classifier,
+)
 
 
 @pytest.fixture(scope="module")
@@ -124,3 +134,36 @@ def test_univariate_selection(
         patterns, input_x, input_y, n
     )
     assert patterns == expected_patterns, f"Expected {expected_patterns} got {patterns}"
+
+
+@responses.activate
+@pytest.mark.parametrize(
+    "lesson,arch,train_quality",
+    [("shapes", ARCH_LR_CLASSIFIER, 3)],
+)
+def test_generates_features_when_env_train_quality_below_3(
+    lesson: str,
+    arch: str,
+    train_quality: int,
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    monkeypatch,
+):
+    monkeypatch.setenv(PROP_TRAIN_QUALITY, str(train_quality))
+    with test_env_isolated(
+        tmpdir, data_root, shared_root, arch=arch, lesson=lesson
+    ) as test_config:
+        train_result = train_classifier(lesson, test_config)
+        print(train_result)
+        _, model_name = path.split(train_result.models)
+        cm = find_predicton_config_and_pickle(
+            ModelRef(
+                arch=ARCH_LR_CLASSIFIER,
+                lesson=model_name,
+                filename=MODEL_FILE_NAME,
+            ),
+            test_config.find_data_dao(),
+        )
+        assert cm is not None
+        # cm.config.get_expectation(exp.expectation)

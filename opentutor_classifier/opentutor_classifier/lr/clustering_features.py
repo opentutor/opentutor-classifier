@@ -19,9 +19,6 @@ from .features import (
     _avg_feature_vector,
 )
 
-CLUSTERS_MIN = 1
-CLUSTERS_MAX = 5
-
 
 class CustomDBScanClustering:
     def __init__(self, word2vec: Word2VecKeyedVectors, index2word_set):
@@ -62,8 +59,8 @@ class CustomDBScanClustering:
 
     def fit_predict(self, data: List[np.ndarray]) -> np.ndarray:
         # Calculate pairwise distances with the new metric.'
-        agg = DBSCAN(eps=0.5)
-        return agg.fit_predict(data)
+        agg = DBSCAN(eps=0.30)
+        return agg.fit_predict(data) if len(data) > 0 else []
 
     def get_embedding(self, sentence: List[str]) -> np.ndarray:
         return _avg_feature_vector(
@@ -223,7 +220,7 @@ class CustomDBScanClustering:
     ) -> List[str]:
         fpr_store: Dict[str, float] = dict()
         features: List[Tuple[float, str]] = []
-        for pattern, fpr in patterns_with_fpr:
+        for pattern, fpr in set(patterns_with_fpr):
             if fpr < fpr_cuttoff:
                 continue
             ok = True

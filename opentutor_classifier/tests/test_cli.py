@@ -4,6 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from opentutor_classifier.dao import DataDao
 from os import path
 import subprocess
 import re
@@ -45,8 +46,15 @@ def capture(command):
 def __train_model(
     tmpdir, lesson: str, shared_root: str
 ) -> Tuple[str, str, str, _TestConfig]:
+    def _find_data_dao_not_implemented() -> DataDao:
+        raise NotImplementedError()
+
     config = copy_test_env_to_tmp(
-        tmpdir, fixture_path("data"), shared_root, lesson=lesson
+        tmpdir,
+        fixture_path("data"),
+        shared_root,
+        _find_data_dao_not_implemented,
+        lesson=lesson,
     )
     command = [
         "poetry",
