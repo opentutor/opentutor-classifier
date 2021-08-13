@@ -158,8 +158,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 supergoodanswer = supergoodanswer + split_training_sets[exp_num][0][0]
 
         for exp_num, (train_x, train_y) in split_training_sets.items():
-            if not exp_num:
-                continue
             train_x.append(supergoodanswer)
             train_y.append("good")
             processed_data = _preprocess_trainx(train_x)
