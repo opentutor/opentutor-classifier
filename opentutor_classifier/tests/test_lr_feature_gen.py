@@ -137,41 +137,13 @@ def test_univariate_selection(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "lesson,arch",
+    "lesson,arch,train_quality,required_fields",
     [
         (
             "shapes",
             ARCH_LR_CLASSIFIER,
-        )
-    ],
-)
-def test_generates_features_when_env_train_quality_2(
-    lesson: str,
-    arch: str,
-    tmpdir,
-    data_root: str,
-    shared_root: str,
-    monkeypatch,
-):
-    monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(2))
-    with test_env_isolated(
-        tmpdir, data_root, shared_root, arch=arch, lesson=lesson
-    ) as test_config:
-        train_result = train_classifier(lesson, test_config)
-        _, model_name = path.split(train_result.models)
-
-        cm = find_predicton_config_and_pickle(
-            ModelRef(
-                arch=ARCH_LR_CLASSIFIER,
-                lesson=model_name,
-                filename=MODEL_FILE_NAME,
-            ),
-            test_config.find_data_dao(),
-        )
-
-        fields_in_config = frozenset(cm.config.get_expectation("0").features.keys())
-        required_fields = frozenset(
-            (
+            2,
+            [
                 "good",
                 "bad",
                 "featureLengthRatio",
@@ -182,50 +154,13 @@ def test_generates_features_when_env_train_quality_2(
                 "archetype_bad",
                 "featureDbScanClustersArchetypeEnabled",
                 "featureDbScanClustersPatternsEnabled",
-            )
-        )
-        assert (
-            fields_in_config == required_fields
-        ), f"Config file does not contain exact features as required, Expected {list(required_fields)} got {list(fields_in_config)}"
-
-
-@responses.activate
-@pytest.mark.parametrize(
-    "lesson,arch",
-    [
+            ],
+        ),
         (
             "shapes",
             ARCH_LR_CLASSIFIER,
-        ),
-    ],
-)
-def test_generates_features_when_env_train_quality_1(
-    lesson: str,
-    arch: str,
-    tmpdir,
-    data_root: str,
-    shared_root: str,
-    monkeypatch,
-):
-    monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(1))
-    with test_env_isolated(
-        tmpdir, data_root, shared_root, arch=arch, lesson=lesson
-    ) as test_config:
-        train_result = train_classifier(lesson, test_config)
-        _, model_name = path.split(train_result.models)
-
-        cm = find_predicton_config_and_pickle(
-            ModelRef(
-                arch=ARCH_LR_CLASSIFIER,
-                lesson=model_name,
-                filename=MODEL_FILE_NAME,
-            ),
-            test_config.find_data_dao(),
-        )
-
-        fields_in_config = frozenset(cm.config.get_expectation("0").features.keys())
-        required_fields = frozenset(
-            (
+            1,
+            [
                 "good",
                 "bad",
                 "featureLengthRatio",
@@ -234,32 +169,34 @@ def test_generates_features_when_env_train_quality_1(
                 "archetype_bad",
                 "featureDbScanClustersArchetypeEnabled",
                 "featureDbScanClustersPatternsEnabled",
-            )
-        )
-        assert (
-            fields_in_config == required_fields
-        ), f"Config file does not contain exact features as required, Expected {list(required_fields)} got {list(fields_in_config)}"
-
-
-@responses.activate
-@pytest.mark.parametrize(
-    "lesson,arch",
-    [
+            ],
+        ),
         (
             "shapes",
             ARCH_LR_CLASSIFIER,
-        )
+            0,
+            [
+                "good",
+                "bad",
+                "featureLengthRatio",
+                "featureRegexAggregateDisabled",
+                "featureDbScanClustersArchetypeEnabled",
+                "featureDbScanClustersPatternsEnabled",
+            ],
+        ),
     ],
 )
-def test_generates_features_when_env_train_quality_0(
+def test_generates_features_when_env_train_quality_2(
     lesson: str,
     arch: str,
+    train_quality: int,
+    required_fields: List[str],
     tmpdir,
     data_root: str,
     shared_root: str,
     monkeypatch,
 ):
-    monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(0))
+    monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(train_quality))
     with test_env_isolated(
         tmpdir, data_root, shared_root, arch=arch, lesson=lesson
     ) as test_config:
@@ -276,16 +213,6 @@ def test_generates_features_when_env_train_quality_0(
         )
 
         fields_in_config = frozenset(cm.config.get_expectation("0").features.keys())
-        required_fields = frozenset(
-            (
-                "good",
-                "bad",
-                "featureLengthRatio",
-                "featureRegexAggregateDisabled",
-                "featureDbScanClustersArchetypeEnabled",
-                "featureDbScanClustersPatternsEnabled",
-            )
-        )
-        assert (
-            fields_in_config == required_fields
+        assert fields_in_config == frozenset(
+            required_fields
         ), f"Config file does not contain exact features as required, Expected {list(required_fields)} got {list(fields_in_config)}"
