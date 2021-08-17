@@ -30,6 +30,7 @@ from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
 from opentutor_classifier.word2vec import find_or_load_word2vec
+from opentutor_classifier.config import PROP_TRAIN_QUALITY
 
 
 def _confidence_score(
@@ -146,6 +147,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 exp_conf.features.get("bad") or [],
                 clustering,
                 mode=ClassifierMode.PREDICT,
+                train_quality=exp_conf.features[PROP_TRAIN_QUALITY],
                 expectation_config=conf.get_expectation(exp.expectation),
                 patterns=exp_conf.features.get("patterns_good", [])
                 + exp_conf.features.get("patterns_bad", [])

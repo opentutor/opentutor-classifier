@@ -70,7 +70,9 @@ class CustomDBScanClustering:
             index2word_set=self.index2word_set,
         )
 
-    def get_clusters(self, good_answers: np.ndarray, bad_answers: np.ndarray):
+    def get_clusters(
+        self, good_answers: np.ndarray, bad_answers: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
         good_labels = self.fit_predict(
             [self.get_embedding(example) for example in good_answers]
         )
@@ -155,10 +157,7 @@ class CustomDBScanClustering:
         return data, useful_pattern_for_each_cluster
 
     def generate_feature_candidates(
-        self,
-        good_answers: np.ndarray,
-        bad_answers: np.ndarray,
-        train_quality: int,
+        self, good_answers: np.ndarray, bad_answers: np.ndarray, train_quality: int
     ):
         good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
         good_labels, bad_labels = self.get_clusters(good_answers, bad_answers)

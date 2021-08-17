@@ -1,5 +1,5 @@
 #
-# This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved.
+# This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved. 
 # Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
@@ -25,6 +25,7 @@ from .utils import (
     train_classifier,
     train_default_classifier,
     _TestExpectation,
+    run_classifier_testset,
 )
 
 CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
@@ -153,6 +154,64 @@ def test_train_and_predict_slow(
         data_root,
         shared_root,
     )
+
+
+@pytest.mark.parametrize(
+    "lesson,arch",
+    [
+        (
+            "shapes",
+            ARCH_LR_CLASSIFIER,
+        ),
+    ],
+)
+def test_predict_on_model_trained_with_cluster_features_but_cluster_features_later_disabled(
+    lesson: str,
+    arch: str,
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    monkeypatch,
+):
+    with test_env_isolated(
+        tmpdir, data_root, shared_root, arch=arch, lesson=lesson
+    ) as test_config:
+        monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(2))
+        train_result = train_classifier(lesson, test_config)
+        assert path.exists(train_result.models)
+
+        monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(0))
+        testset = read_example_testset(lesson)
+        run_classifier_testset(arch, train_result.models, shared_root, testset)
+
+
+@pytest.mark.parametrize(
+    "lesson,arch",
+    [
+        (
+            "shapes",
+            ARCH_LR_CLASSIFIER,
+        ),
+    ],
+)
+def test_predict_off_model_trained_with_cluster_features_but_cluster_features_later_enabled(
+    lesson: str,
+    arch: str,
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    monkeypatch,
+):
+    with test_env_isolated(
+        tmpdir, data_root, shared_root, arch=arch, lesson=lesson
+    ) as test_config:
+        monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(0))
+        train_result = train_classifier(lesson, test_config)
+        assert path.exists(train_result.models)
+
+        monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(2))
+        testset = read_example_testset(lesson)
+        run_classifier_testset(arch, train_result.models, shared_root, testset)
 
 
 def _test_train_and_predict_specific_answers_slow(

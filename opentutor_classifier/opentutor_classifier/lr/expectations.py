@@ -49,9 +49,10 @@ class LRExpectationClassifier:
         bad: List[str],
         clustering: CustomDBScanClustering,
         mode: ClassifierMode,
+        train_quality: int = 0,
         expectation_config: ExpectationConfig = None,
-        patterns: List[str] = None,
-        archetypes: List[str] = None,
+        patterns: List[str] = [],
+        archetypes: List[str] = [],
     ) -> List[float]:
         raw_example = alpha2digit(raw_example, "en")
         regex_good = features.regex_match(raw_example, good)
@@ -84,14 +85,15 @@ class LRExpectationClassifier:
             else:
                 feat.append(features.regex_match_ratio(raw_example, good))
                 feat.append(features.regex_match_ratio(raw_example, bad))
-        if archetypes:
+
+        if train_quality is not None and train_quality >= 1:
             for archetype in archetypes:
                 feat.append(
                     features.word2vec_example_similarity(
                         word2vec, index2word_set, example, archetype.split(" ")
                     )
                 )
-        if patterns:
+        if train_quality is not None and train_quality > 1:
             for pattern in patterns:
                 feat.append(features.check_is_pattern_match(raw_example, pattern))
         return feat

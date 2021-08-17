@@ -52,7 +52,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
         self.accuracy: Dict[str, int] = {}
         self.word2vec: Word2VecKeyedVectors = None
-        self.train_quality = 3
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
         self.word2vec = find_or_load_word2vec(
@@ -86,6 +85,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 [],
                 clustering,
                 ClassifierMode.TRAIN,
+                train_quality=0,
             )
             return features_list
 
@@ -173,6 +173,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 "bad": bad,
                 FEATURE_LENGTH_RATIO: feature_length_ratio_enabled(),
                 FEATURE_REGEX_AGGREGATE_DISABLED: feature_regex_aggregate_disabled(),
+                PROP_TRAIN_QUALITY: self.train_quality,
             }
 
             if self.train_quality == 1:
@@ -217,6 +218,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         bad,
                         clustering,
                         mode=ClassifierMode.TRAIN,
+                        train_quality=config_features[PROP_TRAIN_QUALITY],
                         expectation_config=train_input.config.get_expectation(exp_num),
                         patterns=config_features.get("patterns_good", [])
                         + config_features.get("patterns_bad", []),

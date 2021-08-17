@@ -5,8 +5,13 @@
 ## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 ##
 expectations:
-- expectationId: '0'
+- expectation_id: '0'
   features:
+    TRAIN_QUALITY: 2
+    archetype_bad:
+    - giving respect others bad
+    archetype_good:
+    - peer pressure
     bad:
     - \brule\w*\b.*\bdiffer\w*\b
     featureLengthRatio: false
@@ -16,13 +21,19 @@ expectations:
     patterns_bad:
     - bad
     - giving
+    - giving + others
+    - others + respect
     - respect
-    patterns_good:
-    - peer
-    - pressure
+    patterns_good: []
   ideal: peer pressure can cause you to allow inappropriate behavior
-- expectationId: '1'
+- expectation_id: '1'
   features:
+    TRAIN_QUALITY: 2
+    archetype_bad:
+    - caring people
+    archetype_good:
+    - peer pressure cause allow inappropriate behavioryou may get troubleenforcing
+      rule make unpopular
     bad:
     - \b(lov\w*|lik\w*|car)\b
     featureLengthRatio: false
@@ -31,23 +42,16 @@ expectations:
     - \b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b
     patterns_bad:
     - caring
-    - people
-    patterns_good:
-    - allow
-    - behavioryou
-    - cause
-    - get
-    - inappropriate
-    - make
-    - may
-    - peer
-    - pressure
-    - rule
-    - troubleenforcing
-    - unpopular
+    - caring + people
+    patterns_good: []
   ideal: you may get them in trouble
-- expectationId: '2'
+- expectation_id: '2'
   features:
+    TRAIN_QUALITY: 2
+    archetype_bad:
+    - disrespecting people good
+    archetype_good:
+    - integrity means right thing even makes unpopular
     bad:
     - \b(super\w*|bette\w*)\b
     featureLengthRatio: false
@@ -56,13 +60,8 @@ expectations:
     - \b(unpop\w*|hate\w*|unlik\w*|not\040popular)\b
     patterns_bad:
     - disrespecting
-    - good
-    patterns_good:
-    - even
-    - makes
-    - means
-    - right
-    - thing
-    - unpopular
+    - disrespecting + people
+    - good + people
+    patterns_good: []
   ideal: enforcing the rule can make you unpopular
 question: What are the challenges to demonstrating integrity in a group?
