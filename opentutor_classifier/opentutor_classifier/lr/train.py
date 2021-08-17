@@ -9,7 +9,11 @@ import json
 from os import path
 
 from typing import Dict, List
-from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
+from .constants import (
+    FEATURE_REGEX_AGGREGATE_DISABLED,
+    FEATURE_ARCHETYPE_ENABLED,
+    FEATURE_PATTERNS_ENABLED,
+)
 from .features import feature_regex_aggregate_disabled
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
@@ -85,7 +89,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 [],
                 clustering,
                 ClassifierMode.TRAIN,
-                train_quality=0,
+                feature_archetype_enabled=False,
+                feature_patterns_enabled=False,
             )
             return features_list
 
@@ -173,7 +178,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 "bad": bad,
                 FEATURE_LENGTH_RATIO: feature_length_ratio_enabled(),
                 FEATURE_REGEX_AGGREGATE_DISABLED: feature_regex_aggregate_disabled(),
-                PROP_TRAIN_QUALITY: self.train_quality,
+                FEATURE_ARCHETYPE_ENABLED: self.train_quality >= 1,
+                FEATURE_PATTERNS_ENABLED: self.train_quality > 1,
             }
 
             if self.train_quality == 1:
@@ -218,7 +224,12 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         bad,
                         clustering,
                         mode=ClassifierMode.TRAIN,
-                        train_quality=config_features[PROP_TRAIN_QUALITY],
+                        feature_archetype_enabled=config_features[
+                            FEATURE_ARCHETYPE_ENABLED
+                        ],
+                        feature_patterns_enabled=config_features[
+                            FEATURE_PATTERNS_ENABLED
+                        ],
                         expectation_config=train_input.config.get_expectation(exp_num),
                         patterns=config_features.get("patterns_good", [])
                         + config_features.get("patterns_bad", []),

@@ -180,7 +180,8 @@ def test_generates_features_when_env_train_quality_2(
                 "patterns_bad",
                 "archetype_good",
                 "archetype_bad",
-                "TRAIN_QUALITY",
+                "featureDbScanClustersArchetypeEnabled",
+                "featureDbScanClustersPatternsEnabled",
             )
         )
         assert (
@@ -231,7 +232,8 @@ def test_generates_features_when_env_train_quality_1(
                 "featureRegexAggregateDisabled",
                 "archetype_good",
                 "archetype_bad",
-                "TRAIN_QUALITY",
+                "featureDbScanClustersArchetypeEnabled",
+                "featureDbScanClustersPatternsEnabled",
             )
         )
         assert (
@@ -280,7 +282,8 @@ def test_generates_features_when_env_train_quality_0(
                 "bad",
                 "featureLengthRatio",
                 "featureRegexAggregateDisabled",
-                "TRAIN_QUALITY",
+                "featureDbScanClustersArchetypeEnabled",
+                "featureDbScanClustersPatternsEnabled",
             )
         )
         assert (

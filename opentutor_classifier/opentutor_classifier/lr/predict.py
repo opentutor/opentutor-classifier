@@ -24,7 +24,11 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier
-from .constants import MODEL_FILE_NAME
+from .constants import (
+    MODEL_FILE_NAME,
+    FEATURE_ARCHETYPE_ENABLED,
+    FEATURE_PATTERNS_ENABLED,
+)
 from .clustering_features import CustomDBScanClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
@@ -147,7 +151,12 @@ class LRAnswerClassifier(AnswerClassifier):
                 exp_conf.features.get("bad") or [],
                 clustering,
                 mode=ClassifierMode.PREDICT,
-                train_quality=exp_conf.features[PROP_TRAIN_QUALITY],
+                feature_archetype_enabled=exp_conf.features.get(
+                    FEATURE_ARCHETYPE_ENABLED, False
+                ),
+                feature_patterns_enabled=exp_conf.features.get(
+                    FEATURE_PATTERNS_ENABLED, False
+                ),
                 expectation_config=conf.get_expectation(exp.expectation),
                 patterns=exp_conf.features.get("patterns_good", [])
                 + exp_conf.features.get("patterns_bad", [])

@@ -49,7 +49,8 @@ class LRExpectationClassifier:
         bad: List[str],
         clustering: CustomDBScanClustering,
         mode: ClassifierMode,
-        train_quality: int = 0,
+        feature_archetype_enabled: bool = False,
+        feature_patterns_enabled: bool = False,
         expectation_config: ExpectationConfig = None,
         patterns: List[str] = [],
         archetypes: List[str] = [],
@@ -86,14 +87,14 @@ class LRExpectationClassifier:
                 feat.append(features.regex_match_ratio(raw_example, good))
                 feat.append(features.regex_match_ratio(raw_example, bad))
 
-        if train_quality is not None and train_quality >= 1:
+        if feature_archetype_enabled:
             for archetype in archetypes:
                 feat.append(
                     features.word2vec_example_similarity(
                         word2vec, index2word_set, example, archetype.split(" ")
                     )
                 )
-        if train_quality is not None and train_quality > 1:
+        if feature_patterns_enabled:
             for pattern in patterns:
                 feat.append(features.check_is_pattern_match(raw_example, pattern))
         return feat
