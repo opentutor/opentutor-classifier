@@ -1,0 +1,25 @@
+expectations:
+- expectation_id: '0'
+  features:
+    archetype_bad:
+    - current flows backward order
+    archetype_good:
+    - current flows identical direction arrow
+    bad:
+    - \b(oppo\w*|diffe\w*|back\w*|bot\w|aga\w*t|rev\w*)\b
+    - \b(right|cath\w*)\b.*\b(left|anode)\b
+    featureDbScanClustersArchetypeEnabled: true
+    featureDbScanClustersPatternsEnabled: true
+    featureLengthRatio: false
+    featureRegexAggregateDisabled: false
+    good:
+    - \b(sam\w*|const\w*|on\w*|eq(?!uip)\w*|id\w*n\w*[ck]\w*)\b
+    - \b(left|anode)\b.*\b(right|cath\w*)\b
+    patterns_bad:
+    - backward
+    - backward + current
+    - flows + order
+    patterns_good: []
+  ideal: ''
+question: With a DC input source, does current flow in the same or the opposite direction
+  of the diode arrow?

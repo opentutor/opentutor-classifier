@@ -99,6 +99,9 @@ def test_evaluate_example(
 ):
     testset = read_example_testset(lesson, confidence_threshold=confidence_threshold)
     with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
+        _find_or_train_classifier(
+            lesson, model_roots[0], model_roots[2], shared_root, arch=arch
+        )
         assert_testset_accuracy(
             arch,
             os.path.join(model_roots[0], lesson),
@@ -108,6 +111,7 @@ def test_evaluate_example(
         )
 
 
+@pytest.mark.only
 @pytest.mark.parametrize(
     "input_answer,input_expectation_number,config_data,expected_results",
     [
@@ -176,6 +180,9 @@ def test_evaluates_for_default_model(
         model_roots[1],
         is_default_model=True,
     ):
+        _find_or_train_classifier(
+            "default", model_roots[0], model_roots[2], shared_root
+        )
         classifier = ClassifierFactory().new_classifier(
             ClassifierConfig(
                 dao=opentutor_classifier.dao.find_data_dao(),
