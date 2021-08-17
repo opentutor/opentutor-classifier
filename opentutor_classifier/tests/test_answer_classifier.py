@@ -22,7 +22,7 @@ from opentutor_classifier import (
 from opentutor_classifier.config import confidence_threshold_default
 import opentutor_classifier.dao
 from opentutor_classifier.log import logger
-from opentutor_classifier.training import train_data_root
+from opentutor_classifier.training import train_data_root, train_default_data_root
 from opentutor_classifier.utils import dict_to_config
 from .utils import (
     assert_classifier_evaluate,
@@ -72,12 +72,20 @@ def _find_or_train_classifier(
         logger.warning(
             f"trained model not found in fixtures for test lesson {lesson}, attempting to train..."
         )
-        train_data_root(
-            data_root=example_dir,
-            config=TrainingConfig(shared_root=shared_root),
-            output_dir=model_root,
-            arch=arch,
-        )
+        if lesson == "default":
+            train_default_data_root(
+                data_root=example_dir,
+                config=TrainingConfig(shared_root=shared_root),
+                output_dir=model_root,
+                arch=arch,
+            )
+        else:
+            train_data_root(
+                data_root=example_dir,
+                config=TrainingConfig(shared_root=shared_root),
+                output_dir=model_root,
+                arch=arch,
+            )
     return cfac.new_classifier(cconf, arch=arch)
 
 
@@ -111,7 +119,6 @@ def test_evaluate_example(
         )
 
 
-@pytest.mark.only
 @pytest.mark.parametrize(
     "input_answer,input_expectation_number,config_data,expected_results",
     [

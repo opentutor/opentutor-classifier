@@ -21,7 +21,7 @@ import pandas as pd
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
 
-from opentutor_classifier import DataDao
+from opentutor_classifier import DataDao, QuestionConfig
 from opentutor_classifier import (
     ARCH_LR_CLASSIFIER,
     AnswerClassifierTraining,
@@ -116,6 +116,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 model=expectation_models,
             )
         )
+        dao.save_default_config(arch=ARCH_LR_CLASSIFIER, config=QuestionConfig())
         return dao.create_default_training_result(
             ARCH_LR_CLASSIFIER,
             ExpectationTrainingResult(expectation_id="", accuracy=accuracy),

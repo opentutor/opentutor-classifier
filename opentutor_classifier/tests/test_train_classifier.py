@@ -186,16 +186,23 @@ def test_predict_on_model_trained_with_cluster_features_but_cluster_features_lat
 
 
 @pytest.mark.parametrize(
-    "lesson,arch",
+    "lesson,use_default,arch",
     [
         (
             "shapes",
+            False,
+            ARCH_LR_CLASSIFIER,
+        ),
+        (
+            "shapes",
+            True,
             ARCH_LR_CLASSIFIER,
         ),
     ],
 )
 def test_predict_off_model_trained_with_cluster_features_but_cluster_features_later_enabled(
     lesson: str,
+    use_default: bool,
     arch: str,
     tmpdir,
     data_root: str,
@@ -203,15 +210,33 @@ def test_predict_off_model_trained_with_cluster_features_but_cluster_features_la
     monkeypatch,
 ):
     with test_env_isolated(
-        tmpdir, data_root, shared_root, arch=arch, lesson=lesson
+        tmpdir,
+        data_root,
+        shared_root,
+        arch=arch,
+        lesson=lesson,
+        is_default_model=use_default,
     ) as test_config:
         monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(0))
-        train_result = train_classifier(lesson, test_config)
+        train_result = (
+            train_default_classifier(test_config)
+            if use_default
+            else train_classifier(lesson, test_config)
+        )
         assert path.exists(train_result.models)
+        import logging
 
+        logging.warning(f"models={train_result.models}")
         monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(2))
         testset = read_example_testset(lesson)
-        run_classifier_testset(arch, train_result.models, shared_root, testset)
+        run_classifier_testset(
+            arch,
+            path.join(path.dirname(train_result.models), "default")
+            if use_default
+            else train_result.models,
+            shared_root,
+            testset,
+        )
 
 
 def _test_train_and_predict_specific_answers_slow(
