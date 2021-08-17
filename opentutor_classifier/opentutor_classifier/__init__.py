@@ -174,6 +174,13 @@ class DataDao(ABC):
             )
         )
 
+    def save_default_config(self, config: QuestionConfig, arch: str) -> None:
+        self.save_config(
+            QuestionConfigSaveReq(
+                arch=arch, config=config, lesson=self.get_default_lesson_name()
+            )
+        )
+
     def save_default_pickle(self, req: DefaultModelSaveReq) -> None:
         self.save_pickle(
             ModelSaveReq(
