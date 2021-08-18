@@ -108,7 +108,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
             {},
             [
                 ExpectationClassifierResult(
-                    expectation_id="0", score=0.84, evaluation="Good"
+                    expectation_id="0", score=0.76, evaluation="Good"
                 )
             ],
             {
@@ -123,13 +123,13 @@ def test_evaluate_uses_default_model_when_question_untrained(
             {},
             [
                 ExpectationClassifierResult(
-                    expectation_id="0", score=0.84, evaluation="Good"
+                    expectation_id="0", score=0.76, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
                     expectation_id="1", score=0.56, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation_id="2", score=0.62, evaluation="Bad"
+                    expectation_id="2", score=0.6, evaluation="Bad"
                 ),
             ],
             {
@@ -144,7 +144,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
             {},
             [
                 ExpectationClassifierResult(
-                    expectation_id="0", score=0.55, evaluation="Bad"
+                    expectation_id="0", score=0.52, evaluation="Bad"
                 )
             ],
             {
