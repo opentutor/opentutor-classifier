@@ -129,7 +129,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
                     expectation_id="1", score=0.56, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation_id="2", score=0.6, evaluation="Bad"
+                    expectation_id="2", score=0.61, evaluation="Bad"
                 ),
             ],
             {
@@ -144,7 +144,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
             {},
             [
                 ExpectationClassifierResult(
-                    expectation_id="0", score=0.52, evaluation="Bad"
+                    expectation_id="0", score=0.53, evaluation="Bad"
                 )
             ],
             {

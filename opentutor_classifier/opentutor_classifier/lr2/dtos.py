@@ -4,32 +4,21 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import pytest
+from dataclasses import dataclass
+from typing import Dict
 
-from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
-    ClassifierFactory,
-    ClassifierConfig,
-)
-import opentutor_classifier.dao
-from opentutor_classifier.lr2 import LRAnswerClassifier
+from sklearn import linear_model
+
+from opentutor_classifier import QuestionConfig
 
 
-@pytest.mark.parametrize(
-    "arch,expected_classifier_type",
-    [
-        (ARCH_LR_CLASSIFIER, LRAnswerClassifier),
-    ],
-)
-def test_creates_a_classifier_with_default_arch(
-    monkeypatch, arch: str, expected_classifier_type
-):
-    monkeypatch.setenv("CLASSIFIER_ARCH", arch)
-    assert isinstance(
-        ClassifierFactory().new_classifier(
-            ClassifierConfig(
-                dao=opentutor_classifier.dao.find_data_dao(), model_name="somemodel"
-            )
-        ),
-        expected_classifier_type,
-    )
+@dataclass
+class ExpectationToEvaluate:
+    expectation: str
+    classifier: linear_model.LogisticRegression
+
+
+@dataclass
+class InstanceModels:
+    models_by_expectation_num: Dict[int, linear_model.LogisticRegression]
+    config: QuestionConfig
