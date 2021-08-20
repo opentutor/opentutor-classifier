@@ -340,9 +340,8 @@ def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
     _factories_by_arch[arch] = fac
 
 
-ARCH_LR_CLASSIFIER2 = "opentutor_classifier.lr"
-ARCH_LR_CLASSIFIER = "opentutor_classifier.lr2"
-ARCH_DEFAULT = ARCH_LR_CLASSIFIER
+ARCH_LR2_CLASSIFIER = "opentutor_classifier.lr2"
+ARCH_DEFAULT = ARCH_LR2_CLASSIFIER
 
 
 def get_classifier_arch() -> str:

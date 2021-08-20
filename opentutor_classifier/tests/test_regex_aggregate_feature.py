@@ -8,11 +8,11 @@ from os import path
 import pytest
 
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
     ArchLesson,
 )
 
-from opentutor_classifier.lr.constants import FEATURE_REGEX_AGGREGATE_DISABLED
+from opentutor_classifier.lr2.constants import FEATURE_REGEX_AGGREGATE_DISABLED
 from opentutor_classifier.config import confidence_threshold_default
 
 from .utils import (
@@ -65,7 +65,7 @@ def _test_regex_aggregate_enabled(
     [
         (
             "proportion",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
         )
     ],
 )
@@ -86,7 +86,7 @@ def test_regex_aggregate_can_be_enabled_w_env_var(
     [
         (
             "proportion",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
         )
     ],
 )
@@ -99,7 +99,7 @@ def test_feature_regex_aggregate_disabled_by_default(
 @pytest.mark.parametrize(
     "lesson,arch,confidence_threshold,feature_env_var_enabled_at_train_time,feature_env_var_enabled_at_predict_time",
     [
-        ("proportion", ARCH_LR_CLASSIFIER, CONFIDENCE_THRESHOLD_DEFAULT, True, True),
+        ("proportion", ARCH_LR2_CLASSIFIER, CONFIDENCE_THRESHOLD_DEFAULT, True, True),
     ],
 )
 def test_classifier_and_get_accuracy(

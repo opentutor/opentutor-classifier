@@ -7,7 +7,7 @@
 import responses
 from opentutor_classifier.classifier_dao import ClassifierDao
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
     ClassifierConfig,
 )
 from os import path
@@ -35,7 +35,7 @@ def shared_root(word2vec) -> str:
 @pytest.mark.parametrize(
     "lesson,arch",
     [
-        ("question1", ARCH_LR_CLASSIFIER),
+        ("question1", ARCH_LR2_CLASSIFIER),
     ],
 )
 @responses.activate

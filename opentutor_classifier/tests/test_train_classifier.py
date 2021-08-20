@@ -12,7 +12,7 @@ import responses
 
 from opentutor_classifier import (
     ExpectationTrainingResult,
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
 from .utils import (
@@ -56,7 +56,7 @@ def test_outputs_models_at_specified_root(
 @pytest.mark.parametrize(
     "arch,expected_model_file_name",
     [
-        (ARCH_LR_CLASSIFIER, "models_by_expectation_num.pkl"),
+        (ARCH_LR2_CLASSIFIER, "models_by_expectation_num.pkl"),
     ],
 )
 def test_outputs_models_at_specified_model_root_for_default_model(
@@ -107,7 +107,7 @@ def _test_train_and_predict(
     [
         (
             "ies-rectangle",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(expectation_id="0", accuracy=0.90),
@@ -118,7 +118,7 @@ def _test_train_and_predict(
         ),
         (
             "candles",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(expectation_id="0", accuracy=0.85),
@@ -161,7 +161,7 @@ def test_train_and_predict_slow(
     [
         (
             "shapes",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
         ),
     ],
 )
@@ -191,12 +191,12 @@ def test_predict_on_model_trained_with_cluster_features_but_cluster_features_lat
         (
             "shapes",
             False,
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
         ),
         (
             "shapes",
             True,
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
         ),
     ],
 )
@@ -274,7 +274,7 @@ def _test_train_and_predict_specific_answers_slow(
     [
         (
             "ies-rectangle",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             [
                 # "5",
                 # "It is 3 and 7 and 4 and 0",
@@ -338,7 +338,7 @@ def test_train_and_predict_specific_answers_slow(
             # and those generated features would cause shape-errors at prediction time
             # when used with the default model
             "ies-mixture-with-trained-features-but-model-is-lost",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             ["a"],
             [
                 _TestExpectation(evaluation="Bad", score=0.50, expectation="2"),

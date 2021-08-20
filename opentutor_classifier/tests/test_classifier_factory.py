@@ -7,7 +7,7 @@
 import pytest
 
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
     ClassifierFactory,
     ClassifierConfig,
 )
@@ -18,7 +18,7 @@ from opentutor_classifier.lr2 import LRAnswerClassifier
 @pytest.mark.parametrize(
     "arch,expected_classifier_type",
     [
-        (ARCH_LR_CLASSIFIER, LRAnswerClassifier),
+        (ARCH_LR2_CLASSIFIER, LRAnswerClassifier),
     ],
 )
 def test_creates_a_classifier_with_default_arch(

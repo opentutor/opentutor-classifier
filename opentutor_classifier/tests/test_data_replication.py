@@ -16,7 +16,7 @@ from typing import List
 
 from opentutor_classifier import (
     ClassifierFactory,
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
     TrainingConfig,
     TrainingInput,
     TrainingResult,
@@ -117,7 +117,7 @@ def assert_inc(
     [
         (
             "mixture_toy",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             "mixture a",
             "0",

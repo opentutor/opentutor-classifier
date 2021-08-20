@@ -10,13 +10,13 @@ import responses
 from typing import List, Tuple
 
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
     ModelRef,
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
-from opentutor_classifier.lr.features import preprocess_sentence
-from opentutor_classifier.lr.clustering_features import CustomDBScanClustering
-from opentutor_classifier.lr.constants import MODEL_FILE_NAME
+from opentutor_classifier.lr2.features import preprocess_sentence
+from opentutor_classifier.lr2.clustering_features import CustomDBScanClustering
+from opentutor_classifier.lr2.constants import MODEL_FILE_NAME
 from .utils import (
     fixture_path,
     test_env_isolated,
@@ -141,7 +141,7 @@ def test_univariate_selection(
     [
         (
             "shapes",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             2,
             [
                 "good",
@@ -158,7 +158,7 @@ def test_univariate_selection(
         ),
         (
             "shapes",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             1,
             [
                 "good",
@@ -173,7 +173,7 @@ def test_univariate_selection(
         ),
         (
             "shapes",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             0,
             [
                 "good",
@@ -205,7 +205,7 @@ def test_generates_features_when_env_train_quality_2(
 
         cm = find_predicton_config_and_pickle(
             ModelRef(
-                arch=ARCH_LR_CLASSIFIER,
+                arch=ARCH_LR2_CLASSIFIER,
                 lesson=model_name,
                 filename=MODEL_FILE_NAME,
             ),

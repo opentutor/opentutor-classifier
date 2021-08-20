@@ -12,7 +12,7 @@ from gensim.models.keyedvectors import Word2VecKeyedVectors
 from sklearn import linear_model
 
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
     AnswerClassifier,
     AnswerClassifierInput,
     AnswerClassifierResult,
@@ -74,7 +74,7 @@ class LRAnswerClassifier(AnswerClassifier):
         if not self._model_and_config:
             cm = find_predicton_config_and_pickle(
                 ModelRef(
-                    arch=ARCH_LR_CLASSIFIER,
+                    arch=ARCH_LR2_CLASSIFIER,
                     lesson=self.model_name,
                     filename=MODEL_FILE_NAME,
                 ),
@@ -181,5 +181,5 @@ class LRAnswerClassifier(AnswerClassifier):
 
     def get_last_trained_at(self) -> float:
         return model_last_updated_at(
-            ARCH_LR_CLASSIFIER, self.model_name, self.model_roots, MODEL_FILE_NAME
+            ARCH_LR2_CLASSIFIER, self.model_name, self.model_roots, MODEL_FILE_NAME
         )

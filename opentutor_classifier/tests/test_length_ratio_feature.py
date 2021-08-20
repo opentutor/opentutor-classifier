@@ -9,13 +9,13 @@ import pytest
 import responses
 
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
     ArchLesson,
     ClassifierConfig,
     AnswerClassifierInput,
 )
 
-from opentutor_classifier.lr.constants import FEATURE_LENGTH_RATIO
+from opentutor_classifier.lr2.constants import FEATURE_LENGTH_RATIO
 
 from .utils import (
     fixture_path,
@@ -61,7 +61,7 @@ def _test_feature_length_ratio_enabled(
     [
         (
             "very_small_training_set",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
         )
     ],
 )
@@ -84,7 +84,7 @@ def test_feature_length_ratio_can_be_enabled_w_env_var(
     [
         (
             "very_small_training_set",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
         )
     ],
 )
@@ -147,9 +147,9 @@ def _train_classifier_and_get_confidence(
 @pytest.mark.parametrize(
     "lesson,arch,input_answer",
     [
-        ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "Mixture A"),
-        ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "A"),
-        ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "The answer is mixture A"),
+        ("long_ideal_answers_set", ARCH_LR2_CLASSIFIER, "Mixture A"),
+        ("long_ideal_answers_set", ARCH_LR2_CLASSIFIER, "A"),
+        ("long_ideal_answers_set", ARCH_LR2_CLASSIFIER, "The answer is mixture A"),
     ],
 )
 @responses.activate
@@ -194,8 +194,8 @@ def test_using_feature_length_ratio_lowers_confidence_w_long_ideal_answers(
 @pytest.mark.parametrize(
     "lesson,arch,input_answer,train_feature_on,predict_feature_on",
     [
-        ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "Mixture A", False, True),
-        ("long_ideal_answers_set", ARCH_LR_CLASSIFIER, "Mixture A", True, False),
+        ("long_ideal_answers_set", ARCH_LR2_CLASSIFIER, "Mixture A", False, True),
+        ("long_ideal_answers_set", ARCH_LR2_CLASSIFIER, "Mixture A", True, False),
     ],
 )
 @responses.activate
