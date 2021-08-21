@@ -99,6 +99,7 @@ class DefaultModelSaveReq(ArchFile):
 @dataclass
 class QuestionConfigSaveReq(ArchLesson):
     config: QuestionConfig
+    skip_feature_update: bool = False
 
 
 @dataclass
@@ -177,7 +178,10 @@ class DataDao(ABC):
     def save_default_config(self, config: QuestionConfig, arch: str) -> None:
         self.save_config(
             QuestionConfigSaveReq(
-                arch=arch, config=config, lesson=self.get_default_lesson_name()
+                arch=arch,
+                config=config,
+                lesson=self.get_default_lesson_name(),
+                skip_feature_update=True,
             )
         )
 
