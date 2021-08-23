@@ -201,7 +201,8 @@ class WebAppDataDao(DataDao):
         return self.file_dao.trained_model_exists(ref)
 
     def save_config(self, req: QuestionConfigSaveReq) -> None:
-        update_features(req)
+        if not req.skip_feature_update:
+            update_features(req)
         self.file_dao.save_config(req)
 
     def save_pickle(self, req: ModelSaveReq) -> None:
