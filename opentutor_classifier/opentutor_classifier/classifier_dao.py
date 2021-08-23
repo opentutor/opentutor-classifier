@@ -35,7 +35,7 @@ class ClassifierDao:
         lesson_updated_at = (
             fetch_lesson_updated_at(lesson)
             if cfac.has_trained_model(lesson, config, arch=arch)
-            else datetime.now()
+            else datetime.min
         )
         if config.model_name in self.cache:
             e = self.cache[config.model_name]
