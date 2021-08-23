@@ -220,7 +220,7 @@ class CustomDBScanClustering:
     ) -> List[str]:
         fpr_store: Dict[str, float] = dict()
         features: List[Tuple[float, str]] = []
-        for pattern, fpr in set(patterns_with_fpr):
+        for pattern, fpr in sorted(list(set(patterns_with_fpr))):
             if fpr <= fpr_cuttoff:
                 continue
             ok = True
