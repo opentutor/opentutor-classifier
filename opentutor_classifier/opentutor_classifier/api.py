@@ -207,9 +207,9 @@ def fetch_lesson_updated_at(lesson: str) -> datetime:
     tdjson = __auth_gql(query_lesson_updated_at(lesson))
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
-    data = tdjson["data"]["me"]["lesson"]["updatedAt"]
+    updated_at = tdjson["data"]["me"]["lesson"]["updatedAt"]
     # can't use date.fromisoformat because it doesn't handle Z suffix
-    return parser.isoparse(data)
+    return parser.isoparse(updated_at)
 
 
 def fetch_training_data(lesson: str, url="") -> TrainingInput:

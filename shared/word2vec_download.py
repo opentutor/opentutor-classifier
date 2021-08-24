@@ -11,7 +11,7 @@ from zipfile import ZipFile
 from utils import download
 
 
-def word2vec_download(to_path="installed", replace_existing=True) -> str:
+def word2vec_download(to_path="installed", replace_existing=False) -> str:
     word2vec_path = os.path.abspath(os.path.join(to_path, "word2vec.bin"))
     if os.path.isfile(word2vec_path) and not replace_existing:
         print(f"already is a file! {word2vec_path}")

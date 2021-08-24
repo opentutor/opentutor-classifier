@@ -1,5 +1,6 @@
 from itertools import combinations
 import heapq
+from opentutor_classifier.lr2.constants import BAD, GOOD
 from typing import Dict, List, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
@@ -7,9 +8,8 @@ import numpy as np
 import pandas as pd
 
 from scipy.optimize import linear_sum_assignment
-from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import DBSCAN
 from sklearn.feature_selection import SelectKBest, chi2
-from sklearn.metrics.pairwise import pairwise_distances
 
 from text_to_num import alpha2digit
 
@@ -17,13 +17,11 @@ from .features import (
     number_of_negatives,
     word2vec_example_similarity,
     check_is_pattern_match,
+    _avg_feature_vector,
 )
 
-CLUSTERS_MIN = 1
-CLUSTERS_MAX = 5
 
-
-class CustomAgglomerativeClustering:
+class CustomDBScanClustering:
     def __init__(self, word2vec: Word2VecKeyedVectors, index2word_set):
         self.word2vec = word2vec
         self.index2word_set = index2word_set
@@ -60,39 +58,32 @@ class CustomAgglomerativeClustering:
         ) / float(len(ia_) + n_exact_matches)
         return self.word_alignment_dp[key]
 
-    def alignment_metric(self, x, y) -> float:
-        if len(self.data[int(x[0])]) > len(self.data[int(y[0])]):
-            x, y = y, x
-        return 1 - self.word_alignment_feature(
-            self.data[int(y[0])], self.data[int(x[0])]
-        )
-
-    def fit_predict(self, data: np.ndarray, train_quality: int):
-        self.data = data
-        x = np.arange(len(self.data)).reshape(-1, 1)
-
+    def fit_predict(self, data: List[np.ndarray]) -> np.ndarray:
         # Calculate pairwise distances with the new metric.'
-        m = pairwise_distances(x, x, metric=self.alignment_metric)
+        agg = DBSCAN(eps=0.30)
+        return agg.fit_predict(data) if len(data) > 0 else []
 
-        agg = AgglomerativeClustering(
-            n_clusters=min(CLUSTERS_MAX, max(train_quality, CLUSTERS_MIN)),
-            affinity="precomputed",
-            linkage="average",
+    def get_embedding(self, sentence: List[str]) -> np.ndarray:
+        return _avg_feature_vector(
+            words=sentence,
+            model=self.word2vec,
+            num_features=300,
+            index2word_set=self.index2word_set,
         )
-        return agg.fit_predict(m)
 
     def get_clusters(
-        self, good_answers: np.array, bad_answers: np.array, train_quality: int
-    ):
-        if train_quality == 1:
-            return np.zeros_like(good_answers), np.zeros_like(bad_answers)
-        else:
-            good_labels = self.fit_predict(good_answers, train_quality)
-            bad_labels = self.fit_predict(bad_answers, train_quality)
-            return good_labels, bad_labels
+        self, good_answers: np.ndarray, bad_answers: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        good_labels = self.fit_predict(
+            [self.get_embedding(example) for example in good_answers]
+        )
+        bad_labels = self.fit_predict(
+            [self.get_embedding(example) for example in bad_answers]
+        )
+        return good_labels, bad_labels
 
     def get_best_candidate(
-        self, sentence_cluster: np.array, cuttoff_length: int = 20, batch_size=10
+        self, sentence_cluster: np.ndarray, cuttoff_length: int = 20, batch_size=10
     ) -> List[str]:
         sentence_cluster = sentence_cluster[
             np.vectorize(lambda x: len(x) < cuttoff_length)(sentence_cluster)
@@ -121,8 +112,8 @@ class CustomAgglomerativeClustering:
                         ) * self.word_alignment_feature(row1, row2)
 
                 avg_proximity /= len(current_batch)
-                best_idx = np.argmax(avg_proximity)
-                final_candidates.append(list(current_batch[best_idx]))
+                best_idx = int(np.argmax(avg_proximity))
+                final_candidates.append(current_batch[best_idx])
             final_candidates = final_candidates[total_sentences:]
             total_sentences = len(final_candidates)
 
@@ -133,8 +124,8 @@ class CustomAgglomerativeClustering:
         data: pd.DataFrame, best_targets: List[Tuple[str, List[str]]]
     ):
         useful_pattern_for_each_cluster: Dict[str, List[str]] = {
-            "good": list(),
-            "bad": list(),
+            GOOD: list(),
+            BAD: list(),
         }
 
         for label, best_target in best_targets:
@@ -167,22 +158,17 @@ class CustomAgglomerativeClustering:
         return data, useful_pattern_for_each_cluster
 
     def generate_feature_candidates(
-        self,
-        good_answers: np.array,
-        bad_answers: np.array,
-        train_quality: int,
+        self, good_answers: np.ndarray, bad_answers: np.ndarray, train_quality: int
     ):
         good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
-        good_labels, bad_labels = self.get_clusters(
-            good_answers, bad_answers, train_quality
-        )
+        good_labels, bad_labels = self.get_clusters(good_answers, bad_answers)
 
         best_candidates = []
 
         for cluster_label in np.unique(good_labels):
             best_candidates.append(
                 (
-                    "good",
+                    GOOD,
                     self.get_best_candidate(
                         good_answers[good_labels == cluster_label],
                     ),
@@ -192,7 +178,7 @@ class CustomAgglomerativeClustering:
         for cluster_label in np.unique(bad_labels):
             best_candidates.append(
                 (
-                    "bad",
+                    BAD,
                     self.get_best_candidate(
                         bad_answers[bad_labels == cluster_label],
                     ),
@@ -205,10 +191,26 @@ class CustomAgglomerativeClustering:
                 "[LABELS]": [1] * len(good_answers) + [0] * len(bad_answers),
             }
         )
+        archetype = {
+            GOOD: [
+                " ".join(archetype)
+                for label, archetype in best_candidates
+                if label == GOOD and archetype != [""]
+            ],
+            BAD: [
+                " ".join(archetype)
+                for label, archetype in best_candidates
+                if label == BAD and archetype != [""]
+            ],
+        }
 
-        data, candidates = self.generate_patterns_from_candidates(data, best_candidates)
-
-        return data, candidates
+        if train_quality > 1:
+            data, candidates = self.generate_patterns_from_candidates(
+                data, best_candidates
+            )
+            return data, candidates, archetype
+        else:
+            return archetype
 
     @staticmethod
     def deduplicate_patterns(
@@ -218,8 +220,8 @@ class CustomAgglomerativeClustering:
     ) -> List[str]:
         fpr_store: Dict[str, float] = dict()
         features: List[Tuple[float, str]] = []
-        for pattern, fpr in patterns_with_fpr:
-            if fpr < fpr_cuttoff:
+        for pattern, fpr in sorted(list(set(patterns_with_fpr))):
+            if fpr <= fpr_cuttoff:
                 continue
             ok = True
             for word in pattern.split("+"):
@@ -243,7 +245,7 @@ class CustomAgglomerativeClustering:
         if len(patterns) <= n:
             return patterns
         train_x: List[List[int]] = []
-        train_y: List[int] = [1 * (x == "good") for x in input_y]
+        train_y: List[int] = [1 * (x == GOOD) for x in input_y]
 
         for raw_example in input_x:
             raw_example = alpha2digit(raw_example, "en")
@@ -263,32 +265,31 @@ class CustomAgglomerativeClustering:
         candidates: Dict[str, List[str]],
         input_x: List[str],
         input_y: List[str],
-        fpr_cuttoff: float = 0.98,
+        fpr_cuttoff: float = 0.80,
     ) -> Dict[str, List[str]]:
 
         useful_features: Dict[str, List[str]] = dict()
-        for label in ("good", "bad"):
+        for label in (GOOD, BAD):
             good, bad, patterns = [], [], []
             for candidate in candidates[label]:
                 good.append(np.sum(data[candidate] * data["[LABELS]"]))
                 bad.append(np.sum(data[candidate] * (1 - data["[LABELS]"])))
                 patterns.append(str(candidate))
-            good, bad = np.array(good), np.array(bad)
             one_fpr = None
-            if label == "good":
-                one_fpr = 1 - (bad / np.sum(1 - data["[LABELS]"]))
+            if label == GOOD:
+                one_fpr = 1 - (np.array(good) / np.sum(1 - data["[LABELS]"]))
             else:
-                one_fpr = 1 - (good / np.sum(data["[LABELS]"]))
+                one_fpr = 1 - (np.array(bad) / np.sum(data["[LABELS]"]))
 
             patterns_with_fpr = list(zip(patterns, one_fpr))
             patterns_with_fpr.sort(key=lambda x: len(x[0]))
             # ignores bigger pattern if indivudal words in pattern have higher (1-fpr)
-            useful_features[label] = CustomAgglomerativeClustering.deduplicate_patterns(
+            useful_features[label] = CustomDBScanClustering.deduplicate_patterns(
                 patterns_with_fpr, fpr_cuttoff
             )
             useful_features[
                 label
-            ] = CustomAgglomerativeClustering.univariate_feature_selection(
+            ] = CustomDBScanClustering.univariate_feature_selection(
                 useful_features[label], input_x, input_y
             )
 

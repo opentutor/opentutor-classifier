@@ -5,10 +5,9 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import responses
-from opentutor_classifier.dao import find_data_dao
 from opentutor_classifier.classifier_dao import ClassifierDao
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
     ClassifierConfig,
 )
 from os import path
@@ -36,7 +35,7 @@ def shared_root(word2vec) -> str:
 @pytest.mark.parametrize(
     "lesson,arch",
     [
-        ("question1", ARCH_LR_CLASSIFIER),
+        ("question1", ARCH_LR2_CLASSIFIER),
     ],
 )
 @responses.activate
@@ -53,7 +52,7 @@ def test_classifier_cache(arch: str, lesson: str, tmpdir, data_root, shared_root
             test_config.output_dir,
         )
         config = ClassifierConfig(
-            dao=find_data_dao(),
+            dao=test_config.find_data_dao(),
             model_name=lesson,
             shared_root=shared_root,
             model_roots=[test_config.output_dir],

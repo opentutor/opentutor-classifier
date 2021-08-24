@@ -22,7 +22,7 @@ from opentutor_classifier import (
 from opentutor_classifier.config import confidence_threshold_default
 import opentutor_classifier.dao
 from opentutor_classifier.log import logger
-from opentutor_classifier.training import train_data_root
+from opentutor_classifier.training import train_data_root, train_default_data_root
 from opentutor_classifier.utils import dict_to_config
 from .utils import (
     assert_classifier_evaluate,
@@ -72,12 +72,20 @@ def _find_or_train_classifier(
         logger.warning(
             f"trained model not found in fixtures for test lesson {lesson}, attempting to train..."
         )
-        train_data_root(
-            data_root=example_dir,
-            config=TrainingConfig(shared_root=shared_root),
-            output_dir=model_root,
-            arch=arch,
-        )
+        if lesson == "default":
+            train_default_data_root(
+                data_root=example_dir,
+                config=TrainingConfig(shared_root=shared_root),
+                output_dir=model_root,
+                arch=arch,
+            )
+        else:
+            train_data_root(
+                data_root=example_dir,
+                config=TrainingConfig(shared_root=shared_root),
+                output_dir=model_root,
+                arch=arch,
+            )
     return cfac.new_classifier(cconf, arch=arch)
 
 
@@ -99,6 +107,9 @@ def test_evaluate_example(
 ):
     testset = read_example_testset(lesson, confidence_threshold=confidence_threshold)
     with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
+        _find_or_train_classifier(
+            lesson, model_roots[0], model_roots[2], shared_root, arch=arch
+        )
         assert_testset_accuracy(
             arch,
             os.path.join(model_roots[0], lesson),
@@ -176,6 +187,9 @@ def test_evaluates_for_default_model(
         model_roots[1],
         is_default_model=True,
     ):
+        _find_or_train_classifier(
+            "default", model_roots[0], model_roots[2], shared_root
+        )
         classifier = ClassifierFactory().new_classifier(
             ClassifierConfig(
                 dao=opentutor_classifier.dao.find_data_dao(),

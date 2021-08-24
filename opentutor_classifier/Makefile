@@ -14,7 +14,7 @@ install: poetry-ensure-installed
 	poetry run python -m nltk.downloader wordnet
 	poetry run python -m nltk.downloader averaged_perceptron_tagger
 	poetry run python -m nltk.downloader stopwords
-
+	
 .PHONY: poetry-build-classifier
 poetry-build-classifier: $(VENV)
 	poetry build

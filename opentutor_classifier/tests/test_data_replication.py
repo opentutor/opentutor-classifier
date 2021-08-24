@@ -16,7 +16,7 @@ from typing import List
 
 from opentutor_classifier import (
     ClassifierFactory,
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
     TrainingConfig,
     TrainingInput,
     TrainingResult,
@@ -40,7 +40,7 @@ from .utils import (
 
 
 CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
-_REP_FACTOR = [1, 2, 5, 10]
+_REP_FACTOR = [1, 2, 4, 8]
 
 
 @pytest.fixture(scope="module")
@@ -117,7 +117,7 @@ def assert_inc(
     [
         (
             "mixture_toy",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             "mixture a",
             "0",

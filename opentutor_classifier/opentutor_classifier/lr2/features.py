@@ -94,7 +94,7 @@ def _avg_feature_vector(
     return feature_vec
 
 
-def _calculate_similarity(a: float, b: float) -> float:
+def _calculate_similarity(a: np.ndarray, b: np.ndarray) -> float:
     similarity = 1 - spatial.distance.cosine(a, b)
     return similarity if not math.isnan(similarity) else 0
 

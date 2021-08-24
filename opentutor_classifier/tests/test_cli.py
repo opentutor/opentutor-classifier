@@ -4,6 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from opentutor_classifier.dao import DataDao
 from os import path
 import subprocess
 import re
@@ -45,8 +46,15 @@ def capture(command):
 def __train_model(
     tmpdir, lesson: str, shared_root: str
 ) -> Tuple[str, str, str, _TestConfig]:
+    def _find_data_dao_not_implemented() -> DataDao:
+        raise NotImplementedError()
+
     config = copy_test_env_to_tmp(
-        tmpdir, fixture_path("data"), shared_root, lesson=lesson
+        tmpdir,
+        fixture_path("data"),
+        shared_root,
+        _find_data_dao_not_implemented,
+        lesson=lesson,
     )
     command = [
         "poetry",
@@ -98,7 +106,7 @@ def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_roo
             "peer pressure can change your behavior",
             ARCH_DEFAULT,
             [
-                _TestExpectation(expectation="0", score=0.8, evaluation="Good"),
+                _TestExpectation(expectation="0", score=0.72, evaluation="Good"),
                 # _TestExpectation(
                 #     expectation=1,
                 #     score=CONFIDENCE_THRESHOLD_DEFAULT,
@@ -115,7 +123,7 @@ def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_roo
             "question2",
             "Current flows in the same direction as the arrow",
             ARCH_DEFAULT,
-            [_TestExpectation(expectation="0", score=0.81, evaluation="Good")],
+            [_TestExpectation(expectation="0", score=0.64, evaluation="Good")],
         ),
     ],
 )

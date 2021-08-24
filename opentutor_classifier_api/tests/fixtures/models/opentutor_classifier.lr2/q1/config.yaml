@@ -21,11 +21,8 @@ expectations:
     - \b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b
     patterns_bad:
     - bad
-    - bad + others
-    - bad + respect
+    - bad + giving
     - giving
-    - giving + others
-    - giving + respect
     - others + respect
     - respect
     patterns_good: []
@@ -47,7 +44,6 @@ expectations:
     - \b(troub\w*|hard(er)|embarrass(ed|ing)|defens\w*|ang\w*|ups\w*)\b
     patterns_bad:
     - caring
-    - caring + people
     patterns_good: []
   ideal: you may get them in trouble
 - expectation_id: '2'
@@ -66,7 +62,6 @@ expectations:
     - \b(unpop\w*|hate\w*|unlik\w*|not\040popular)\b
     patterns_bad:
     - disrespecting
-    - disrespecting + good
     - good + people
     patterns_good: []
   ideal: enforcing the rule can make you unpopular

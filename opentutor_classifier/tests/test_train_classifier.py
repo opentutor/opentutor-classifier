@@ -12,7 +12,7 @@ import responses
 
 from opentutor_classifier import (
     ExpectationTrainingResult,
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
 from .utils import (
@@ -25,6 +25,7 @@ from .utils import (
     train_classifier,
     train_default_classifier,
     _TestExpectation,
+    run_classifier_testset,
 )
 
 CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
@@ -55,7 +56,7 @@ def test_outputs_models_at_specified_root(
 @pytest.mark.parametrize(
     "arch,expected_model_file_name",
     [
-        (ARCH_LR_CLASSIFIER, "models_by_expectation_num.pkl"),
+        (ARCH_LR2_CLASSIFIER, "models_by_expectation_num.pkl"),
     ],
 )
 def test_outputs_models_at_specified_model_root_for_default_model(
@@ -106,26 +107,26 @@ def _test_train_and_predict(
     [
         (
             "ies-rectangle",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(expectation_id="0", accuracy=0.89),
-                ExpectationTrainingResult(expectation_id="1", accuracy=0.90),
-                ExpectationTrainingResult(expectation_id="2", accuracy=0.90),
+                ExpectationTrainingResult(expectation_id="0", accuracy=0.90),
+                ExpectationTrainingResult(expectation_id="1", accuracy=0.95),
+                ExpectationTrainingResult(expectation_id="2", accuracy=0.95),
             ],
-            0.85,
+            1,
         ),
         (
             "candles",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(expectation_id="0", accuracy=0.80),
-                ExpectationTrainingResult(expectation_id="1", accuracy=0.80),
-                ExpectationTrainingResult(expectation_id="2", accuracy=0.75),
-                ExpectationTrainingResult(expectation_id="3", accuracy=0.89),
+                ExpectationTrainingResult(expectation_id="0", accuracy=0.85),
+                ExpectationTrainingResult(expectation_id="1", accuracy=0.81),
+                ExpectationTrainingResult(expectation_id="2", accuracy=0.81),
+                ExpectationTrainingResult(expectation_id="3", accuracy=0.95),
             ],
-            0.8,
+            0.90,
         ),
     ],
 )
@@ -153,6 +154,89 @@ def test_train_and_predict_slow(
         data_root,
         shared_root,
     )
+
+
+@pytest.mark.parametrize(
+    "lesson,arch",
+    [
+        (
+            "shapes",
+            ARCH_LR2_CLASSIFIER,
+        ),
+    ],
+)
+def test_predict_on_model_trained_with_cluster_features_but_cluster_features_later_disabled(
+    lesson: str,
+    arch: str,
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    monkeypatch,
+):
+    with test_env_isolated(
+        tmpdir, data_root, shared_root, arch=arch, lesson=lesson
+    ) as test_config:
+        monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(2))
+        train_result = train_classifier(lesson, test_config)
+        assert path.exists(train_result.models)
+
+        monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(0))
+        testset = read_example_testset(lesson)
+        run_classifier_testset(arch, train_result.models, shared_root, testset)
+
+
+@pytest.mark.parametrize(
+    "lesson,use_default,arch",
+    [
+        (
+            "shapes",
+            False,
+            ARCH_LR2_CLASSIFIER,
+        ),
+        (
+            "shapes",
+            True,
+            ARCH_LR2_CLASSIFIER,
+        ),
+    ],
+)
+def test_predict_off_model_trained_with_cluster_features_but_cluster_features_later_enabled(
+    lesson: str,
+    use_default: bool,
+    arch: str,
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    monkeypatch,
+):
+    with test_env_isolated(
+        tmpdir,
+        data_root,
+        shared_root,
+        arch=arch,
+        lesson=lesson,
+        is_default_model=use_default,
+    ) as test_config:
+        monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(0))
+        train_result = (
+            train_default_classifier(test_config)
+            if use_default
+            else train_classifier(lesson, test_config)
+        )
+        assert path.exists(train_result.models)
+        import logging
+
+        logging.warning(f"models={train_result.models}")
+        monkeypatch.setenv("TRAIN_QUALITY_DEFAULT", str(2))
+        testset = read_example_testset(lesson)
+        run_classifier_testset(
+            arch,
+            path.join(path.dirname(train_result.models), "default")
+            if use_default
+            else train_result.models,
+            shared_root,
+            testset,
+        )
 
 
 def _test_train_and_predict_specific_answers_slow(
@@ -190,7 +274,7 @@ def _test_train_and_predict_specific_answers_slow(
     [
         (
             "ies-rectangle",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             [
                 # "5",
                 # "It is 3 and 7 and 4 and 0",
@@ -254,7 +338,7 @@ def test_train_and_predict_specific_answers_slow(
             # and those generated features would cause shape-errors at prediction time
             # when used with the default model
             "ies-mixture-with-trained-features-but-model-is-lost",
-            ARCH_LR_CLASSIFIER,
+            ARCH_LR2_CLASSIFIER,
             ["a"],
             [
                 _TestExpectation(evaluation="Bad", score=0.50, expectation="2"),

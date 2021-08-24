@@ -4,16 +4,15 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from opentutor_classifier.utils import model_last_updated_at
+from opentutor_classifier.utils import model_last_updated_at, prop_bool
 from os import path
 from typing import Dict, List, Optional, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
-import numpy as np
 from sklearn import linear_model
 
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
     AnswerClassifier,
     AnswerClassifierInput,
     AnswerClassifierResult,
@@ -25,8 +24,18 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier
-from .constants import MODEL_FILE_NAME
-from .clustering_features import CustomAgglomerativeClustering
+from .constants import (
+    ARCHETYPE_BAD,
+    ARCHETYPE_GOOD,
+    BAD,
+    GOOD,
+    MODEL_FILE_NAME,
+    FEATURE_ARCHETYPE_ENABLED,
+    FEATURE_PATTERNS_ENABLED,
+    PATTERNS_BAD,
+    PATTERNS_GOOD,
+)
+from .clustering_features import CustomDBScanClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
@@ -65,7 +74,7 @@ class LRAnswerClassifier(AnswerClassifier):
         if not self._model_and_config:
             cm = find_predicton_config_and_pickle(
                 ModelRef(
-                    arch=ARCH_LR_CLASSIFIER,
+                    arch=ARCH_LR2_CLASSIFIER,
                     lesson=self.model_name,
                     filename=MODEL_FILE_NAME,
                 ),
@@ -97,7 +106,7 @@ class LRAnswerClassifier(AnswerClassifier):
         return self._word2vec
 
     def find_score_and_class(
-        self, classifier, exp_num_i: str, sent_features: np.ndarray
+        self, classifier, exp_num_i: str, sent_features: List[List[float]]
     ):
         _evaluation = "Good" if classifier.predict(sent_features)[0] == 1 else "Bad"
         _score = _confidence_score(classifier, sent_features)
@@ -133,7 +142,7 @@ class LRAnswerClassifier(AnswerClassifier):
             result
         )
         question_proc = preprocess_sentence(conf.question)
-        clustering = CustomAgglomerativeClustering(word2vec, index2word)
+        clustering = CustomDBScanClustering(word2vec, index2word)
         for exp in expectations:
             exp_conf = conf.get_expectation(exp.expectation)
             sent_features = LRExpectationClassifier.calculate_features(
@@ -143,13 +152,23 @@ class LRAnswerClassifier(AnswerClassifier):
                 preprocess_sentence(exp_conf.ideal),
                 word2vec,
                 index2word,
-                exp_conf.features.get("good") or [],
-                exp_conf.features.get("bad") or [],
+                exp_conf.features.get(GOOD) or [],
+                exp_conf.features.get(BAD) or [],
                 clustering,
                 mode=ClassifierMode.PREDICT,
+                feature_archetype_enabled=prop_bool(
+                    FEATURE_ARCHETYPE_ENABLED, exp_conf.features
+                ),
+                feature_patterns_enabled=prop_bool(
+                    FEATURE_PATTERNS_ENABLED, exp_conf.features
+                ),
                 expectation_config=conf.get_expectation(exp.expectation),
-                patterns=exp_conf.features.get("patterns_good", [])
-                + exp_conf.features.get("patterns_bad", [])
+                patterns=exp_conf.features.get(PATTERNS_GOOD, [])
+                + exp_conf.features.get(PATTERNS_BAD, [])
+                if not self._is_default
+                else [],
+                archetypes=exp_conf.features.get(ARCHETYPE_GOOD, [])
+                + exp_conf.features.get(ARCHETYPE_BAD, [])
                 if not self._is_default
                 else [],
             )
@@ -162,5 +181,5 @@ class LRAnswerClassifier(AnswerClassifier):
 
     def get_last_trained_at(self) -> float:
         return model_last_updated_at(
-            ARCH_LR_CLASSIFIER, self.model_name, self.model_roots, MODEL_FILE_NAME
+            ARCH_LR2_CLASSIFIER, self.model_name, self.model_roots, MODEL_FILE_NAME
         )

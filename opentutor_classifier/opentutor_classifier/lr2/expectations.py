@@ -11,7 +11,7 @@ from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
 from . import features
 
 from opentutor_classifier.utils import prop_bool
-from .clustering_features import CustomAgglomerativeClustering
+from .clustering_features import CustomDBScanClustering
 from .constants import FEATURE_LENGTH_RATIO
 
 
@@ -47,10 +47,13 @@ class LRExpectationClassifier:
         index2word_set: set,
         good: List[str],
         bad: List[str],
-        clustering: CustomAgglomerativeClustering,
+        clustering: CustomDBScanClustering,
         mode: ClassifierMode,
+        feature_archetype_enabled: bool = False,
+        feature_patterns_enabled: bool = False,
         expectation_config: ExpectationConfig = None,
-        patterns: List[str] = None,
+        patterns: List[str] = [],
+        archetypes: List[str] = [],
     ) -> List[float]:
         raw_example = alpha2digit(raw_example, "en")
         regex_good = features.regex_match(raw_example, good)
@@ -83,7 +86,15 @@ class LRExpectationClassifier:
             else:
                 feat.append(features.regex_match_ratio(raw_example, good))
                 feat.append(features.regex_match_ratio(raw_example, bad))
-        if patterns:
+
+        if feature_archetype_enabled:
+            for archetype in archetypes:
+                feat.append(
+                    features.word2vec_example_similarity(
+                        word2vec, index2word_set, example, archetype.split(" ")
+                    )
+                )
+        if feature_patterns_enabled:
             for pattern in patterns:
                 feat.append(features.check_is_pattern_match(raw_example, pattern))
         return feat

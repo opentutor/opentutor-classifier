@@ -11,7 +11,7 @@ import pytest
 import responses
 
 from opentutor_classifier import (
-    ARCH_LR_CLASSIFIER,
+    ARCH_LR2_CLASSIFIER,
     ExpectationConfig,
     QuestionConfig,
     QuestionConfigSaveReq,
@@ -21,7 +21,7 @@ import opentutor_classifier.dao
 from opentutor_classifier.utils import load_config
 
 
-@pytest.mark.parametrize("arch", [(ARCH_LR_CLASSIFIER)])
+@pytest.mark.parametrize("arch", [(ARCH_LR2_CLASSIFIER)])
 @responses.activate
 def test_saves_config_to_model_root_and_features_to_gql(arch: str, tmpdir, monkeypatch):
     model_root = tmpdir.mkdir("models")

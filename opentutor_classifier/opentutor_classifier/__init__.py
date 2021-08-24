@@ -14,7 +14,6 @@ from typing import Any, Dict, List, Optional
 import yaml
 
 from opentutor_classifier.camelcase import dict_camel_to_snake
-from opentutor_classifier.config import PROP_TRAIN_QUALITY
 from opentutor_classifier.speechact import SpeechActClassifierResult
 
 
@@ -100,6 +99,7 @@ class DefaultModelSaveReq(ArchFile):
 @dataclass
 class QuestionConfigSaveReq(ArchLesson):
     config: QuestionConfig
+    skip_feature_update: bool = False
 
 
 @dataclass
@@ -172,6 +172,16 @@ class DataDao(ABC):
                 arch=file.arch,
                 filename=file.filename,
                 lesson=self.get_default_lesson_name(),
+            )
+        )
+
+    def save_default_config(self, config: QuestionConfig, arch: str) -> None:
+        self.save_config(
+            QuestionConfigSaveReq(
+                arch=arch,
+                config=config,
+                lesson=self.get_default_lesson_name(),
+                skip_feature_update=True,
             )
         )
 
@@ -278,7 +288,7 @@ class ExpectationFeatures:
 @dataclass
 class TrainingConfig:
     shared_root: str = "shared"
-    properties = {PROP_TRAIN_QUALITY: 1}
+    properties = {"PLACEHOLDER": 0}
 
 
 class AnswerClassifierTraining(ABC):
@@ -334,8 +344,8 @@ def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
     _factories_by_arch[arch] = fac
 
 
-ARCH_LR_CLASSIFIER = "opentutor_classifier.lr"
-ARCH_DEFAULT = ARCH_LR_CLASSIFIER
+ARCH_LR2_CLASSIFIER = "opentutor_classifier.lr2"
+ARCH_DEFAULT = ARCH_LR2_CLASSIFIER
 
 
 def get_classifier_arch() -> str:

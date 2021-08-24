@@ -4,4 +4,23 @@
 ##
 ## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 ##
-question: "placeholder, this is the default model"
+question: "Given four figures a square with side length 9, a rectangle with length 10 and width 8, a circle with radius 5 and a triangle with height 10 and base 15. Which figure has the smallest and largest area?"
+expectations:
+  - expectationId: "0"
+    ideal: Square has the largest area
+    features:        
+      bad:        
+        - triangle
+        - circle
+        - rectangle
+      good:        
+        - square
+  # - expectationId: "1"
+  #   ideal: Triangle has the smallest area.
+  #   features: 
+  #     bad:        
+  #       - square
+  #       - rectangle
+  #       - circle
+  #     good:
+  #       - triangle

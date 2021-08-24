@@ -31,7 +31,12 @@ class ClassifierDao:
     def find_classifier(
         self, lesson: str, config: ClassifierConfig, arch: str = ""
     ) -> AnswerClassifier:
-        lesson_updated_at = fetch_lesson_updated_at(lesson)
+        cfac = ClassifierFactory()
+        lesson_updated_at = (
+            fetch_lesson_updated_at(lesson)
+            if cfac.has_trained_model(lesson, config, arch=arch)
+            else datetime.min
+        )
         if config.model_name in self.cache:
             e = self.cache[config.model_name]
             if (
@@ -40,9 +45,6 @@ class ClassifierDao:
                 and e.lesson_updated_at >= lesson_updated_at
             ):
                 return e.classifier
-        c = ClassifierFactory().new_classifier(
-            config=config, arch=arch or get_classifier_arch()
-        )
-
+        c = cfac.new_classifier(config=config, arch=arch or get_classifier_arch())
         self.cache[config.model_name] = Entry(c, lesson_updated_at)
         return c
