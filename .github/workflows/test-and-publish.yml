@@ -57,20 +57,20 @@ jobs:
       - name: docker login
         run: docker login -u ${{ secrets.DOCKER_LOGIN }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: docker build classifier
-        run: cd opentutor_classifier && DOCKER_IMAGE=uscictdocker/opentutor-classifier:${{ steps.tag.outputs.image_tag }} make docker-build
+        run: cd opentutor_classifier && DOCKER_IMAGE=opentutor/opentutor-classifier:${{ steps.tag.outputs.image_tag }} make docker-build
       - name: docker build api
-        run: cd opentutor_classifier_api && DOCKER_IMAGE=uscictdocker/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }} make docker-build
+        run: cd opentutor_classifier_api && DOCKER_IMAGE=opentutor/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }} make docker-build
       - name: docker tag release as version
         if: needs.publish-check.outputs.is_release == 'true'
         run: |
-          docker tag "uscictdocker/opentutor-classifier:${{ steps.tag.outputs.image_tag }}" "uscictdocker/opentutor-classifier:${GITHUB_REF#refs/tags/}"
-          docker tag "uscictdocker/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }}" "uscictdocker/opentutor-classifier-api:${GITHUB_REF#refs/tags/}"
+          docker tag "opentutor/opentutor-classifier:${{ steps.tag.outputs.image_tag }}" "opentutor/opentutor-classifier:${GITHUB_REF#refs/tags/}"
+          docker tag "opentutor/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }}" "opentutor/opentutor-classifier-api:${GITHUB_REF#refs/tags/}"
       - name: docker tag main as latest
         if: github.ref == 'refs/heads/main'
         run: |
-          docker tag "uscictdocker/opentutor-classifier:${{ steps.tag.outputs.image_tag }}" "uscictdocker/opentutor-classifier:latest"
-          docker tag "uscictdocker/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }}" "uscictdocker/opentutor-classifier-api:latest"
+          docker tag "opentutor/opentutor-classifier:${{ steps.tag.outputs.image_tag }}" "opentutor/opentutor-classifier:latest"
+          docker tag "opentutor/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }}" "opentutor/opentutor-classifier-api:latest"
       - name: docker push classifier
-        run: docker push --all-tags uscictdocker/opentutor-classifier
+        run: docker push --all-tags opentutor/opentutor-classifier
       - name: docker push api
-        run: docker push --all-tags uscictdocker/opentutor-classifier-api
+        run: docker push --all-tags opentutor/opentutor-classifier-api
