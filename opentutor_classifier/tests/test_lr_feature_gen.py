@@ -120,7 +120,7 @@ def test_unit_deduplication(
                 "good",
             ],
             4,
-            ['37 + 40', '37', '1 + ratio', 'difference + length'],
+            ["37 + 40", "37", "1 + ratio", "difference + length"],
         )
     ],
 )
@@ -130,7 +130,7 @@ def test_univariate_selection(
     input_y: List[str],
     n: int,
     expected_patterns: List[str],
-    shared_root: str
+    shared_root: str,
 ):
     preprocessor = SpacyPreprocessor(shared_root)
     patterns = CustomDBScanClustering.univariate_feature_selection(
