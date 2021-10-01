@@ -11,10 +11,9 @@ from typing import List, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
-from nltk import pos_tag
-from nltk.tokenize import word_tokenize
 from scipy import spatial
 
+from opentutor_classifier.spacy_preprocessor import SpacyPreprocessor
 from opentutor_classifier.stopwords import STOPWORDS
 from text_to_num import alpha2digit
 
@@ -39,23 +38,24 @@ def preprocess_punctuations(sentence: str) -> str:
     return sentence
 
 
-def preprocess_sentence(sentence: str) -> List[str]:
+def preprocess_sentence(sentence: str, preprocessor: SpacyPreprocessor) -> List[str]:
     sentence = preprocess_punctuations(sentence.lower())
     sentence = alpha2digit(sentence, "en")
-    word_tokens_groups: List[str] = [
-        word_tokenize(entry)
-        for entry in ([sentence] if isinstance(sentence, str) else sentence)
-    ]
+    word_tokens_groups: List[str] = [preprocessor.transform(sentence)]
     result_words = []
     for entry in word_tokens_groups:
-        for word, _ in pos_tag(entry):
+        for word in entry:
             if word not in STOPWORDS:
                 result_words.append(word)
     return [word_mapper.get(word, word) for word in result_words]
 
 
-def check_is_pattern_match(sentence: str, pattern: str) -> int:
-    words = preprocess_sentence(sentence)  # sentence should be preprocessed
+def check_is_pattern_match(
+    sentence: str, pattern: str, preprocessor: SpacyPreprocessor
+) -> int:
+    words = preprocess_sentence(
+        sentence, preprocessor
+    )  # sentence should be preprocessed
     keywords = pattern.split("+")
     is_there = True
     for keyword in keywords:

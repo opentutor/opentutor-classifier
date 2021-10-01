@@ -40,6 +40,7 @@ from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
 from opentutor_classifier.word2vec import find_or_load_word2vec
+from opentutor_classifier.spacy_preprocessor import SpacyPreprocessor
 
 
 def _confidence_score(
@@ -117,7 +118,8 @@ class LRAnswerClassifier(AnswerClassifier):
         )
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
-        sent_proc = preprocess_sentence(answer.input_sentence)
+        preprocessor = SpacyPreprocessor(self.shared_root)
+        sent_proc = preprocess_sentence(answer.input_sentence, preprocessor)
         m_by_e, conf = self.model_and_config
         expectations = [
             ExpectationToEvaluate(
@@ -141,7 +143,7 @@ class LRAnswerClassifier(AnswerClassifier):
         result.speech_acts["profanity"] = self.speech_act_classifier.check_profanity(
             result
         )
-        question_proc = preprocess_sentence(conf.question)
+        question_proc = preprocess_sentence(conf.question, preprocessor)
         clustering = CustomDBScanClustering(word2vec, index2word)
         for exp in expectations:
             exp_conf = conf.get_expectation(exp.expectation)
@@ -149,13 +151,14 @@ class LRAnswerClassifier(AnswerClassifier):
                 question_proc,
                 answer.input_sentence,
                 sent_proc,
-                preprocess_sentence(exp_conf.ideal),
+                preprocess_sentence(exp_conf.ideal, preprocessor),
                 word2vec,
                 index2word,
                 exp_conf.features.get(GOOD) or [],
                 exp_conf.features.get(BAD) or [],
                 clustering,
                 mode=ClassifierMode.PREDICT,
+                preprocessor=preprocessor,
                 feature_archetype_enabled=prop_bool(
                     FEATURE_ARCHETYPE_ENABLED, exp_conf.features
                 ),

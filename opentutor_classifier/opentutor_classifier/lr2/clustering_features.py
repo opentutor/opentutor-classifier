@@ -1,6 +1,7 @@
 from itertools import combinations
 import heapq
 from opentutor_classifier.lr2.constants import BAD, GOOD
+from opentutor_classifier.spacy_preprocessor import SpacyPreprocessor
 from typing import Dict, List, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
@@ -240,7 +241,11 @@ class CustomDBScanClustering:
 
     @staticmethod
     def univariate_feature_selection(
-        patterns: List[str], input_x: List[str], input_y: List[str], n: int = 10
+        patterns: List[str],
+        input_x: List[str],
+        input_y: List[str],
+        preprocessor: SpacyPreprocessor,
+        n: int = 10,
     ) -> List[str]:
         if len(patterns) <= n:
             return patterns
@@ -251,7 +256,7 @@ class CustomDBScanClustering:
             raw_example = alpha2digit(raw_example, "en")
             feat: List[int] = []
             for pattern in patterns:
-                feat.append(check_is_pattern_match(raw_example, pattern))
+                feat.append(check_is_pattern_match(raw_example, pattern, preprocessor))
             train_x.append(feat)
 
         skb = SelectKBest(chi2, k=min(n, len(patterns)))
@@ -265,6 +270,7 @@ class CustomDBScanClustering:
         candidates: Dict[str, List[str]],
         input_x: List[str],
         input_y: List[str],
+        preprocessor: SpacyPreprocessor,
         fpr_cuttoff: float = 0.80,
     ) -> Dict[str, List[str]]:
 
@@ -290,7 +296,7 @@ class CustomDBScanClustering:
             useful_features[
                 label
             ] = CustomDBScanClustering.univariate_feature_selection(
-                useful_features[label], input_x, input_y
+                useful_features[label], input_x, input_y, preprocessor=preprocessor
             )
 
         return useful_features

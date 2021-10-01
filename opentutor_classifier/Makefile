@@ -10,10 +10,6 @@ install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
 	poetry env use python3.8
 	poetry install
-	poetry run python -m nltk.downloader punkt
-	poetry run python -m nltk.downloader wordnet
-	poetry run python -m nltk.downloader averaged_perceptron_tagger
-	poetry run python -m nltk.downloader stopwords
 	
 .PHONY: poetry-build-classifier
 poetry-build-classifier: $(VENV)
@@ -80,6 +76,8 @@ PHONY: test
 test: $(VENV)
 	cd $(ROOT)/shared/ \
 		&& $(MAKE) installed/word2vec.bin
+	cd $(ROOT)/shared/ \
+		&& $(MAKE) installed/spacy-model
 	poetry run coverage run \
 		--omit="$(PWD)/tests" \
 		-m py.test -vv $(args)

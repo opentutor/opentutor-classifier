@@ -10,6 +10,7 @@ from opentutor_classifier import ClassifierMode, ExpectationConfig
 from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
 from . import features
 
+from opentutor_classifier.spacy_preprocessor import SpacyPreprocessor
 from opentutor_classifier.utils import prop_bool
 from .clustering_features import CustomDBScanClustering
 from .constants import FEATURE_LENGTH_RATIO
@@ -49,6 +50,7 @@ class LRExpectationClassifier:
         bad: List[str],
         clustering: CustomDBScanClustering,
         mode: ClassifierMode,
+        preprocessor: SpacyPreprocessor,
         feature_archetype_enabled: bool = False,
         feature_patterns_enabled: bool = False,
         expectation_config: ExpectationConfig = None,
@@ -96,7 +98,9 @@ class LRExpectationClassifier:
                 )
         if feature_patterns_enabled:
             for pattern in patterns:
-                feat.append(features.check_is_pattern_match(raw_example, pattern))
+                feat.append(
+                    features.check_is_pattern_match(raw_example, pattern, preprocessor)
+                )
         return feat
 
     @staticmethod

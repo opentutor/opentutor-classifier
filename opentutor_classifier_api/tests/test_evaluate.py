@@ -144,7 +144,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
             {},
             [
                 ExpectationClassifierResult(
-                    expectation_id="0", score=0.53, evaluation="Bad"
+                    expectation_id="0", score=0.6, evaluation="Bad"
                 )
             ],
             {
