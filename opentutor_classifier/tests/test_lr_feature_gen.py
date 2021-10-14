@@ -120,7 +120,7 @@ def test_unit_deduplication(
                 "good",
             ],
             4,
-            ["37 + 40", "37", "1 + ratio", "difference + length"],
+            ['37 + 40', '37', 'sides + closer', '1 + ratio'],
         )
     ],
 )
