@@ -20,6 +20,6 @@ def find_or_load_spacy(file_path: str) -> Language:
                 "en_core_web_sm",
                 "en_core_web_sm-3.1.0",
             ),
-            disable=["tagger", "ner", "parser"]
+            disable=["tagger", "ner", "parser"],
         )
     return SPACY_MODELS[abs_path]
