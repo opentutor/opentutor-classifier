@@ -23,8 +23,6 @@ expectations:
     - \b(left|anode)\b.*\b(right|cath\w*)\b
     patterns_bad:
     - backward
-    - backward + current
-    - backward + order
     - flows + order
     patterns_good: []
   ideal: ''

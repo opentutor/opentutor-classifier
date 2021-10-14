@@ -13,6 +13,7 @@ licenseheaders = {git = "https://github.com/kycarr/licenseheaders.git"}
 pep8-naming = "^0.11.1"
 tqdm = "^4.62.3"
 joblib = "^1.1.0"
+regex = "^2021.10.8"
 
 [tool.poetry.dev-dependencies]
 

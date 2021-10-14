@@ -21,7 +21,6 @@ expectations:
     - \b(group|peer|lead\w*|command\w*)\b.*\b(pressu\w*|influ\w*)\b
     patterns_bad:
     - bad
-    - bad + giving
     - giving
     - others + respect
     - respect
@@ -32,7 +31,7 @@ expectations:
     archetype_bad:
     - caring people
     archetype_good:
-    - peer pressure cause allow inappropriate behavioryou may get troubleenforcing
+    - peer pressure cause allow inappropriate behavioryou may get ththem troubleenforcing
       rule make unpopular
     bad:
     - \b(lov\w*|lik\w*|car)\b
