@@ -57,7 +57,7 @@ def test_returns_400_response_when_input_not_set(client):
             "0",
             [
                 ExpectationClassifierResult(
-                    expectation_id="0", evaluation="Good", score=0.62
+                    expectation_id="0", evaluation="Good", score=0.63
                 ),
             ],
         )
@@ -126,7 +126,7 @@ def test_evaluate_uses_default_model_when_question_untrained(
                     expectation_id="0", score=0.76, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
-                    expectation_id="1", score=0.56, evaluation="Good"
+                    expectation_id="1", score=0.55, evaluation="Good"
                 ),
                 ExpectationClassifierResult(
                     expectation_id="2", score=0.61, evaluation="Bad"
