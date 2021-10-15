@@ -11,8 +11,8 @@ from typing import List, Tuple
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
-from nltk import pos_tag
-from nltk.tokenize import word_tokenize
+from tok import word_tokenize
+
 from scipy import spatial
 
 from opentutor_classifier.stopwords import STOPWORDS
@@ -42,13 +42,10 @@ def preprocess_punctuations(sentence: str) -> str:
 def preprocess_sentence(sentence: str) -> List[str]:
     sentence = preprocess_punctuations(sentence.lower())
     sentence = alpha2digit(sentence, "en")
-    word_tokens_groups: List[str] = [
-        word_tokenize(entry)
-        for entry in ([sentence] if isinstance(sentence, str) else sentence)
-    ]
+    word_tokens_groups: List[str] = [word_tokenize(sentence)]
     result_words = []
     for entry in word_tokens_groups:
-        for word, _ in pos_tag(entry):
+        for word in entry:
             if word not in STOPWORDS:
                 result_words.append(word)
     return [word_mapper.get(word, word) for word in result_words]

@@ -16,6 +16,9 @@ python-dotenv = "^0.17.1"
 redis = "^3.5.3"
 werkzeug = "^2.0.1"
 opentutor-classifier = {path = "../opentutor_classifier/dist/opentutor_classifier-1.0.0.tar.gz"}
+tok = "^0.1.14"
+tqdm = "^4.62.3"
+joblib = "^1.1.0"
 
 [tool.poetry.dev-dependencies]
 coverage = "^5.5"
