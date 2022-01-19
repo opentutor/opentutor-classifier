@@ -9,7 +9,7 @@ import json
 import os
 from logging.config import dictConfig
 
-from flask import Flask, has_request_context, request
+from flask import Flask, has_request_context, request, g
 from flask_cors import CORS
 from .config_default import Config
 
