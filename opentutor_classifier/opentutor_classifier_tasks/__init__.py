@@ -22,6 +22,22 @@ dotenv_path = os.path.join(os.getcwd(), ".env")
 def logger_setup_handler(logger: logging.Logger, **kwargs):
     logger.addHandler(logging.StreamHandler(sys.stdout))
 
+if os.environ.get("IS_SENTRY_ENABLED", "") == "true":
+    import sentry_sdk  # NOQA E402
+    from sentry_sdk.integrations.celery import CeleryIntegration  # NOQA E402
+
+    sentry_sdk.init(
+        dsn=os.environ.get("SENTRY_DSN_OPENTUTOR_CLASSIFIER"),
+        # include project so issues can be filtered in sentry:
+        environment=os.environ.get("PYTHON_ENV", "opentutor-qa"),
+        integrations=[CeleryIntegration()],
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=0.20,
+        debug=os.environ.get("SENTRY_DEBUG_CLASSIFIER", "") == "true",
+    )
+
 
 @signals.task_retry.connect
 @signals.task_failure.connect
