@@ -22,6 +22,7 @@ dotenv_path = os.path.join(os.getcwd(), ".env")
 def logger_setup_handler(logger: logging.Logger, **kwargs):
     logger.addHandler(logging.StreamHandler(sys.stdout))
 
+
 if os.environ.get("IS_SENTRY_ENABLED", "") == "true":
     import sentry_sdk  # NOQA E402
     from sentry_sdk.integrations.celery import CeleryIntegration  # NOQA E402

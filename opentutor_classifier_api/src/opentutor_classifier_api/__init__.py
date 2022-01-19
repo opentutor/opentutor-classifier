@@ -17,6 +17,7 @@ if os.environ.get("IS_SENTRY_ENABLED", "") == "true":
     import sentry_sdk  # NOQA E402
     from sentry_sdk.integrations.flask import FlaskIntegration  # NOQA E402
 
+
 class JSONFormatter(logging.Formatter):
     RECORD_ATTRS = [
         "name",
@@ -149,7 +150,6 @@ def create_app():
             traces_sample_rate=0.20,
             debug=os.environ.get("SENTRY_DEBUG_CLASSIFIER", "") == "true",
         )
-
 
     from opentutor_classifier_api.blueprints.evaluate import eval_blueprint
 
