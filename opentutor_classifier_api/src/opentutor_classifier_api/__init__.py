@@ -139,6 +139,7 @@ def create_app():
     CORS(app)
 
     if os.environ.get("IS_SENTRY_ENABLED", "") == "true":
+        logging.info("SENTRY enabled, calling init")
         sentry_sdk.init(
             dsn=os.environ.get("SENTRY_DSN_OPENTUTOR_CLASSIFIER"),
             # include project so issues can be filtered in sentry:
