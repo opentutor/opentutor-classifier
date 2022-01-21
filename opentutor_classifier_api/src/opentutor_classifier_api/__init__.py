@@ -93,8 +93,8 @@ class RequestFilter(logging.Filter):
 
 
 def create_app():
-    log_level = os.environ.get("LOG_LEVEL_UPLOAD_API", "INFO")
-    log_format = os.environ.get("LOG_FORMAT_UPLOAD_API", "json")
+    log_level = os.environ.get("LOG_LEVEL_CLASSIFIER_API", "INFO")
+    log_format = os.environ.get("LOG_FORMAT_CLASSIFIER_API", "json")
     dictConfig(
         {
             "version": 1,
