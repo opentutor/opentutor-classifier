@@ -224,6 +224,10 @@ class DataDao(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def remove_trained_model(self, ref: ArchLesson) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
     def save_config(self, req: QuestionConfigSaveReq) -> None:
         raise NotImplementedError()
 

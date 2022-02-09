@@ -134,6 +134,9 @@ class FileDataDao(DataDao):
     def trained_model_exists(self, ref: ModelRef) -> bool:
         return path.isfile(self._get_model_file(ref))
 
+    def remove_trained_model(self, ref: ArchLesson) -> None:
+        shutil.rmtree(self.get_model_root(ref))
+
     def save_config(self, req: QuestionConfigSaveReq) -> None:
         tmpf = self._setup_tmp(_CONFIG_YAML)
         req.config.write_to(tmpf)
@@ -199,6 +202,9 @@ class WebAppDataDao(DataDao):
 
     def trained_model_exists(self, ref: ModelRef) -> bool:
         return self.file_dao.trained_model_exists(ref)
+
+    def remove_trained_model(self, ref: ArchLesson) -> None:
+        return self.file_dao.remove_trained_model(ref)
 
     def save_config(self, req: QuestionConfigSaveReq) -> None:
         if not req.skip_feature_update:

@@ -12,13 +12,26 @@ import responses
 
 from opentutor_classifier import (
     ARCH_LR2_CLASSIFIER,
+    ArchLesson,
     ExpectationConfig,
+    ModelRef,
     QuestionConfig,
     QuestionConfigSaveReq,
 )
 from opentutor_classifier.api import get_graphql_endpoint, update_features_gql
 import opentutor_classifier.dao
 from opentutor_classifier.utils import load_config
+from tests.utils import fixture_path, test_env_isolated, train_classifier
+
+
+@pytest.fixture(scope="module")
+def data_root() -> str:
+    return fixture_path("data")
+
+
+@pytest.fixture(scope="module")
+def shared_root(word2vec) -> str:
+    return path.dirname(word2vec)
 
 
 @pytest.mark.parametrize("arch", [(ARCH_LR2_CLASSIFIER)])
@@ -49,3 +62,22 @@ def test_saves_config_to_model_root_and_features_to_gql(arch: str, tmpdir, monke
     config_file = path.join(model_root, arch, req.lesson, "config.yaml")
     assert path.isfile(config_file)
     assert load_config(config_file).to_dict() == req.config.to_dict()
+
+
+@pytest.mark.parametrize("lesson,arch", [("question1", ARCH_LR2_CLASSIFIER)])
+def test_delete_model(tmpdir, data_root: str, shared_root: str, lesson: str, arch: str):
+    with test_env_isolated(
+        tmpdir, data_root, shared_root, lesson=lesson, arch=arch
+    ) as test_config:
+        result = train_classifier(lesson, test_config)
+        assert path.exists(path.join(result.models, "models_by_expectation_num.pkl"))
+        assert path.exists(path.join(result.models, "config.yaml"))
+
+    dao = test_config.find_data_dao()
+    assert dao.trained_model_exists(
+        ModelRef(arch, lesson, "models_by_expectation_num.pkl")
+    )
+    dao.remove_trained_model(ArchLesson(arch=arch, lesson=lesson))
+    assert not dao.trained_model_exists(
+        ModelRef(arch=arch, lesson=lesson, filename="models_by_expectation_num.pkl")
+    )
