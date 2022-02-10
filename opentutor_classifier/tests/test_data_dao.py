@@ -20,6 +20,7 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.api import get_graphql_endpoint, update_features_gql
 import opentutor_classifier.dao
+from opentutor_classifier.lr2.constants import MODEL_FILE_NAME
 from opentutor_classifier.utils import load_config
 from tests.utils import fixture_path, test_env_isolated, train_classifier
 
@@ -70,14 +71,12 @@ def test_delete_model(tmpdir, data_root: str, shared_root: str, lesson: str, arc
         tmpdir, data_root, shared_root, lesson=lesson, arch=arch
     ) as test_config:
         result = train_classifier(lesson, test_config)
-        assert path.exists(path.join(result.models, "models_by_expectation_num.pkl"))
+        assert path.exists(path.join(result.models, MODEL_FILE_NAME))
         assert path.exists(path.join(result.models, "config.yaml"))
 
     dao = test_config.find_data_dao()
-    assert dao.trained_model_exists(
-        ModelRef(arch, lesson, "models_by_expectation_num.pkl")
-    )
+    assert dao.trained_model_exists(ModelRef(arch, lesson, MODEL_FILE_NAME))
     dao.remove_trained_model(ArchLesson(arch=arch, lesson=lesson))
     assert not dao.trained_model_exists(
-        ModelRef(arch=arch, lesson=lesson, filename="models_by_expectation_num.pkl")
+        ModelRef(arch=arch, lesson=lesson, filename=MODEL_FILE_NAME)
     )

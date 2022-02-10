@@ -15,6 +15,7 @@ from opentutor_classifier import (
     ARCH_LR2_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
+from opentutor_classifier.lr2.constants import MODEL_FILE_NAME
 from .utils import (
     assert_testset_accuracy,
     assert_train_expectation_results,
@@ -49,14 +50,14 @@ def test_outputs_models_at_specified_root(
         tmpdir, data_root, shared_root, lesson=lesson
     ) as test_config:
         result = train_classifier(lesson, test_config)
-        assert path.exists(path.join(result.models, "models_by_expectation_num.pkl"))
+        assert path.exists(path.join(result.models, MODEL_FILE_NAME))
         assert path.exists(path.join(result.models, "config.yaml"))
 
 
 @pytest.mark.parametrize(
     "arch,expected_model_file_name",
     [
-        (ARCH_LR2_CLASSIFIER, "models_by_expectation_num.pkl"),
+        (ARCH_LR2_CLASSIFIER, MODEL_FILE_NAME),
     ],
 )
 def test_outputs_models_at_specified_model_root_for_default_model(
