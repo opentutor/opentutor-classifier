@@ -37,6 +37,16 @@ def create_app():
 
     app.register_blueprint(eval_blueprint, url_prefix="/classifier/evaluate")
 
+    from opentutor_classifier_api.blueprints.check_model import check_model_blueprint
+
+    app.register_blueprint(check_model_blueprint, url_prefix="/classifier/check_model")
+
+    from opentutor_classifier_api.blueprints.delete_model import delete_model_blueprint
+
+    app.register_blueprint(
+        delete_model_blueprint, url_prefix="/classifier/delete_model"
+    )
+
     from opentutor_classifier_api.blueprints.ping import ping_blueprint
 
     app.register_blueprint(ping_blueprint, url_prefix="/classifier/ping")

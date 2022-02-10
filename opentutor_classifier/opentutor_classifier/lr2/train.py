@@ -18,6 +18,7 @@ from .constants import (
     FEATURE_ARCHETYPE_ENABLED,
     FEATURE_PATTERNS_ENABLED,
     GOOD,
+    MODEL_FILE_NAME,
     PATTERNS_BAD,
     PATTERNS_GOOD,
 )
@@ -124,7 +125,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         dao.save_default_pickle(
             DefaultModelSaveReq(
                 arch=ARCH_LR2_CLASSIFIER,
-                filename="models_by_expectation_num.pkl",
+                filename=MODEL_FILE_NAME,
                 model=expectation_models,
             )
         )
@@ -268,7 +269,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             ModelSaveReq(
                 arch=ARCH_LR2_CLASSIFIER,
                 lesson=train_input.lesson,
-                filename="models_by_expectation_num.pkl",
+                filename=MODEL_FILE_NAME,
                 model=expectation_models,
             )
         )
