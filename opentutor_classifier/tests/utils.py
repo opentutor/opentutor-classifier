@@ -288,6 +288,9 @@ class _TestDataDao(DataDao):
     def trained_model_exists(self, ref: ModelRef) -> bool:
         return self.dao.trained_model_exists(ref)
 
+    def remove_trained_model(self, ref: ArchLesson) -> None:
+        return self.dao.remove_trained_model(ref)
+
     def save_config(self, req: QuestionConfigSaveReq) -> None:
         self.dao.save_config(req)
         mock_gql_response(

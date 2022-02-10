@@ -15,6 +15,7 @@ import responses
 
 from opentutor_classifier import ARCH_DEFAULT
 from opentutor_classifier.config import confidence_threshold_default
+from opentutor_classifier.lr2.constants import MODEL_FILE_NAME
 from .types import _TestConfig
 from .utils import (
     copy_test_env_to_tmp,
@@ -81,9 +82,7 @@ def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_roo
     out, err, exit_code, config = __train_model(tmpdir, lesson, shared_root)
     model_root = config.output_dir
     assert exit_code == 0
-    assert path.exists(
-        path.join(model_root, ARCH_DEFAULT, lesson, "models_by_expectation_num.pkl")
-    )
+    assert path.exists(path.join(model_root, ARCH_DEFAULT, lesson, MODEL_FILE_NAME))
     assert path.exists(path.join(model_root, ARCH_DEFAULT, lesson, "config.yaml"))
     out_lines = out.decode("utf-8").split("\n")
     while out_lines and re.search(r"^(DEBUG|INFO|WARNING|ERROR).*", out_lines[0]):
