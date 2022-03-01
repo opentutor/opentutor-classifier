@@ -28,6 +28,7 @@ from .api import (
     fetch_config,
     fetch_training_data,
     update_features,
+    update_last_trained_at,
 )
 from .utils import load_data, load_config
 
@@ -209,6 +210,7 @@ class WebAppDataDao(DataDao):
     def save_config(self, req: QuestionConfigSaveReq) -> None:
         if not req.skip_feature_update:
             update_features(req)
+        update_last_trained_at(req.lesson)
         self.file_dao.save_config(req)
 
     def save_pickle(self, req: ModelSaveReq) -> None:

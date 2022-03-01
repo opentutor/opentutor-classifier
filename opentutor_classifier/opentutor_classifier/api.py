@@ -117,6 +117,21 @@ mutation UpdateLessonFeatures(
 }"""
 
 
+GQL_UPDATE_LAST_TRAINED_AT = """
+mutation UpdateLastTrainedAt(
+    $lessonId: String!
+) {
+     me {
+        updateLastTrainedAt(
+            lessonId: $lessonId,
+        ) {
+            lessonId
+            lastTrainedAt
+        }
+    }
+}"""
+
+
 def query_lesson_updated_at(lesson: str) -> GQLQueryBody:
     return {
         "query": GQL_QUERY_LESSON_UPDATED_AT,
@@ -159,6 +174,21 @@ def update_features_gql(req: QuestionConfigSaveReq) -> GQLQueryBody:
             ],
         },
     }
+
+
+def update_last_trained_at_gql(lesson: str) -> GQLQueryBody:
+    return {
+        "query": GQL_UPDATE_LAST_TRAINED_AT,
+        "variables": {
+            "lessonId": lesson,
+        },
+    }
+
+
+def update_last_trained_at(lesson: str) -> None:
+    res_json = __auth_gql(update_last_trained_at_gql(lesson))
+    if "errors" in res_json:
+        raise Exception(json.dumps(res_json.get("errors")))
 
 
 def update_features(req: QuestionConfigSaveReq) -> None:
