@@ -113,6 +113,11 @@ class ModelSaveReq(ModelRef):
 
 
 @dataclass
+class EmbeddingSaveReq(ModelRef):
+    embedding: Any
+
+
+@dataclass
 class TrainingInput:
     lesson: str = ""  # the lesson id
     config: QuestionConfig = field(default_factory=QuestionConfig)

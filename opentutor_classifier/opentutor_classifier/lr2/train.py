@@ -6,6 +6,7 @@
 #
 from collections import defaultdict
 import json
+
 from opentutor_classifier.utils import prop_bool
 from os import path
 
@@ -19,6 +20,7 @@ from .constants import (
     FEATURE_PATTERNS_ENABLED,
     GOOD,
     MODEL_FILE_NAME,
+    SLIM_EMBEDDING_FILE_NAME,
     PATTERNS_BAD,
     PATTERNS_GOOD,
 )
@@ -35,6 +37,7 @@ from opentutor_classifier import (
     AnswerClassifierTraining,
     ArchLesson,
     DefaultModelSaveReq,
+    EmbeddingSaveReq,
     ExpectationTrainingResult,
     ModelSaveReq,
     QuestionConfigSaveReq,
@@ -74,11 +77,39 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         self.word2vec = find_or_load_word2vec(
             path.join(config.shared_root, "word2vec.bin")
         )
+        self.word2vec_slim = find_or_load_word2vec(
+            path.join(config.shared_root, "word2vec_slim.bin")
+        )
         self.train_quality = config.properties.get(
             PROP_TRAIN_QUALITY, get_train_quality_default()
         )
 
         return self
+
+    def update_slim_embeddings(
+        self,
+        ideal: List[str],
+        question: List[str],
+        archtypes_good: List[str],
+        archetypes_bad: List[str],
+        patterns_good: List[str],
+        patterns_bad: List[str],
+    ):
+        embeddings: Dict[str, List[float]] = dict()
+        words_set = set()
+        for word in ideal + question: words_set.add(word)
+        for archetype in archtypes_good + archetypes_bad:
+            for word in archetype.lower().split():
+                words_set.add(word)
+        for pattern in patterns_bad + patterns_good:
+            for word in pattern.split(" + "):
+                words_set.add(word)
+
+        for word in words_set:
+            if word in self.word2vec_slim:
+                embeddings[word] = list(map(float, self.word2vec_slim[word]))
+        
+        return embeddings
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         model = LRExpectationClassifier.initialize_model()
@@ -176,6 +207,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             else:
                 supergoodanswer = supergoodanswer + split_training_sets[exp_num][0][0]
 
+        slim_embeddings: Dict[str, List[float]] = dict()
         for exp_num, (train_x, train_y) in split_training_sets.items():
             train_x.append(supergoodanswer)
             train_y.append(GOOD)
@@ -264,7 +296,18 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                     expectation_id=exp_num, accuracy=results_loocv.mean()
                 )
             )
+            slim_embeddings.update(
+                self.update_slim_embeddings(
+                    ideal_answer,
+                    processed_question,
+                    config_features.get(ARCHETYPE_GOOD, []),
+                    config_features.get(ARCHETYPE_BAD, []),
+                    config_features.get(PATTERNS_GOOD, []),
+                    config_features.get(PATTERNS_BAD, []),
+                )
+            )
             expectation_models[exp_num] = model
+
         dao.save_pickle(
             ModelSaveReq(
                 arch=ARCH_LR2_CLASSIFIER,
@@ -278,6 +321,14 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 arch=ARCH_LR2_CLASSIFIER,
                 lesson=train_input.lesson,
                 config=config_updated,
+            )
+        )
+        dao.save_embeddings(
+            EmbeddingSaveReq(
+                arch=ARCH_LR2_CLASSIFIER,
+                lesson=train_input.lesson,
+                filename=SLIM_EMBEDDING_FILE_NAME,
+                embedding=slim_embeddings,
             )
         )
         return TrainingResult(

@@ -32,6 +32,7 @@ installed:
 installed/word2vec.bin: $(VENV)
 	$(MAKE) installed
 	poetry run python word2vec_download.py 
+	poetry run python word2vec_slim_download.py 
 
 
 .PHONY: poetry-ensure-installed

@@ -1,0 +1,75 @@
+expectations:
+- expectation_id: '0'
+  features:
+    archetype_bad:
+    - drinking job not always bad
+    archetype_good:
+    - peer pressure make harder work people get trouble may also make unpopular etc
+    - cause inappropriate behavior
+    bad:
+    - rules\\sapply\\sdifferently
+    featureDbScanClustersArchetypeEnabled: true
+    featureDbScanClustersPatternsEnabled: true
+    featureLengthRatio: false
+    featureRegexAggregateDisabled: false
+    good:
+    - (group|[Pp]eer|leader|commander)\\s(pressure|influence)
+    patterns_bad:
+    - '[NEG] + bad'
+    - '[NEG] + drinking'
+    - '[NEG] + job'
+    - always
+    - always + drinking
+    - always + job
+    - bad + drinking
+    - bad + job
+    - drinking
+    - job
+    patterns_good:
+    - also
+    - etc
+    - get + people
+    - harder + people
+    - make + people
+    - may + people
+    - peer + people
+    - people
+  ideal: Peer pressure can cause you to allow inappropriate behavior.
+- expectation_id: '1'
+  features:
+    archetype_bad:
+    - ''
+    archetype_good:
+    - could get ththem trouble make harder work ththem
+    bad:
+    - love|like
+    featureDbScanClustersArchetypeEnabled: true
+    featureDbScanClustersPatternsEnabled: true
+    featureLengthRatio: false
+    featureRegexAggregateDisabled: false
+    good:
+    - in\\strouble|captain's\\smast|hard(er)?\\sto\\swork\\swith|embarrass(ed|ing)?|defensive|angry|upset
+    patterns_bad: []
+    patterns_good:
+    - could
+  ideal: If you correct someone's behavior, you may get them in trouble or it may
+    be harder to work with them.
+- expectation_id: '2'
+  features:
+    archetype_bad:
+    - fun bad
+    archetype_good:
+    - make unpopular
+    bad:
+    - feel\\s(superior|better)
+    featureDbScanClustersArchetypeEnabled: true
+    featureDbScanClustersPatternsEnabled: true
+    featureLengthRatio: false
+    featureRegexAggregateDisabled: false
+    good:
+    - unpopular|hated?|unliked|not\\spopular|popular
+    patterns_bad:
+    - bad + fun
+    patterns_good: []
+  ideal: Enforcing the rules can make you unpopular.
+question: What are the challenges to demonstrating integrity in a group?

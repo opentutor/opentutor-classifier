@@ -6,6 +6,7 @@
 #
 from dataclasses import dataclass
 import pickle
+import json
 from os import environ, makedirs, path
 import shutil
 import tempfile
@@ -17,6 +18,7 @@ from . import (
     ArchFile,
     ArchLesson,
     DataDao,
+    EmbeddingSaveReq,
     ModelRef,
     ModelSaveReq,
     QuestionConfig,
@@ -76,6 +78,12 @@ class FileDataDao(DataDao):
         return path.join(self.data_root, lesson, fname)
 
     def _get_model_file(self, ref: ModelRef) -> str:
+        return path.join(
+            self.get_model_root(ArchLesson(arch=ref.arch, lesson=ref.lesson)),
+            ref.filename,
+        )
+
+    def _get_embedding_file(self, ref: ModelRef) -> str:
         return path.join(
             self.get_model_root(ArchLesson(arch=ref.arch, lesson=ref.lesson)),
             ref.filename,
@@ -153,6 +161,12 @@ class FileDataDao(DataDao):
         with open(tmpf, "wb") as f:
             pickle.dump(req.model, f)
         self._replace(tmpf, self._get_model_file(req))
+
+    def save_embeddings(self, req: EmbeddingSaveReq) -> None:
+        tmpf = self._setup_tmp(req.filename)
+        with open(tmpf, "w") as f:
+            json.dump(req.embedding, f)
+        self._replace(tmpf, self._get_embedding_file(req))
 
 
 class WebAppDataDao(DataDao):

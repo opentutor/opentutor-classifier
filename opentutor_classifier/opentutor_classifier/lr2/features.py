@@ -135,23 +135,37 @@ def word2vec_example_similarity(
     index2word_set: set,
     example: List[str],
     ideal: List[str],
+    num_features: int = 300,
 ) -> float:
     example_feature_vec = _avg_feature_vector(
-        example, model=word2vec, num_features=300, index2word_set=index2word_set
+        example,
+        model=word2vec,
+        num_features=num_features,
+        index2word_set=index2word_set,
     )
     ia_feature_vec = _avg_feature_vector(
-        ideal, model=word2vec, num_features=300, index2word_set=index2word_set
+        ideal, model=word2vec, num_features=num_features, index2word_set=index2word_set
     )
     return _calculate_similarity(example_feature_vec, ia_feature_vec)
 
 
 def word2vec_question_similarity(
-    word2vec: Word2VecKeyedVectors, index2word_set: set, example, question
+    word2vec: Word2VecKeyedVectors,
+    index2word_set: set,
+    example: List[str],
+    question: List[str],
+    num_features: int = 300,
 ):
     example_feature_vec = _avg_feature_vector(
-        example, model=word2vec, num_features=300, index2word_set=index2word_set
+        example,
+        model=word2vec,
+        num_features=num_features,
+        index2word_set=index2word_set,
     )
     question_feature_vec = _avg_feature_vector(
-        question, model=word2vec, num_features=300, index2word_set=index2word_set
+        question,
+        model=word2vec,
+        num_features=num_features,
+        index2word_set=index2word_set,
     )
     return _calculate_similarity(example_feature_vec, question_feature_vec)

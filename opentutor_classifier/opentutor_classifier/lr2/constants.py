@@ -1,5 +1,7 @@
 MODEL_FILE_NAME = "models_by_expectation_num.pkl"
 
+SLIM_EMBEDDING_FILE_NAME = "slim_embeddings.json"
+
 FEATURE_LENGTH_RATIO = "featureLengthRatio"
 
 FEATURE_REGEX_AGGREGATE_DISABLED = "featureRegexAggregateDisabled"
