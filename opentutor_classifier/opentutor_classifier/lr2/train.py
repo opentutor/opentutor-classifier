@@ -97,7 +97,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
     ):
         embeddings: Dict[str, List[float]] = dict()
         words_set = set()
-        for word in ideal + question: words_set.add(word)
+        for word in ideal + question:
+            words_set.add(word)
         for archetype in archtypes_good + archetypes_bad:
             for word in archetype.lower().split():
                 words_set.add(word)
@@ -108,7 +109,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         for word in words_set:
             if word in self.word2vec_slim:
                 embeddings[word] = list(map(float, self.word2vec_slim[word]))
-        
+
         return embeddings
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:

@@ -230,6 +230,9 @@ class WebAppDataDao(DataDao):
     def save_pickle(self, req: ModelSaveReq) -> None:
         self.file_dao.save_pickle(req)
 
+    def save_embeddings(self, req: EmbeddingSaveReq) -> None:
+        self.file_dao.save_embeddings(req)
+
 
 def find_data_dao() -> DataDao:
     return WebAppDataDao()

@@ -240,6 +240,10 @@ class DataDao(ABC):
     def save_pickle(self, req: ModelSaveReq) -> None:
         raise NotImplementedError()
 
+    @abstractmethod
+    def save_embeddings(self, req: EmbeddingSaveReq) -> None:
+        raise NotImplementedError()
+
 
 @dataclass
 class AnswerClassifierInput:
