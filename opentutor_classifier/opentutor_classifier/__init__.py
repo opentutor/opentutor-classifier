@@ -288,6 +288,10 @@ class AnswerClassifier(ABC):
     def get_last_trained_at(self) -> float:
         raise NotImplementedError()
 
+    @abstractmethod
+    def save_config_and_model(self) -> Dict[str, Any]:
+        raise NotImplementedError()
+
 
 @dataclass
 class ExpectationFeatures:

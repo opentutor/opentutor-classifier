@@ -108,8 +108,9 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
         for word in words_set:
             if word in self.word2vec_slim:
-                embeddings[word] = list(map(float, self.word2vec_slim[word]))
-
+                embeddings[word] = list(
+                    map(lambda x: round(float(x), 9), self.word2vec_slim[word])
+                )
         return embeddings
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:

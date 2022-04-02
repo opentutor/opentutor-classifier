@@ -156,6 +156,14 @@ def create_app():
 
     app.register_blueprint(eval_blueprint, url_prefix="/classifier/evaluate")
 
+    from opentutor_classifier_api.blueprints.extract_config import (
+        extract_config_blueprint,
+    )
+
+    app.register_blueprint(
+        extract_config_blueprint, url_prefix="/classifier/extract_config"
+    )
+
     from opentutor_classifier_api.blueprints.check_model import check_model_blueprint
 
     app.register_blueprint(check_model_blueprint, url_prefix="/classifier/check_model")
