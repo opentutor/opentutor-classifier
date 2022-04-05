@@ -12,7 +12,6 @@ import pytest
 from opentutor_classifier import (
     ClassifierConfig,
     ClassifierFactory,
-    ARCH_LR2_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
 from .utils import (
@@ -62,28 +61,3 @@ def _test_train_and_check_config(
         config = classifier.save_config_and_model()
         for field in fields:
             assert field in config
-
-
-@pytest.mark.parametrize(
-    "example,arch,fields",
-    [
-        ("ies-rectangle", ARCH_LR2_CLASSIFIER, ["0", "1", "2", "embedding"]),
-    ],
-)
-@pytest.mark.slow
-def test_train_and_predict_slow(
-    example: str,
-    arch: str,
-    fields: List[str],
-    tmpdir,
-    data_root: str,
-    shared_root: str,
-):
-    _test_train_and_check_config(
-        example,
-        arch,
-        fields,
-        tmpdir,
-        data_root,
-        shared_root,
-    )

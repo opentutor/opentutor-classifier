@@ -77,6 +77,6 @@ def evaluate():
     )
     config = classifier.save_config_and_model()
     return (
-        jsonify({"output": to_camelcase(config.to_dict())}),
+        jsonify({"output": config}),
         200,
     )

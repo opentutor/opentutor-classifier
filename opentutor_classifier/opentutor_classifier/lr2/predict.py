@@ -96,25 +96,25 @@ class LRAnswerClassifier(AnswerClassifier):
             for i in conf.get_all_expectation_names()
         ]
 
-        word2vec_slim = self.find_word2vec_slim()
-        question_proc = preprocess_sentence(conf.question)
+        # word2vec_slim = self.find_word2vec_slim()
+        # question_proc = preprocess_sentence(conf.question)
 
-        slim_embeddings: Dict[str, List[float]] = dict()
+        # slim_embeddings: Dict[str, List[float]] = dict()
         config_dict: Dict[str, Any] = dict()
 
         for exp in expectations:
             exp_conf = conf.get_expectation(exp.expectation)
-            slim_embeddings.update(
-                self.update_slim_embeddings(
-                    preprocess_sentence(exp_conf.ideal),
-                    question_proc,
-                    exp_conf.features.get(ARCHETYPE_GOOD, []),
-                    exp_conf.features.get(ARCHETYPE_BAD, []),
-                    exp_conf.features.get(PATTERNS_GOOD, []),
-                    exp_conf.features.get(PATTERNS_BAD, []),
-                    word2vec_slim,
-                )
-            )
+            # slim_embeddings.update(
+            #     self.update_slim_embeddings(
+            #         preprocess_sentence(exp_conf.ideal),
+            #         question_proc,
+            #         exp_conf.features.get(ARCHETYPE_GOOD, []),
+            #         exp_conf.features.get(ARCHETYPE_BAD, []),
+            #         exp_conf.features.get(PATTERNS_GOOD, []),
+            #         exp_conf.features.get(PATTERNS_BAD, []),
+            #         word2vec_slim,
+            #     )
+            # )
             config_dict[exp.expectation] = dict()
             config_dict[exp.expectation]["weights_bias"] = [
                 list(exp.classifier.coef_[0]),
@@ -150,7 +150,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 exp_conf.features.get("patterns_good") or []
             )
 
-        config_dict["embedding"] = slim_embeddings
+        # config_dict["embedding"] = slim_embeddings
         return config_dict
 
     def find_model_for_expectation(
