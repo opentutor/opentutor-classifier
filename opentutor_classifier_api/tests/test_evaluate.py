@@ -206,34 +206,30 @@ def test_evaluate_classifies_user_answers(
             assert res["evaluation"] == res_expected.evaluation
 
 
-# @pytest.mark.only
-# @pytest.mark.parametrize(
-#     "lesson,answer",
-#     [
-#         ("q1","peer pressure can change your behavior",)
-#     ],
-# )
-# @responses.activate
-# def test_extract_config(
-#     client,
-#     lesson,
-#     answer
-# ):
-#     with mocked_data_dao(
-#         lesson,
-#         fixture_path("data"),
-#         fixture_path("models"),
-#         fixture_path("models_deployed"),
-#     ):
-#         res = client.post(
-#             "/classifier/extract_config/",
-#             data=json.dumps(
-#                 {
-#                     "lesson": lesson,
-#                 }
-#             ),
-#             content_type="application/json",
-#         )
-#         response = res.json["output"]
-#         print(response)
-#         assert 1==2
+@pytest.mark.only
+@pytest.mark.parametrize(
+    "lesson",
+    ["q1"],
+)
+@responses.activate
+def test_extract_config(
+    client,
+    lesson,
+):
+    with mocked_data_dao(
+        lesson,
+        fixture_path("data"),
+        fixture_path("models"),
+        fixture_path("models_deployed"),
+    ):
+        res = client.post(
+            "/classifier/extract_config/",
+            data=json.dumps(
+                {
+                    "lesson": lesson,
+                }
+            ),
+            content_type="application/json",
+        )
+        response = res.json["output"]
+        assert response is not None
