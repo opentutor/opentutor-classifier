@@ -17,7 +17,9 @@ def word2vec_download(to_path="installed", replace_existing=False) -> str:
         print(f"already is a file! {word2vec_path}")
         return word2vec_path
     word2vec_zip = os.path.join(to_path, "word2vec_slim.zip")
-    download("http://vectors.nlpl.eu/repository/20/40.zip", word2vec_zip)
+    download(
+        "https://aws-classifier-model.s3.amazonaws.com/word2vec_slim.zip", word2vec_zip
+    )
     with ZipFile(word2vec_zip, "r") as z:
         z.extract("model.bin")
     shutil.move("model.bin", word2vec_path)
