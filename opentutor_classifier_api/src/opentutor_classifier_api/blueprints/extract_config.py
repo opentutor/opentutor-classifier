@@ -52,6 +52,7 @@ def evaluate():
     validator = Validator(
         {
             "lesson": {"required": True, "type": "string"},
+            "embedding": {"required": False, "type": "boolean", "default": True},
         },
         allow_unknown=True,
         purge_unknown=True,
@@ -65,6 +66,7 @@ def evaluate():
         os.environ.get("MODEL_DEPLOYED_ROOT") or "models_deployed",
     ]
     lesson = args.get("lesson")
+    embedding = args.get("embedding", True)
     shared_root = os.environ.get("SHARED_ROOT") or "shared"
     classifier = _get_dao().find_classifier(
         lesson,
@@ -75,7 +77,7 @@ def evaluate():
             shared_root=shared_root,
         ),
     )
-    config = classifier.save_config_and_model()
+    config = classifier.save_config_and_model(embedding)
     return (
         jsonify({"output": config}),
         200,

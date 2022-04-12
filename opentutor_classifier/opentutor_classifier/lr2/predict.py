@@ -85,7 +85,7 @@ class LRAnswerClassifier(AnswerClassifier):
             self._is_default = cm.is_default
         return self._model_and_config
 
-    def save_config_and_model(self) -> Dict[str, Any]:
+    def save_config_and_model(self, embedding: bool = True) -> Dict[str, Any]:
         m_by_e, conf = self.model_and_config
         expectations = [
             ExpectationToEvaluate(
@@ -97,7 +97,8 @@ class LRAnswerClassifier(AnswerClassifier):
             for i in conf.get_all_expectation_names()
         ]
 
-        self.find_word2vec_slim()
+        if embedding:
+            self.find_word2vec_slim()
         question_proc = preprocess_sentence(conf.question)
 
         slim_embeddings: Dict[str, List[float]] = dict()
@@ -105,17 +106,18 @@ class LRAnswerClassifier(AnswerClassifier):
 
         for exp in expectations:
             exp_conf = conf.get_expectation(exp.expectation)
-            slim_embeddings.update(
-                self.update_slim_embeddings(
-                    preprocess_sentence(exp_conf.ideal),
-                    question_proc,
-                    exp_conf.features.get(ARCHETYPE_GOOD, []),
-                    exp_conf.features.get(ARCHETYPE_BAD, []),
-                    exp_conf.features.get(PATTERNS_GOOD, []),
-                    exp_conf.features.get(PATTERNS_BAD, []),
-                    self._word2vec_slim,
+            if embedding:
+                slim_embeddings.update(
+                    self.update_slim_embeddings(
+                        preprocess_sentence(exp_conf.ideal),
+                        question_proc,
+                        exp_conf.features.get(ARCHETYPE_GOOD, []),
+                        exp_conf.features.get(ARCHETYPE_BAD, []),
+                        exp_conf.features.get(PATTERNS_GOOD, []),
+                        exp_conf.features.get(PATTERNS_BAD, []),
+                        self._word2vec_slim,
+                    )
                 )
-            )
             config_dict[exp.expectation] = dict()
             config_dict[exp.expectation]["weights_bias"] = [
                 list(exp.classifier.coef_[0]),
@@ -151,7 +153,8 @@ class LRAnswerClassifier(AnswerClassifier):
                 exp_conf.features.get("patterns_good") or []
             )
 
-        config_dict["embedding"] = slim_embeddings
+        if embedding:
+            config_dict["embedding"] = slim_embeddings
         return config_dict
 
     def find_model_for_expectation(
