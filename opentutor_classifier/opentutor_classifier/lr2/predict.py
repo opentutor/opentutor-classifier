@@ -6,7 +6,7 @@
 #
 from opentutor_classifier.utils import model_last_updated_at, prop_bool
 from os import path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 
 from gensim.models.keyedvectors import Word2VecKeyedVectors
 from sklearn import linear_model
@@ -54,6 +54,7 @@ ModelAndConfig = Tuple[Dict[str, linear_model.LogisticRegression], QuestionConfi
 class LRAnswerClassifier(AnswerClassifier):
     def __init__(self):
         self._word2vec = None
+        self._word2vec_slim = None
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
         self._model_and_config: ModelAndConfig = None
@@ -84,6 +85,78 @@ class LRAnswerClassifier(AnswerClassifier):
             self._is_default = cm.is_default
         return self._model_and_config
 
+    def save_config_and_model(self, embedding: bool = True) -> Dict[str, Any]:
+        m_by_e, conf = self.model_and_config
+        expectations = [
+            ExpectationToEvaluate(
+                expectation=i,
+                classifier=self.find_model_for_expectation(
+                    m_by_e, i, return_first_model_if_only_one=True
+                ),
+            )
+            for i in conf.get_all_expectation_names()
+        ]
+
+        if embedding:
+            self.find_word2vec_slim()
+        question_proc = preprocess_sentence(conf.question)
+
+        slim_embeddings: Dict[str, List[float]] = dict()
+        config_dict: Dict[str, Any] = dict()
+
+        for exp in expectations:
+            exp_conf = conf.get_expectation(exp.expectation)
+            if embedding:
+                slim_embeddings.update(
+                    self.update_slim_embeddings(
+                        preprocess_sentence(exp_conf.ideal),
+                        question_proc,
+                        exp_conf.features.get(ARCHETYPE_GOOD, []),
+                        exp_conf.features.get(ARCHETYPE_BAD, []),
+                        exp_conf.features.get(PATTERNS_GOOD, []),
+                        exp_conf.features.get(PATTERNS_BAD, []),
+                        self._word2vec_slim,
+                    )
+                )
+            config_dict[exp.expectation] = dict()
+            config_dict[exp.expectation]["weights_bias"] = [
+                list(exp.classifier.coef_[0]),
+                exp.classifier.intercept_[0],
+            ]
+            config_dict[exp.expectation]["ideal"] = exp_conf.ideal
+            config_dict[exp.expectation]["archetype_bad"] = exp_conf.features.get(
+                ARCHETYPE_BAD, []
+            )
+            config_dict[exp.expectation]["archetype_good"] = exp_conf.features.get(
+                ARCHETYPE_GOOD, []
+            )
+            config_dict[exp.expectation]["regex_good"] = (
+                exp_conf.features.get(GOOD) or []
+            )
+            config_dict[exp.expectation]["regex_bad"] = exp_conf.features.get(BAD) or []
+            config_dict[exp.expectation][
+                "featureRegexAggregateDisabled"
+            ] = exp_conf.features.get("featureRegexAggregateDisabled")
+            config_dict[exp.expectation][
+                "featureDbScanClustersArchetypeEnabled"
+            ] = exp_conf.features.get("featureDbScanClustersArchetypeEnabled")
+            config_dict[exp.expectation][
+                "featureDbScanClustersPatternsEnabled"
+            ] = exp_conf.features.get("featureDbScanClustersPatternsEnabled")
+            config_dict[exp.expectation]["featureLengthRatio"] = exp_conf.features.get(
+                "featureLengthRatio"
+            )
+            config_dict[exp.expectation]["patterns_bad"] = (
+                exp_conf.features.get("patterns_bad") or []
+            )
+            config_dict[exp.expectation]["patterns_good"] = (
+                exp_conf.features.get("patterns_good") or []
+            )
+
+        if embedding:
+            config_dict["embedding"] = slim_embeddings
+        return config_dict
+
     def find_model_for_expectation(
         self,
         m_by_e: Dict[str, linear_model.LogisticRegression],
@@ -104,6 +177,13 @@ class LRAnswerClassifier(AnswerClassifier):
                 path.join(self.shared_root, "word2vec.bin")
             )
         return self._word2vec
+
+    def find_word2vec_slim(self) -> Word2VecKeyedVectors:
+        if not self._word2vec_slim:
+            self._word2vec_slim = find_or_load_word2vec(
+                path.join(self.shared_root, "word2vec_slim.bin")
+            )
+        return self._word2vec_slim
 
     def find_score_and_class(
         self, classifier, exp_num_i: str, sent_features: List[List[float]]
@@ -183,3 +263,31 @@ class LRAnswerClassifier(AnswerClassifier):
         return model_last_updated_at(
             ARCH_LR2_CLASSIFIER, self.model_name, self.model_roots, MODEL_FILE_NAME
         )
+
+    def update_slim_embeddings(
+        self,
+        ideal: List[str],
+        question: List[str],
+        archtypes_good: List[str],
+        archetypes_bad: List[str],
+        patterns_good: List[str],
+        patterns_bad: List[str],
+        word2vec_slim: Word2VecKeyedVectors,
+    ):
+        embeddings: Dict[str, List[float]] = dict()
+        words_set = set()
+        for word in ideal + question:
+            words_set.add(word)
+        for archetype in archtypes_good + archetypes_bad:
+            for word in archetype.lower().split():
+                words_set.add(word)
+        for pattern in patterns_bad + patterns_good:
+            for word in pattern.split(" + "):
+                words_set.add(word)
+
+        for word in words_set:
+            if word in word2vec_slim:
+                embeddings[word] = list(
+                    map(lambda x: round(float(x), 9), word2vec_slim[word])
+                )
+        return embeddings

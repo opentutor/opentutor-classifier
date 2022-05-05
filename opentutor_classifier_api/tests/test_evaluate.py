@@ -204,3 +204,32 @@ def test_evaluate_classifies_user_answers(
             assert res["expectationId"] == res_expected.expectation_id
             assert round(float(res["score"]), 2) == res_expected.score
             assert res["evaluation"] == res_expected.evaluation
+
+
+# @pytest.mark.only
+# @pytest.mark.parametrize(
+#     "lesson",
+#     ["q1"],
+# )
+# @responses.activate
+# def test_extract_config(
+#     client,
+#     lesson,
+# ):
+#     with mocked_data_dao(
+#         lesson,
+#         fixture_path("data"),
+#         fixture_path("models"),
+#         fixture_path("models_deployed"),
+#     ):
+#         res = client.post(
+#             "/classifier/extract_config/",
+#             data=json.dumps(
+#                 {
+#                     "lesson": lesson,
+#                 }
+#             ),
+#             content_type="application/json",
+#         )
+#         response = res.json["output"]
+#         assert response is not None

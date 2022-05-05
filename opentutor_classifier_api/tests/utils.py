@@ -22,6 +22,7 @@ from opentutor_classifier import (  # type: ignore
     ModelRef,
     ModelSaveReq,
     TrainingInput,
+    EmbeddingSaveReq,
 )
 from opentutor_classifier.api import get_graphql_endpoint  # type: ignore
 from opentutor_classifier.dao import FileDataDao  # type: ignore
@@ -104,6 +105,9 @@ class _TestDataDao(DataDao):
 
     def save_pickle(self, req: ModelSaveReq) -> None:
         self.dao.save_pickle(req)
+
+    def save_embeddings(self, req: EmbeddingSaveReq) -> None:
+        self.dao.save_embeddings(req)
 
 
 @contextmanager

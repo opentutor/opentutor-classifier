@@ -113,6 +113,11 @@ class ModelSaveReq(ModelRef):
 
 
 @dataclass
+class EmbeddingSaveReq(ModelRef):
+    embedding: Any
+
+
+@dataclass
 class TrainingInput:
     lesson: str = ""  # the lesson id
     config: QuestionConfig = field(default_factory=QuestionConfig)
@@ -235,6 +240,10 @@ class DataDao(ABC):
     def save_pickle(self, req: ModelSaveReq) -> None:
         raise NotImplementedError()
 
+    @abstractmethod
+    def save_embeddings(self, req: EmbeddingSaveReq) -> None:
+        raise NotImplementedError()
+
 
 @dataclass
 class AnswerClassifierInput:
@@ -277,6 +286,10 @@ class AnswerClassifier(ABC):
 
     @abstractmethod
     def get_last_trained_at(self) -> float:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def save_config_and_model(self) -> Dict[str, Any]:
         raise NotImplementedError()
 
 

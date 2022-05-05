@@ -63,11 +63,11 @@ class CustomDBScanClustering:
         agg = DBSCAN(eps=0.30)
         return agg.fit_predict(data) if len(data) > 0 else []
 
-    def get_embedding(self, sentence: List[str]) -> np.ndarray:
+    def get_embedding(self, sentence: List[str], num_features=300) -> np.ndarray:
         return _avg_feature_vector(
             words=sentence,
             model=self.word2vec,
-            num_features=300,
+            num_features=num_features,
             index2word_set=self.index2word_set,
         )
 
