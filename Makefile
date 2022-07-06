@@ -45,7 +45,8 @@ LICENSE_HEADER:
 
 .PHONY: license
 license: LICENSE LICENSE_HEADER $(VENV)
-	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/src $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/opentutor_classifier $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/opentutor_classifier_tasks $(args)
 	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/tests $(args)
 	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier_api/src $(args)
 	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier_api/tests $(args)
