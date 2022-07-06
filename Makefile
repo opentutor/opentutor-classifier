@@ -1,5 +1,5 @@
 LICENSE=LICENSE
-LICENSE_HEADER=LICENSE_HEADER
+LICENSE_HEADER?=LICENSE_HEADER
 VENV=.venv
 $(VENV):
 	$(MAKE) install
@@ -45,12 +45,12 @@ LICENSE_HEADER:
 
 .PHONY: license
 license: LICENSE LICENSE_HEADER $(VENV)
-	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/src $(args)
-	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier/tests $(args)
-	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/src $(args)
-	poetry run python -m licenseheaders -t LICENSE_HEADER -d opentutor_classifier_api/tests $(args)
-	poetry run python -m licenseheaders -t LICENSE_HEADER -d tools $(args)
-	poetry run python -m licenseheaders -t LICENSE_HEADER -d word2vec $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/src $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/tests $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier_api/src $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier_api/tests $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d tools $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d word2vec $(args)
 
 .PHONY: poetry-ensure-installed
 poetry-ensure-installed:
