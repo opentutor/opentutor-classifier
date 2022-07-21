@@ -210,7 +210,8 @@ class WebAppDataDao(DataDao):
     def save_config(self, req: QuestionConfigSaveReq) -> None:
         if not req.skip_feature_update:
             update_features(req)
-        update_last_trained_at(req.lesson)
+        if req.lesson != "default":
+            update_last_trained_at(req.lesson)
         self.file_dao.save_config(req)
 
     def save_pickle(self, req: ModelSaveReq) -> None:
