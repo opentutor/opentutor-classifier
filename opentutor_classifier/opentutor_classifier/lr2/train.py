@@ -11,6 +11,9 @@ from opentutor_classifier.utils import prop_bool
 from os import path
 
 from typing import Dict, List
+
+from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
+
 from .constants import (
     ARCHETYPE_BAD,
     ARCHETYPE_GOOD,
@@ -74,6 +77,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         self.word2vec: Word2VecKeyedVectors = None
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
+        self.word2vec_wrapper: Word2VecWrapper = Word2VecWrapper(path.join(config.shared_root, "word2vec.bin"))
+        self.word2vec_slim_wrapper: Word2VecWrapper = Word2VecWrapper(path.join(config.shared_root, "word2vec_slim.bin"))
         self.word2vec = find_or_load_word2vec(
             path.join(config.shared_root, "word2vec.bin")
         )
@@ -106,16 +111,17 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             for word in pattern.split(" + "):
                 words_set.add(word)
 
-        for word in words_set:
-            if word in self.word2vec_slim:
-                embeddings[word] = list(
-                    map(lambda x: round(float(x), 9), self.word2vec_slim[word])
-                )
+        word_vecs = self.word2vec_slim_wrapper.get_feature_vectors(words_set)
+
+        for word in word_vecs.keys():
+            embeddings[word] = list(
+                map(lambda x: round(float(x), 9), word_vecs[word])
+            )
         return embeddings
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         model = LRExpectationClassifier.initialize_model()
-        index2word_set = set(self.word2vec.index_to_key)
+        index2word_set = set(self.word2vec_slim_wrapper.index_to_key())
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
         clustering = CustomDBScanClustering(self.word2vec, index2word_set)
 
