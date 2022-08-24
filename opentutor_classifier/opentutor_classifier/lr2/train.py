@@ -28,7 +28,6 @@ from .constants import (
     PATTERNS_GOOD,
 )
 from .features import feature_regex_aggregate_disabled
-from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
 from sklearn import model_selection, linear_model
@@ -61,8 +60,6 @@ from .constants import FEATURE_LENGTH_RATIO
 from .expectations import LRExpectationClassifier
 from .features import feature_length_ratio_enabled, preprocess_sentence
 
-from opentutor_classifier.word2vec import find_or_load_word2vec
-
 from .clustering_features import CustomDBScanClustering
 
 
@@ -74,16 +71,11 @@ def _preprocess_trainx(data: List[str]) -> List[List[str]]:
 class LRAnswerClassifierTraining(AnswerClassifierTraining):
     def __init__(self):
         self.accuracy: Dict[str, int] = {}
-        self.word2vec: Word2VecKeyedVectors = None
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
-        self.word2vec_wrapper: Word2VecWrapper = Word2VecWrapper(path.join(config.shared_root, "word2vec.bin"))
-        self.word2vec_slim_wrapper: Word2VecWrapper = Word2VecWrapper(path.join(config.shared_root, "word2vec_slim.bin"))
-        self.word2vec = find_or_load_word2vec(
-            path.join(config.shared_root, "word2vec.bin")
-        )
-        self.word2vec_slim = find_or_load_word2vec(
-            path.join(config.shared_root, "word2vec_slim.bin")
+        self.word2vec_wrapper: Word2VecWrapper = Word2VecWrapper(
+            path.join(config.shared_root, "word2vec.bin"),
+            path.join(config.shared_root, "word2vec_slim.bin"),
         )
         self.train_quality = config.properties.get(
             PROP_TRAIN_QUALITY, get_train_quality_default()
@@ -111,19 +103,17 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             for word in pattern.split(" + "):
                 words_set.add(word)
 
-        word_vecs = self.word2vec_slim_wrapper.get_feature_vectors(words_set)
+        word_vecs = self.word2vec_wrapper.get_feature_vectors(words_set, True)
 
         for word in word_vecs.keys():
-            embeddings[word] = list(
-                map(lambda x: round(float(x), 9), word_vecs[word])
-            )
+            embeddings[word] = list(map(lambda x: round(float(x), 9), word_vecs[word]))
         return embeddings
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         model = LRExpectationClassifier.initialize_model()
-        index2word_set = set(self.word2vec_slim_wrapper.index_to_key())
+        index2word_set = set(self.word2vec_wrapper.index_to_key(True))
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
-        clustering = CustomDBScanClustering(self.word2vec, index2word_set)
+        clustering = CustomDBScanClustering(self.word2vec_wrapper, index2word_set)
 
         def process_features(features, input_sentence, index2word_set):
             processed_input_sentence = preprocess_sentence(input_sentence)
@@ -135,7 +125,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 input_sentence,
                 processed_input_sentence,
                 processed_ia,
-                self.word2vec,
+                self.word2vec_wrapper,
                 index2word_set,
                 [],
                 [],
@@ -202,8 +192,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 str(train_data["text"][i]).lower().strip()
             )
             split_training_sets[exp_num][1].append(label)
-        index2word_set: set = set(self.word2vec.index_to_key)
-        clustering = CustomDBScanClustering(self.word2vec, index2word_set)
+        index2word_set: set = set(self.word2vec_wrapper.index_to_key(False))
+        clustering = CustomDBScanClustering(self.word2vec_wrapper, index2word_set)
         config_updated = train_input.config.clone()
         expectation_results: List[ExpectationTrainingResult] = []
         expectation_models: Dict[str, linear_model.LogisticRegression] = {}
@@ -272,7 +262,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         raw_example,
                         example,
                         ideal_answer,
-                        self.word2vec,
+                        self.word2vec_wrapper,
                         index2word_set,
                         good,
                         bad,

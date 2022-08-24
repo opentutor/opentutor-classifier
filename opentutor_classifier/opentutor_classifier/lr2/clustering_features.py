@@ -9,7 +9,6 @@ import heapq
 from opentutor_classifier.lr2.constants import BAD, GOOD
 from typing import Dict, List, Tuple
 
-from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 import pandas as pd
 
@@ -18,6 +17,8 @@ from sklearn.cluster import DBSCAN
 from sklearn.feature_selection import SelectKBest, chi2
 
 from text_to_num import alpha2digit
+
+from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
 
 from .features import (
     number_of_negatives,
@@ -28,7 +29,7 @@ from .features import (
 
 
 class CustomDBScanClustering:
-    def __init__(self, word2vec: Word2VecKeyedVectors, index2word_set):
+    def __init__(self, word2vec: Word2VecWrapper, index2word_set):
         self.word2vec = word2vec
         self.index2word_set = index2word_set
         self.word_alignment_dp: Dict[

@@ -9,7 +9,6 @@ from os import environ
 import re
 from typing import List, Tuple
 
-from gensim.models.keyedvectors import Word2VecKeyedVectors
 import numpy as np
 from tok import word_tokenize
 
@@ -19,6 +18,7 @@ from opentutor_classifier.stopwords import STOPWORDS
 from text_to_num import alpha2digit
 
 from opentutor_classifier.utils import prop_bool
+from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
 from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
 
 
@@ -76,16 +76,17 @@ def feature_length_ratio_enabled() -> bool:
 
 def _avg_feature_vector(
     words: List[str],
-    model: Word2VecKeyedVectors,
+    model: Word2VecWrapper,
     num_features: int,
     index2word_set: set,
 ) -> np.ndarray:
     feature_vec = np.zeros((num_features,), dtype="float32")
     nwords = 0
     common_words = set(words).intersection(index2word_set)
-    for word in common_words:
+    word_vecs = model.get_feature_vectors(common_words, False)
+    for word in word_vecs.keys():
         nwords = nwords + 1
-        feature_vec = np.add(feature_vec, model[word])
+        feature_vec = np.add(feature_vec, word_vecs[word])
     if nwords > 0:
         feature_vec = np.divide(feature_vec, nwords)
     return feature_vec
@@ -131,7 +132,7 @@ def regex_match_ratio(str_example: str, regexes: List[str]) -> float:
 
 
 def word2vec_example_similarity(
-    word2vec: Word2VecKeyedVectors,
+    word2vec: Word2VecWrapper,
     index2word_set: set,
     example: List[str],
     ideal: List[str],
@@ -150,7 +151,7 @@ def word2vec_example_similarity(
 
 
 def word2vec_question_similarity(
-    word2vec: Word2VecKeyedVectors,
+    word2vec: Word2VecWrapper,
     index2word_set: set,
     example: List[str],
     question: List[str],
