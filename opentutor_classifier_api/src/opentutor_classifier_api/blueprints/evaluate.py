@@ -52,6 +52,7 @@ def _get_dao() -> ClassifierDao:
 @eval_blueprint.route("/", methods=["POST"])
 @eval_blueprint.route("", methods=["POST"])
 def evaluate():
+    auth_headers = {"Authorization": request.headers.get("Authorization")}
     validator = Validator(
         {
             "lesson": {"required": True, "type": "string"},
@@ -86,12 +87,14 @@ def evaluate():
             model_roots=model_roots,
             shared_root=shared_root,
         ),
+        auth_headers=auth_headers,
     )
     _model_op = classifier.evaluate(
         AnswerClassifierInput(
             input_sentence=input_sentence,
             expectation=exp_num,
-        )
+        ),
+        auth_headers=auth_headers
     )
     return (
         jsonify({"output": to_camelcase(_model_op.to_dict())}),

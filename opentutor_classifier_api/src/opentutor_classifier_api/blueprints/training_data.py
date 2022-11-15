@@ -5,7 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from opentutor_classifier.api import fetch_training_data
-from flask import Blueprint, make_response
+from flask import Blueprint, make_response, request
 
 
 trainingdata_blueprint = Blueprint("trainingdata", __name__)
@@ -13,7 +13,8 @@ trainingdata_blueprint = Blueprint("trainingdata", __name__)
 
 @trainingdata_blueprint.route("/<lesson_id>", methods=["GET"])
 def get_data(lesson_id: str):
-    data = fetch_training_data(lesson_id)
+    auth_headers = {"Authorization": request.headers.get("Authorization")}
+    data = fetch_training_data(lesson_id, auth_headers=auth_headers)
     data_csv = data.data.to_csv(index=False)
     output = make_response(data_csv)
     output.headers["Content-Disposition"] = "attachment; filename=mentor.csv"

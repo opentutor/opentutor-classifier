@@ -59,11 +59,11 @@ def test_classifier_cache(arch: str, lesson: str, tmpdir, data_root, shared_root
         )
 
         dao = ClassifierDao()
-        classifier1 = dao.find_classifier(lesson, config, arch)
-        classifier2 = dao.find_classifier(lesson, config, arch)
+        classifier1 = dao.find_classifier(lesson, config, arch, {})
+        classifier2 = dao.find_classifier(lesson, config, arch, {})
         assert classifier1 == classifier2
 
         train_classifier(lesson, test_config)
 
-        classifier3 = dao.find_classifier(lesson, config, arch)
+        classifier3 = dao.find_classifier(lesson, config, arch, {})
         assert classifier3 != classifier1

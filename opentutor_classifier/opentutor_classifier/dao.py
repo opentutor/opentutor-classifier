@@ -10,7 +10,7 @@ import json
 from os import environ, makedirs, path
 import shutil
 import tempfile
-from typing import Any
+from typing import Any, Dict
 
 import pandas as pd
 
@@ -114,7 +114,9 @@ class FileDataDao(DataDao):
         makedirs(path.dirname(path.abspath(f_new)), exist_ok=True)
         shutil.copyfile(f_old, f_new)
 
-    def find_default_training_data(self) -> pd.DataFrame:
+    def find_default_training_data(
+        self, auth_headers: Dict[str, str] = {}
+    ) -> pd.DataFrame:
         return load_data(
             self._get_data_file(self.get_default_lesson_name(), _TRAINING_CSV)
         )
@@ -126,13 +128,17 @@ class FileDataDao(DataDao):
             )
         )
 
-    def find_training_config(self, lesson: str) -> QuestionConfig:
+    def find_training_config(
+        self, lesson: str, auth_headers: Dict[str, str] = {}
+    ) -> QuestionConfig:
         return load_config(self._get_data_file(lesson, _CONFIG_YAML))
 
-    def find_training_input(self, lesson: str) -> TrainingInput:
+    def find_training_input(
+        self, lesson: str, auth_headers: Dict[str, str] = {}
+    ) -> TrainingInput:
         return TrainingInput(
             lesson=lesson,
-            config=self.find_training_config(lesson),
+            config=self.find_training_config(lesson, auth_headers),
             data=load_data(self._get_data_file(lesson, _TRAINING_CSV)),
         )
 
@@ -146,7 +152,9 @@ class FileDataDao(DataDao):
     def remove_trained_model(self, ref: ArchLesson) -> None:
         shutil.rmtree(self.get_model_root(ref))
 
-    def save_config(self, req: QuestionConfigSaveReq) -> None:
+    def save_config(
+        self, req: QuestionConfigSaveReq, auth_headers: Dict[str, str] = {}
+    ) -> None:
         tmpf = self._setup_tmp(_CONFIG_YAML)
         req.config.write_to(tmpf)
         self._replace(
@@ -200,17 +208,23 @@ class WebAppDataDao(DataDao):
     def get_model_root(self, lesson: ArchLesson) -> str:
         return self.file_dao.get_model_root(lesson)
 
-    def find_default_training_data(self) -> pd.DataFrame:
-        return fetch_all_training_data()
+    def find_default_training_data(
+        self, auth_headers: Dict[str, str] = {}
+    ) -> pd.DataFrame:
+        return fetch_all_training_data(auth_headers=auth_headers)
 
     def find_prediction_config(self, lesson: ArchLesson) -> QuestionConfig:
         return self.file_dao.find_prediction_config(lesson)
 
-    def find_training_config(self, lesson: str) -> QuestionConfig:
-        return fetch_config(lesson)
+    def find_training_config(
+        self, lesson: str, auth_headers: Dict[str, str] = {}
+    ) -> QuestionConfig:
+        return fetch_config(lesson, auth_headers)
 
-    def find_training_input(self, lesson: str) -> TrainingInput:
-        return fetch_training_data(lesson)
+    def find_training_input(
+        self, lesson: str, auth_headers: Dict[str, str] = {}
+    ) -> TrainingInput:
+        return fetch_training_data(lesson, auth_headers=auth_headers)
 
     def load_pickle(self, ref: ModelRef) -> Any:
         return self.file_dao.load_pickle(ref)
@@ -221,12 +235,14 @@ class WebAppDataDao(DataDao):
     def remove_trained_model(self, ref: ArchLesson) -> None:
         return self.file_dao.remove_trained_model(ref)
 
-    def save_config(self, req: QuestionConfigSaveReq) -> None:
+    def save_config(
+        self, req: QuestionConfigSaveReq, auth_headers: Dict[str, str] = {}
+    ) -> None:
         if not req.skip_feature_update:
-            update_features(req)
+            update_features(req, auth_headers=auth_headers)
         if req.lesson != "default":
-            update_last_trained_at(req.lesson)
-        self.file_dao.save_config(req)
+            update_last_trained_at(req.lesson, auth_headers=auth_headers)
+        self.file_dao.save_config(req, auth_headers=auth_headers)
 
     def save_pickle(self, req: ModelSaveReq) -> None:
         self.file_dao.save_pickle(req)
@@ -246,7 +262,9 @@ class ConfigAndModel:
     is_default: bool
 
 
-def find_predicton_config_and_pickle(ref: ModelRef, dao: DataDao) -> ConfigAndModel:
+def find_predicton_config_and_pickle(
+    ref: ModelRef, dao: DataDao, auth_headers: Dict[str, str] = {}
+) -> ConfigAndModel:
     """
     Utility finder for the common prediction-time case
     of needing to load a single, pickle-file trained model
@@ -261,7 +279,7 @@ def find_predicton_config_and_pickle(ref: ModelRef, dao: DataDao) -> ConfigAndMo
         )
     else:
         return ConfigAndModel(
-            config=dao.find_training_config(ref.lesson),
+            config=dao.find_training_config(ref.lesson, auth_headers),
             model=dao.load_default_pickle(
                 ArchFile(arch=ref.arch, filename=ref.filename)
             ),

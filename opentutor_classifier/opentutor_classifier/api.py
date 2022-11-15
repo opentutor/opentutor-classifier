@@ -11,7 +11,7 @@ from io import StringIO
 import json
 import os
 import requests
-from typing import Optional, TypedDict
+from typing import Optional, TypedDict, Dict
 import yaml
 
 import pandas as pd
@@ -55,20 +55,16 @@ class GQLQueryBody(TypedDict):
 
 GQL_QUERY_LESSON_UPDATED_AT = """
 query LessonUpdatedAt($lessonId: String!) {
-    me {
-        lesson(lessonId: $lessonId) {
-            updatedAt
-        }
+    lesson(lessonId: $lessonId) {
+        updatedAt
     }
 }
 """
 
 GQL_QUERY_LESSON_CONFIG = """
 query LessonConfig($lessonId: String!) {
-    me {
-        config(lessonId: $lessonId) {
-            stringified
-        }
+    config(lessonId: $lessonId) {
+        stringified
     }
 }
 """
@@ -185,28 +181,29 @@ def update_last_trained_at_gql(lesson: str) -> GQLQueryBody:
     }
 
 
-def update_last_trained_at(lesson: str) -> None:
-    res_json = __auth_gql(update_last_trained_at_gql(lesson))
+def update_last_trained_at(lesson: str, auth_headers: Dict[str, str] = {}) -> None:
+    res_json = __auth_gql(update_last_trained_at_gql(lesson), auth_headers=auth_headers)
     if "errors" in res_json:
         raise Exception(json.dumps(res_json.get("errors")))
 
 
-def update_features(req: QuestionConfigSaveReq) -> None:
-    res_json = __auth_gql(update_features_gql(req))
+def update_features(
+    req: QuestionConfigSaveReq, auth_headers: Dict[str, str] = {}
+) -> None:
+    res_json = __auth_gql(update_features_gql(req), auth_headers=auth_headers)
     if "errors" in res_json:
         raise Exception(json.dumps(res_json.get("errors")))
 
 
-def __auth_gql(query: GQLQueryBody, url: str = "") -> dict:
+def __auth_gql(
+    query: GQLQueryBody, url: str = "", auth_headers: Dict[str, str] = {}
+) -> dict:
     res: Optional[requests.Response] = None
     try:
         res = requests.post(
             url or get_graphql_endpoint(),
             json=query,
-            headers={
-                "opentutor-api-req": "true",
-                "Authorization": f"bearer {get_api_key()}",
-            },
+            headers=auth_headers,
         )
         res.raise_for_status()
         return res.json()
@@ -218,32 +215,40 @@ def __auth_gql(query: GQLQueryBody, url: str = "") -> dict:
         raise x
 
 
-def __fetch_training_data(lesson: str, url: str) -> dict:
+def __fetch_training_data(
+    lesson: str, url: str, auth_headers: Dict[str, str] = {}
+) -> dict:
     if url and not url.startswith("http"):
         with open(url) as f:
             return json.load(f)
-    return __auth_gql(query_lesson_training_data_gql(lesson), url=url)
+    return __auth_gql(
+        query_lesson_training_data_gql(lesson), url=url, auth_headers=auth_headers
+    )
 
 
-def fetch_config(lesson: str) -> QuestionConfig:
-    tdjson = __auth_gql(query_lesson_config_gql(lesson))
+def fetch_config(lesson: str, auth_headers: Dict[str, str] = {}) -> QuestionConfig:
+    tdjson = __auth_gql(query_lesson_config_gql(lesson), auth_headers=auth_headers)
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
-    data = tdjson["data"]["me"]["config"]
+    data = tdjson["data"]["config"]
     return dict_to_question_config(yaml.safe_load(data.get("stringified") or ""))
 
 
-def fetch_lesson_updated_at(lesson: str) -> datetime:
-    tdjson = __auth_gql(query_lesson_updated_at(lesson))
+def fetch_lesson_updated_at(lesson: str, auth_headers: Dict[str, str] = {}) -> datetime:
+    tdjson = __auth_gql(query_lesson_updated_at(lesson), auth_headers=auth_headers)
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
-    updated_at = tdjson["data"]["me"]["lesson"]["updatedAt"]
+    updated_at = tdjson["data"]["lesson"]["updatedAt"]
     # can't use date.fromisoformat because it doesn't handle Z suffix
     return parser.isoparse(updated_at)
 
 
-def fetch_training_data(lesson: str, url="") -> TrainingInput:
-    tdjson = __fetch_training_data(lesson, url or get_graphql_endpoint())
+def fetch_training_data(
+    lesson: str, url="", auth_headers: Dict[str, str] = {}
+) -> TrainingInput:
+    tdjson = __fetch_training_data(
+        lesson, url or get_graphql_endpoint(), auth_headers=auth_headers
+    )
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
     data = tdjson["data"]["me"]["trainingData"]
@@ -256,15 +261,17 @@ def fetch_training_data(lesson: str, url="") -> TrainingInput:
     )
 
 
-def __fetch_all_training_data(url: str) -> dict:
+def __fetch_all_training_data(url: str, auth_headers: Dict[str, str] = {}) -> dict:
     if url and not url.startswith("http"):
         with open(url) as f:
             return json.load(f)
-    return __auth_gql(query_all_training_data_gql(), url=url)
+    return __auth_gql(query_all_training_data_gql(), url=url, auth_headers=auth_headers)
 
 
-def fetch_all_training_data(url="") -> pd.DataFrame:
-    tdjson = __fetch_all_training_data(url or get_graphql_endpoint())
+def fetch_all_training_data(url="", auth_headers: Dict[str, str] = {}) -> pd.DataFrame:
+    tdjson = __fetch_all_training_data(
+        url or get_graphql_endpoint(), auth_headers=auth_headers
+    )
     if "errors" in tdjson:
         raise Exception(json.dumps(tdjson.get("errors")))
     data = tdjson["data"]["me"]["allTrainingData"]

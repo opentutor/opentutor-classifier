@@ -122,7 +122,7 @@ def _train_classifier_and_get_confidence(
         from opentutor_classifier.dao import find_data_dao
 
         data_dao = find_data_dao()
-        question_config = data_dao.find_training_config(lesson)
+        question_config = data_dao.find_training_config(lesson, {})
 
         classifier_config = ClassifierConfig(
             data_dao,
@@ -132,14 +132,17 @@ def _train_classifier_and_get_confidence(
         )
         from opentutor_classifier.classifier_dao import ClassifierDao
 
-        classifier = ClassifierDao().find_classifier(lesson, classifier_config, arch)
+        classifier = ClassifierDao().find_classifier(
+            lesson, classifier_config, arch, {}
+        )
 
         answer_classifier_result = classifier.evaluate(
             AnswerClassifierInput(
                 input_sentence=input_answer,
                 config_data=question_config,
                 expectation="0",
-            )
+            ),
+            {}
         )
         return answer_classifier_result.expectation_results[0].score
 

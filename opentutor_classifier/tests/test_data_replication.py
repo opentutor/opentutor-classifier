@@ -72,7 +72,7 @@ def predict_replicate_model(
         arch=arch,
     )
     class_input = AnswerClassifierInput(input, None, expectation)
-    results = classifier.evaluate(class_input)
+    results = classifier.evaluate(class_input, {})
     return results.expectation_results[0].score
 
 

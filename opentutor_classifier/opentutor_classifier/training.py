@@ -14,6 +14,7 @@ from . import (
 )
 from . import DataDao
 from .dao import FileDataDao
+from typing import Dict
 
 
 def train(
@@ -21,17 +22,22 @@ def train(
     arch="",
     config: TrainingConfig = None,
     dao: DataDao = None,
+    auth_headers: Dict[str, str] = {},
 ) -> TrainingResult:
     dao = dao or opentutor_classifier.dao.find_data_dao()
-    data = dao.find_training_input(lesson)
+    data = dao.find_training_input(lesson, auth_headers)
     fac = ClassifierFactory()
     training = fac.new_training(config or TrainingConfig(), arch=arch)
-    res = training.train(data, dao)
+    res = training.train(data, dao, auth_headers)
     return res
 
 
 def train_data_root(
-    arch="", config: TrainingConfig = None, data_root="data", output_dir=""
+    arch="",
+    config: TrainingConfig = None,
+    data_root="data",
+    output_dir="",
+    auth_headers: Dict[str, str] = {},
 ) -> TrainingResult:
     droot, lesson = path.split(path.abspath(data_root))
     return train(
@@ -39,15 +45,23 @@ def train_data_root(
         arch=arch,
         config=config,
         dao=FileDataDao(droot, model_root=output_dir),
+        auth_headers=auth_headers,
     )
 
 
 def train_default_data_root(
-    arch="", config: TrainingConfig = None, data_root="data", output_dir=""
+    arch="",
+    config: TrainingConfig = None,
+    data_root="data",
+    output_dir="",
+    auth_headers: Dict[str, str] = {},
 ) -> TrainingResult:
     droot, __default__ = path.split(path.abspath(data_root))
     return train_default(
-        arch=arch, config=config, dao=FileDataDao(droot, model_root=output_dir)
+        arch=arch,
+        config=config,
+        dao=FileDataDao(droot, model_root=output_dir),
+        auth_headers=auth_headers,
     )
 
 
@@ -55,11 +69,12 @@ def train_default(
     arch="",
     config: TrainingConfig = None,
     dao: DataDao = None,
+    auth_headers: Dict[str, str] = {},
 ) -> TrainingResult:
     dao = dao or opentutor_classifier.dao.find_data_dao()
-    data = dao.find_default_training_data()
+    data = dao.find_default_training_data(auth_headers)
     return (
         ClassifierFactory()
         .new_training(config or TrainingConfig(), arch=arch)
-        .train_default(data, dao)
+        .train_default(data, dao, auth_headers=auth_headers)
     )

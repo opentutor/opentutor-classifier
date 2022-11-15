@@ -21,10 +21,10 @@ celery.conf.update(config)
 
 
 @celery.task()
-def train_task(lesson):
+def train_task(lesson, auth_headers):
     pass
 
 
 @celery.task()
-def train_default_task():
+def train_default_task(auth_headers):
     pass
