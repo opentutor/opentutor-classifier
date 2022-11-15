@@ -210,6 +210,7 @@ def test_generates_features_when_env_train_quality_2(
                 filename=MODEL_FILE_NAME,
             ),
             test_config.find_data_dao(),
+            {},
         )
 
         fields_in_config = frozenset(cm.config.get_expectation("0").features.keys())

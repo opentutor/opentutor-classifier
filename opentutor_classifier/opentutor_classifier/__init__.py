@@ -180,14 +180,17 @@ class DataDao(ABC):
             )
         )
 
-    def save_default_config(self, config: QuestionConfig, arch: str) -> None:
+    def save_default_config(
+        self, config: QuestionConfig, arch: str, auth_headers: Dict[str, str] = {}
+    ) -> None:
         self.save_config(
             QuestionConfigSaveReq(
                 arch=arch,
                 config=config,
                 lesson=self.get_default_lesson_name(),
                 skip_feature_update=True,
-            )
+            ),
+            auth_headers=auth_headers,
         )
 
     def save_default_pickle(self, req: DefaultModelSaveReq) -> None:
@@ -205,15 +208,21 @@ class DataDao(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def find_default_training_data(self) -> pd.DataFrame:
+    def find_default_training_data(
+        self, auth_headers: Dict[str, str] = {}
+    ) -> pd.DataFrame:
         raise NotImplementedError()
 
     @abstractmethod
-    def find_training_config(self, lesson: str) -> QuestionConfig:
+    def find_training_config(
+        self, lesson: str, auth_headers: Dict[str, str] = {}
+    ) -> QuestionConfig:
         raise NotImplementedError()
 
     @abstractmethod
-    def find_training_input(self, lesson: str) -> TrainingInput:
+    def find_training_input(
+        self, lesson: str, auth_headers: Dict[str, str] = {}
+    ) -> TrainingInput:
         raise NotImplementedError()
 
     @abstractmethod
@@ -233,7 +242,9 @@ class DataDao(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def save_config(self, req: QuestionConfigSaveReq) -> None:
+    def save_config(
+        self, req: QuestionConfigSaveReq, auth_headers: Dict[str, str] = {}
+    ) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -281,7 +292,7 @@ class AnswerClassifier(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+    def evaluate(self, answer: AnswerClassifierInput, auth_headers: Dict[str, str] = {}) -> AnswerClassifierResult:
         raise NotImplementedError()
 
     @abstractmethod
@@ -289,7 +300,9 @@ class AnswerClassifier(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def save_config_and_model(self) -> Dict[str, Any]:
+    def save_config_and_model(
+        self, embedding: bool = True, auth_headers: Dict[str, str] = {}
+    ) -> Dict[str, Any]:
         raise NotImplementedError()
 
 
@@ -314,11 +327,18 @@ class AnswerClassifierTraining(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
+    def train(
+        self,
+        train_input: TrainingInput,
+        dao: DataDao,
+        auth_headers: Dict[str, str] = {},
+    ) -> TrainingResult:
         raise NotImplementedError()
 
     @abstractmethod
-    def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
+    def train_default(
+        self, data: pd.DataFrame, dao: DataDao, auth_headers: Dict[str, str] = {}
+    ) -> TrainingResult:
         raise NotImplementedError()
 
 

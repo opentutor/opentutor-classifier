@@ -8,6 +8,8 @@ from datetime import datetime
 from opentutor_classifier.api import fetch_lesson_updated_at
 from os import environ
 
+from typing import Dict
+
 import pylru
 from opentutor_classifier import (
     get_classifier_arch,
@@ -29,11 +31,15 @@ class ClassifierDao:
         self.cache = pylru.lrucache(int(environ.get("CACHE_MAX_SIZE", "100")))
 
     def find_classifier(
-        self, lesson: str, config: ClassifierConfig, arch: str = ""
+        self,
+        lesson: str,
+        config: ClassifierConfig,
+        arch: str = "",
+        auth_headers: Dict[str, str] = {},
     ) -> AnswerClassifier:
         cfac = ClassifierFactory()
         lesson_updated_at = (
-            fetch_lesson_updated_at(lesson)
+            fetch_lesson_updated_at(lesson, auth_headers)
             if cfac.has_trained_model(lesson, config, arch=arch)
             else datetime.min
         )

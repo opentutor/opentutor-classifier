@@ -22,7 +22,10 @@ def _to_status_url(root: str, id: str) -> str:
 @train_blueprint.route("", methods=["POST"])
 def train():
     lesson: str = request.json.get("lesson")
-    t = opentutor_classifier_tasks.tasks.train_task.apply_async(args=[lesson])
+    auth_headers = {"Authorization": request.headers.get("Authorization")}
+    t = opentutor_classifier_tasks.tasks.train_task.apply_async(
+        args=[lesson, auth_headers]
+    )
     return jsonify(
         {
             "data": {

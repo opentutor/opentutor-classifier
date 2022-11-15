@@ -10,6 +10,7 @@ from distutils.dir_util import copy_tree
 from pathlib import Path
 from typing import Any, Callable, List, Optional
 from unittest.mock import patch
+from typing import Dict
 
 import pandas as pd
 import pytest
@@ -126,7 +127,7 @@ def run_classifier_tests(
         arch=arch,
     )
     for ex in examples:
-        assert_classifier_evaluate(classifier.evaluate(ex.input), ex.expectations)
+        assert_classifier_evaluate(classifier.evaluate(ex.input, {}), ex.expectations)
 
 
 def run_classifier_testset(
@@ -144,7 +145,7 @@ def run_classifier_testset(
     )
     result = _TestSetResult(testset=testset)
     for ex in testset.examples:
-        result.results.append(to_example_result(ex, classifier.evaluate(ex.input)))
+        result.results.append(to_example_result(ex, classifier.evaluate(ex.input, {})))
     return result
 
 
@@ -271,17 +272,23 @@ class _TestDataDao(DataDao):
     def get_model_root(self, lesson: ArchLesson) -> str:
         return self.dao.get_model_root(lesson)
 
-    def find_default_training_data(self) -> pd.DataFrame:
-        return self.dao.find_default_training_data()
+    def find_default_training_data(
+        self, auth_headers: Dict[str, str] = {}
+    ) -> pd.DataFrame:
+        return self.dao.find_default_training_data(auth_headers)
 
     def find_prediction_config(self, lesson: ArchLesson) -> QuestionConfig:
         return self.dao.find_prediction_config(lesson)
 
-    def find_training_config(self, lesson: str) -> QuestionConfig:
-        return self.dao.find_training_config(lesson)
+    def find_training_config(
+        self, lesson: str, auth_headers: Dict[str, str] = {}
+    ) -> QuestionConfig:
+        return self.dao.find_training_config(lesson, auth_headers)
 
-    def find_training_input(self, lesson: str) -> TrainingInput:
-        return self.dao.find_training_input(lesson)
+    def find_training_input(
+        self, lesson: str, auth_headers: Dict[str, str] = {}
+    ) -> TrainingInput:
+        return self.dao.find_training_input(lesson, auth_headers)
 
     def load_pickle(self, ref: ModelRef) -> Any:
         return self.dao.load_pickle(ref)
@@ -292,8 +299,10 @@ class _TestDataDao(DataDao):
     def remove_trained_model(self, ref: ArchLesson) -> None:
         return self.dao.remove_trained_model(ref)
 
-    def save_config(self, req: QuestionConfigSaveReq) -> None:
-        self.dao.save_config(req)
+    def save_config(
+        self, req: QuestionConfigSaveReq, auth_headers: Dict[str, str] = {}
+    ) -> None:
+        self.dao.save_config(req, auth_headers)
         mock_gql_response(
             req.lesson,
             self.dao.data_root,

@@ -70,8 +70,7 @@ class LRAnswerClassifier(AnswerClassifier):
         self.shared_root = config.shared_root
         return self
 
-    @property
-    def model_and_config(self) -> ModelAndConfig:
+    def model_and_config(self, auth_headers: Dict[str, str] = {}) -> ModelAndConfig:
         if not self._model_and_config:
             cm = find_predicton_config_and_pickle(
                 ModelRef(
@@ -80,13 +79,16 @@ class LRAnswerClassifier(AnswerClassifier):
                     filename=MODEL_FILE_NAME,
                 ),
                 self.dao,
+                auth_headers=auth_headers,
             )
             self._model_and_config = (cm.model, cm.config)
             self._is_default = cm.is_default
         return self._model_and_config
 
-    def save_config_and_model(self, embedding: bool = True) -> Dict[str, Any]:
-        m_by_e, conf = self.model_and_config
+    def save_config_and_model(
+        self, embedding: bool = True, auth_headers: Dict[str, str] = {}
+    ) -> Dict[str, Any]:
+        m_by_e, conf = self.model_and_config(auth_headers=auth_headers)
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
@@ -196,9 +198,9 @@ class LRAnswerClassifier(AnswerClassifier):
             score=_score if _evaluation == "Good" else 1 - _score,
         )
 
-    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+    def evaluate(self, answer: AnswerClassifierInput, auth_headers: Dict[str, str] = {}) -> AnswerClassifierResult:
         sent_proc = preprocess_sentence(answer.input_sentence)
-        m_by_e, conf = self.model_and_config
+        m_by_e, conf = self.model_and_config(auth_headers)
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,

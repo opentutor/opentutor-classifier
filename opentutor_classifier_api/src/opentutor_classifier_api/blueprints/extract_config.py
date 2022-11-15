@@ -49,6 +49,7 @@ def _get_dao() -> ClassifierDao:
 @extract_config_blueprint.route("/", methods=["POST"])
 @extract_config_blueprint.route("", methods=["POST"])
 def evaluate():
+    auth_headers = {"Authorization": request.headers.get("Authorization")}
     validator = Validator(
         {
             "lesson": {"required": True, "type": "string"},
@@ -76,8 +77,9 @@ def evaluate():
             model_roots=model_roots,
             shared_root=shared_root,
         ),
+        auth_headers=auth_headers,
     )
-    config = classifier.save_config_and_model(embedding)
+    config = classifier.save_config_and_model(embedding, auth_headers=auth_headers)
     return (
         jsonify({"output": config}),
         200,

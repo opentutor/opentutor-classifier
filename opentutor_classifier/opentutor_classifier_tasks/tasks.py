@@ -8,6 +8,7 @@ import os
 
 from celery import Celery
 from celery.utils.log import get_task_logger
+from typing import Dict
 
 from opentutor_classifier import TrainingConfig
 from opentutor_classifier.training import train, train_default
@@ -29,11 +30,12 @@ SHARED_ROOT = os.environ.get("SHARED_ROOT") or "shared"
 
 
 @celery.task()
-def train_task(lesson: str) -> dict:
+def train_task(lesson: str, auth_headers: Dict[str, str] = {}) -> dict:
     try:
         return train(
             lesson,
             config=TrainingConfig(shared_root=SHARED_ROOT),
+            auth_headers=auth_headers,
         ).to_dict()
     except BaseException as ex:
         get_task_logger(__name__).exception(ex)
@@ -41,10 +43,11 @@ def train_task(lesson: str) -> dict:
 
 
 @celery.task()
-def train_default_task() -> dict:
+def train_default_task(auth_headers: Dict[str,str] = {}) -> dict:
     try:
         return train_default(
             config=TrainingConfig(shared_root=SHARED_ROOT),
+            auth_headers=auth_headers
         ).to_dict()
     except BaseException as ex:
         get_task_logger(__name__).exception(ex)

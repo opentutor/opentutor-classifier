@@ -9,8 +9,12 @@ from pathlib import Path
 from .api import fetch_training_data
 
 
-def sync(lesson: str, url: str, output: str):
-    data = fetch_training_data(lesson, url)
+def sync(lesson: str, url: str, api_key: str, output: str):
+    auth_headers = {
+        "opentutor-api-req": "true",
+        "Authorization": f"bearer {api_key}",
+    }
+    data = fetch_training_data(lesson, url, auth_headers=auth_headers)
     Path(output).mkdir(parents=True, exist_ok=True)
     with open(f"{output}/training.csv", "w+", newline="") as file:
         file.write(data.data.to_csv(index=False))

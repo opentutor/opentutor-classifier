@@ -203,7 +203,8 @@ def test_evaluates_for_default_model(
                 input_sentence=input_answer,
                 config_data=dict_to_config(config_data),
                 expectation=input_expectation_number,
-            )
+            ),
+            {}
         )
         assert_classifier_evaluate(result, expected_results)
 
@@ -321,7 +322,8 @@ def test_evaluates_meta_cognitive_sentences(
                 input_sentence=input_answer,
                 config_data=dict_to_config(config_data),
                 expectation=input_expectation_number,
-            )
+            ),
+            {}
         )
         assert (
             expected_sa_results["metacognitive"].evaluation

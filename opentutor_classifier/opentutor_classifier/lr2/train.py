@@ -113,7 +113,9 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 )
         return embeddings
 
-    def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
+    def train_default(
+        self, data: pd.DataFrame, dao: DataDao, auth_headers: Dict[str, str] = {}
+    ) -> TrainingResult:
         model = LRExpectationClassifier.initialize_model()
         index2word_set = set(self.word2vec.index_to_key)
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
@@ -162,13 +164,20 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 model=expectation_models,
             )
         )
-        dao.save_default_config(arch=ARCH_LR2_CLASSIFIER, config=QuestionConfig())
+        dao.save_default_config(
+            arch=ARCH_LR2_CLASSIFIER, config=QuestionConfig(), auth_headers=auth_headers
+        )
         return dao.create_default_training_result(
             ARCH_LR2_CLASSIFIER,
             ExpectationTrainingResult(expectation_id="", accuracy=accuracy),
         )
 
-    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
+    def train(
+        self,
+        train_input: TrainingInput,
+        dao: DataDao,
+        auth_headers: Dict[str, str] = {},
+    ) -> TrainingResult:
         question = train_input.config.question or ""
         if not question:
             raise ValueError("config must have a 'question'")
@@ -323,7 +332,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 arch=ARCH_LR2_CLASSIFIER,
                 lesson=train_input.lesson,
                 config=config_updated,
-            )
+            ),
+            auth_headers=auth_headers,
         )
         dao.save_embeddings(
             EmbeddingSaveReq(

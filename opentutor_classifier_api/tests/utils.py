@@ -7,7 +7,7 @@
 from contextlib import contextmanager
 from pathlib import Path
 from os import path
-from typing import Any
+from typing import Any, Dict
 from unittest.mock import patch
 
 import pandas as pd
@@ -74,17 +74,23 @@ class _TestDataDao(DataDao):
     def get_model_root(self, lesson: ArchLesson) -> str:
         return self.dao.get_model_root(lesson)
 
-    def find_default_training_data(self) -> pd.DataFrame:
-        return self.dao.find_default_training_data()
+    def find_default_training_data(
+        self, auth_headers: Dict[str, str] = {}
+    ) -> pd.DataFrame:
+        return self.dao.find_default_training_data(auth_headers)
 
     def find_prediction_config(self, lesson: ArchLesson) -> QuestionConfig:
         return self.dao.find_prediction_config(lesson)
 
-    def find_training_config(self, lesson: str) -> QuestionConfig:
-        return self.dao.find_training_config(lesson)
+    def find_training_config(
+        self, lesson: str, auth_headers: Dict[str, str] = {}
+    ) -> QuestionConfig:
+        return self.dao.find_training_config(lesson, auth_headers=auth_headers)
 
-    def find_training_input(self, lesson: str) -> TrainingInput:
-        return self.dao.find_training_input(lesson)
+    def find_training_input(
+        self, lesson: str, auth_headers: Dict[str, str] = {}
+    ) -> TrainingInput:
+        return self.dao.find_training_input(lesson, auth_headers)
 
     def load_pickle(self, ref: ModelRef) -> Any:
         return self.dao.load_pickle(ref)
@@ -95,8 +101,10 @@ class _TestDataDao(DataDao):
     def remove_trained_model(self, ref: ArchLesson) -> None:
         return self.dao.remove_trained_model(ref)
 
-    def save_config(self, req: QuestionConfigSaveReq) -> None:
-        self.dao.save_config(req)
+    def save_config(
+        self, req: QuestionConfigSaveReq, auth_headers: Dict[str, str] = {}
+    ) -> None:
+        self.dao.save_config(req, auth_headers)
         mock_gql_response(
             req.lesson,
             self.dao.data_root,

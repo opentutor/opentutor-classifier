@@ -15,10 +15,15 @@ def cli():
 @cli.command()
 @click.option("-p", "--data", required=False, type=click.Path(exists=True))
 @click.option("-s", "--shared", required=False, type=click.Path(exists=True))
+@click.option("-a", "--apikey", required=True, type=click.Path(exists=False))
 @click.option("-o", "--output", required=False, type=click.Path(exists=False))
-def train(data: str, shared: str, output: str):
+def train(data: str, shared: str, api_key:str, output: str):
+    auth_headers={
+        "opentutor-api-req": "true",
+        "Authorization": f"bearer {api_key}",
+    }
     result = train_data_root(
-        data_root=data, config=TrainingConfig(shared_root=shared), output_dir=output
+        data_root=data, config=TrainingConfig(shared_root=shared), output_dir=output, auth_headers=auth_headers
     )
     print(f"Models are saved at: {result.models}", file=sys.stdout)
     for exp_num, exp_result in enumerate(result.expectations):
@@ -30,10 +35,15 @@ def train(data: str, shared: str, output: str):
 @cli.command()
 @click.option("-p", "--data", required=False, type=click.Path(exists=True))
 @click.option("-s", "--shared", required=False, type=click.Path(exists=True))
+@click.option("-a", "--apikey", required=True, type=click.Path(exists=False))
 @click.option("-o", "--output", required=False, type=click.Path(exists=False))
-def traindefault(data: str, shared: str, output: str):
+def traindefault(data: str, shared: str, api_key: str, output: str):
+    auth_headers={
+        "opentutor-api-req": "true",
+        "Authorization": f"bearer {api_key}",
+    }
     training = train_default_data_root(
-        data_root=data, shared_root=shared, output_dir=output
+        data_root=data, shared_root=shared, output_dir=output, auth_headers=auth_headers
     )
     accuracy = training.default_train_all(data_root=data, output_dir=output)
     print("Models are saved at: " + output)
@@ -43,10 +53,11 @@ def traindefault(data: str, shared: str, output: str):
 @cli.command()
 @click.option("-p", "--lesson", required=True)
 @click.option("-s", "--url", required=True)
+@click.option("-a", "--apikey", required=True)
 @click.option("-o", "--output", required=False)
-def sync(lesson: str, url: str, output: str):
+def sync(lesson: str, url: str, api_key: str, output: str):
     data_path = os.path.join(output, lesson)
-    _sync(lesson, url, data_path)
+    _sync(lesson, url, api_key, data_path)
     print(f"Data is saved at: {data_path}")
 
 
