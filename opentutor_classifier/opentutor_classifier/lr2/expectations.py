@@ -7,12 +7,12 @@
 from collections import defaultdict
 from typing import List
 
-from gensim.models.keyedvectors import Word2VecKeyedVectors
 from sklearn import model_selection, linear_model
 from sklearn.preprocessing import LabelEncoder
 from text_to_num import alpha2digit
 
 from opentutor_classifier import ClassifierMode, ExpectationConfig
+from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
 from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
 from . import features
 
@@ -49,7 +49,7 @@ class LRExpectationClassifier:
         raw_example: str,
         example: List[str],
         ideal: List[str],
-        word2vec: Word2VecKeyedVectors,
+        word2vec: Word2VecWrapper,
         index2word_set: set,
         good: List[str],
         bad: List[str],
