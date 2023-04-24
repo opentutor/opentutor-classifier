@@ -8,7 +8,6 @@ from opentutor_classifier.utils import model_last_updated_at, prop_bool
 from os import path
 from typing import Dict, List, Optional, Tuple, Any
 
-from gensim.models.keyedvectors import Word2VecKeyedVectors
 from sklearn import linear_model
 
 from opentutor_classifier import (
@@ -24,6 +23,7 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier
+from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
 from .constants import (
     ARCHETYPE_BAD,
     ARCHETYPE_GOOD,
@@ -39,7 +39,6 @@ from .clustering_features import CustomDBScanClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
-from opentutor_classifier.word2vec import find_or_load_word2vec
 
 
 def _confidence_score(
@@ -54,7 +53,6 @@ ModelAndConfig = Tuple[Dict[str, linear_model.LogisticRegression], QuestionConfi
 class LRAnswerClassifier(AnswerClassifier):
     def __init__(self):
         self._word2vec = None
-        self._word2vec_slim = None
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
         self._model_and_config: ModelAndConfig = None
@@ -115,7 +113,6 @@ class LRAnswerClassifier(AnswerClassifier):
                         exp_conf.features.get(ARCHETYPE_BAD, []),
                         exp_conf.features.get(PATTERNS_GOOD, []),
                         exp_conf.features.get(PATTERNS_BAD, []),
-                        self._word2vec_slim,
                     )
                 )
             config_dict[exp.expectation] = dict()
@@ -171,19 +168,16 @@ class LRAnswerClassifier(AnswerClassifier):
         else:
             return m_by_e[expectation]
 
-    def find_word2vec(self) -> Word2VecKeyedVectors:
+    def find_word2vec(self) -> Word2VecWrapper:
         if not self._word2vec:
-            self._word2vec = find_or_load_word2vec(
-                path.join(self.shared_root, "word2vec.bin")
+            self._word2vec = Word2VecWrapper(
+                path.join(self.shared_root, "word2vec.bin"),
+                path.join(self.shared_root, "word2vec_slim.bin"),
             )
         return self._word2vec
 
-    def find_word2vec_slim(self) -> Word2VecKeyedVectors:
-        if not self._word2vec_slim:
-            self._word2vec_slim = find_or_load_word2vec(
-                path.join(self.shared_root, "word2vec_slim.bin")
-            )
-        return self._word2vec_slim
+    def find_word2vec_slim(self) -> Word2VecWrapper:
+        return self.find_word2vec()
 
     def find_score_and_class(
         self, classifier, exp_num_i: str, sent_features: List[List[float]]
@@ -214,7 +208,7 @@ class LRAnswerClassifier(AnswerClassifier):
         ]
         result = AnswerClassifierResult(input=answer, expectation_results=[])
         word2vec = self.find_word2vec()
-        index2word = set(word2vec.index_to_key)
+        index2word = set(word2vec.index_to_key(False))
         result.speech_acts[
             "metacognitive"
         ] = self.speech_act_classifier.check_meta_cognitive(result)
@@ -272,7 +266,6 @@ class LRAnswerClassifier(AnswerClassifier):
         archetypes_bad: List[str],
         patterns_good: List[str],
         patterns_bad: List[str],
-        word2vec_slim: Word2VecKeyedVectors,
     ):
         embeddings: Dict[str, List[float]] = dict()
         words_set = set()
@@ -285,9 +278,8 @@ class LRAnswerClassifier(AnswerClassifier):
             for word in pattern.split(" + "):
                 words_set.add(word)
 
-        for word in words_set:
-            if word in word2vec_slim:
-                embeddings[word] = list(
-                    map(lambda x: round(float(x), 9), word2vec_slim[word])
-                )
+        word_vecs = self._word2vec.get_feature_vectors(words_set, True)
+
+        for word in word_vecs.keys():
+            embeddings[word] = list(map(lambda x: round(float(x), 9), word_vecs[word]))
         return embeddings
