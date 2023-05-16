@@ -14,7 +14,12 @@ from typing import Any
 
 import pandas as pd
 
-from serverless_modules.train_job.constants import MODEL_ROOT_DEFAULT, MODELS_DEPLOYED_ROOT_DEFAULT
+from serverless_modules.logger import get_logger
+
+from serverless_modules.train_job.constants import (
+    MODEL_ROOT_DEFAULT,
+    MODELS_DEPLOYED_ROOT_DEFAULT,
+)
 
 from . import (
     ArchFile,
@@ -34,7 +39,10 @@ from .api import (
     update_features,
     update_last_trained_at,
 )
-from serverless_modules.train_job.utils import load_config
+from serverless_modules.train_job.utils import load_config, load_data
+
+logger = get_logger("dao")
+
 
 def _get_model_root() -> str:
     return environ.get("MODEL_ROOT") or MODEL_ROOT_DEFAULT
@@ -69,6 +77,7 @@ class FileDataDao(DataDao):
         return self._deployed_model_root
 
     def get_model_root(self, lesson: ArchLesson) -> str:
+        # only tmp file system is available in lambdas
         return path.join(self.model_root, lesson.arch, lesson.lesson)
 
     def _get_data_file(self, lesson, fname: str) -> str:
@@ -154,9 +163,12 @@ class FileDataDao(DataDao):
         )
 
     def save_pickle(self, req: ModelSaveReq) -> None:
+        logger.info(req)
+
         tmpf = self._setup_tmp(req.filename)
         with open(tmpf, "wb") as f:
             pickle.dump(req.model, f)
+        logger.info(f"saving final pickel to {self._get_model_file(req)}")
         self._replace(tmpf, self._get_model_file(req))
 
     def save_embeddings(self, req: EmbeddingSaveReq) -> None:

@@ -1,4 +1,3 @@
-
 from serverless_modules.train_job import QuestionConfig, ExpectationConfig
 import yaml
 
@@ -25,6 +24,7 @@ def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
 def load_config(config_file: str) -> QuestionConfig:
     with open(config_file) as f:
         return QuestionConfig(**yaml.load(f, Loader=yaml.FullLoader))
+
 
 def load_data(filename: str) -> pd.DataFrame:
     return pd.read_csv(filename, encoding="latin-1", dtype={"exp_num": str})

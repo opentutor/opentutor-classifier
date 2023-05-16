@@ -47,7 +47,7 @@ from serverless_modules.train_job import (
     TrainingResult,
     ClassifierMode,
     DataDao,
-    QuestionConfig
+    QuestionConfig,
 )
 from serverless_modules.train_job.config import (
     LABEL_BAD,
@@ -64,6 +64,7 @@ from .features import feature_length_ratio_enabled, preprocess_sentence
 from .clustering_features import CustomDBScanClustering
 
 logger = get_logger("train_job")
+
 
 def _preprocess_trainx(data: List[str]) -> List[List[str]]:
     pre_processed_dataset = [preprocess_sentence(entry) for entry in data]
@@ -108,7 +109,14 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             embeddings[word] = list(map(lambda x: round(float(x), 9), word_vecs[word]))
         return embeddings
 
+    def prefetch_all_feature_vectors_train_default(self, data: pd.DataFrame):
+        all_data_text_set = set([x.lower().strip() for x in data["text"]])
+        logger.info(f"all_data_text_set: {all_data_text_set}")
+        self.word2vec_wrapper.get_feature_vectors(all_data_text_set)
+
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
+        self.prefetch_all_feature_vectors_train_default(data)
+
         model = LRExpectationClassifier.initialize_model()
         index2word_set = set(self.word2vec_wrapper.index_to_key(True))
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
@@ -163,7 +171,21 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             ExpectationTrainingResult(expectation_id="", accuracy=accuracy),
         )
 
+    def prefetch_all_feature_vectors_train(self, train_input: TrainingInput):
+        all_data_text = [
+            *[
+                x.ideal.lower().strip()
+                for i, x in enumerate(train_input.config.expectations)
+            ],
+            *[x.lower().strip() for x in train_input.data["text"]],
+        ]
+        all_data_text_set = set(all_data_text)
+        logger.info(f"all_data_text_set: {all_data_text_set}")
+        self.word2vec_wrapper.get_feature_vectors(all_data_text_set)
+
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
+        self.prefetch_all_feature_vectors_train(train_input)
+
         question = train_input.config.question or ""
         if not question:
             raise ValueError("config must have a 'question'")

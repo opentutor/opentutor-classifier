@@ -5,7 +5,11 @@ from serverless_modules.logger import get_logger
 
 from serverless_modules.train_job.dao import find_data_dao
 from serverless_modules.train_job import ClassifierFactory, TrainingConfig
-from serverless_modules.train_job.constants import MODEL_ROOT_DEFAULT, ARCH_DEFAULT
+from serverless_modules.train_job.constants import (
+    MODEL_ROOT_DEFAULT,
+    ARCH_DEFAULT,
+    MODEL_FILE_NAME,
+)
 
 log = get_logger("train-job")
 shared = os.environ.get("SHARED_ROOT")
@@ -18,6 +22,7 @@ s3 = boto3.client("s3")
 aws_region = os.environ.get("REGION", "us-east-1")
 dynamodb = boto3.resource("dynamodb", region_name=aws_region)
 job_table = dynamodb.Table(JOBS_TABLE_NAME)
+
 
 def handler(event, context):
 
@@ -37,30 +42,26 @@ def handler(event, context):
             if should_train_default:
                 data = dao.find_default_training_data()
                 training = fac.new_training(config, arch=ARCH_DEFAULT)
-                res = training.train_default(data, dao)
+                training.train_default(data, dao)
             else:
                 data = dao.find_training_input(lesson_name)
                 training = fac.new_training(config, arch=ARCH_DEFAULT)
-                res = training.train(data, dao)
+                training.train(data, dao)
             s3.upload_file(
                 os.path.join(
                     MODEL_ROOT_DEFAULT,
                     ARCH_DEFAULT,
                     lesson_name,
-                    "model.pkl",
+                    MODEL_FILE_NAME,
                 ),
                 MODELS_BUCKET,
-                os.path.join(
-                    lesson_name, ARCH_DEFAULT, "model.pkl"
-                ),
+                os.path.join(lesson_name, ARCH_DEFAULT, MODEL_FILE_NAME),
             )
 
             update_status(request["id"], "SUCCESS")
         except Exception as e:
             log.exception(e)
             update_status(request["id"], "FAILURE")
-
-
 
 
 def update_status(id, status):

@@ -28,12 +28,15 @@ custom:
   stages:
     dev:
       WEBACL_ARN: ${ssm:/dev-opentutor/api_firewall_arn, ''}
+      SBERT_API_SECRET: ${ssm:/dev-opentutor/sbert-api-secret, ''}
       GRAPHQL_ENDPOINT: 'https://opentutor.info/graphql'
     qa:
       WEBACL_ARN: ${ssm:/qa-opentutor/api_firewall_arn, ''}
+      SBERT_API_SECRET: ${ssm:/qa-opentutor/sbert-api-secret, ''}
       GRAPHQL_ENDPOINT: 'https://opentutor.info/graphql'
     prod:
       WEBACL_ARN: ${ssm:/prod-opentutor/api_firewall_arn, ''}
+      SBERT_API_SECRET: ${ssm:/prod-opentutor/sbert-api-secret, ''}
       GRAPHQL_ENDPOINT: 'https://opentutor.info/graphql'
 
   # serverless-layers requires a deployment bucket to be created before deploying this stack
@@ -45,7 +48,7 @@ custom:
           - python3.8
         functions:
             - train_request
-          # - http_train_status
+            - train_status
           # - http_training_data
           # - authorizer_func
 
@@ -93,6 +96,9 @@ provider:
     NODE_ENV: opentutor-${self:provider.stage}
     NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=50'
     API_SECRET: ${ssm:/shared/api-secret, ''}
+    SBERT_API_SECRET: ${self:custom.stages.${self:provider.stage}.SBERT_API_SECRET}
+    SBERT_WAF_SECRET_HEADER: ${ssm:/shared/sbert-waf-secret-header, ''}
+    SBERT_WAF_SECRET_VALUE: ${ssm:/shared/sbert-waf-secret-value, ''}
     SENTRY_DSN_OPENTUTOR_CLASSIFIER: ${ssm:/shared/sentry-dsn-opentutor-classifier, ''}
     WEBACL_ARN: ${self:custom.stages.${self:provider.stage}.WEBACL_ARN}
     GRAPHQL_ENDPOINT: ${self:custom.stages.${self:provider.stage}.GRAPHQL_ENDPOINT}
@@ -166,7 +172,19 @@ functions:
           arn:
             Fn::GetAtt: [TrainQueue, Arn]
           batchSize: 1
-
+  train_status:
+    handler: src/functions/train_status.handler
+    memorySize: 512
+    timeout: 10
+    events:
+      - http:
+          path: /train/status/{id}
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
   # check_model:
   #   # lambda default timeout is 6 seconds
   #   timeout: 20

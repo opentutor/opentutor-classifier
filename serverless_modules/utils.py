@@ -15,6 +15,7 @@ import json
 from typing import Union, Dict, Any, Iterable
 from pathlib import Path
 
+
 def prop_bool(
     name: str, props: Union[Dict[str, Any], _Environ], dft: bool = False
 ) -> bool:
@@ -22,6 +23,7 @@ def prop_bool(
         return dft
     v = props[name]
     return str(v).lower() in ["1", "t", "true"]
+
 
 def model_last_updated_at(
     arch: str, model_name: str, model_roots: Iterable[str], model_file_name: str

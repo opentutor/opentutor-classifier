@@ -18,6 +18,7 @@ from serverless_modules.train_job.speechact import SpeechActClassifierResult
 
 from serverless_modules.train_job.constants import DEFAULT_LESSON_NAME
 
+
 @dataclass
 class ExpectationClassifierResult:
     expectation_id: str = ""
@@ -145,7 +146,6 @@ class TrainingResult:
 
     def to_dict(self) -> dict:
         return {k: v for k, v in asdict(self).items() if v}
-
 
 
 class DataDao(ABC):

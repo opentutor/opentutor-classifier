@@ -17,6 +17,7 @@ log.info(f"using queue {queue_url}")
 dynamodb = boto3.resource("dynamodb", region_name=aws_region)
 job_table = dynamodb.Table(JOBS_TABLE_NAME)
 
+
 def handler(event, context):
     print(json.dumps(event))
     if "body" not in event:
@@ -27,14 +28,17 @@ def handler(event, context):
     else:
         body = event["body"]
     train_request = json.loads(body)
-    should_train_default = train_request["train_default"] if "train_default" in train_request else False
+    should_train_default = (
+        train_request["train_default"] if "train_default" in train_request else False
+    )
 
     if "lesson" not in train_request and should_train_default is False:
-        raise Exception("Bad request: Need lesson in json body, or specify to train default via 'train_default' body param")
-    
+        raise Exception(
+            "Bad request: Need lesson in json body, or specify to train default via 'train_default' body param"
+        )
+
     lesson = train_request["lesson"] if "lesson" in train_request else "default"
     ping = train_request["ping"] if "ping" in train_request else False
-
 
     job_id = str(uuid.uuid4())
     train_job = {

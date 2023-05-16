@@ -170,10 +170,7 @@ class LRAnswerClassifier(AnswerClassifier):
 
     def find_word2vec(self) -> Word2VecWrapper:
         if not self._word2vec:
-            self._word2vec = Word2VecWrapper(
-                path.join(self.shared_root, "word2vec.bin"),
-                path.join(self.shared_root, "word2vec_slim.bin"),
-            )
+            self._word2vec = Word2VecWrapper()
         return self._word2vec
 
     def find_word2vec_slim(self) -> Word2VecWrapper:

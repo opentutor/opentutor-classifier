@@ -44,7 +44,6 @@ def train_default(
     )
 
 
-
 def train_data_root(
     arch="", config: TrainingConfig = None, data_root="data", output_dir=""
 ) -> TrainingResult:

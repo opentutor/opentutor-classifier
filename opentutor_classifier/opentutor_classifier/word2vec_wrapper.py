@@ -7,7 +7,10 @@
 from typing import Any, Dict
 
 from numpy import ndarray
-from opentutor_classifier.opentutor_classifier.api import sbert_word_to_vec, get_sbert_index_to_key
+from opentutor_classifier.opentutor_classifier.api import (
+    sbert_word_to_vec,
+    get_sbert_index_to_key,
+)
 
 
 class Word2VecWrapper:
