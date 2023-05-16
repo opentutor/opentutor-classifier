@@ -11,12 +11,12 @@ from sklearn import model_selection, linear_model
 from sklearn.preprocessing import LabelEncoder
 from text_to_num import alpha2digit
 
-from opentutor_classifier import ClassifierMode, ExpectationConfig
-from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
+from serverless_modules.train_job import ClassifierMode, ExpectationConfig
+from serverless_modules.train_job.word2vec_wrapper import Word2VecWrapper
 from .constants import FEATURE_REGEX_AGGREGATE_DISABLED
 from . import features
 
-from opentutor_classifier.utils import prop_bool
+from serverless_modules.utils import prop_bool
 from .clustering_features import CustomDBScanClustering
 from .constants import FEATURE_LENGTH_RATIO
 

@@ -14,6 +14,8 @@ from typing import Any
 
 import pandas as pd
 
+from serverless_modules.train_job.constants import MODEL_ROOT_DEFAULT, MODELS_DEPLOYED_ROOT_DEFAULT
+
 from . import (
     ArchFile,
     ArchLesson,
@@ -32,12 +34,7 @@ from .api import (
     update_features,
     update_last_trained_at,
 )
-from .utils import load_data, load_config
-
-
-MODEL_ROOT_DEFAULT = "./models"
-MODELS_DEPLOYED_ROOT_DEFAULT = "./models_deployed"
-
+from serverless_modules.train_job.utils import load_config
 
 def _get_model_root() -> str:
     return environ.get("MODEL_ROOT") or MODEL_ROOT_DEFAULT

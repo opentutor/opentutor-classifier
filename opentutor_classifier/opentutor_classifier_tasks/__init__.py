@@ -30,7 +30,7 @@ if os.environ.get("IS_SENTRY_ENABLED", "") == "true":
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN_OPENTUTOR_CLASSIFIER"),
         # include project so issues can be filtered in sentry:
-        environment=os.environ.get("PYTHON_ENV", "opentutor-qa"),
+        environment=os.environ.get("PYTHON_ENV", "opentutor-dev"),
         integrations=[CeleryIntegration()],
         # Set traces_sample_rate to 1.0 to capture 100%
         # of transactions for performance monitoring.

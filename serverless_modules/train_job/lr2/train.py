@@ -7,12 +7,12 @@
 from collections import defaultdict
 import json
 
-from opentutor_classifier.utils import prop_bool
+from serverless_modules.utils import prop_bool
 from os import path
 
 from typing import Dict, List
 
-from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
+from serverless_modules.train_job.word2vec_wrapper import Word2VecWrapper
 
 from .constants import (
     ARCHETYPE_BAD,
@@ -33,8 +33,7 @@ import pandas as pd
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
 
-from opentutor_classifier import DataDao, QuestionConfig
-from opentutor_classifier import (
+from serverless_modules.train_job import (
     ARCH_LR2_CLASSIFIER,
     AnswerClassifierTraining,
     ArchLesson,
@@ -47,14 +46,16 @@ from opentutor_classifier import (
     TrainingInput,
     TrainingResult,
     ClassifierMode,
+    DataDao,
+    QuestionConfig
 )
-from opentutor_classifier.config import (
+from serverless_modules.train_job.config import (
     LABEL_BAD,
     LABEL_GOOD,
     get_train_quality_default,
     PROP_TRAIN_QUALITY,
 )
-from opentutor_classifier.log import logger
+from serverless_modules.logger import get_logger
 
 from .constants import FEATURE_LENGTH_RATIO
 from .expectations import LRExpectationClassifier
@@ -62,6 +63,7 @@ from .features import feature_length_ratio_enabled, preprocess_sentence
 
 from .clustering_features import CustomDBScanClustering
 
+logger = get_logger("train_job")
 
 def _preprocess_trainx(data: List[str]) -> List[List[str]]:
     pre_processed_dataset = [preprocess_sentence(entry) for entry in data]
@@ -73,10 +75,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         self.accuracy: Dict[str, int] = {}
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
-        self.word2vec_wrapper: Word2VecWrapper = Word2VecWrapper(
-            path.join(config.shared_root, "word2vec.bin"),
-            path.join(config.shared_root, "word2vec_slim.bin"),
-        )
+        self.word2vec_wrapper: Word2VecWrapper = Word2VecWrapper()
         self.train_quality = config.properties.get(
             PROP_TRAIN_QUALITY, get_train_quality_default()
         )

@@ -14,11 +14,11 @@ from tok import word_tokenize
 
 from scipy import spatial
 
-from opentutor_classifier.stopwords import STOPWORDS
+from serverless_modules.train_job.stopwords import STOPWORDS
 from text_to_num import alpha2digit
 
-from opentutor_classifier.utils import prop_bool
-from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
+from serverless_modules.utils import prop_bool
+from serverless_modules.train_job.word2vec_wrapper import Word2VecWrapper
 from .constants import FEATURE_LENGTH_RATIO, FEATURE_REGEX_AGGREGATE_DISABLED
 
 

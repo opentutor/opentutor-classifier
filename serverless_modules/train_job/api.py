@@ -13,26 +13,33 @@ import os
 import requests
 from typing import Optional, TypedDict
 import yaml
+from urllib.parse import quote
+
 
 import pandas as pd
 
-from opentutor_classifier import (
+from . import (
     ExpectationFeatures,
     QuestionConfig,
     QuestionConfigSaveReq,
     TrainingInput,
     dict_to_question_config,
 )
-from opentutor_classifier.log import logger
+from serverless_modules.logger import get_logger
 
+logger = get_logger("api")
 
 def get_graphql_endpoint() -> str:
     return os.environ.get("GRAPHQL_ENDPOINT") or "http://graphql/graphql"
 
+def get_sbert_endpoint() -> str:
+    return os.environ.get("SBERT_ENDPOINT") or "https://sbert-dev.mentorpal.org/"
 
 def get_api_key() -> str:
     return os.environ.get("API_SECRET") or ""
 
+def get_sbert_api_key() -> str:
+    return os.environ.get("SBERT_API_SECRET") or ""
 
 @dataclass
 class AnswerUpdateRequest:
@@ -271,3 +278,28 @@ def fetch_all_training_data(url="") -> pd.DataFrame:
     df = pd.read_csv(StringIO(data.get("training") or ""))
     df.sort_values(by=["exp_num"], ignore_index=True, inplace=True)
     return df
+
+
+
+def sbert_word_to_vec(words: list, slim: bool = False):
+    model_name = "word2vec_slim" if slim else "word2vec"
+    words_appended_by_space = " ".join(words)
+    res = requests.post(
+        f"{get_sbert_endpoint()}v1/w2v/?model={model_name}&words={quote(words_appended_by_space)}",
+        headers={
+            "Authorization": f"bearer {get_sbert_api_key()}",
+        },
+    )
+    res.raise_for_status()
+    return res.json()
+
+def get_sbert_index_to_key(slim: bool = False):
+    model_name = "word2vec_slim" if slim else "word2vec"
+    res = requests.post(
+        f"{get_sbert_endpoint()}v1/w2v/index_to_key?model={model_name}",
+        headers={
+            "Authorization": f"bearer {get_sbert_api_key()}",
+        },
+    )
+    res.raise_for_status()
+    return res.json()

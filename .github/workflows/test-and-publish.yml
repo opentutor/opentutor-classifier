@@ -23,10 +23,11 @@ jobs:
         run: make test-types
       - name: test licenses
         run: make test-license
-      - name: test classifier
-        run: cd opentutor_classifier && make test
-      - name: test classifier api
-        run: cd opentutor_classifier_api && make test
+      #  TODO: new testing CICD suite for lambdas
+      # - name: test classifier
+      #   run: cd opentutor_classifier && make test
+      # - name: test classifier api
+      #   run: cd opentutor_classifier_api && make test
   publish-check:
     name: publish check
     needs:

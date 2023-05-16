@@ -6,7 +6,7 @@
 #
 from itertools import combinations
 import heapq
-from opentutor_classifier.lr2.constants import BAD, GOOD
+from .constants import BAD, GOOD
 from typing import Dict, List, Tuple
 
 import numpy as np
@@ -18,7 +18,7 @@ from sklearn.feature_selection import SelectKBest, chi2
 
 from text_to_num import alpha2digit
 
-from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
+from serverless_modules.train_job.word2vec_wrapper import Word2VecWrapper
 
 from .features import (
     number_of_negatives,

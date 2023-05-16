@@ -13,9 +13,10 @@ import pandas as pd
 from typing import Any, Dict, List, Optional
 import yaml
 
-from opentutor_classifier.camelcase import dict_camel_to_snake
-from opentutor_classifier.speechact import SpeechActClassifierResult
+from serverless_modules.train_job.camelcase import dict_camel_to_snake
+from serverless_modules.train_job.speechact import SpeechActClassifierResult
 
+from serverless_modules.train_job.constants import DEFAULT_LESSON_NAME
 
 @dataclass
 class ExpectationClassifierResult:
@@ -145,8 +146,6 @@ class TrainingResult:
     def to_dict(self) -> dict:
         return {k: v for k, v in asdict(self).items() if v}
 
-
-DEFAULT_LESSON_NAME = "default"
 
 
 class DataDao(ABC):
@@ -361,7 +360,7 @@ def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
     _factories_by_arch[arch] = fac
 
 
-ARCH_LR2_CLASSIFIER = "opentutor_classifier.lr2"
+ARCH_LR2_CLASSIFIER = "serverless_modules.train_job.lr2"
 ARCH_DEFAULT = ARCH_LR2_CLASSIFIER
 
 

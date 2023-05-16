@@ -4,21 +4,16 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from dataclasses import dataclass
-from typing import Dict
+from typing import Any, Dict
 
-from sklearn import linear_model
-
-from opentutor_classifier import QuestionConfig
+from numpy import ndarray
+from .api import sbert_word_to_vec, get_sbert_index_to_key
 
 
-@dataclass
-class ExpectationToEvaluate:
-    expectation: str
-    classifier: linear_model.LogisticRegression
+class Word2VecWrapper:
+    def get_feature_vectors(self, words, slim: bool = False) -> Dict[str, ndarray]:
+        sbert_w2v_result = sbert_word_to_vec(words, slim)
+        return sbert_w2v_result
 
-
-@dataclass
-class InstanceModels:
-    models_by_expectation_num: Dict[int, linear_model.LogisticRegression]
-    config: QuestionConfig
+    def index_to_key(self, slim: bool = False) -> Any:
+        return get_sbert_index_to_key(slim)

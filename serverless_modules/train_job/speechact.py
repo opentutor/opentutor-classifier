@@ -16,7 +16,6 @@ class SpeechActClassifierResult:
     evaluation: str = ""
     score: float = 0.0
 
-
 class SpeechActClassifier:
     def check_meta_cognitive(self, result):
         input_sentence = result.input.input_sentence

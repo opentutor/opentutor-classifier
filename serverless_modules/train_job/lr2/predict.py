@@ -4,13 +4,13 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from opentutor_classifier.utils import model_last_updated_at, prop_bool
+from serverless_modules.utils import model_last_updated_at, prop_bool
 from os import path
 from typing import Dict, List, Optional, Tuple, Any
 
 from sklearn import linear_model
 
-from opentutor_classifier import (
+from serverless_modules.train_job import (
     ARCH_LR2_CLASSIFIER,
     AnswerClassifier,
     AnswerClassifierInput,
@@ -21,9 +21,9 @@ from opentutor_classifier import (
     QuestionConfig,
     ClassifierMode,
 )
-from opentutor_classifier.dao import find_predicton_config_and_pickle
-from opentutor_classifier.speechact import SpeechActClassifier
-from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
+from serverless_modules.train_job.dao import find_predicton_config_and_pickle
+from serverless_modules.train_job.speechact import SpeechActClassifier
+from serverless_modules.train_job.word2vec_wrapper import Word2VecWrapper
 from .constants import (
     ARCHETYPE_BAD,
     ARCHETYPE_GOOD,
