@@ -109,44 +109,62 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             embeddings[word] = list(map(lambda x: round(float(x), 9), word_vecs[word]))
         return embeddings
 
-    def prefetch_all_feature_vectors_train_default(self, data: pd.DataFrame):
-        all_data_text_set = set([x.lower().strip() for x in data["text"]])
-        logger.info(f"all_data_text_set: {all_data_text_set}")
-        self.word2vec_wrapper.get_feature_vectors(all_data_text_set)
+    def preload_feature_vectors(self, data: pd.DataFrame, index2word_set):
+        """
+        This function preprocesses data and preloads their vectors for later use
+        """
+        all_words = []
+        for i, row in data.iterrows():
+            logger.info(f"working on row: {row}")
+            input_sentence = row["text"]
+            features = json.loads(row["exp_data"])
+            processed_input_sentence = preprocess_sentence(input_sentence)
+            processed_question = preprocess_sentence(features["question"])
+            processed_ia = preprocess_sentence(features["ideal"])
+            i_processed_input_sentence = set(processed_input_sentence).intersection(
+                index2word_set
+            )
+            i_processed_question = set(processed_question).intersection(index2word_set)
+            i_processed_ia = set(processed_ia).intersection(index2word_set)
+            all_words.extend(
+                [*i_processed_input_sentence, *i_processed_question, *i_processed_ia]
+            )
+        logger.info(f"all words: {all_words}")
+        self.word2vec_wrapper.get_feature_vectors(set(all_words))
+
+    def process_features(self, features, input_sentence, index2word_set, clustering):
+        processed_input_sentence = preprocess_sentence(input_sentence)
+        processed_question = preprocess_sentence(features["question"])
+        processed_ia = preprocess_sentence(features["ideal"])
+
+        features_list = LRExpectationClassifier.calculate_features(
+            processed_question,
+            input_sentence,
+            processed_input_sentence,
+            processed_ia,
+            self.word2vec_wrapper,
+            index2word_set,
+            [],
+            [],
+            clustering,
+            ClassifierMode.TRAIN,
+            feature_archetype_enabled=False,
+            feature_patterns_enabled=False,
+        )
+        return features_list
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
-        self.prefetch_all_feature_vectors_train_default(data)
-
         model = LRExpectationClassifier.initialize_model()
         index2word_set = set(self.word2vec_wrapper.index_to_key(True))
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
         clustering = CustomDBScanClustering(self.word2vec_wrapper, index2word_set)
 
-        def process_features(features, input_sentence, index2word_set):
-            processed_input_sentence = preprocess_sentence(input_sentence)
-            processed_question = preprocess_sentence(features["question"])
-            processed_ia = preprocess_sentence(features["ideal"])
-
-            features_list = LRExpectationClassifier.calculate_features(
-                processed_question,
-                input_sentence,
-                processed_input_sentence,
-                processed_ia,
-                self.word2vec_wrapper,
-                index2word_set,
-                [],
-                [],
-                clustering,
-                ClassifierMode.TRAIN,
-                feature_archetype_enabled=False,
-                feature_patterns_enabled=False,
-            )
-            return features_list
+        self.preload_feature_vectors(data, index2word_set)
 
         all_features = list(
             data.apply(
-                lambda row: process_features(
-                    json.loads(row["exp_data"]), row["text"], index2word_set
+                lambda row: self.process_features(
+                    json.loads(row["exp_data"]), row["text"], index2word_set, clustering
                 ),
                 axis=1,
             )
