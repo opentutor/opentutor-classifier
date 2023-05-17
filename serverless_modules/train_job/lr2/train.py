@@ -111,11 +111,10 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
     def preload_feature_vectors(self, data: pd.DataFrame, index2word_set):
         """
-        This function preprocesses data and preloads their vectors for later use
+        This function preprocesses data and preloads their vectors for later use by process_features (via calculate_features)
         """
         all_words = []
         for i, row in data.iterrows():
-            logger.info(f"working on row: {row}")
             input_sentence = row["text"]
             features = json.loads(row["exp_data"])
             processed_input_sentence = preprocess_sentence(input_sentence)

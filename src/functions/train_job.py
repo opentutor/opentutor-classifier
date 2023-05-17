@@ -9,6 +9,7 @@ from serverless_modules.train_job.constants import (
     MODEL_ROOT_DEFAULT,
     ARCH_DEFAULT,
     MODEL_FILE_NAME,
+    DEFAULT_LESSON_NAME,
 )
 
 log = get_logger("train-job")
@@ -30,7 +31,7 @@ def handler(event, context):
         request = json.loads(str(record["body"]))
         lesson = request["lesson"]
         should_train_default = request["train_default"]
-        lesson_name = "deafult" if should_train_default else lesson
+        lesson_name = DEFAULT_LESSON_NAME if should_train_default else lesson
         ping = request["ping"] if "ping" in request else False
         update_status(request["id"], "IN_PROGRESS")
 
