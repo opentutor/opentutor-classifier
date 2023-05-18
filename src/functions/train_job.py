@@ -5,7 +5,7 @@ from serverless_modules.logger import get_logger
 
 from serverless_modules.train_job.dao import find_data_dao, _CONFIG_YAML, _TRAINING_CSV
 from serverless_modules.train_job import ClassifierFactory, TrainingConfig
-from serverless_modules.train_job.constants import (
+from serverless_modules.constants import (
     MODEL_ROOT_DEFAULT,
     ARCH_DEFAULT,
     MODEL_FILE_NAME,

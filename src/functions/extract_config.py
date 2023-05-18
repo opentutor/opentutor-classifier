@@ -1,6 +1,6 @@
 import json, base64, os
 from serverless_modules.utils import create_json_response
-from serverless_modules.train_job.constants import (
+from serverless_modules.constants import (
     MODEL_ROOT_DEFAULT,
     MODELS_DEPLOYED_ROOT_DEFAULT,
 )

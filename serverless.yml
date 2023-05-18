@@ -49,6 +49,7 @@ custom:
         functions:
             - train_request
             - train_status
+            - check_model
             # - authorizer_func
 
 provider:
@@ -209,7 +210,7 @@ functions:
               paths:
                 id: true
   training_config:
-    timeout: 20
+    timeout: 30
     memorySize: 4096
     image:
       name: training_config
@@ -225,7 +226,7 @@ functions:
               paths:
                 lesson_id: true
   training_data:
-    timeout: 20
+    timeout: 30
     memorySize: 4096
     image:
       name: training_data
@@ -241,7 +242,7 @@ functions:
               paths:
                 lesson_id: true
   extract_config:
-    timeout: 20
+    timeout: 30
     memorySize: 4096
     image:
       name: extract_config
@@ -252,16 +253,14 @@ functions:
           path: /extract_config
           method: POST
           cors: true
-                
-  # check_model:
-  #   # lambda default timeout is 6 seconds
-  #   timeout: 20
-  #   handler: src/functions/check_model.handler
-  #   events:
-  #     - http:
-  #         path: /check_modelD
-  #         method: POST
-  #         cors: true
+  check_model:
+    timeout: 30
+    handler: src/functions/check_model.handler
+    events:
+      - http:
+          path: /check_model
+          method: POST
+          cors: true
 
 resources:
   Conditions:

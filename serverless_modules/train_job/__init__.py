@@ -16,7 +16,7 @@ import yaml
 from serverless_modules.train_job.camelcase import dict_camel_to_snake
 from serverless_modules.train_job.speechact import SpeechActClassifierResult
 
-from serverless_modules.train_job.constants import DEFAULT_LESSON_NAME
+from serverless_modules.constants import DEFAULT_LESSON_NAME
 
 
 @dataclass

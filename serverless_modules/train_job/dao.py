@@ -20,7 +20,7 @@ import pandas as pd
 
 from serverless_modules.logger import get_logger
 
-from serverless_modules.train_job.constants import (
+from serverless_modules.constants import (
     DEFAULT_LESSON_NAME,
     MODEL_FILE_NAME,
     MODEL_ROOT_DEFAULT,
