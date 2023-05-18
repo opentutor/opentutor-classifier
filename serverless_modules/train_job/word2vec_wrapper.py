@@ -16,6 +16,7 @@ logger = get_logger("w2v_wrapper")
 class Word2VecWrapper:
     def __init__(self):
         self.loaded_word_vectors: Dict[str, ndarray] = {}
+        self.loaded_word_vectors_slim: Dict[str, ndarray] = {}
         self.words_with_no_sbert_vector: set = set()
 
     def get_feature_vectors(self, words: set, slim: bool = False) -> Dict[str, ndarray]:
@@ -26,15 +27,27 @@ class Word2VecWrapper:
             return {}
         res_words = {}
         for word in words.copy():
-            if word in self.loaded_word_vectors:
+            if slim is True and word in self.loaded_word_vectors_slim:
+                res_words[word] = self.loaded_word_vectors_slim[word]
+                words.remove(word)
+            elif slim is False and word in self.loaded_word_vectors:
                 res_words[word] = self.loaded_word_vectors[word]
                 words.remove(word)
-            if word in self.words_with_no_sbert_vector:
+            elif word in self.words_with_no_sbert_vector:
                 words.remove(word)
 
         if len(words) > 0:
             sbert_w2v_result = sbert_word_to_vec(list(words), slim)
-            self.loaded_word_vectors = {**self.loaded_word_vectors, **sbert_w2v_result}
+            if slim:
+                self.loaded_word_vectors_slim = {
+                    **self.loaded_word_vectors_slim,
+                    **sbert_w2v_result,
+                }
+            else:
+                self.loaded_word_vectors = {
+                    **self.loaded_word_vectors,
+                    **sbert_w2v_result,
+                }
 
             words_with_no_sbert_vector = set(
                 filter(lambda word: word not in sbert_w2v_result, words)

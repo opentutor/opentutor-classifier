@@ -97,6 +97,9 @@ provider:
       training_data:
         path: ./
         file: Dockerfile.training_data
+      extract_config:
+        path: ./
+        file: Dockerfile.extract_config
 
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
@@ -237,6 +240,18 @@ functions:
             parameters:
               paths:
                 lesson_id: true
+  extract_config:
+    timeout: 20
+    memorySize: 4096
+    image:
+      name: extract_config
+      command:
+        - extract_config.handler
+    events:
+      - http:
+          path: /extract_config
+          method: POST
+          cors: true
                 
   # check_model:
   #   # lambda default timeout is 6 seconds

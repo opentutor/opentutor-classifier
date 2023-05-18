@@ -91,6 +91,19 @@ class LRAnswerClassifier(AnswerClassifier):
             )
         return self._model_and_config
 
+    def preload_save_config_and_model_features(
+        self, conf: QuestionConfig, expectations, w2v: Word2VecWrapper
+    ):
+        words_to_preload = [*preprocess_sentence(conf.question)]
+        for exp in expectations:
+            exp_conf = conf.get_expectation(exp.expectation)
+            words_to_preload.extend(preprocess_sentence(exp_conf.ideal))
+            words_to_preload.extend(exp_conf.features.get(ARCHETYPE_GOOD, []))
+            words_to_preload.extend(exp_conf.features.get(ARCHETYPE_BAD, []))
+            words_to_preload.extend(exp_conf.features.get(PATTERNS_GOOD, []))
+            words_to_preload.extend(exp_conf.features.get(PATTERNS_BAD, []))
+        w2v.get_feature_vectors(set(words_to_preload), True)
+
     def save_config_and_model(self, embedding: bool = True) -> Dict[str, Any]:
         m_by_e, conf = self.model_and_config
         expectations = [
@@ -104,7 +117,9 @@ class LRAnswerClassifier(AnswerClassifier):
         ]
 
         if embedding:
-            self.find_word2vec_slim()
+            self.preload_save_config_and_model_features(
+                conf, expectations, self.find_word2vec_slim()
+            )
         question_proc = preprocess_sentence(conf.question)
 
         slim_embeddings: Dict[str, List[float]] = dict()

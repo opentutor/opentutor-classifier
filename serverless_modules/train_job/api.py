@@ -13,7 +13,6 @@ import os
 import requests
 from typing import Optional, TypedDict
 import yaml
-from urllib.parse import quote
 
 
 import pandas as pd
