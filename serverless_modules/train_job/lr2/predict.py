@@ -40,12 +40,16 @@ from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
 
+from serverless_modules.logger import get_logger
+
 
 def _confidence_score(
     model: linear_model.LogisticRegression, sentence: List[List[float]]
 ) -> float:
     return model.predict_proba(sentence)[0, 1]
 
+
+logger = get_logger("predict")
 
 ModelAndConfig = Tuple[Dict[str, linear_model.LogisticRegression], QuestionConfig]
 
@@ -81,6 +85,10 @@ class LRAnswerClassifier(AnswerClassifier):
             )
             self._model_and_config = (cm.model, cm.config)
             self._is_default = cm.is_default
+        else:
+            logger.info(
+                f"model and config already in memory for lesson: {self.model_name}"
+            )
         return self._model_and_config
 
     def save_config_and_model(self, embedding: bool = True) -> Dict[str, Any]:
@@ -187,6 +195,23 @@ class LRAnswerClassifier(AnswerClassifier):
             score=_score if _evaluation == "Good" else 1 - _score,
         )
 
+    def preload_evaluate_features(
+        self,
+        answer: AnswerClassifierInput,
+        index2word,
+        config: QuestionConfig,
+        expectations,
+    ):
+        final_list = []
+        final_list.extend(preprocess_sentence(answer.input_sentence))
+        final_list.extend(preprocess_sentence(config.question))
+        word2vec = self.find_word2vec()
+        for exp in expectations:
+            exp_conf = config.get_expectation(exp.expectation)
+            final_list.extend(preprocess_sentence(exp_conf.ideal))
+        final_set = set(final_list).intersection(index2word)
+        word2vec.get_feature_vectors(final_set)
+
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = preprocess_sentence(answer.input_sentence)
         m_by_e, conf = self.model_and_config
@@ -214,6 +239,9 @@ class LRAnswerClassifier(AnswerClassifier):
         )
         question_proc = preprocess_sentence(conf.question)
         clustering = CustomDBScanClustering(word2vec, index2word)
+
+        self.preload_evaluate_features(answer, index2word, conf, expectations)
+
         for exp in expectations:
             exp_conf = conf.get_expectation(exp.expectation)
             sent_features = LRExpectationClassifier.calculate_features(

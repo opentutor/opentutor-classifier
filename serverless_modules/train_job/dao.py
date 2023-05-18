@@ -6,17 +6,23 @@
 #
 from dataclasses import dataclass
 import pickle
+import datetime
 import json
 from os import environ, makedirs, path
+import os
+import botocore
 import shutil
 import tempfile
 from typing import Any
+import boto3
 
 import pandas as pd
 
 from serverless_modules.logger import get_logger
 
 from serverless_modules.train_job.constants import (
+    DEFAULT_LESSON_NAME,
+    MODEL_FILE_NAME,
     MODEL_ROOT_DEFAULT,
     MODELS_DEPLOYED_ROOT_DEFAULT,
 )
@@ -40,8 +46,14 @@ from .api import (
     update_last_trained_at,
 )
 from serverless_modules.train_job.utils import load_config, load_data
+from serverless_modules.utils import require_env
 
 logger = get_logger("dao")
+s3 = boto3.client("s3")
+SHARED = os.environ.get("SHARED_ROOT")
+logger.info(f"shared: {SHARED}")
+MODELS_BUCKET = require_env("MODELS_BUCKET")
+logger.info(f"bucket: {MODELS_BUCKET}")
 
 
 def _get_model_root() -> str:
@@ -163,12 +175,10 @@ class FileDataDao(DataDao):
         )
 
     def save_pickle(self, req: ModelSaveReq) -> None:
-        logger.info(req)
-
         tmpf = self._setup_tmp(req.filename)
         with open(tmpf, "wb") as f:
             pickle.dump(req.model, f)
-        logger.info(f"saving final pickel to {self._get_model_file(req)}")
+        logger.info(f"saving final pickle to {self._get_model_file(req)}")
         self._replace(tmpf, self._get_model_file(req))
 
     def save_embeddings(self, req: EmbeddingSaveReq) -> None:
@@ -255,20 +265,102 @@ class ConfigAndModel:
     is_default: bool
 
 
+"""
+    model_in_memory_exists: only replace model in memory if model in s3 was updated
+"""
+
+
+def get_and_update_model_from_s3(ref: ModelRef, model_in_memory_exists: bool = True):
+    model_lambda_file_path = os.path.join(
+        MODEL_ROOT_DEFAULT, ref.arch, ref.lesson, ref.filename
+    )
+    config_lambda_file_path = os.path.join(
+        MODEL_ROOT_DEFAULT, ref.arch, ref.lesson, _CONFIG_YAML
+    )
+    if model_in_memory_exists:
+        # Check if model exists in s3 that is more up to date than model in memory
+        logger.info(f"model file exists in lambda memory: {model_lambda_file_path}")
+        modified_time = os.path.getmtime(model_lambda_file_path)
+        utc_mod_time = datetime.datetime.utcfromtimestamp(modified_time)
+        logger.info(f"model file modified at {utc_mod_time}")
+    try:
+        model_s3_path = os.path.join(ref.lesson, ref.arch, ref.filename)
+        logger.info(f"model s3 path: {model_s3_path}")
+        model_from_s3 = s3.get_object(
+            **{
+                "Bucket": MODELS_BUCKET,
+                "Key": model_s3_path,
+                **({"IfModifiedSince": utc_mod_time} if model_in_memory_exists else {}),
+            }
+        )
+        config_s3_path = os.path.join(ref.lesson, ref.arch, _CONFIG_YAML)
+        logger.info(f"model s3 path: {config_s3_path}")
+
+        config_from_s3 = s3.get_object(
+            **{
+                "Bucket": MODELS_BUCKET,
+                "Key": config_s3_path,
+                **({"IfModifiedSince": utc_mod_time} if model_in_memory_exists else {}),
+            }
+        )
+        logger.info("model and config found in s3")
+        # Update model and config in memory with up to date versions from s3
+        os.makedirs(os.path.dirname(model_lambda_file_path), exist_ok=True)
+        os.makedirs(os.path.dirname(config_lambda_file_path), exist_ok=True)
+        with open(model_lambda_file_path, "wb") as f:
+            for chunk in model_from_s3["Body"].iter_chunks(chunk_size=4096):
+                f.write(chunk)
+        with open(config_lambda_file_path, "wb") as f:
+            for chunk in config_from_s3["Body"].iter_chunks(chunk_size=4096):
+                f.write(chunk)
+        logger.info("model file updated")
+        return True
+    except botocore.exceptions.ClientError as e:
+        if e.response["Error"]["Code"] != "304":
+
+            logger.error(ref)
+            logger.error(e)
+            if model_in_memory_exists:
+                # if a model exists in memory, there should definitely be one in s3, so error out
+                raise e
+        logger.debug("model file not updated in s3 since last fetch")
+        return False
+
+
 def find_predicton_config_and_pickle(ref: ModelRef, dao: DataDao) -> ConfigAndModel:
     """
     Utility finder for the common prediction-time case
     of needing to load a single, pickle-file trained model
     and its sibling config.
-    If the requested model has not been trained, returns default model
+    if the requested model is in memory, first checks if a more up to date model exists in s3
+    if the requested model is not in memory, checks if a model exists in s3.
+    else return default model
     """
+
     if dao.trained_model_exists(ref):
+        logger.info(f"model in memory for {ref.lesson}, checking s3")
+        get_and_update_model_from_s3(ref, model_in_memory_exists=True)
+        return ConfigAndModel(
+            config=dao.find_prediction_config(ref),
+            model=dao.load_pickle(ref),
+            is_default=False,
+        )
+    elif get_and_update_model_from_s3(ref, model_in_memory_exists=False):
+        logger.info(f"model not in memory but got it from s3")
         return ConfigAndModel(
             config=dao.find_prediction_config(ref),
             model=dao.load_pickle(ref),
             is_default=False,
         )
     else:
+        default_ref: ModelRef = ModelRef(
+            filename=ref.filename, lesson=DEFAULT_LESSON_NAME, arch=ref.arch
+        )
+        logger.info(
+            f"No model found for lesson {ref.lesson} in memory nor s3, using default model"
+        )
+        model_in_memory_exists = dao.trained_model_exists(default_ref)
+        get_and_update_model_from_s3(default_ref, model_in_memory_exists)
         return ConfigAndModel(
             config=dao.find_training_config(ref.lesson),
             model=dao.load_default_pickle(

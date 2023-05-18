@@ -89,6 +89,9 @@ provider:
       train_job:
         path: ./
         file: Dockerfile.train_job
+      evaluate:
+        path: ./
+        file: Dockerfile.evaluate
 
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
@@ -172,6 +175,18 @@ functions:
           arn:
             Fn::GetAtt: [TrainQueue, Arn]
           batchSize: 1
+  evaluate:
+    image:
+      name: evaluate
+      command:
+        - evaluate.handler
+    memorySize: 8192
+    timeout: 30
+    events:
+      - http:
+          path: /evaluate
+          method: post
+          cors: true
   train_status:
     handler: src/functions/train_status.handler
     memorySize: 512

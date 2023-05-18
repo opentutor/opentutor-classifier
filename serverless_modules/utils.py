@@ -8,6 +8,7 @@
 import os
 import requests
 import yaml
+import re
 
 from tqdm import tqdm
 from os import _Environ, environ, path
@@ -105,3 +106,22 @@ def append_cors_headers(headers, event):
 def load_yaml(file_path: str) -> Dict[str, Any]:
     with open(file_path, "r") as yaml_file:
         return yaml.load(yaml_file, Loader=yaml.FullLoader)
+
+
+under_pat = re.compile(r"_([a-z])")
+
+
+def underscore_to_camel(name: str) -> str:
+    return under_pat.sub(lambda x: x.group(1).upper(), name)
+
+
+def to_camelcase(d: dict) -> dict:
+    new_d = {}
+    for k, v in d.items():
+        if isinstance(v, dict):
+            new_d[underscore_to_camel(k)] = to_camelcase(v)
+        elif isinstance(v, list):
+            new_d[underscore_to_camel(k)] = [to_camelcase(x) for x in v]
+        else:
+            new_d[underscore_to_camel(k)] = v
+    return new_d

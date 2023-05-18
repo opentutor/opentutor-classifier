@@ -3,7 +3,7 @@ import boto3
 from serverless_modules.utils import require_env
 from serverless_modules.logger import get_logger
 
-from serverless_modules.train_job.dao import find_data_dao
+from serverless_modules.train_job.dao import find_data_dao, _CONFIG_YAML, _TRAINING_CSV
 from serverless_modules.train_job import ClassifierFactory, TrainingConfig
 from serverless_modules.train_job.constants import (
     MODEL_ROOT_DEFAULT,
@@ -48,6 +48,8 @@ def handler(event, context):
                 data = dao.find_training_input(lesson_name)
                 training = fac.new_training(config, arch=ARCH_DEFAULT)
                 training.train(data, dao)
+
+            # upload model
             s3.upload_file(
                 os.path.join(
                     MODEL_ROOT_DEFAULT,
@@ -57,6 +59,15 @@ def handler(event, context):
                 ),
                 MODELS_BUCKET,
                 os.path.join(lesson_name, ARCH_DEFAULT, MODEL_FILE_NAME),
+            )
+
+            # upload model config
+            s3.upload_file(
+                os.path.join(
+                    MODEL_ROOT_DEFAULT, ARCH_DEFAULT, lesson_name, _CONFIG_YAML
+                ),
+                MODELS_BUCKET,
+                os.path.join(lesson_name, ARCH_DEFAULT, _CONFIG_YAML),
             )
 
             update_status(request["id"], "SUCCESS")
