@@ -37,7 +37,9 @@ def _get_dao() -> ClassifierDao:
 def handler(event, context):
     print(json.dumps(event))
     if "body" not in event:
-        raise Exception("bad request: body not in event")
+        return create_json_response(
+            400, {"error": "bad request: body not in event"}, event
+        )
 
     if event["isBase64Encoded"]:
         body = base64.b64decode(event["body"])
@@ -46,9 +48,9 @@ def handler(event, context):
     request_body = json.loads(body)
 
     if "lesson" not in request_body:
-        raise Exception("required param: lesson")
+        return create_json_response(400, {"error": "lesson is a required param"}, event)
     if "input" not in request_body:
-        raise Exception("required param: input")
+        return create_json_response(400, {"error": "lesson is a required param"}, event)
 
     lesson = request_body["lesson"]
     input_sentence = request_body["input"]

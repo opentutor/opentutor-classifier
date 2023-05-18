@@ -31,7 +31,9 @@ job_table = dynamodb.Table(JOBS_TABLE_NAME)
 def handler(event, context):
     print(json.dumps(event))
     if "body" not in event:
-        raise Exception("bad request: body not in event")
+        return create_json_response(
+            400, {"error": "bad request: body not in event"}, event
+        )
 
     if event["isBase64Encoded"]:
         body = base64.b64decode(event["body"])
@@ -43,8 +45,12 @@ def handler(event, context):
     )
 
     if "lesson" not in train_request and should_train_default is False:
-        raise Exception(
-            "Bad request: Need lesson in json body, or specify to train default via 'train_default' body param"
+        return create_json_response(
+            400,
+            {
+                "error": "Bad request: Need lesson in json body, or specify to train default via 'train_default' body param"
+            },
+            event,
         )
 
     lesson = train_request["lesson"] if "lesson" in train_request else "default"

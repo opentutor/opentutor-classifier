@@ -319,9 +319,7 @@ def get_and_update_model_from_s3(ref: ModelRef, model_in_memory_exists: bool = T
 
             logger.error(ref)
             logger.error(e)
-            if model_in_memory_exists:
-                # if a model exists in memory, there should definitely be one in s3, so error out
-                raise e
+            raise e
         logger.debug("model file not updated in s3 since last fetch")
         return False
 

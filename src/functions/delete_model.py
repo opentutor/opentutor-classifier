@@ -21,7 +21,10 @@ logger.info(f"bucket: {MODELS_BUCKET}")
 
 def handler(event, context):
     if "body" not in event:
-        raise Exception("bad request: body not in event")
+        return create_json_response(
+            400, {"error": "bad request: body not in event"}, event
+        )
+
     if event["isBase64Encoded"]:
         body = base64.b64decode(event["body"])
     else:
@@ -29,7 +32,7 @@ def handler(event, context):
     payload = json.loads(body)
 
     if "lesson" not in payload:
-        raise Exception("required param: lesson")
+        return create_json_response(400, {"error": "lesson is a required param"}, event)
 
     arch = os.environ.get("CLASSIFIER_ARCH") or ARCH_DEFAULT
     lesson = payload["lesson"]
@@ -45,7 +48,7 @@ def handler(event, context):
 
         return create_json_response(200, {"deleted": True}, event)
     except botocore.exceptions.ClientError as e:
-        # TODO: explicitly check if the error response is an object not found response, else raise exception
+        # if not a 404, then an unexpected error occured
         if e.response["Error"]["Code"] != "404":
             logger.error(e)
             raise e

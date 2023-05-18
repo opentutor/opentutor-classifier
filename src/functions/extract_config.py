@@ -9,12 +9,23 @@ import base64
 import os
 from serverless_modules.utils import create_json_response
 from serverless_modules.constants import (
+    _CONFIG_YAML,
+    ARCH_DEFAULT,
+    MODEL_FILE_NAME,
     MODEL_ROOT_DEFAULT,
     MODELS_DEPLOYED_ROOT_DEFAULT,
 )
 from serverless_modules.evaluate.classifier_dao import ClassifierDao, ClassifierConfig
 from serverless_modules.train_job.dao import find_data_dao
+from serverless_modules.logger import get_logger
+from serverless_modules.utils import require_env
+import boto3
+import botocore
 
+logger = get_logger("extract_config")
+s3 = boto3.client("s3")
+MODELS_BUCKET = require_env("MODELS_BUCKET")
+logger.info(f"bucket: {MODELS_BUCKET}")
 
 shared_root = os.environ.get("SHARED_ROOT") or "shared"
 model_roots = [
@@ -37,7 +48,9 @@ def handler(event, context):
     print(json.dumps(event))
 
     if "body" not in event:
-        raise Exception("bad request: body not in event")
+        return create_json_response(
+            400, {"error": "bad request: body not in event"}, event
+        )
 
     if event["isBase64Encoded"]:
         body = base64.b64decode(event["body"])
@@ -46,11 +59,25 @@ def handler(event, context):
     extract_config_body = json.loads(body)
 
     if "lesson" not in extract_config_body:
-        raise Exception("required param: lesson")
+        return create_json_response(400, {"error": "lesson is a required param"}, event)
     lesson = extract_config_body["lesson"]
     embedding = (
         extract_config_body["embedding"] if "embedding" in extract_config_body else True
     )
+    arch = os.environ.get("CLASSIFIER_ARCH") or ARCH_DEFAULT
+
+    # First confirm that the model and config exists in s3
+    try:
+        model_s3_path = os.path.join(lesson, arch, MODEL_FILE_NAME)
+        config_s3_path = os.path.join(lesson, arch, _CONFIG_YAML)
+        s3.head_object(**{"Bucket": MODELS_BUCKET, "Key": model_s3_path})
+        s3.head_object(**{"Bucket": MODELS_BUCKET, "Key": config_s3_path})
+    except Exception as e:
+        logger.error("model or config do not exist in s3, aborting")
+        logger.error(e)
+        return create_json_response(
+            400, {"error": "model or config do not exist in s3, aborting"}, event
+        )
 
     classifier = _get_dao().find_classifier(
         lesson,
