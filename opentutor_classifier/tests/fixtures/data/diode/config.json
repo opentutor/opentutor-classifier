@@ -1,8 +1,0 @@
-{
-  "data": {
-    "trainingData": {
-      "config": "expectations:\n  - ideal: Current flows in the same direction as the arrow.\n    features:\n      ideal: Current flows in the same direction as the arrow.\n      good:\n        - \"\\b(sam\\\\w*|const\\\\w*|eq(?!uip)\\\\w*|id\\\\w*n\\\\w*[ck]\\\\w*)\\b\"\n        - \"\\bfrom\\b.*\\bto\\b, \\b(left|anode)\\b.*\\b(ri(ght|te)|cath\\\\w*)\\b\"\n      bad:\n        - \"\\b(oppo\\\\w*|diffe\\\\w*|aga\\\\w*t|rev\\\\w*)\\b\"\n        - \"\\bfrom\\b.*\\bto\\b, \\b(ri(ght|te)|cath\\\\w*)\\b.*\\b(left|anode)\\b\"\nquestion: With a DC input source, does current flow in the same or the opposite\n  direction of the diode arrow?\n",
-      "training": "exp_num,text,label\n0,current flows in the same direction as the arrow,Good\n0,current flows in the same direction,Good\n0,current flows in the same direction,Good\n0,current flows in the same direction as the arrow.,Good\n0,Same,Good\n0,The same direction,Good\n0,Opposite ,Bad\n0,opposite,Bad\n0,same,Good\n0,same,Good\n0,opposite,Bad\n0,same,Good\n0,opposite,Bad\n0,Same,Good\n0,Opposite,Bad\n0,Goes in the direction of the arrow ,Good\n0,Same,Good\n0,the current follows the arrow,Good\n"
-    }
-  }
-}

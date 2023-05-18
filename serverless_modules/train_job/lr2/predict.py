@@ -5,7 +5,6 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from serverless_modules.utils import model_last_updated_at, prop_bool
-from os import path
 from typing import Dict, List, Optional, Tuple, Any
 
 from sklearn import linear_model

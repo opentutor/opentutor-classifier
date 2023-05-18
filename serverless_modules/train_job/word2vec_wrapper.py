@@ -5,7 +5,6 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from typing import Any, Dict
-import json
 from numpy import ndarray
 from serverless_modules.train_job.api import sbert_word_to_vec, get_sbert_index_to_key
 from serverless_modules.logger import get_logger

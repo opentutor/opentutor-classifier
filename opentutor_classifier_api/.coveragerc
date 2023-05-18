@@ -1,9 +1,0 @@
-[run]
-dynamic_context = test_function
-branch = True
-
-[report]
-skip_empty = True
-
-[html]
-show_contexts = True

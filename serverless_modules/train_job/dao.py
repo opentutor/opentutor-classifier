@@ -22,7 +22,6 @@ from serverless_modules.logger import get_logger
 
 from serverless_modules.constants import (
     DEFAULT_LESSON_NAME,
-    MODEL_FILE_NAME,
     MODEL_ROOT_DEFAULT,
     MODELS_DEPLOYED_ROOT_DEFAULT,
 )
@@ -346,7 +345,7 @@ def find_predicton_config_and_pickle(ref: ModelRef, dao: DataDao) -> ConfigAndMo
             is_default=False,
         )
     elif get_and_update_model_from_s3(ref, model_in_memory_exists=False):
-        logger.info(f"model not in memory but got it from s3")
+        logger.info("model not in memory but got it from s3")
         return ConfigAndModel(
             config=dao.find_prediction_config(ref),
             model=dao.load_pickle(ref),

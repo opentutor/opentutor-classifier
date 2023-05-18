@@ -20,17 +20,6 @@ deps-show-outdated:
 deps-update:
 	poetry update
 
-.PHONY: docker-build
-docker-build:
-	cd opentutor_classifier && $(MAKE) docker-build
-	cd opentutor_classifier_api && $(MAKE) docker-build
-
-.PHONY: install
-install: poetry-ensure-installed
-	poetry config --local virtualenvs.in-project true
-	poetry env use python3.8
-	poetry install
-
 .PHONY: format
 format: $(VENV)
 	poetry run black .
@@ -45,37 +34,17 @@ LICENSE_HEADER:
 
 .PHONY: license
 license: LICENSE LICENSE_HEADER $(VENV)
-	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/opentutor_classifier $(args)
-	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/opentutor_classifier_tasks $(args)
-	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/tests $(args)
-	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier_api/src $(args)
-	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier_api/tests $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d serverless_modules $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d serverless_modules/train_job $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d serverless_modules/train_job/lr2 $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d serverless_modules/evaluate $(args)
 	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d tools $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d src/functions $(args)
 	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d word2vec $(args)
 
 .PHONY: poetry-ensure-installed
 poetry-ensure-installed:
 	sh ./tools/poetry_ensure_installed.sh
-
-.PHONY: test
-test:
-	cd opentutor_classifier && $(MAKE) test
-	cd opentutor_classifier_api && $(MAKE) test
-
-.PHONY: test-not-slow
-test-not-slow:
-	cd opentutor_classifier && $(MAKE) test-not-slow
-	cd opentutor_classifier_api && $(MAKE) test-not-slow
-
-.PHONY: test-all
-test-all:
-	cd opentutor_classifier && $(MAKE) test-all
-	cd opentutor_classifier_api && $(MAKE) test-all
-
-.PHONY: test-all-not-slow
-test-all-not-slow:
-	cd opentutor_classifier && $(MAKE) test-all-not-slow
-	cd opentutor_classifier_api && $(MAKE) test-all-not-slow
 
 .PHONY: test-format
 test-format: $(VENV)
@@ -91,6 +60,5 @@ test-license: LICENSE LICENSE_HEADER
 
 .PHONY: test-types
 test-types: $(VENV)
-	poetry run mypy opentutor_classifier
-	poetry run mypy opentutor_classifier_api
-	poetry run mypy shared
+	poetry run mypy src
+	poetry run mypy serverless_modules

@@ -8,7 +8,6 @@ from collections import defaultdict
 import json
 
 from serverless_modules.utils import prop_bool
-from os import path
 
 from typing import Dict, List
 
