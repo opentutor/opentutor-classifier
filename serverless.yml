@@ -49,8 +49,7 @@ custom:
         functions:
             - train_request
             - train_status
-          # - http_training_data
-          # - authorizer_func
+            # - authorizer_func
 
 provider:
   name: aws
@@ -92,6 +91,9 @@ provider:
       evaluate:
         path: ./
         file: Dockerfile.evaluate
+      training_config:
+        path: ./
+        file: Dockerfile.training_config
 
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
@@ -200,6 +202,23 @@ functions:
             parameters:
               paths:
                 id: true
+  training_config:
+    timeout: 20
+    memorySize: 4096
+    image:
+      name: training_config
+      command:
+        - training_config.handler
+    events:
+      - http:
+          path: /trainingconfig/{lesson_id}
+          method: GET
+          cors: true
+          request:
+            parameters:
+              paths:
+                lesson_id: true
+                
   # check_model:
   #   # lambda default timeout is 6 seconds
   #   timeout: 20
