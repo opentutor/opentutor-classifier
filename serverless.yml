@@ -50,6 +50,7 @@ custom:
             - train_request
             - train_status
             - check_model
+            - delete_model
             # - authorizer_func
 
 provider:
@@ -125,6 +126,7 @@ provider:
           Action:
             - "s3:PutObject"
             - "s3:GetObject"
+            - "s3:DeleteObject"
           Resource:
             - 'arn:aws:s3:::${self:provider.environment.MODELS_BUCKET}/*'
         - Effect: "Allow"
@@ -259,6 +261,14 @@ functions:
     events:
       - http:
           path: /check_model
+          method: POST
+          cors: true
+  delete_model:
+    timeout: 30
+    handler: src/functions/delete_model.handler
+    events:
+      - http:
+          path: /delete_model
           method: POST
           cors: true
 
