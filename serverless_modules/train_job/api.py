@@ -295,18 +295,31 @@ def get_sbert_waf_secret_value():
 
 def sbert_word_to_vec(words: list, slim: bool = False):
     model_name = "word2vec_slim" if slim else "word2vec"
-    words_appended_by_space = " ".join(words)
-    logger.info(f"requesting w2v for words: {words_appended_by_space}")
-    res = requests.post(
-        f"{get_sbert_endpoint()}v1/w2v",
-        headers={
-            "Authorization": f"bearer {get_sbert_api_key()}",
-            f"{get_sbert_waf_secret_header()}": f"{get_sbert_waf_secret_value()}",
-        },
-        json={"model": model_name, "words": words_appended_by_space},
-    )
-    res.raise_for_status()
-    return res.json()
+
+    # sbert WAF only allows 8kb body size, 800 words is ~6kb
+    req_words_chunk_size = 800
+    req_words_chunks = [
+        words[i : i + req_words_chunk_size]
+        for i in range(0, len(words), req_words_chunk_size)
+    ]
+    final_res = {}
+    logger.info(f"Number of chunk requests to make: {len(req_words_chunks)}")
+
+    for i, req_words in enumerate(req_words_chunks):
+
+        words_appended_by_space = " ".join(req_words)
+        res = requests.post(
+            f"{get_sbert_endpoint()}v1/w2v",
+            headers={
+                "Authorization": f"bearer {get_sbert_api_key()}",
+                f"{get_sbert_waf_secret_header()}": f"{get_sbert_waf_secret_value()}",
+            },
+            json={"model": model_name, "words": words_appended_by_space},
+        )
+        res.raise_for_status()
+        logger.info(f"Finished req_chuck #{i+1}")
+        final_res = {**final_res, **res.json()}
+    return final_res
 
 
 def get_sbert_index_to_key(slim: bool = False):

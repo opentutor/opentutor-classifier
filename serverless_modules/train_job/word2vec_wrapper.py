@@ -33,7 +33,7 @@ class Word2VecWrapper:
                 words.remove(word)
 
         if len(words) > 0:
-            sbert_w2v_result = sbert_word_to_vec(words, slim)
+            sbert_w2v_result = sbert_word_to_vec(list(words), slim)
             self.loaded_word_vectors = {**self.loaded_word_vectors, **sbert_w2v_result}
 
             words_with_no_sbert_vector = set(
