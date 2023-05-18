@@ -94,6 +94,9 @@ provider:
       training_config:
         path: ./
         file: Dockerfile.training_config
+      training_data:
+        path: ./
+        file: Dockerfile.training_data
 
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
@@ -212,6 +215,22 @@ functions:
     events:
       - http:
           path: /trainingconfig/{lesson_id}
+          method: GET
+          cors: true
+          request:
+            parameters:
+              paths:
+                lesson_id: true
+  training_data:
+    timeout: 20
+    memorySize: 4096
+    image:
+      name: training_data
+      command:
+        - training_data.handler
+    events:
+      - http:
+          path: /trainingdata/{lesson_id}
           method: GET
           cors: true
           request:

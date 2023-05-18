@@ -1,0 +1,12 @@
+FROM public.ecr.aws/lambda/python:3.8
+
+WORKDIR /app
+
+ENV PYTHONPATH /app
+ENV PATH="/app/bin:${PATH}"
+
+COPY requirements-training_data.txt ./requirements.txt
+# RUN python -m pip install --upgrade pip
+RUN pip install --no-cache -r requirements.txt
+COPY src/functions/training_data.py ./
+COPY serverless_modules serverless_modules
