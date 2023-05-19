@@ -9,30 +9,25 @@ from typing import Any, Dict
 from abc import ABC, abstractmethod
 
 from numpy import ndarray
-from opentutor_classifier.constants import DEPLOYMENT_MODE_ONLINE, DEPLOYMENT_MODE_OFFLINE
+from opentutor_classifier.constants import (
+    DEPLOYMENT_MODE_ONLINE,
+    DEPLOYMENT_MODE_OFFLINE,
+)
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
 from opentutor_classifier.api import sbert_word_to_vec, get_sbert_index_to_key
 
-class Word2Vec(ABC):
-    def __init__(self, path, slim_path):
-        pass
+DEPLOYMENT_MODE = os.environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
 
+
+class Word2VecWrapper(ABC):
     @abstractmethod
     def get_feature_vectors(self, words, slim: bool = False) -> Dict[str, ndarray]:
         raise NotImplementedError()
-    
+
     @abstractmethod
     def index_to_key(self, slim: bool = False) -> Any:
         raise NotImplementedError()
-
-class Word2VecWrapper(Word2Vec):
-    def __new__(cls, *args, **kwargs):
-        DEPLOYMENT_MODE = os.getenv("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
-        if DEPLOYMENT_MODE == DEPLOYMENT_MODE_ONLINE:
-            return super().__new__(Word2VecWrapperOnline)
-        else:
-            return super().__new__(Word2VecWrapperOffline)
 
 
 class Word2VecWrapperOffline(Word2VecWrapper):
@@ -54,6 +49,7 @@ class Word2VecWrapperOffline(Word2VecWrapper):
         if slim:
             return self.model_slim.index_to_key
         return self.model.index_to_key
+
 
 class Word2VecWrapperOnline(Word2VecWrapper):
     def __init__(self, path, slim_path):
@@ -105,9 +101,8 @@ class Word2VecWrapperOnline(Word2VecWrapper):
         return get_sbert_index_to_key(slim)
 
 
-# def get_word2vec(path, slim_path):
-#     DEPLOYMENT_MODE = os.getenv("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
-    # if DEPLOYMENT_MODE == DEPLOYMENT_MODE_ONLINE:
-    #     return Word2VecWrapperOnline(path, slim_path)
-    # else:
-    #     return Word2VecWrapperOffline()
+def get_word2vec(path, slim_path) -> Word2VecWrapper:
+    if DEPLOYMENT_MODE == DEPLOYMENT_MODE_ONLINE:
+        return Word2VecWrapperOnline(path, slim_path)
+    else:
+        return Word2VecWrapperOffline(path, slim_path)

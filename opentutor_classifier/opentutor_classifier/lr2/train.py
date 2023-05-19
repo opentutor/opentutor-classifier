@@ -12,7 +12,7 @@ from os import path
 
 from typing import Dict, List
 
-from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
+from opentutor_classifier.word2vec_wrapper import Word2VecWrapper, get_word2vec
 
 from .constants import (
     ARCHETYPE_BAD,
@@ -73,7 +73,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         self.accuracy: Dict[str, int] = {}
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
-        self.word2vec_wrapper: Word2VecWrapper = Word2VecWrapper(
+        self.word2vec_wrapper: Word2VecWrapper = get_word2vec(
             path.join(config.shared_root, "word2vec.bin"),
             path.join(config.shared_root, "word2vec_slim.bin"),
         )

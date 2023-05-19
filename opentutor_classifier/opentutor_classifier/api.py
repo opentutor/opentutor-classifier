@@ -11,7 +11,7 @@ from io import StringIO
 import json
 import os
 import requests
-from typing import Optional, TypedDict
+from typing import Optional, TypedDict, Dict
 import yaml
 
 
@@ -301,7 +301,7 @@ def sbert_word_to_vec(words: list, slim: bool = False):
         words[i : i + req_words_chunk_size]
         for i in range(0, len(words), req_words_chunk_size)
     ]
-    final_res = {}
+    final_res: Dict = {}
     logger.info(f"Number of chunk requests to make: {len(req_words_chunks)}")
 
     for i, req_words in enumerate(req_words_chunks):

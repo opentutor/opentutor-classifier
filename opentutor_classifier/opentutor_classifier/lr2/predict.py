@@ -23,7 +23,7 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier
-from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
+from opentutor_classifier.word2vec_wrapper import Word2VecWrapper, get_word2vec
 from .constants import (
     ARCHETYPE_BAD,
     ARCHETYPE_GOOD,
@@ -170,7 +170,7 @@ class LRAnswerClassifier(AnswerClassifier):
 
     def find_word2vec(self) -> Word2VecWrapper:
         if not self._word2vec:
-            self._word2vec = Word2VecWrapper(
+            self._word2vec = get_word2vec(
                 path.join(self.shared_root, "word2vec.bin"),
                 path.join(self.shared_root, "word2vec_slim.bin"),
             )
