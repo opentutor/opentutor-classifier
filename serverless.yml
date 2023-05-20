@@ -49,9 +49,8 @@ custom:
         functions:
             - train_request
             - train_status
-            # - check_model
-            # - delete_model
-            # - authorizer_func
+            - check_model
+            - delete_model
 
 provider:
   name: aws
@@ -256,22 +255,22 @@ functions:
           path: /extract_config
           method: POST
           cors: true
-  # check_model:
-  #   timeout: 30
-  #   handler: serverless/functions/check_model.handler
-  #   events:
-  #     - http:
-  #         path: /check_model
-  #         method: POST
-  #         cors: true
-  # delete_model:
-  #   timeout: 30
-  #   handler: serverless/functions/delete_model.handler
-  #   events:
-  #     - http:
-  #         path: /delete_model
-  #         method: POST
-  #         cors: true
+  check_model:
+    timeout: 30
+    handler: serverless/functions/check_model.handler
+    events:
+      - http:
+          path: /check_model
+          method: POST
+          cors: true
+  delete_model:
+    timeout: 30
+    handler: serverless/functions/delete_model.handler
+    events:
+      - http:
+          path: /delete_model
+          method: POST
+          cors: true
 
 resources:
   Conditions:
