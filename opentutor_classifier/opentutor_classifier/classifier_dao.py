@@ -4,7 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from datetime import datetime
+from datetime import datetime, timezone
 from opentutor_classifier.api import fetch_lesson_updated_at
 from os import environ
 
@@ -34,8 +34,10 @@ class ClassifierDao:
         cfac = ClassifierFactory()
         lesson_updated_at = (
             fetch_lesson_updated_at(lesson)
+            # TODO: won't this always resolve to false since the factory is being
+            # created within the function? And therefore a new factory every function call?
             if cfac.has_trained_model(lesson, config, arch=arch)
-            else datetime.min
+            else datetime.min.replace(tzinfo=timezone.utc)
         )
         if config.model_name in self.cache:
             e = self.cache[config.model_name]

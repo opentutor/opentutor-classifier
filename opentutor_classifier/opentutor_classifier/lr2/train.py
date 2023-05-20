@@ -137,6 +137,27 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         logger.info(f"all words: {all_words}")
         self.word2vec_wrapper.get_feature_vectors(set(all_words))
 
+    def process_features(self, features, input_sentence, index2word_set, clustering):
+        processed_input_sentence = preprocess_sentence(input_sentence)
+        processed_question = preprocess_sentence(features["question"])
+        processed_ia = preprocess_sentence(features["ideal"])
+
+        features_list = LRExpectationClassifier.calculate_features(
+            processed_question,
+            input_sentence,
+            processed_input_sentence,
+            processed_ia,
+            self.word2vec_wrapper,
+            index2word_set,
+            [],
+            [],
+            clustering,
+            ClassifierMode.TRAIN,
+            feature_archetype_enabled=False,
+            feature_patterns_enabled=False,
+        )
+        return features_list
+
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         model = LRExpectationClassifier.initialize_model()
         index2word_set = set(self.word2vec_wrapper.index_to_key(True))
@@ -145,31 +166,10 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
         self.preload_feature_vectors_train_default(data, index2word_set)
 
-        def process_features(features, input_sentence, index2word_set):
-            processed_input_sentence = preprocess_sentence(input_sentence)
-            processed_question = preprocess_sentence(features["question"])
-            processed_ia = preprocess_sentence(features["ideal"])
-
-            features_list = LRExpectationClassifier.calculate_features(
-                processed_question,
-                input_sentence,
-                processed_input_sentence,
-                processed_ia,
-                self.word2vec_wrapper,
-                index2word_set,
-                [],
-                [],
-                clustering,
-                ClassifierMode.TRAIN,
-                feature_archetype_enabled=False,
-                feature_patterns_enabled=False,
-            )
-            return features_list
-
         all_features = list(
             data.apply(
-                lambda row: process_features(
-                    json.loads(row["exp_data"]), row["text"], index2word_set
+                lambda row: self.process_features(
+                    json.loads(row["exp_data"]), row["text"], index2word_set, clustering
                 ),
                 axis=1,
             )
@@ -214,6 +214,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
         self.preload_all_feature_vectors_train(train_input)
+
         question = train_input.config.question or ""
         if not question:
             raise ValueError("config must have a 'question'")
