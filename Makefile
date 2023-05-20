@@ -30,8 +30,6 @@ install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
 	poetry env use python3.8
 	poetry install
-	cd opentutor_classifier && poetry install
-	cd opentutor_classifier_api && poetry install
 
 .PHONY: format
 format: $(VENV)
