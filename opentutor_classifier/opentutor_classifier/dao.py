@@ -44,7 +44,7 @@ import botocore
 
 logger = get_logger("dao")
 s3 = boto3.client("s3")
-SHARED = environ.get("SHARED_ROOT")
+SHARED = environ.get("SHARED_ROOT") or "shared"
 logger.info(f"shared: {SHARED}")
 MODELS_BUCKET = require_env("MODELS_BUCKET")
 logger.info(f"bucket: {MODELS_BUCKET}")
@@ -54,13 +54,14 @@ logger.info(f"Deployment Mode: {DEPLOYMENT_MODE}")
 
 # online mode lambdas only allow writing to /tmp folder
 MODEL_ROOT_DEFAULT = (
-    "./models" if DEPLOYMENT_MODE == DEPLOYMENT_MODE_OFFLINE else "./tmp/models"
+    "/models" if DEPLOYMENT_MODE == DEPLOYMENT_MODE_OFFLINE else "/tmp/models"
 )
 MODELS_DEPLOYED_ROOT_DEFAULT = (
-    "./models_deployed"
+    "/models_deployed"
     if DEPLOYMENT_MODE == DEPLOYMENT_MODE_OFFLINE
-    else "./tmp/models_deployed"
+    else "/tmp/models_deployed"
 )
+logger.info(f"model root default: {MODEL_ROOT_DEFAULT}")
 
 
 def _get_model_root() -> str:
@@ -182,6 +183,7 @@ class FileDataDao(DataDao):
 
     def save_pickle(self, req: ModelSaveReq) -> None:
         tmpf = self._setup_tmp(req.filename)
+        logger.info(f"temp storing model at {tmpf}")
         with open(tmpf, "wb") as f:
             pickle.dump(req.model, f)
         logger.info(f"saving final pickle to {self._get_model_file(req)}")

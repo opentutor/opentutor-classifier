@@ -48,7 +48,7 @@ custom:
           - python3.8
         functions:
             - train_request
-            # - train_status
+            - train_status
             # - check_model
             # - delete_model
             # - authorizer_func
@@ -85,11 +85,11 @@ provider:
       # Log full requests/responses for execution logging (default: true)
       fullExecutionData: true
 
-  # ecr:
-  #   images:
-  #     train_job:
-  #       path: ./
-  #       file: Dockerfile.train_job
+  ecr:
+    images:
+      train_job:
+        path: ./
+        file: Dockerfile.train_job
   #     evaluate:
   #       path: ./
   #       file: Dockerfile.evaluate
@@ -99,9 +99,9 @@ provider:
   #     training_data:
   #       path: ./
   #       file: Dockerfile.training_data
-  #     extract_config:
-  #       path: ./
-  #       file: Dockerfile.extract_config
+      extract_config:
+        path: ./
+        file: Dockerfile.extract_config
 
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
@@ -118,6 +118,7 @@ provider:
     MODELS_BUCKET: opentutor-classifier-models-${self:provider.stage}
     JOBS_TABLE_NAME: opentutor-classifier-jobs-${self:provider.stage}
     JOBS_SQS_NAME: opentutor-classifier-jobs-${self:provider.stage}
+    DEPLOYMENT_MODE: "ONLINE"
   iam:
     role:
       statements:
@@ -174,18 +175,18 @@ functions:
           path: /train
           method: post
           cors: true
-  # train_job:
-  #   image:
-  #     name: train_job
-  #     command:
-  #       - train_job.handler
-  #   memorySize: 8192
-  #   timeout: 600
-  #   events:
-  #     - sqs:
-  #         arn:
-  #           Fn::GetAtt: [TrainQueue, Arn]
-  #         batchSize: 1
+  train_job:
+    image:
+      name: train_job
+      command:
+        - train_job.handler
+    memorySize: 8192
+    timeout: 600
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [TrainQueue, Arn]
+          batchSize: 1
   # evaluate:
   #   image:
   #     name: evaluate
@@ -198,19 +199,19 @@ functions:
   #         path: /evaluate
   #         method: post
   #         cors: true
-  # train_status:
-  #   handler: src/functions/train_status.handler
-  #   memorySize: 512
-  #   timeout: 10
-  #   events:
-  #     - http:
-  #         path: /train/status/{id}
-  #         method: get
-  #         cors: true
-  #         request:
-  #           parameters:
-  #             paths:
-  #               id: true
+  train_status:
+    handler: serverless/functions/train_status.handler
+    memorySize: 512
+    timeout: 10
+    events:
+      - http:
+          path: /train/status/{id}
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
   # training_config:
   #   timeout: 30
   #   memorySize: 4096
@@ -243,21 +244,21 @@ functions:
   #           parameters:
   #             paths:
   #               lesson_id: true
-  # extract_config:
-  #   timeout: 30
-  #   memorySize: 4096
-  #   image:
-  #     name: extract_config
-  #     command:
-  #       - extract_config.handler
-  #   events:
-  #     - http:
-  #         path: /extract_config
-  #         method: POST
-  #         cors: true
+  extract_config:
+    timeout: 30
+    memorySize: 4096
+    image:
+      name: extract_config
+      command:
+        - extract_config.handler
+    events:
+      - http:
+          path: /extract_config
+          method: POST
+          cors: true
   # check_model:
   #   timeout: 30
-  #   handler: src/functions/check_model.handler
+  #   handler: serverless/functions/check_model.handler
   #   events:
   #     - http:
   #         path: /check_model
@@ -265,7 +266,7 @@ functions:
   #         cors: true
   # delete_model:
   #   timeout: 30
-  #   handler: src/functions/delete_model.handler
+  #   handler: serverless/functions/delete_model.handler
   #   events:
   #     - http:
   #         path: /delete_model
