@@ -5,6 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import json
+import re
 from os import environ
 
 
@@ -48,3 +49,22 @@ def require_env(n: str) -> str:
     if not env_val:
         raise EnvironmentError(f"missing required env var {n}")
     return env_val
+
+
+under_pat = re.compile(r"_([a-z])")
+
+
+def underscore_to_camel(name: str) -> str:
+    return under_pat.sub(lambda x: x.group(1).upper(), name)
+
+
+def to_camelcase(d: dict) -> dict:
+    new_d = {}
+    for k, v in d.items():
+        if isinstance(v, dict):
+            new_d[underscore_to_camel(k)] = to_camelcase(v)
+        elif isinstance(v, list):
+            new_d[underscore_to_camel(k)] = [to_camelcase(x) for x in v]
+        else:
+            new_d[underscore_to_camel(k)] = v
+    return new_d

@@ -89,15 +89,15 @@ provider:
       train_job:
         path: ./
         file: Dockerfile.train_job
-  #     evaluate:
-  #       path: ./
-  #       file: Dockerfile.evaluate
-  #     training_config:
-  #       path: ./
-  #       file: Dockerfile.training_config
-  #     training_data:
-  #       path: ./
-  #       file: Dockerfile.training_data
+      evaluate:
+        path: ./
+        file: Dockerfile.evaluate
+      training_config:
+        path: ./
+        file: Dockerfile.training_config
+      training_data:
+        path: ./
+        file: Dockerfile.training_data
       extract_config:
         path: ./
         file: Dockerfile.extract_config
@@ -186,18 +186,18 @@ functions:
           arn:
             Fn::GetAtt: [TrainQueue, Arn]
           batchSize: 1
-  # evaluate:
-  #   image:
-  #     name: evaluate
-  #     command:
-  #       - evaluate.handler
-  #   memorySize: 8192
-  #   timeout: 30
-  #   events:
-  #     - http:
-  #         path: /evaluate
-  #         method: post
-  #         cors: true
+  evaluate:
+    image:
+      name: evaluate
+      command:
+        - evaluate.handler
+    memorySize: 8192
+    timeout: 30
+    events:
+      - http:
+          path: /evaluate
+          method: post
+          cors: true
   train_status:
     handler: serverless/functions/train_status.handler
     memorySize: 512
@@ -211,38 +211,38 @@ functions:
             parameters:
               paths:
                 id: true
-  # training_config:
-  #   timeout: 30
-  #   memorySize: 4096
-  #   image:
-  #     name: training_config
-  #     command:
-  #       - training_config.handler
-  #   events:
-  #     - http:
-  #         path: /trainingconfig/{lesson_id}
-  #         method: GET
-  #         cors: true
-  #         request:
-  #           parameters:
-  #             paths:
-  #               lesson_id: true
-  # training_data:
-  #   timeout: 30
-  #   memorySize: 4096
-  #   image:
-  #     name: training_data
-  #     command:
-  #       - training_data.handler
-  #   events:
-  #     - http:
-  #         path: /trainingdata/{lesson_id}
-  #         method: GET
-  #         cors: true
-  #         request:
-  #           parameters:
-  #             paths:
-  #               lesson_id: true
+  training_config:
+    timeout: 30
+    memorySize: 4096
+    image:
+      name: training_config
+      command:
+        - training_config.handler
+    events:
+      - http:
+          path: /trainingconfig/{lesson_id}
+          method: GET
+          cors: true
+          request:
+            parameters:
+              paths:
+                lesson_id: true
+  training_data:
+    timeout: 30
+    memorySize: 4096
+    image:
+      name: training_data
+      command:
+        - training_data.handler
+    events:
+      - http:
+          path: /trainingdata/{lesson_id}
+          method: GET
+          cors: true
+          request:
+            parameters:
+              paths:
+                lesson_id: true
   extract_config:
     timeout: 30
     memorySize: 4096
