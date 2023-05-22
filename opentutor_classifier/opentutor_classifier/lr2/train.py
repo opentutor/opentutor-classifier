@@ -134,7 +134,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             all_words.extend(
                 [*i_processed_input_sentence, *i_processed_question, *i_processed_ia]
             )
-        logger.info(f"all words: {all_words}")
         self.word2vec_wrapper.get_feature_vectors(set(all_words))
 
     def process_features(self, features, input_sentence, index2word_set, clustering):
