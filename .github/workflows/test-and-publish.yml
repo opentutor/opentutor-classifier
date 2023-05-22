@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: python env setup
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
       - name: poetry install
@@ -16,7 +16,7 @@ jobs:
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           poetry --version
       - name: python env setup
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
           cache: "poetry"
