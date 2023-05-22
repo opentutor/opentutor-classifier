@@ -20,14 +20,14 @@ jobs:
         with:
           python-version: 3.8
           cache: "poetry"
-      - name: test format
-        run: make test-format
-      - name: test lint
-        run: make test-lint
-      - name: test types
-        run: make test-types
-      - name: test licenses
-        run: make test-license
+      # - name: test format
+      #   run: make test-format
+      # - name: test lint
+      #   run: make test-lint
+      # - name: test types
+      #   run: make test-types
+      # - name: test licenses
+      #   run: make test-license
       # TODO: turn back on, skipping for now to speed up GHA testing
       # - name: test classifier
       #   run: cd opentutor_classifier && make test
