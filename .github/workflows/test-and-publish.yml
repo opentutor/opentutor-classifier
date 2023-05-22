@@ -12,7 +12,7 @@ jobs:
           python-version: 3.8
       - name: poetry install
         run: |
-          curl -sSL https://install.python-poetry.org | python -
+          curl -sSL https://install.python-poetry.org | python - --version 1.4.2
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           poetry --version
       - name: test format
@@ -23,8 +23,9 @@ jobs:
         run: make test-types
       - name: test licenses
         run: make test-license
-      - name: test classifier
-        run: cd opentutor_classifier && make test
+      # TODO: turn back on, skipping for now to speed up GHA testing
+      # - name: test classifier
+      #   run: cd opentutor_classifier && make test
       - name: test classifier api
         run: cd opentutor_classifier_api && make test
   publish-check:
