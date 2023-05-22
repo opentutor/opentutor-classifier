@@ -734,7 +734,7 @@ category = "main"
 optional = false
 python-versions = ">=3.8.4,<3.9.0"
 files = [
-    {file = "opentutor_classifier-1.0.0.tar.gz", hash = "sha256:49efe80904e6bdc5914f1fbc23151059089f4fadbf8a526c3f881b0eb4a50112"},
+    {file = "opentutor_classifier-1.0.0.tar.gz", hash = "sha256:cf18f59e153eb9679ce2fd6141296510f0f1a8cc2caea7eee887949932ffff70"},
 ]
 
 [package.dependencies]
