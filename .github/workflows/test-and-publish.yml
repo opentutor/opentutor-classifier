@@ -9,7 +9,7 @@ jobs:
       - name: python env setup
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8.4
+          python-version: 3.8
       - name: poetry install
         run: |
           curl -sSL https://install.python-poetry.org | python - --version 1.4.2
