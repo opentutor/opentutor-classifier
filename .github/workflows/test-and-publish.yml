@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: python env setup
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
           python-version: 3.8
       - name: poetry install
@@ -15,11 +15,6 @@ jobs:
           curl -sSL https://install.python-poetry.org | python - --version 1.4.2
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           poetry --version
-      - name: python env setup
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-          cache: "poetry"
       # - name: test format
       #   run: make test-format
       # - name: test lint
@@ -28,6 +23,14 @@ jobs:
       #   run: make test-types
       # - name: test licenses
       #   run: make test-license
+      - name : poetry build opentutor_classifier
+        run: cd opentutor_classifier && poetry build
+      - name: Upload wheel for inspections
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheel-inspection
+          path: |
+            opentutor_classifier/dist/opentutor_classifier-1.0.0.tar.gz
       # TODO: turn back on, skipping for now to speed up GHA testing
       # - name: test classifier
       #   run: cd opentutor_classifier && make test
