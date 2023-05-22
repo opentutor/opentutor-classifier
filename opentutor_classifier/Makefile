@@ -13,7 +13,7 @@ install: poetry-ensure-installed
 
 .PHONY: poetry-build-classifier
 poetry-build-classifier: $(VENV)
-	poetry build
+	POETRY_NO_INTERACTION=1 && poetry build
 
 .PHONY: poetry-ensure-installed
 poetry-ensure-installed:
