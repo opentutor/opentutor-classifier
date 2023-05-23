@@ -12,9 +12,10 @@ jobs:
           python-version: 3.8
       - name: poetry install
         run: |
-          curl -sSL https://install.python-poetry.org | python - --version 1.2.0
+          curl -sSL https://install.python-poetry.org | python - --version 1.4.2
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           poetry --version
+          poetry show
       # - name: test format
       #   run: make test-format
       # - name: test lint
@@ -35,7 +36,7 @@ jobs:
       # - name: test classifier
       #   run: cd opentutor_classifier && make test
       - name: test classifier api
-        run: cd opentutor_classifier_api && make test
+        run: cd opentutor_classifier_api && poetry show && make test
   publish-check:
     name: publish check
     needs:
