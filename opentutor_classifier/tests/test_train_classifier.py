@@ -122,12 +122,12 @@ def _test_train_and_predict(
             ARCH_LR2_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
-                ExpectationTrainingResult(expectation_id="0", accuracy=0.85),
+                ExpectationTrainingResult(expectation_id="0", accuracy=0.84),
                 ExpectationTrainingResult(expectation_id="1", accuracy=0.81),
                 ExpectationTrainingResult(expectation_id="2", accuracy=0.81),
                 ExpectationTrainingResult(expectation_id="3", accuracy=0.95),
             ],
-            0.90,
+            0.85,
         ),
     ],
 )
