@@ -20,4 +20,4 @@ phases:
   build:
     commands:
       - echo Deploying prod stack
-      - NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s prod --region us-east-1
+      - npm run deploy:prod
