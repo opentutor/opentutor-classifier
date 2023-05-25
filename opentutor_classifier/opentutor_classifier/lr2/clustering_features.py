@@ -167,7 +167,9 @@ class CustomDBScanClustering:
     def generate_feature_candidates(
         self, good_answers: np.ndarray, bad_answers: np.ndarray, train_quality: int
     ):
-        good_answers, bad_answers = np.array(good_answers), np.array(bad_answers)
+        good_answers, bad_answers = np.array(good_answers, dtype=object), np.array(
+            bad_answers, dtype=object
+        )
         good_labels, bad_labels = self.get_clusters(good_answers, bad_answers)
 
         best_candidates = []
@@ -284,9 +286,11 @@ class CustomDBScanClustering:
                 patterns.append(str(candidate))
             one_fpr = None
             if label == GOOD:
-                one_fpr = 1 - (np.array(good) / np.sum(1 - data["[LABELS]"]))
+                one_fpr = 1 - (
+                    np.array(good, dtype=object) / np.sum(1 - data["[LABELS]"])
+                )
             else:
-                one_fpr = 1 - (np.array(bad) / np.sum(data["[LABELS]"]))
+                one_fpr = 1 - (np.array(bad, dtype=object) / np.sum(data["[LABELS]"]))
 
             patterns_with_fpr = list(zip(patterns, one_fpr))
             patterns_with_fpr.sort(key=lambda x: len(x[0]))

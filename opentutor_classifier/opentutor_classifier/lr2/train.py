@@ -278,8 +278,12 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
             if self.train_quality == 1:
                 cluster_archetype = clustering.generate_feature_candidates(
-                    np.array(processed_data)[np.array(train_y) == GOOD],
-                    np.array(processed_data)[np.array(train_y) == BAD],
+                    np.array(processed_data, dtype=object)[
+                        np.array(train_y, dtype=object) == GOOD
+                    ],
+                    np.array(processed_data, dtype=object)[
+                        np.array(train_y, dtype=object) == BAD
+                    ],
                     self.train_quality,
                 )
                 config_features[ARCHETYPE_GOOD] = cluster_archetype[GOOD]
@@ -290,8 +294,12 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                     candidates,
                     cluster_archetype,
                 ) = clustering.generate_feature_candidates(
-                    np.array(processed_data)[np.array(train_y) == GOOD],
-                    np.array(processed_data)[np.array(train_y) == BAD],
+                    np.array(processed_data, dtype=object)[
+                        np.array(train_y, dtype=object) == GOOD
+                    ],
+                    np.array(processed_data, dtype=object)[
+                        np.array(train_y, dtype=object) == BAD
+                    ],
                     self.train_quality,
                 )
                 pattern = clustering.select_feature_candidates(
@@ -329,7 +337,8 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         + config_features.get(PATTERNS_BAD, []),
                         archetypes=config_features.get(ARCHETYPE_GOOD, [])
                         + config_features.get(ARCHETYPE_BAD, []),
-                    )
+                    ),
+                    dtype=object,
                 )
                 for raw_example, example in zip(train_x, processed_data)
             ]
