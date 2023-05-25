@@ -25,3 +25,4 @@ htmlcov
 models
 shared/installed/*
 .serverless
+node_modules
