@@ -6,11 +6,6 @@
 ##
 version: 0.2
 
-env:
-  variables:
-    SENTRY_ORG: 'usc-ict-ls'
-    SENTRY_PROJECT: 'mentor-classifier'
-
 phases:
   install:
     runtime-versions:
@@ -21,7 +16,7 @@ phases:
       - . /root/venv/bin/activate
       - pip3 install poetry
       - poetry install --no-root
-      - n 18 
+      - n 16
       - NODE_ENV=dev npm ci
       - serverless --version
 
@@ -40,3 +35,5 @@ artifacts:
 cache:
   paths:
     - '/root/venv/**/*'
+    - '/root/.cache/pip/**/*'
+    - '/root/.cache/pypoetry/virtualenvs/**/*'
