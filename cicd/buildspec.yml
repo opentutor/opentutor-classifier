@@ -18,7 +18,6 @@ phases:
       - poetry install --no-root
       - n 16
       - NODE_ENV=dev npm ci
-      - serverless --version
 
   build:
     commands:
