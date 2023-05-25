@@ -323,7 +323,6 @@ def sbert_word_to_vec(words: list, slim: bool = False):
 
 def get_sbert_index_to_key(slim: bool = False):
     model_name = "word2vec_slim" if slim else "word2vec"
-    logger.info("requesting index to key")
     res = requests.post(
         f"{get_sbert_endpoint()}v1/w2v/index_to_key?model={model_name}",
         headers={

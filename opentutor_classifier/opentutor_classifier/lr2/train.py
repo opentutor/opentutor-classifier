@@ -208,7 +208,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             *[x.lower().strip() for x in train_input.data["text"]],
         ]
         all_data_text_set = set(all_data_text)
-        logger.info(f"all_data_text_set: {all_data_text_set}")
         self.word2vec_wrapper.get_feature_vectors(all_data_text_set)
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:

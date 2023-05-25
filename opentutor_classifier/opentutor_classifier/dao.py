@@ -183,10 +183,8 @@ class FileDataDao(DataDao):
 
     def save_pickle(self, req: ModelSaveReq) -> None:
         tmpf = self._setup_tmp(req.filename)
-        logger.info(f"temp storing model at {tmpf}")
         with open(tmpf, "wb") as f:
             pickle.dump(req.model, f)
-        logger.info(f"saving final pickle to {self._get_model_file(req)}")
         self._replace(tmpf, self._get_model_file(req))
 
     def save_embeddings(self, req: EmbeddingSaveReq) -> None:

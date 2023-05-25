@@ -21,7 +21,3 @@ phases:
     commands:
       - echo Deploying qa stack
       - NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s qa --region us-east-1
-
-      # TODO
-      # - echo sentry release: ${SENTRY_RELEASE}
-      # - bash sentry-release.sh
