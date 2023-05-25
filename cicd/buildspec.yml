@@ -1,0 +1,48 @@
+#This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved.
+#Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
+#
+#The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
+version: 0.2
+
+env:
+  variables:
+    SENTRY_ORG: 'usc-ict-ls'
+    SENTRY_PROJECT: 'mentor-classifier'
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+    commands:
+      - cd /tmp
+      - curl -OJL https://github.com/git-lfs/git-lfs/releases/download/v3.1.4/git-lfs-linux-amd64-v3.1.4.tar.gz
+      - tar xzf git-lfs-linux-amd64-v3.1.4.tar.gz
+      - ./install.sh
+      - cd $CODEBUILD_SRC_DIR
+      # `git lfs pull`` fails with:
+      #   batch response: Repository or object not found: https://codestar-connections.***classifier-service.git/info/lfs/objects/batch
+      #   Check that it exists and that you have proper access to it
+      - git lfs pull https://github.com/mentorpal/classifier-service.git
+      - pyenv global $PYTHON_38_VERSION
+      - python3 -m venv /root/venv
+      - . /root/venv/bin/activate
+      - pip3 install poetry
+      - poetry install --no-root
+      - n 18 
+      - NODE_ENV=dev
+
+  build:
+    commands:
+      - make test-format
+      - make test-lint
+      - make test-types
+      - make test-license
+      - cd opentutor_classifier && make test
+      - cd opentutor_classifier_api && make test
+artifacts:
+  files:
+    - '**/*'
+  enable-symlinks: yes
+cache:
+  paths:
+    - '/root/venv/**/*'
