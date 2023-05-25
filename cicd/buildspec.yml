@@ -22,7 +22,7 @@ phases:
       - pip3 install poetry
       - poetry install --no-root
       - n 18 
-      - NODE_ENV=dev && npm ci
+      - NODE_ENV=dev npm ci
       - serverless --version
 
   build:

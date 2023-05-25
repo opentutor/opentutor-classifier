@@ -13,6 +13,14 @@
     "deploy:qa": "NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s qa --region us-east-1",
     "deploy:prod": "NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s prod --region us-east-1"
   },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "serverless",
+    "lambda",
+    "opentutor"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/opentutor/opentutor-classifier.git"
