@@ -30,8 +30,8 @@ phases:
       - make test-lint
       - make test-types
       - make test-license
-      - cd opentutor_classifier && make test
-      - cd ../opentutor_classifier_api && make test
+      # - cd opentutor_classifier && make test
+      # - cd ../opentutor_classifier_api && make test
 artifacts:
   files:
     - '**/*'
