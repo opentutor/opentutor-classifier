@@ -362,7 +362,7 @@ def get_and_update_model_from_s3(ref: ModelRef, model_in_memory_exists: bool = T
         logger.info("model file updated")
         return True
     except botocore.exceptions.ClientError as e:
-        if e.response["Error"]["Code"] != "NoSuchKey" and e.response["Error"]["Code"] != "304": #indicates no trained model in s3
+        if e.response["Error"]["Code"] != "NoSuchKey" and e.response["Error"]["Code"] != "304": # NoSuchKey indicates no trained model in s3, 304 indicates model exists but not updated
             logger.error(ref)
             logger.error(e)
             raise e
