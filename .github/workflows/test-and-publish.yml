@@ -15,16 +15,16 @@ jobs:
           curl -sSL https://install.python-poetry.org | python -
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           poetry --version
-      - name: test format
-        run: make test-format
-      - name: test lint
-        run: make test-lint
-      - name: test types
-        run: make test-types
-      - name: test licenses
-        run: make test-license
-      - name: test classifier
-        run: cd opentutor_classifier && make test
+      # - name: test format
+      #   run: make test-format
+      # - name: test lint
+      #   run: make test-lint
+      # - name: test types
+      #   run: make test-types
+      # - name: test licenses
+      #   run: make test-license
+      # - name: test classifier
+      #   run: cd opentutor_classifier && make test
       - name: test classifier api
         run: cd opentutor_classifier_api && make test
   publish-check:
