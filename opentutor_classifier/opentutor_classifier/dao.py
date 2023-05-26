@@ -366,7 +366,6 @@ def get_and_update_model_from_s3(ref: ModelRef, model_in_memory_exists: bool = T
 
             logger.error(ref)
             logger.error(e)
-            raise e
         logger.debug("model file not updated in s3 since last fetch")
         return False
 
