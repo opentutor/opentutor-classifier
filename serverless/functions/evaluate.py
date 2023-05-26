@@ -47,9 +47,11 @@ def handler(event, context):
         body = event["body"]
     request_body = json.loads(body)
 
+    ping = request_body["ping"] if "ping" in request_body else False
+
     if "lesson" not in request_body:
         return create_json_response(400, {"error": "lesson is a required param"}, event)
-    if "input" not in request_body:
+    if "input" not in request_body and ping is False:
         return create_json_response(400, {"error": "lesson is a required param"}, event)
 
     lesson = request_body["lesson"]
@@ -70,13 +72,18 @@ def handler(event, context):
             shared_root=shared_root,
         ),
     )
-    _model_op = classifier.evaluate(
-        AnswerClassifierInput(
-            input_sentence=input_sentence,
-            expectation=exp_num,
+    if ping:
+        return create_json_response(
+        200, {"ping": "pong"}, event
         )
-    )
+    else:
+        _model_op = classifier.evaluate(
+            AnswerClassifierInput(
+                input_sentence=input_sentence,
+                expectation=exp_num,
+            )
+        )
 
-    return create_json_response(
-        200, {"output": to_camelcase(_model_op.to_dict())}, event
-    )
+        return create_json_response(
+            200, {"output": to_camelcase(_model_op.to_dict())}, event
+        )
