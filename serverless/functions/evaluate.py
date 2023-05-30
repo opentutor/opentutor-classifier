@@ -55,7 +55,7 @@ def handler(event, context):
         return create_json_response(400, {"error": "lesson is a required param"}, event)
 
     lesson = request_body["lesson"]
-    input_sentence = request_body["input"]
+    input_sentence = request_body["input"] if ping is False else ""
     exp_num = request_body["expectation"] if "expectation" in request_body else ""
 
     model_roots = [
@@ -73,9 +73,7 @@ def handler(event, context):
         ),
     )
     if ping:
-        return create_json_response(
-        200, {"ping": "pong"}, event
-        )
+        return create_json_response(200, {"ping": "pong"}, event)
     else:
         _model_op = classifier.evaluate(
             AnswerClassifierInput(
