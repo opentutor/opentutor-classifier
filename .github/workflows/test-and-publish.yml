@@ -12,7 +12,7 @@ jobs:
           python-version: 3.8
       - name: poetry install
         run: |
-          curl -sSL https://install.python-poetry.org | python -
+          curl -sSL https://install.python-poetry.org | python - --version 1.1.8
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           poetry --version
       - name: test format
