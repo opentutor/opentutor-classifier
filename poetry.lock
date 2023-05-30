@@ -169,14 +169,6 @@ docs = ["furo (>=2023.3.27)", "proselint (>=0.13)", "sphinx (>=6.2.1)", "sphinx-
 test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.3.1)", "pytest-cov (>=4)", "pytest-mock (>=3.10)"]
 
 [[package]]
-name = "poetry-core"
-version = "1.0.4"
-description = "Poetry PEP 517 Build Backend"
-category = "main"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-
-[[package]]
 name = "pycodestyle"
 version = "2.7.0"
 description = "Python style guide checker"
@@ -307,7 +299,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.8.4"
-content-hash = "07c9f0a0bd150dc7b8ac37360e268914769881c4a5294dc291045d9566847e07"
+content-hash = "e750c21823eb806346b00b1ff955e43710428f9229df7fdc5095d8931f622e55"
 
 [metadata.files]
 black = [
@@ -387,10 +379,6 @@ pep8-naming = [
 platformdirs = [
     {file = "platformdirs-3.5.1-py3-none-any.whl", hash = "sha256:e2378146f1964972c03c085bb5662ae80b2b8c06226c54b2ff4aa9483e8a13a5"},
     {file = "platformdirs-3.5.1.tar.gz", hash = "sha256:412dae91f52a6f84830f39a8078cecd0e866cb72294a5c66808e74d5e88d251f"},
-]
-poetry-core = [
-    {file = "poetry-core-1.0.4.tar.gz", hash = "sha256:4b3847ad3e7b5deb88a35b23fa19762b9cef26828770cef3a5b47ffb508119c1"},
-    {file = "poetry_core-1.0.4-py2.py3-none-any.whl", hash = "sha256:a99fa921cf84f0521644714bb4b531d9d8f839c64de20aa71fa137f7461a1516"},
 ]
 pycodestyle = [
     {file = "pycodestyle-2.7.0-py2.py3-none-any.whl", hash = "sha256:514f76d918fcc0b55c6680472f0a37970994e07bbb80725808c17089be302068"},
