@@ -34,8 +34,6 @@ class ClassifierDao:
         cfac = ClassifierFactory()
         lesson_updated_at = (
             fetch_lesson_updated_at(lesson)
-            # TODO: won't this always resolve to false since the factory is being
-            # created within the function? And therefore a new factory every function call?
             if cfac.has_trained_model(lesson, config, arch=arch)
             else datetime.min.replace(tzinfo=timezone.utc)
         )
