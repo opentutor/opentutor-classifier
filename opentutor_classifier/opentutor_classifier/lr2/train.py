@@ -6,13 +6,14 @@
 #
 from collections import defaultdict
 import json
+from opentutor_classifier.constants import DEPLOYMENT_MODE_OFFLINE
 
 from opentutor_classifier.utils import prop_bool
-from os import path
+from os import path, environ
 
 from typing import Dict, List
 
-from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
+from opentutor_classifier.word2vec_wrapper import Word2VecWrapper, get_word2vec
 
 from .constants import (
     ARCHETYPE_BAD,
@@ -62,6 +63,8 @@ from .features import feature_length_ratio_enabled, preprocess_sentence
 
 from .clustering_features import CustomDBScanClustering
 
+DEPLOYMENT_MODE = environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
+
 
 def _preprocess_trainx(data: List[str]) -> List[List[str]]:
     pre_processed_dataset = [preprocess_sentence(entry) for entry in data]
@@ -73,7 +76,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         self.accuracy: Dict[str, int] = {}
 
     def configure(self, config: TrainingConfig) -> AnswerClassifierTraining:
-        self.word2vec_wrapper: Word2VecWrapper = Word2VecWrapper(
+        self.word2vec_wrapper: Word2VecWrapper = get_word2vec(
             path.join(config.shared_root, "word2vec.bin"),
             path.join(config.shared_root, "word2vec_slim.bin"),
         )
@@ -109,37 +112,63 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             embeddings[word] = list(map(lambda x: round(float(x), 9), word_vecs[word]))
         return embeddings
 
+    def preload_feature_vectors_train_default(self, data: pd.DataFrame, index2word_set):
+        """
+        ONLINE USE ONLY
+        This function preprocesses data and preloads their vectors for later use by process_features (via calculate_features)
+        """
+        if DEPLOYMENT_MODE == DEPLOYMENT_MODE_OFFLINE:
+            return
+        all_words = []
+        for i, row in data.iterrows():
+            input_sentence = row["text"]
+            features = json.loads(row["exp_data"])
+            processed_input_sentence = preprocess_sentence(input_sentence)
+            processed_question = preprocess_sentence(features["question"])
+            processed_ia = preprocess_sentence(features["ideal"])
+            i_processed_input_sentence = set(processed_input_sentence).intersection(
+                index2word_set
+            )
+            i_processed_question = set(processed_question).intersection(index2word_set)
+            i_processed_ia = set(processed_ia).intersection(index2word_set)
+            all_words.extend(
+                [*i_processed_input_sentence, *i_processed_question, *i_processed_ia]
+            )
+        self.word2vec_wrapper.get_feature_vectors(set(all_words))
+
+    def process_features(self, features, input_sentence, index2word_set, clustering):
+        processed_input_sentence = preprocess_sentence(input_sentence)
+        processed_question = preprocess_sentence(features["question"])
+        processed_ia = preprocess_sentence(features["ideal"])
+
+        features_list = LRExpectationClassifier.calculate_features(
+            processed_question,
+            input_sentence,
+            processed_input_sentence,
+            processed_ia,
+            self.word2vec_wrapper,
+            index2word_set,
+            [],
+            [],
+            clustering,
+            ClassifierMode.TRAIN,
+            feature_archetype_enabled=False,
+            feature_patterns_enabled=False,
+        )
+        return features_list
+
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         model = LRExpectationClassifier.initialize_model()
         index2word_set = set(self.word2vec_wrapper.index_to_key(True))
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
         clustering = CustomDBScanClustering(self.word2vec_wrapper, index2word_set)
 
-        def process_features(features, input_sentence, index2word_set):
-            processed_input_sentence = preprocess_sentence(input_sentence)
-            processed_question = preprocess_sentence(features["question"])
-            processed_ia = preprocess_sentence(features["ideal"])
-
-            features_list = LRExpectationClassifier.calculate_features(
-                processed_question,
-                input_sentence,
-                processed_input_sentence,
-                processed_ia,
-                self.word2vec_wrapper,
-                index2word_set,
-                [],
-                [],
-                clustering,
-                ClassifierMode.TRAIN,
-                feature_archetype_enabled=False,
-                feature_patterns_enabled=False,
-            )
-            return features_list
+        self.preload_feature_vectors_train_default(data, index2word_set)
 
         all_features = list(
             data.apply(
-                lambda row: process_features(
-                    json.loads(row["exp_data"]), row["text"], index2word_set
+                lambda row: self.process_features(
+                    json.loads(row["exp_data"]), row["text"], index2word_set, clustering
                 ),
                 axis=1,
             )
@@ -164,7 +193,26 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             ExpectationTrainingResult(expectation_id="", accuracy=accuracy),
         )
 
+    def preload_all_feature_vectors_train(self, train_input: TrainingInput):
+        """
+        ONLINE USE ONLY
+        preprocesses data and fetches their vectors from w2v in one batch to store in memory
+        """
+        if DEPLOYMENT_MODE == DEPLOYMENT_MODE_OFFLINE:
+            return
+        all_data_text = [
+            *[
+                x.ideal.lower().strip()
+                for i, x in enumerate(train_input.config.expectations)
+            ],
+            *[x.lower().strip() for x in train_input.data["text"]],
+        ]
+        all_data_text_set = set(all_data_text)
+        self.word2vec_wrapper.get_feature_vectors(all_data_text_set)
+
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
+        self.preload_all_feature_vectors_train(train_input)
+
         question = train_input.config.question or ""
         if not question:
             raise ValueError("config must have a 'question'")

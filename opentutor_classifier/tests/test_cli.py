@@ -85,13 +85,22 @@ def test_cli_outputs_models_files(tmpdir, lesson, no_of_expectations, shared_roo
     assert path.exists(path.join(model_root, ARCH_DEFAULT, lesson, MODEL_FILE_NAME))
     assert path.exists(path.join(model_root, ARCH_DEFAULT, lesson, "config.yaml"))
     out_lines = out.decode("utf-8").split("\n")
-    while out_lines and re.search(r"^(DEBUG|INFO|WARNING|ERROR).*", out_lines[0]):
-        out_lines.pop(0)
-    assert re.search(r"Models are saved at: /.+/" + lesson, out_lines[0])
+    model_saved_output = next(
+        (
+            line
+            for line in out_lines
+            if re.search(r"Models are saved at: /.+" + lesson, line)
+        ),
+        None,
+    )
+    model_accuracy_lines = list(
+        filter(lambda line: "Accuracy for model=" in line, out_lines)
+    )
+    assert model_saved_output is not None
     for i in range(0, no_of_expectations):
         assert re.search(
             f"Accuracy for model={i} is [0-9]+\\.[0-9]+\\.",
-            out_lines[i + 1],
+            model_accuracy_lines[i],
             flags=re.MULTILINE,
         )
 

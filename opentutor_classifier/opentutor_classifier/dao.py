@@ -11,10 +11,14 @@ from os import environ, makedirs, path
 import shutil
 import tempfile
 from typing import Any
+from datetime import datetime
 
 import pandas as pd
 
+from .constants import DEPLOYMENT_MODE_OFFLINE
+
 from . import (
+    DEFAULT_LESSON_NAME,
     ArchFile,
     ArchLesson,
     DataDao,
@@ -32,11 +36,32 @@ from .api import (
     update_features,
     update_last_trained_at,
 )
-from .utils import load_data, load_config
+from .utils import load_data, load_config, require_env
+from .logger import get_logger
 
+import boto3
+import botocore
 
-MODEL_ROOT_DEFAULT = "./models"
-MODELS_DEPLOYED_ROOT_DEFAULT = "./models_deployed"
+logger = get_logger("dao")
+s3 = boto3.client("s3")
+SHARED = environ.get("SHARED_ROOT") or "shared"
+logger.info(f"shared: {SHARED}")
+MODELS_BUCKET = require_env("MODELS_BUCKET")
+logger.info(f"bucket: {MODELS_BUCKET}")
+
+DEPLOYMENT_MODE = environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
+logger.info(f"Deployment Mode: {DEPLOYMENT_MODE}")
+
+# online mode lambdas only allow writing to /tmp folder
+MODEL_ROOT_DEFAULT = (
+    "/models" if DEPLOYMENT_MODE == DEPLOYMENT_MODE_OFFLINE else "/tmp/models"
+)
+MODELS_DEPLOYED_ROOT_DEFAULT = (
+    "/models_deployed"
+    if DEPLOYMENT_MODE == DEPLOYMENT_MODE_OFFLINE
+    else "/tmp/models_deployed"
+)
+logger.info(f"model root default: {MODEL_ROOT_DEFAULT}")
 
 
 def _get_model_root() -> str:
@@ -247,7 +272,17 @@ class ConfigAndModel:
 
 
 def find_predicton_config_and_pickle(ref: ModelRef, dao: DataDao) -> ConfigAndModel:
+    if DEPLOYMENT_MODE == DEPLOYMENT_MODE_OFFLINE:
+        return find_predicton_config_and_pickle_offline(ref, dao)
+    else:
+        return find_predicton_config_and_pickle_online(ref, dao)
+
+
+def find_predicton_config_and_pickle_offline(
+    ref: ModelRef, dao: DataDao
+) -> ConfigAndModel:
     """
+    FOR OFFLINE MODE USE
     Utility finder for the common prediction-time case
     of needing to load a single, pickle-file trained model
     and its sibling config.
@@ -260,6 +295,121 @@ def find_predicton_config_and_pickle(ref: ModelRef, dao: DataDao) -> ConfigAndMo
             is_default=False,
         )
     else:
+        return ConfigAndModel(
+            config=dao.find_training_config(ref.lesson),
+            model=dao.load_default_pickle(
+                ArchFile(arch=ref.arch, filename=ref.filename)
+            ),
+            is_default=True,
+        )
+
+
+def get_and_update_model_from_s3(ref: ModelRef, model_in_memory_exists: bool = True):
+    """
+    ONLINE USE ONLY
+    model_in_memory_exists: only replace model in memory if model in s3 was updated
+    """
+    model_lambda_file_path = path.join(
+        MODEL_ROOT_DEFAULT, ref.arch, ref.lesson, ref.filename
+    )
+    config_lambda_file_path = path.join(
+        MODEL_ROOT_DEFAULT, ref.arch, ref.lesson, _CONFIG_YAML
+    )
+    if model_in_memory_exists:
+        # Check if model exists in s3 that is more up to date than model in memory
+        logger.info(f"model file exists in lambda memory: {model_lambda_file_path}")
+        modified_time = path.getmtime(model_lambda_file_path)
+        utc_mod_time = datetime.utcfromtimestamp(modified_time)
+        logger.info(f"model file modified at {utc_mod_time}")
+    try:
+        model_s3_path = path.join(ref.lesson, ref.arch, ref.filename)
+        logger.info(f"model s3 path: {model_s3_path}")
+        model_from_s3 = s3.get_object(
+            **{
+                "Bucket": MODELS_BUCKET,
+                "Key": model_s3_path,
+                **(
+                    {"IfModifiedSince": str(utc_mod_time)}
+                    if model_in_memory_exists
+                    else {}
+                ),
+            }
+        )
+        config_s3_path = path.join(ref.lesson, ref.arch, _CONFIG_YAML)
+        logger.info(f"model s3 path: {config_s3_path}")
+
+        config_from_s3 = s3.get_object(
+            **{
+                "Bucket": MODELS_BUCKET,
+                "Key": config_s3_path,
+                **(
+                    {"IfModifiedSince": str(utc_mod_time)}
+                    if model_in_memory_exists
+                    else {}
+                ),
+            }
+        )
+        logger.info("model and config found in s3")
+        # Update model and config in memory with up to date versions from s3
+        makedirs(path.dirname(model_lambda_file_path), exist_ok=True)
+        makedirs(path.dirname(config_lambda_file_path), exist_ok=True)
+        with open(model_lambda_file_path, "wb") as f:
+            for chunk in model_from_s3["Body"].iter_chunks(chunk_size=4096):
+                f.write(chunk)
+        with open(config_lambda_file_path, "wb") as f:
+            for chunk in config_from_s3["Body"].iter_chunks(chunk_size=4096):
+                f.write(chunk)
+        logger.info("model file updated")
+        return True
+    except botocore.exceptions.ClientError as e:
+        if (
+            e.response["Error"]["Code"] != "NoSuchKey"
+            and e.response["Error"]["Code"] != "304"
+        ):  # indicates no trained model in s3
+            logger.error(ref)
+            logger.error(e)
+            raise e
+        logger.debug("model file not updated in s3 since last fetch")
+        return False
+
+
+def find_predicton_config_and_pickle_online(
+    ref: ModelRef, dao: DataDao
+) -> ConfigAndModel:
+    """
+    FOR ONLINE MODE USE
+    Utility finder for the common prediction-time case
+    of needing to load a single, pickle-file trained model
+    and its sibling config.
+    if the requested model is in memory, first checks if a more up to date model exists in s3
+    if the requested model is not in memory, checks if a model exists in s3.
+    else return default model
+    """
+
+    if dao.trained_model_exists(ref):
+        logger.info(f"model in memory for {ref.lesson}, checking s3")
+        get_and_update_model_from_s3(ref, model_in_memory_exists=True)
+        return ConfigAndModel(
+            config=dao.find_prediction_config(ref),
+            model=dao.load_pickle(ref),
+            is_default=False,
+        )
+    elif get_and_update_model_from_s3(ref, model_in_memory_exists=False):
+        logger.info("model not in memory but got it from s3")
+        return ConfigAndModel(
+            config=dao.find_prediction_config(ref),
+            model=dao.load_pickle(ref),
+            is_default=False,
+        )
+    else:
+        default_ref: ModelRef = ModelRef(
+            filename=ref.filename, lesson=DEFAULT_LESSON_NAME, arch=ref.arch
+        )
+        logger.info(
+            f"No model found for lesson {ref.lesson} in memory nor s3, using default model"
+        )
+        model_in_memory_exists = dao.trained_model_exists(default_ref)
+        get_and_update_model_from_s3(default_ref, model_in_memory_exists)
         return ConfigAndModel(
             config=dao.find_training_config(ref.lesson),
             model=dao.load_default_pickle(

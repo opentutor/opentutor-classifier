@@ -1,0 +1,30 @@
+{
+  "name": "opentutor-classifier",
+  "version": "1.0.0",
+  "description": "A short answer classifier service",
+  "devDependencies": {
+    "serverless": "^3.27.0",
+    "serverless-deployment-bucket": "^1.6.0",
+    "serverless-domain-manager": "^6.2.1",
+    "serverless-layers": "2.5.2"
+  },
+  "scripts": {
+    "deploy:dev": "NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s dev --region us-east-1",
+    "deploy:qa": "NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s qa --region us-east-1",
+    "deploy:prod": "NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s prod --region us-east-1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "serverless",
+    "lambda",
+    "opentutor"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opentutor/opentutor-classifier.git"
+  },
+  "author": "USC ICT",
+  "license": "SEE LICENSE IN ./LICENSE"
+}

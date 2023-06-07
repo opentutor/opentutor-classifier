@@ -4,14 +4,33 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+import os
 from typing import Any, Dict
+from abc import ABC, abstractmethod
 
 from numpy import ndarray
+from opentutor_classifier.constants import (
+    DEPLOYMENT_MODE_ONLINE,
+    DEPLOYMENT_MODE_OFFLINE,
+)
 
 from opentutor_classifier.word2vec import find_or_load_word2vec
+from opentutor_classifier.api import sbert_word_to_vec, get_sbert_index_to_key
+
+DEPLOYMENT_MODE = os.environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
 
 
-class Word2VecWrapper:
+class Word2VecWrapper(ABC):
+    @abstractmethod
+    def get_feature_vectors(self, words, slim: bool = False) -> Dict[str, ndarray]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def index_to_key(self, slim: bool = False) -> Any:
+        raise NotImplementedError()
+
+
+class Word2VecWrapperOffline(Word2VecWrapper):
     def __init__(self, path, slim_path):
         self.model = find_or_load_word2vec(path)
         self.model_slim = find_or_load_word2vec(slim_path)
@@ -30,3 +49,60 @@ class Word2VecWrapper:
         if slim:
             return self.model_slim.index_to_key
         return self.model.index_to_key
+
+
+class Word2VecWrapperOnline(Word2VecWrapper):
+    def __init__(self, path, slim_path):
+        self.loaded_word_vectors: Dict[str, ndarray] = {}
+        self.loaded_word_vectors_slim: Dict[str, ndarray] = {}
+        self.words_with_no_sbert_vector: set = set()
+
+    def get_feature_vectors(self, words: set, slim: bool = False) -> Dict[str, ndarray]:
+        """
+        Fetches words feature vectors from sbert service and stores word, vector pairs in memory
+        """
+        if len(words) == 0:
+            return {}
+        res_words = {}
+        for word in words.copy():
+            if slim is True and word in self.loaded_word_vectors_slim:
+                res_words[word] = self.loaded_word_vectors_slim[word]
+                words.remove(word)
+            elif slim is False and word in self.loaded_word_vectors:
+                res_words[word] = self.loaded_word_vectors[word]
+                words.remove(word)
+            elif word in self.words_with_no_sbert_vector:
+                words.remove(word)
+
+        if len(words) > 0:
+            sbert_w2v_result = sbert_word_to_vec(list(words), slim)
+            if slim:
+                self.loaded_word_vectors_slim = {
+                    **self.loaded_word_vectors_slim,
+                    **sbert_w2v_result,
+                }
+            else:
+                self.loaded_word_vectors = {
+                    **self.loaded_word_vectors,
+                    **sbert_w2v_result,
+                }
+
+            words_with_no_sbert_vector = set(
+                filter(lambda word: word not in sbert_w2v_result, words)
+            )
+            self.words_with_no_sbert_vector = self.words_with_no_sbert_vector.union(
+                words_with_no_sbert_vector
+            )
+
+            res_words = {**res_words, **sbert_w2v_result}
+        return res_words
+
+    def index_to_key(self, slim: bool = False) -> Any:
+        return get_sbert_index_to_key(slim)
+
+
+def get_word2vec(path, slim_path) -> Word2VecWrapper:
+    if DEPLOYMENT_MODE == DEPLOYMENT_MODE_ONLINE:
+        return Word2VecWrapperOnline(path, slim_path)
+    else:
+        return Word2VecWrapperOffline(path, slim_path)

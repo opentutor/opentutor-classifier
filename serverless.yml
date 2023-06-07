@@ -1,0 +1,396 @@
+service: opentutor-classifier
+
+# pin to a specific Serverless version, major releases might not be backward compatible:
+frameworkVersion: '3'
+
+plugins:
+  - serverless-domain-manager
+  - serverless-layers
+  - serverless-deployment-bucket
+
+custom:
+  domain:
+    dev: api-dev.opentutor.info
+    qa: api-qa.opentutor.info
+    prod: api.opentutor.info
+  customDomain:
+    domainName: ${self:custom.domain.${opt:stage, 'dev'}}
+    basePath: 'classifier' # api root url becomes: api.opentutor.info/classifier
+    stage: ${self:provider.stage}
+    endpointType: 'regional'
+    apiType: rest
+    createRoute53Record: true
+    securityPolicy: tls_1_2
+    autoDomain: true
+    # Using same domain in multiple services. https://github.com/amplify-education/serverless-domain-manager/issues/484#issuecomment-1028713546
+    preserveExternalPathMappings: true
+
+  stages:
+    dev:
+      WEBACL_ARN: ${ssm:/dev-opentutor/api_firewall_arn, ''}
+      SBERT_API_SECRET: ${ssm:/dev-opentutor/sbert-api-secret, ''}
+      GRAPHQL_ENDPOINT: 'https://opentutor.info/graphql'
+    qa:
+      WEBACL_ARN: ${ssm:/qa-opentutor/api_firewall_arn, ''}
+      SBERT_API_SECRET: ${ssm:/qa-opentutor/sbert-api-secret, ''}
+      GRAPHQL_ENDPOINT: 'https://opentutor.info/graphql'
+    prod:
+      WEBACL_ARN: ${ssm:/prod-opentutor/api_firewall_arn, ''}
+      SBERT_API_SECRET: ${ssm:/prod-opentutor/sbert-api-secret, ''}
+      GRAPHQL_ENDPOINT: 'https://opentutor.info/graphql'
+
+  # serverless-layers requires a deployment bucket to be created before deploying this stack
+  serverless-layers:
+    - dependencies:
+        layersDeploymentBucket: ${self:provider.deploymentBucket.name}
+        dependenciesPath: ./serverless/src/requirements.txt
+        compatibleRuntimes:
+          - python3.8
+        functions:
+            - train_request
+            - train_status
+            - check_model
+            - delete_model
+
+provider:
+  name: aws
+  region: ${opt:region, 'us-east-1'}
+  stage: ${opt:stage, 'dev'}
+  runtime: python3.8
+  endpointType: regional
+  memorySize: 256
+  tracing:
+    lambda: true
+    apiGateway: true
+  logRetentionInDays: 3
+  apiGateway:
+    # https://www.serverless.com/framework/docs/deprecations#api-gateway-naming-will-be-changed-to-service-stage
+    shouldStartNameWithService: true
+    minimumCompressionSize: 1024
+  deploymentBucket:
+    name: '${self:service}-sls-deploy-${self:provider.stage}-v2'
+    blockPublicAccess: true
+    serverSideEncryption: AES256
+    versioning: false
+  logs:
+    restApi:
+      # Enables HTTP access logs (default: true)
+      accessLogging: true
+      # # Log format to use for access logs
+      # format: 'requestId: $context.requestId'
+      # Enable execution logging (default: true)
+      executionLogging: true
+      level: INFO # INFO or ERROR
+      # Log full requests/responses for execution logging (default: true)
+      fullExecutionData: true
+
+  ecr:
+    images:
+      train_job:
+        path: ./
+        file: Dockerfile.train_job
+      evaluate:
+        path: ./
+        file: Dockerfile.evaluate
+      training_config:
+        path: ./
+        file: Dockerfile.training_config
+      training_data:
+        path: ./
+        file: Dockerfile.training_data
+      extract_config:
+        path: ./
+        file: Dockerfile.extract_config
+
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    STAGE: ${self:provider.stage}
+    NODE_ENV: opentutor-${self:provider.stage}
+    NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=50'
+    API_SECRET: ${ssm:/shared/api-secret, ''}
+    SBERT_API_SECRET: ${self:custom.stages.${self:provider.stage}.SBERT_API_SECRET}
+    SBERT_WAF_SECRET_HEADER: ${ssm:/shared/sbert-waf-secret-header, ''}
+    SBERT_WAF_SECRET_VALUE: ${ssm:/shared/sbert-waf-secret-value, ''}
+    SENTRY_DSN_OPENTUTOR_CLASSIFIER: ${ssm:/shared/sentry-dsn-opentutor-classifier, ''}
+    WEBACL_ARN: ${self:custom.stages.${self:provider.stage}.WEBACL_ARN}
+    GRAPHQL_ENDPOINT: ${self:custom.stages.${self:provider.stage}.GRAPHQL_ENDPOINT}
+    MODELS_BUCKET: opentutor-classifier-models-${self:provider.stage}
+    JOBS_TABLE_NAME: opentutor-classifier-jobs-${self:provider.stage}
+    JOBS_SQS_NAME: opentutor-classifier-jobs-${self:provider.stage}
+    DEPLOYMENT_MODE: "ONLINE"
+  iam:
+    role:
+      statements:
+      # todo create dedicated roles for each function for increased security
+        - Effect: "Allow"
+          Action:
+            - "s3:PutObject"
+            - "s3:GetObject"
+            - "s3:DeleteObject"
+          Resource:
+            - 'arn:aws:s3:::${self:provider.environment.MODELS_BUCKET}/*'
+        - Effect: "Allow"
+          Action:
+            - "s3:ListBucket"
+          Resource:
+            - 'arn:aws:s3:::${self:provider.environment.MODELS_BUCKET}'
+        - Effect: "Allow"
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+          Resource:
+            Fn::GetAtt: [JobsTable, Arn]
+        - Effect: "Allow"
+          Action:
+            - sqs:SendMessage
+            - sqs:GetQueueUrl
+          Resource:
+            Fn::GetAtt: [TrainQueue, Arn]
+
+  stackTags:
+    Environment: ${self:provider.stage}
+    Source: 'serverless-framework'
+    Project: 'opentutor'
+    Component: 'opentutor-classifier'
+
+package:
+ individually: true
+ patterns:
+    # exclude everything:
+     - '!./**'
+    # and then add back in only the files we need:
+     - '*.py'
+     - 'opentutor_classifier/opentutor_classifier/**'
+     - 'serverless/**'
+
+functions:
+  train_request:
+    handler: serverless/functions/train_request.handler
+    timeout: 30
+    memorySize: 1024
+    events:
+      - http:
+          path: /train
+          method: post
+          cors: true
+  train_job:
+    image:
+      name: train_job
+      command:
+        - train_job.handler
+    memorySize: 8192
+    timeout: 600
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [TrainQueue, Arn]
+          batchSize: 1
+  evaluate:
+    image:
+      name: evaluate
+      command:
+        - evaluate.handler
+    memorySize: 8192
+    timeout: 30
+    events:
+      - http:
+          path: /evaluate
+          method: post
+          cors: true
+  train_status:
+    handler: serverless/functions/train_status.handler
+    memorySize: 512
+    timeout: 10
+    events:
+      - http:
+          path: /train/status/{id}
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
+  training_config:
+    timeout: 30
+    memorySize: 4096
+    image:
+      name: training_config
+      command:
+        - training_config.handler
+    events:
+      - http:
+          path: /trainingconfig/{lesson_id}
+          method: GET
+          cors: true
+          request:
+            parameters:
+              paths:
+                lesson_id: true
+  training_data:
+    timeout: 30
+    memorySize: 4096
+    image:
+      name: training_data
+      command:
+        - training_data.handler
+    events:
+      - http:
+          path: /trainingdata/{lesson_id}
+          method: GET
+          cors: true
+          request:
+            parameters:
+              paths:
+                lesson_id: true
+  extract_config:
+    timeout: 30
+    memorySize: 4096
+    image:
+      name: extract_config
+      command:
+        - extract_config.handler
+    events:
+      - http:
+          path: /extract_config
+          method: POST
+          cors: true
+  check_model:
+    timeout: 30
+    handler: serverless/functions/check_model.handler
+    events:
+      - http:
+          path: /check_model
+          method: POST
+          cors: true
+  delete_model:
+    timeout: 30
+    handler: serverless/functions/delete_model.handler
+    events:
+      - http:
+          path: /delete_model
+          method: POST
+          cors: true
+
+resources:
+  Conditions:
+    AttachFirewall:
+      Fn::Or:
+        - Fn::Equals: ['${self:provider.stage}', 'qa']
+        - Fn::Equals: ['${self:provider.stage}', 'prod']
+  Resources:
+    TrainDLQ:
+      Type: AWS::SQS::Queue
+      Properties:
+        DelaySeconds: 30
+        QueueName: classifier-jobs-dlq-${self:provider.stage}
+        MessageRetentionPeriod: 1209600 # max 14 days, default is 4 days
+    TrainQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html
+        QueueName:  ${self:provider.environment.JOBS_SQS_NAME}
+        VisibilityTimeout: 800 # AWS recommends 6 times lambdas timeout
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt: [TrainDLQ, Arn]
+          maxReceiveCount: 5 # AWS recommends minimum 5
+    
+    TrainedModelsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.MODELS_BUCKET}
+
+    JobsTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Delete
+      UpdateReplacePolicy: Delete
+      Properties:
+        TableName: ${self:provider.environment.JOBS_TABLE_NAME}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        # to cleanup jobs after a while set this attribute as a number
+        TimeToLiveSpecification: 
+          AttributeName: ttl
+          Enabled: true
+    # TODO: Requires ALERT_SNS_ARN to be places in SSN
+    # TrainDLQAlarm:
+    #   Type: AWS::CloudWatch::Alarm
+    #   Condition: CreateCloudWatchAlarm
+    #   Properties:
+    #     ActionsEnabled: true
+    #     AlarmName: 'Number of failed train jobs ${self:resources.Resources.TrainDLQ.Properties.QueueName}'
+    #     AlarmDescription: 'Number of failed train jobs greater than zero'
+    #     Namespace: 'AWS/SQS'
+    #     Statistic: 'Sum'
+    #     MetricName: 'ApproximateNumberOfMessagesVisible'
+    #     ComparisonOperator: 'GreaterThanThreshold'
+    #     EvaluationPeriods: 1
+    #     Period: 300 # 5 minutes in seconds
+    #     Threshold: 0
+    #     TreatMissingData: 'notBreaching'
+    #     Dimensions:
+    #       - Name: QueueName
+    #         Value: ${self:resources.Resources.TrainDLQ.Properties.QueueName}
+    #     AlarmActions:
+    #       - ${self:custom.stages.${self:provider.stage}.ALERT_SNS_ARN}
+    #     OKActions:
+    #       - ${self:custom.stages.${self:provider.stage}.ALERT_SNS_ARN}
+
+    # ApiErrors:
+    #   Type: AWS::CloudWatch::Alarm
+    #   Condition: CreateCloudWatchAlarm
+    #   Properties:
+    #     ActionsEnabled: true
+    #     AlarmName: 'classifier API Gateway 5xx errors - ${self:provider.stage}'
+    #     AlarmDescription: 'classifier API Gateway 5xx errors - ${self:provider.stage}'
+    #     Namespace: AWS/ApiGateway
+    #     MetricName: 5XXError
+    #     Statistic: Sum
+    #     Threshold: 0
+    #     ComparisonOperator: 'GreaterThanThreshold'
+    #     EvaluationPeriods: 1
+    #     Period: 60
+    #     TreatMissingData: 'notBreaching'
+    #     Dimensions:
+    #       - Name: ApiName
+    #         Value: '${self:provider.stage}-${self:service}'
+    #     AlarmActions:
+    #       - ${self:custom.stages.${self:provider.stage}.ALERT_SNS_ARN}
+
+
+
+    # this fails on first deploy because CloudFormation tries to create
+    # association but the gateway does not yet exist
+    # Workaround: Disable this resource on first deploy, when first deploy is successful, enable this resource and deploy again
+    FirewallAssociation:
+      Type: AWS::WAFv2::WebACLAssociation
+      Condition: AttachFirewall
+      DependsOn: 'ApiGatewayRestApi'
+      Properties:
+        ResourceArn:
+          Fn::Sub: 'arn:aws:apigateway:${AWS::Region}::/restapis/${ApiGatewayRestApi}/stages/${self:provider.stage}'
+        WebACLArn: '${self:custom.stages.${self:provider.stage}.WEBACL_ARN}'
+
+    # configure cors for apigw error responses:
+    Response5xx:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: 'method.request.header.origin'
+        ResponseType: DEFAULT_5XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+    Response4xx:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: 'method.request.header.origin'
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'

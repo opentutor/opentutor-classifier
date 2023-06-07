@@ -4,25 +4,18 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from flask import Response
-from src.opentutor_classifier_api import create_app  # type: ignore
-from os import path
-import pytest
+import json
+from serverless.src.utils import create_json_response
+from opentutor_classifier.api import fetch_training_data
 
 
-@pytest.fixture
-def app():
-    myapp = create_app()
-    myapp.debug = True
-    myapp.response_class = Response
-    return myapp
-
-
-@pytest.fixture(scope="module", autouse=True)
-def word2vec() -> str:
-    word2vec_path = path.abspath(path.join("..", "shared", "installed", "word2vec.bin"))
-    if not path.exists(word2vec_path):
-        raise Exception(
-            "missing required word2vec.bin. Try run `make clean word2vec.bin` from <PROJECT_ROOT>/word2vec folder"
-        )
-    return word2vec_path
+def handler(event, context):
+    print(json.dumps(event))
+    lesson_id = event["pathParameters"]["lesson_id"]
+    data = fetch_training_data(lesson_id)
+    data_config = data.config.to_dict()
+    extra_headers = {
+        "Content-Disposition": "attachment; filename=mentor.csv",
+        "Content-type": "text/csv",
+    }
+    return create_json_response(200, data_config, event, extra_headers)

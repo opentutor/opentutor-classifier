@@ -1,0 +1,38 @@
+##
+## This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved. 
+## Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
+##
+## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
+##
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+    commands:
+      - pyenv global $PYTHON_38_VERSION
+      - python3 -m venv /root/venv
+      - . /root/venv/bin/activate
+      - pip3 install poetry
+      - poetry install --no-root
+      - n 16
+      - NODE_ENV=dev npm ci
+
+  build:
+    commands:
+      - make test-format
+      - make test-lint
+      - make test-types
+      - make test-license
+      # - cd opentutor_classifier && make test
+      # - cd ../opentutor_classifier_api && make test
+artifacts:
+  files:
+    - '**/*'
+  enable-symlinks: yes
+cache:
+  paths:
+    - '/root/venv/**/*'
+    - '/root/.cache/pip/**/*'
+    - '/root/.cache/pypoetry/virtualenvs/**/*'

@@ -11,8 +11,9 @@ from io import StringIO
 import json
 import os
 import requests
-from typing import Optional, TypedDict
+from typing import Optional, TypedDict, Dict
 import yaml
+
 
 import pandas as pd
 
@@ -23,15 +24,25 @@ from opentutor_classifier import (
     TrainingInput,
     dict_to_question_config,
 )
-from opentutor_classifier.log import logger
+from opentutor_classifier.logger import get_logger
+
+logger = get_logger("api")
 
 
 def get_graphql_endpoint() -> str:
     return os.environ.get("GRAPHQL_ENDPOINT") or "http://graphql/graphql"
 
 
+def get_sbert_endpoint() -> str:
+    return os.environ.get("SBERT_ENDPOINT") or "https://sbert-dev.mentorpal.org/"
+
+
 def get_api_key() -> str:
     return os.environ.get("API_SECRET") or ""
+
+
+def get_sbert_api_key() -> str:
+    return os.environ.get("SBERT_API_SECRET") or ""
 
 
 @dataclass
@@ -271,3 +282,53 @@ def fetch_all_training_data(url="") -> pd.DataFrame:
     df = pd.read_csv(StringIO(data.get("training") or ""))
     df.sort_values(by=["exp_num"], ignore_index=True, inplace=True)
     return df
+
+
+def get_sbert_waf_secret_header():
+    return os.environ.get("SBERT_WAF_SECRET_HEADER") or ""
+
+
+def get_sbert_waf_secret_value():
+    return os.environ.get("SBERT_WAF_SECRET_VALUE") or ""
+
+
+def sbert_word_to_vec(words: list, slim: bool = False):
+    model_name = "word2vec_slim" if slim else "word2vec"
+
+    # sbert WAF only allows 8kb body size, 800 words is ~6kb
+    req_words_chunk_size = 800
+    req_words_chunks = [
+        words[i : i + req_words_chunk_size]
+        for i in range(0, len(words), req_words_chunk_size)
+    ]
+    final_res: Dict = {}
+    logger.info(f"Number of chunk requests to make: {len(req_words_chunks)}")
+
+    for i, req_words in enumerate(req_words_chunks):
+
+        words_appended_by_space = " ".join(req_words)
+        res = requests.post(
+            f"{get_sbert_endpoint()}v1/w2v",
+            headers={
+                "Authorization": f"bearer {get_sbert_api_key()}",
+                f"{get_sbert_waf_secret_header()}": f"{get_sbert_waf_secret_value()}",
+            },
+            json={"model": model_name, "words": words_appended_by_space},
+        )
+        res.raise_for_status()
+        logger.info(f"Finished req_chuck #{i+1}")
+        final_res = {**final_res, **res.json()}
+    return final_res
+
+
+def get_sbert_index_to_key(slim: bool = False):
+    model_name = "word2vec_slim" if slim else "word2vec"
+    res = requests.post(
+        f"{get_sbert_endpoint()}v1/w2v/index_to_key?model={model_name}",
+        headers={
+            "Authorization": f"bearer {get_sbert_api_key()}",
+            f"{get_sbert_waf_secret_header()}": f"{get_sbert_waf_secret_value()}",
+        },
+    )
+    res.raise_for_status()
+    return res.json()

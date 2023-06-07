@@ -4,8 +4,9 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from opentutor_classifier.constants import DEPLOYMENT_MODE_OFFLINE
 from opentutor_classifier.utils import model_last_updated_at, prop_bool
-from os import path
+from os import path, environ
 from typing import Dict, List, Optional, Tuple, Any
 
 from sklearn import linear_model
@@ -23,7 +24,7 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.dao import find_predicton_config_and_pickle
 from opentutor_classifier.speechact import SpeechActClassifier
-from opentutor_classifier.word2vec_wrapper import Word2VecWrapper
+from opentutor_classifier.word2vec_wrapper import Word2VecWrapper, get_word2vec
 from .constants import (
     ARCHETYPE_BAD,
     ARCHETYPE_GOOD,
@@ -39,6 +40,8 @@ from .clustering_features import CustomDBScanClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
+
+DEPLOYMENT_MODE = environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
 
 
 def _confidence_score(
@@ -83,6 +86,25 @@ class LRAnswerClassifier(AnswerClassifier):
             self._is_default = cm.is_default
         return self._model_and_config
 
+    def batch_preload_save_config_and_model_features(
+        self, conf: QuestionConfig, expectations, w2v: Word2VecWrapper
+    ):
+        """
+        ONLINE USE ONLY
+        preprocesses data and fetches their vectors from w2v in one batch to store in memory
+        """
+        if DEPLOYMENT_MODE == DEPLOYMENT_MODE_OFFLINE:
+            return
+        words_to_preload = [*preprocess_sentence(conf.question)]
+        for exp in expectations:
+            exp_conf = conf.get_expectation(exp.expectation)
+            words_to_preload.extend(preprocess_sentence(exp_conf.ideal))
+            words_to_preload.extend(exp_conf.features.get(ARCHETYPE_GOOD, []))
+            words_to_preload.extend(exp_conf.features.get(ARCHETYPE_BAD, []))
+            words_to_preload.extend(exp_conf.features.get(PATTERNS_GOOD, []))
+            words_to_preload.extend(exp_conf.features.get(PATTERNS_BAD, []))
+        w2v.get_feature_vectors(set(words_to_preload), True)
+
     def save_config_and_model(self, embedding: bool = True) -> Dict[str, Any]:
         m_by_e, conf = self.model_and_config
         expectations = [
@@ -96,7 +118,8 @@ class LRAnswerClassifier(AnswerClassifier):
         ]
 
         if embedding:
-            self.find_word2vec_slim()
+            w2v = self.find_word2vec_slim()
+            self.batch_preload_save_config_and_model_features(conf, expectations, w2v)
         question_proc = preprocess_sentence(conf.question)
 
         slim_embeddings: Dict[str, List[float]] = dict()
@@ -170,7 +193,7 @@ class LRAnswerClassifier(AnswerClassifier):
 
     def find_word2vec(self) -> Word2VecWrapper:
         if not self._word2vec:
-            self._word2vec = Word2VecWrapper(
+            self._word2vec = get_word2vec(
                 path.join(self.shared_root, "word2vec.bin"),
                 path.join(self.shared_root, "word2vec_slim.bin"),
             )
@@ -189,6 +212,29 @@ class LRAnswerClassifier(AnswerClassifier):
             evaluation=_evaluation,
             score=_score if _evaluation == "Good" else 1 - _score,
         )
+
+    def batch_preload_evaluate_features(
+        self,
+        answer: AnswerClassifierInput,
+        index2word,
+        config: QuestionConfig,
+        expectations,
+    ):
+        """
+        ONLINE USE ONLY
+        preprocesses data and fetches their vectors from w2v in one batch to store in memory
+        """
+        if DEPLOYMENT_MODE == DEPLOYMENT_MODE_OFFLINE:
+            return
+        final_list = []
+        final_list.extend(preprocess_sentence(answer.input_sentence))
+        final_list.extend(preprocess_sentence(config.question))
+        word2vec = self.find_word2vec()
+        for exp in expectations:
+            exp_conf = config.get_expectation(exp.expectation)
+            final_list.extend(preprocess_sentence(exp_conf.ideal))
+        final_set = set(final_list).intersection(index2word)
+        word2vec.get_feature_vectors(final_set)
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = preprocess_sentence(answer.input_sentence)
@@ -217,6 +263,9 @@ class LRAnswerClassifier(AnswerClassifier):
         )
         question_proc = preprocess_sentence(conf.question)
         clustering = CustomDBScanClustering(word2vec, index2word)
+
+        self.batch_preload_evaluate_features(answer, index2word, conf, expectations)
+
         for exp in expectations:
             exp_conf = conf.get_expectation(exp.expectation)
             sent_features = LRExpectationClassifier.calculate_features(

@@ -4,7 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from os import path, _Environ
+from os import path, _Environ, environ
 from typing import Any, Dict, Iterable, Optional, Union
 import pandas as pd
 import yaml
@@ -65,3 +65,10 @@ def load_data(filename: str) -> pd.DataFrame:
 def load_yaml(file_path: str) -> Dict[str, Any]:
     with open(file_path, "r") as yaml_file:
         return yaml.load(yaml_file, Loader=yaml.FullLoader)
+
+
+def require_env(n: str) -> str:
+    env_val = environ.get(n, "")
+    if not env_val:
+        raise EnvironmentError(f"missing required env var {n}")
+    return env_val
