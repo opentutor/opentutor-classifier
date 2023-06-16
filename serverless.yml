@@ -29,15 +29,15 @@ custom:
     dev:
       WEBACL_ARN: ${ssm:/dev-opentutor/api_firewall_arn, ''}
       SBERT_API_SECRET: ${ssm:/dev-opentutor/sbert-api-secret, ''}
-      GRAPHQL_ENDPOINT: 'https://opentutor.info/graphql'
+      GRAPHQL_ENDPOINT: 'https://api-dev.opentutor.info/graphql/graphql'
     qa:
       WEBACL_ARN: ${ssm:/qa-opentutor/api_firewall_arn, ''}
       SBERT_API_SECRET: ${ssm:/qa-opentutor/sbert-api-secret, ''}
-      GRAPHQL_ENDPOINT: 'https://opentutor.info/graphql'
+      GRAPHQL_ENDPOINT: 'https://api-qa.opentutor.info/graphql/graphql'
     prod:
       WEBACL_ARN: ${ssm:/prod-opentutor/api_firewall_arn, ''}
       SBERT_API_SECRET: ${ssm:/prod-opentutor/sbert-api-secret, ''}
-      GRAPHQL_ENDPOINT: 'https://opentutor.info/graphql'
+      GRAPHQL_ENDPOINT: 'https://api.opentutor.info/graphql/graphql'
 
   # serverless-layers requires a deployment bucket to be created before deploying this stack
   serverless-layers:
