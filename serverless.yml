@@ -30,14 +30,18 @@ custom:
       WEBACL_ARN: ${ssm:/dev-opentutor/api_firewall_arn, ''}
       SBERT_API_SECRET: ${ssm:/dev-opentutor/sbert-api-secret, ''}
       GRAPHQL_ENDPOINT: 'https://api-dev.opentutor.info/graphql/graphql'
+      SBERT_ENDPOINT: 'https://sbert-dev.mentorpal.org/'
+      
     qa:
       WEBACL_ARN: ${ssm:/qa-opentutor/api_firewall_arn, ''}
       SBERT_API_SECRET: ${ssm:/qa-opentutor/sbert-api-secret, ''}
       GRAPHQL_ENDPOINT: 'https://api-qa.opentutor.info/graphql/graphql'
+      SBERT_ENDPOINT: 'https://sbert-qa.mentorpal.org/'
     prod:
       WEBACL_ARN: ${ssm:/prod-opentutor/api_firewall_arn, ''}
       SBERT_API_SECRET: ${ssm:/prod-opentutor/sbert-api-secret, ''}
       GRAPHQL_ENDPOINT: 'https://api.opentutor.info/graphql/graphql'
+      SBERT_ENDPOINT: 'https://sbert.mentorpal.org/'
 
   # serverless-layers requires a deployment bucket to be created before deploying this stack
   serverless-layers:
@@ -109,6 +113,7 @@ provider:
     NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=50'
     API_SECRET: ${ssm:/shared/api-secret, ''}
     SBERT_API_SECRET: ${self:custom.stages.${self:provider.stage}.SBERT_API_SECRET}
+    SBERT_ENDPOINT: ${self:custom.stages.${self:provider.stage}.SBERT_ENDPOINT}
     SBERT_WAF_SECRET_HEADER: ${ssm:/shared/sbert-waf-secret-header, ''}
     SBERT_WAF_SECRET_VALUE: ${ssm:/shared/sbert-waf-secret-value, ''}
     SENTRY_DSN_OPENTUTOR_CLASSIFIER: ${ssm:/shared/sentry-dsn-opentutor-classifier, ''}
