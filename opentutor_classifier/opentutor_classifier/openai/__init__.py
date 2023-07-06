@@ -27,7 +27,7 @@ class OpenAICall:
     system_assignment: str
     user_concepts: List[str]
     user_answer: List[str]
-    user_template: dict()
+    user_template: dict
     user_guardrails: str
 
     def to_openai_json(self) -> str:

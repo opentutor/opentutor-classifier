@@ -8,7 +8,6 @@ from os import path, _Environ, environ
 from typing import Any, Dict, Iterable, Optional, Union, Type
 import pandas as pd
 import yaml
-import json
 from pathlib import Path
 
 from . import ExpectationConfig, QuestionConfig
@@ -75,9 +74,9 @@ def require_env(n: str) -> str:
     return env_val
 
 
-def validateJSON(jsonData: str, dataType: Type) -> bool:
+def validate_json(json_data: str, data_type: Type) -> bool:
     try:
-        dataType.from_json(jsonData)
-    except Exception as err:
+        data_type.from_json(json_data)
+    except Exception:
         return False
     return True
