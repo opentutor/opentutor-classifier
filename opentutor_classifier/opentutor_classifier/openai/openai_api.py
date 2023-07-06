@@ -26,9 +26,7 @@ openai.api_key = require_env(OPENAI_API_KEY)
     ),
     logger=logger,
 )
-def completions_with_backoff(
-    self, **kwargs
-) -> Generator:
+def completions_with_backoff(self, **kwargs) -> Generator:
     return openai.ChatCompletion.create(**kwargs)
 
 
