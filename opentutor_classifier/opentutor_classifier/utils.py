@@ -5,9 +5,10 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from os import path, _Environ, environ
-from typing import Any, Dict, Iterable, Optional, Union
+from typing import Any, Dict, Iterable, Optional, Union, Type
 import pandas as pd
 import yaml
+import json
 from pathlib import Path
 
 from . import ExpectationConfig, QuestionConfig
@@ -72,3 +73,11 @@ def require_env(n: str) -> str:
     if not env_val:
         raise EnvironmentError(f"missing required env var {n}")
     return env_val
+
+
+def validateJSON(jsonData: str, dataType: Type) -> bool:
+    try:
+        dataType.from_json(jsonData)
+    except Exception as err:
+        return False
+    return True

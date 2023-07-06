@@ -5,13 +5,18 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 
-from opentutor_classifier import AnswerClassifier, ClassifierConfig, AnswerClassifierInput, AnswerClassifierResult
+from opentutor_classifier import (
+    AnswerClassifier,
+    ClassifierConfig,
+    AnswerClassifierInput,
+    AnswerClassifierResult,
+)
 from typing import Dict, Any
+
 
 class OpenAIAnswerClassifier(AnswerClassifier):
     def configure(self, config: ClassifierConfig) -> "AnswerClassifier":
         return self
-
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         raise NotImplementedError()

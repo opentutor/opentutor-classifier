@@ -1,4 +1,3 @@
-
 #
 # This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved.
 # Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
@@ -7,10 +6,16 @@
 #
 
 import pandas as pd
-from opentutor_classifier import AnswerClassifierTraining, TrainingConfig, DataDao, TrainingInput, TrainingResult
+from opentutor_classifier import (
+    AnswerClassifierTraining,
+    TrainingConfig,
+    DataDao,
+    TrainingInput,
+    TrainingResult,
+)
+
 
 class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):
-
     def configure(self, config: TrainingConfig) -> "AnswerClassifierTraining":
         return self
 

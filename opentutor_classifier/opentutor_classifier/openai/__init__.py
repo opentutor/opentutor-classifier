@@ -5,12 +5,22 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 
+from dataclasses_json import dataclass_json
 from dataclasses import dataclass
 from typing import List, Dict
-from opentutor_classifier import ArchClassifierFactory, ClassifierConfig, AnswerClassifier, AnswerClassifierTraining, TrainingConfig, ARCH_OPENAI_CLASSIFIER, register_classifier_factory
+from opentutor_classifier import (
+    ArchClassifierFactory,
+    ClassifierConfig,
+    AnswerClassifier,
+    AnswerClassifierTraining,
+    TrainingConfig,
+    ARCH_OPENAI_CLASSIFIER,
+    register_classifier_factory,
+)
 from .train import OpenAIAnswerClassifierTraining
 from .predict import OpenAIAnswerClassifier
 import json
+
 
 @dataclass
 class OpenAICall:
@@ -21,7 +31,7 @@ class OpenAICall:
     user_guardrails: str
 
     def to_openai_json(self) -> str:
-        result:dict = {}
+        result: dict = {}
         result["system-assignment"] = self.system_assignment
         user_concepts: dict = {}
         for index, concept in enumerate(self.user_concepts):
@@ -29,26 +39,35 @@ class OpenAICall:
         result["user-concepts"] = user_concepts
         user_answer: dict = {}
         for index, answer in enumerate(self.user_answer):
-            user_answer["Answer " + str(index)] = {"Answer Text" : answer}        
+            user_answer["Answer " + str(index)] = {"Answer Text": answer}
         result["user-answer"] = user_answer
         result["user-template"] = self.user_template
         result["user-guardrails"] = self.user_guardrails
-        return json.dumps(result)
+        return json.dumps(result, indent=2)
 
+
+@dataclass_json
 @dataclass
 class Concept:
     is_known: bool
     confidence: float
     justification: str
 
+
+@dataclass_json
 @dataclass
 class Answer:
     answer_text: str
     concepts: Dict[str, Concept]
 
+
+@dataclass_json
 @dataclass
 class OpenAIResultContent:
     answers: Dict[str, Answer]
+
+    # @staticmethod
+    # def from_json(json_string: str) -> "OpenAIResultContent":
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):
@@ -66,4 +85,3 @@ class __ArchClassifierFactory(ArchClassifierFactory):
 
 
 register_classifier_factory(ARCH_OPENAI_CLASSIFIER, __ArchClassifierFactory())
-
