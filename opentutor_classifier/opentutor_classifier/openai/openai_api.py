@@ -46,7 +46,7 @@ def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
 
         if validate_json(content, OpenAIResultContent):
             result_valid = True
-            result = OpenAIResultContent.from_json(content)
+            result:OpenAIResultContent = OpenAIResultContent.from_json(content)
             return result
         else:
             temperature += 0.1
@@ -56,6 +56,4 @@ def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
                 + " and trying again."
             )
 
-    raise Exception(
-        "Invalid JSON returned from OpenAI after 5 attempts, returning None."
-    )
+    raise Exception("Unable to get valid JSON from OpenAI after 5 attempts.")

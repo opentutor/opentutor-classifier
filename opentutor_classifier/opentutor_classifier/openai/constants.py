@@ -12,7 +12,7 @@ ANSWER_TEMPLATE = {
     "Please respond in the following format": {
         "answers": {
             "answer_N": {
-                "answer text": "string // State the text of the particular answer being classified.",
+                "answer_text": "string // State the text of the particular answer being classified.",
                 "concepts": {
                     "concept_N": {
                         "is_known": "string // true or false. If the input answer implies that the concept is known, the classification should be true. Otherwise it should be false.",

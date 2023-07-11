@@ -4,8 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-
-from dataclasses_json import dataclass_json
+from dataclass_wizard import JSONWizard
 from dataclasses import dataclass
 from typing import List, Dict
 from opentutor_classifier import (
@@ -23,7 +22,7 @@ import json
 
 
 @dataclass
-class OpenAICall:
+class OpenAICall(JSONWizard):
     system_assignment: str
     user_concepts: List[str]
     user_answer: List[str]
@@ -46,28 +45,22 @@ class OpenAICall:
         return json.dumps(result, indent=2)
 
 
-@dataclass_json
 @dataclass
-class Concept:
+class Concept(JSONWizard):
     is_known: bool
     confidence: float
     justification: str
 
 
-@dataclass_json
 @dataclass
-class Answer:
+class Answer(JSONWizard):
     answer_text: str
     concepts: Dict[str, Concept]
 
 
-@dataclass_json
 @dataclass
-class OpenAIResultContent:
+class OpenAIResultContent(JSONWizard):
     answers: Dict[str, Answer]
-
-    # @staticmethod
-    # def from_json(json_string: str) -> "OpenAIResultContent":
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):
