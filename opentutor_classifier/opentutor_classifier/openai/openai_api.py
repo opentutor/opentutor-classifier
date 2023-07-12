@@ -5,15 +5,60 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 
-from typing import Generator
+from dataclasses import dataclass
+import json
+from typing import Dict, Generator, List
+from dataclass_wizard import JSONWizard
 import openai
 import backoff
+from opentutor_classifier import ExpectationConfig
 from .constants import OPENAI_API_KEY, OPENAI_DEFAULT_TEMP, OPENAI_MODEL
-from .__init__ import OpenAICall, OpenAIResultContent
-from utils import require_env, validate_json
-from log import logger
+from opentutor_classifier.utils import require_env, validate_json
+from opentutor_classifier.log import logger
 
 openai.api_key = require_env(OPENAI_API_KEY)
+
+
+@dataclass
+class OpenAICall(JSONWizard):
+    system_assignment: str
+    user_concepts: List[ExpectationConfig]
+    user_answer: List[str]
+    user_template: dict
+    user_guardrails: str
+
+    def to_openai_json(self) -> str:
+        result: dict = {}
+        result["system-assignment"] = self.system_assignment
+        user_concepts: dict = {}
+        for index, concept in enumerate(self.user_concepts):
+            user_concepts[concept.expectation_id] = concept.ideal
+        result["user-concepts"] = user_concepts
+        user_answer: dict = {}
+        for index, answer in enumerate(self.user_answer):
+            user_answer["Answer " + str(index)] = {"Answer Text": answer}
+        result["user-answer"] = user_answer
+        result["user-template"] = self.user_template
+        result["user-guardrails"] = self.user_guardrails
+        return json.dumps(result, indent=2)
+
+
+@dataclass
+class Concept(JSONWizard):
+    is_known: bool
+    confidence: float
+    justification: str
+
+
+@dataclass
+class Answer(JSONWizard):
+    answer_text: str
+    concepts: Dict[str, Concept]
+
+
+@dataclass
+class OpenAIResultContent(JSONWizard):
+    answers: Dict[str, Answer]
 
 
 @backoff.on_exception(
@@ -26,7 +71,7 @@ openai.api_key = require_env(OPENAI_API_KEY)
     ),
     logger=logger,
 )
-def completions_with_backoff(self, **kwargs) -> Generator:
+def completions_with_backoff(**kwargs) -> Generator:
     return openai.ChatCompletion.create(**kwargs)
 
 
@@ -42,11 +87,11 @@ def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
         raw_result = completions_with_backoff(
             model=OPENAI_MODEL, temperature=temperature, messages=mesasges
         )
-        content = raw_result["content"]
+        content = raw_result.choices[0].message.content
 
         if validate_json(content, OpenAIResultContent):
             result_valid = True
-            result:OpenAIResultContent = OpenAIResultContent.from_json(content)
+            result: OpenAIResultContent = OpenAIResultContent.from_json(content)
             return result
         else:
             temperature += 0.1

@@ -28,7 +28,7 @@ def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
         QuestionConfig(
             question=config_data.get("question", ""),
             expectations=[
-                ExpectationConfig(ideal=i["ideal"])
+                ExpectationConfig(ideal=i["ideal"], expectation_id=i["expectation_id"])
                 for i in config_data.get("expectations", [])
             ],
         )

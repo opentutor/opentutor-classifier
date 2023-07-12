@@ -4,9 +4,6 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from dataclass_wizard import JSONWizard
-from dataclasses import dataclass
-from typing import List, Dict
 from opentutor_classifier import (
     ArchClassifierFactory,
     ClassifierConfig,
@@ -18,49 +15,6 @@ from opentutor_classifier import (
 )
 from .train import OpenAIAnswerClassifierTraining
 from .predict import OpenAIAnswerClassifier
-import json
-
-
-@dataclass
-class OpenAICall(JSONWizard):
-    system_assignment: str
-    user_concepts: List[str]
-    user_answer: List[str]
-    user_template: dict
-    user_guardrails: str
-
-    def to_openai_json(self) -> str:
-        result: dict = {}
-        result["system-assignment"] = self.system_assignment
-        user_concepts: dict = {}
-        for index, concept in enumerate(self.user_concepts):
-            user_concepts["Concept " + str(index)] = concept
-        result["user-concepts"] = user_concepts
-        user_answer: dict = {}
-        for index, answer in enumerate(self.user_answer):
-            user_answer["Answer " + str(index)] = {"Answer Text": answer}
-        result["user-answer"] = user_answer
-        result["user-template"] = self.user_template
-        result["user-guardrails"] = self.user_guardrails
-        return json.dumps(result, indent=2)
-
-
-@dataclass
-class Concept(JSONWizard):
-    is_known: bool
-    confidence: float
-    justification: str
-
-
-@dataclass
-class Answer(JSONWizard):
-    answer_text: str
-    concepts: Dict[str, Concept]
-
-
-@dataclass
-class OpenAIResultContent(JSONWizard):
-    answers: Dict[str, Answer]
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):

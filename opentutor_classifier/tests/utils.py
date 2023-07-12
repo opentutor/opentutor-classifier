@@ -10,6 +10,7 @@ from distutils.dir_util import copy_tree
 from pathlib import Path
 from typing import Any, Callable, List, Optional
 from unittest.mock import patch
+from openai.openai_object import OpenAIObject
 
 import pandas as pd
 import pytest
@@ -56,6 +57,16 @@ from .types import (
     _TestSet,
     _TestSetResult,
 )
+
+
+def mock_openai_object(payload) -> OpenAIObject:
+    obj = OpenAIObject()
+    message = OpenAIObject()
+    content = OpenAIObject()
+    content.content = payload
+    message.message = content
+    obj.choices = [message]
+    return obj
 
 
 def assert_train_expectation_results(

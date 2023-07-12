@@ -10,12 +10,17 @@ from opentutor_classifier import (
     ClassifierConfig,
     AnswerClassifierInput,
     AnswerClassifierResult,
-    ExpectationClassifierResult
+    ExpectationClassifierResult,
+    ExpectationConfig,
 )
 from opentutor_classifier.speechact import SpeechActClassifier
-from config import LABEL_BAD, LABEL_GOOD
-from openai_api import openai_create
-from .__init__ import OpenAICall, OpenAIResultContent, Answer
+from opentutor_classifier.config import LABEL_BAD, LABEL_GOOD
+from opentutor_classifier.openai.openai_api import (
+    Answer,
+    OpenAICall,
+    OpenAIResultContent,
+    openai_create,
+)
 from .constants import SYSTEM_ASSIGNMENT, USER_GUARDRAILS, ANSWER_TEMPLATE
 from typing import Dict, List, Any
 
@@ -28,17 +33,32 @@ class OpenAIAnswerClassifier(AnswerClassifier):
         return self
 
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
-        concepts: List[str] = [x.ideal for x in answer.config_data.expectations]
-        call = OpenAICall(system_assignment=SYSTEM_ASSIGNMENT, user_concepts=concepts, user_answer=[answer.input_sentence], user_template=ANSWER_TEMPLATE, user_guardrails=USER_GUARDRAILS)
+        if answer.config_data is None:
+            raise Exception("missing question data in answer")
+        concepts: List[ExpectationConfig] = answer.config_data.expectations
+        call = OpenAICall(
+            system_assignment=SYSTEM_ASSIGNMENT,
+            user_concepts=concepts,
+            user_answer=[answer.input_sentence],
+            user_template=ANSWER_TEMPLATE,
+            user_guardrails=USER_GUARDRAILS,
+        )
         response: OpenAIResultContent = openai_create(call_data=call)
         expectations: List[ExpectationClassifierResult] = []
-        open_ai_answer: Answer = response.answers.values()[0]
+        print(response.to_json())
+        open_ai_answer: Answer = response.answers[
+            response.answers.__iter__().__next__()
+        ]
         for concept_key in open_ai_answer.concepts.keys():
             concept = open_ai_answer.concepts[concept_key]
             evaluation = LABEL_GOOD if concept.is_known else LABEL_BAD
-            concept_result = ExpectationClassifierResult(expectation_id=concept_key, evaluation=evaluation, score=concept.confidence)
+            concept_result = ExpectationClassifierResult(
+                expectation_id=concept_key,
+                evaluation=evaluation,
+                score=concept.confidence,
+            )
             expectations.append(concept_result)
-        result = AnswerClassifierResult(input=answer, expectations_results=expectations)
+        result = AnswerClassifierResult(input=answer, expectation_results=expectations)
 
         result.speech_acts[
             "metacognitive"
