@@ -1,0 +1,203 @@
+content:{
+  "answer_38": {
+    "answer text": "It benefited him",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.2,
+        "justification": "The answer does not mention anything about career advancement, so it is unlikely that the user knows Concept 1."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention anything about seeing a counselor, so it is unlikely that the user knows Concept 2."
+      },
+      "Concept 3": {
+        "is_known": "false",
+        "confidence": 0.4,
+        "justification": "The answer does not mention anything about being at full strength to succeed, so it is unlikely that the user knows Concept 3."
+      }
+    }
+  },
+  "answer_16": {
+    "answer text": "Save your kife",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.2,
+        "justification": "The answer does not relate to the concept of career advancement."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.1,
+        "justification": "The answer does not relate to the concept of counseling."
+      },
+      "Concept 3": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not relate to the concept of success and advancement."
+      }
+    }
+  },
+  "answer_45": {
+    "answer text": "It lets you deal with problems that will become worse if they are not handled",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.2,
+        "justification": "The answer does not mention anything related to advancing in one's career, which is the focus of Concept 1."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention anything related to seeing a counselor, which is the focus of Concept 2."
+      },
+      "Concept 3": {
+        "is_known": "false",
+        "confidence": 0.4,
+        "justification": "The answer does not mention anything related to being at full strength to succeed and advance better, which is the focus of Concept 3."
+      }
+    }
+  },
+  "answer_4": {
+    "answer text": "Getting a promotion",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.2,
+        "justification": "The answer does not mention anything about advancing in one's career, which is what Concept 1 is about."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.1,
+        "justification": "The answer does not mention anything about seeing a counselor, which is what Concept 2 is about."
+      },
+      "Concept 3": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer implies that the person is aiming to advance in their career, which requires being at full strength to succeed and advance better, which is what Concept 3 is about."
+      }
+    }
+  },
+  "answer_43": {
+    "answer text": "It can help deal with issue in the future.",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.2,
+        "justification": "The answer does not mention anything related to advancing in one's career, which is what Concept 1 is about."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention anything related to seeing a counselor, which is what Concept 2 is about."
+      },
+      "Concept 3": {
+        "is_known": "false",
+        "confidence": 0.4,
+        "justification": "The answer does not mention anything related to being at full strength to succeed and advance better, which is what Concept 3 is about."
+      }
+    }
+  },
+  "answer_31": {
+    "answer text": "it affected his career positively and he feels grateful for it",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "true",
+        "confidence": 0.4,
+        "justification": "The answer mentions that the person's career was affected positively, which could imply advancement, but it does not provide any specific details or examples to demonstrate a clear understanding of the concept."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything related to seeing a counselor, so it is unlikely that the user knows this concept."
+      },
+      "Concept 3": {
+        "is_known": "false",
+        "confidence": 0.6,
+        "justification": "The answer mentions feeling grateful, but does not provide any specific details or examples to demonstrate a clear understanding of the concept of being at full strength to succeed and advance better."
+      }
+    }
+  },
+  "answer_13": {
+    "answer text": "It is helpful and important",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.2,
+        "justification": "The answer does not mention anything related to advancing in one's career, so it is unlikely that the user knows Concept 1."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.1,
+        "justification": "The answer does not mention anything related to seeing a counselor, so it is unlikely that the user knows Concept 2."
+      },
+      "Concept 3": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention anything related to being at full strength to succeed and advance better, so it is unlikely that the user knows Concept 3."
+      }
+    }
+  },
+  "answer_17": {
+    "answer text": "he kept rising in the ranks and he is a corporal",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer mentions that the person continued to advance in their career, which aligns with Concept 1."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about seeing a counselor, so it is unclear if the user knows Concept 2."
+      },
+      "Concept 3": {
+        "is_known": "false",
+        "confidence": 0.6,
+        "justification": "The answer mentions being at full strength to succeed, but it is unclear if the user knows Concept 3 as it is not directly mentioned."
+      }
+    }
+  },
+  "answer_12": {
+    "answer text": "he was healthier",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.6,
+        "justification": "The answer does not directly relate to the concept. However, it could be argued that being healthier could lead to career advancement."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.4,
+        "justification": "The answer does not relate to the concept of seeing a counselor."
+      },
+      "Concept 3": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not directly relate to the concept. However, it could be argued that being healthier could lead to better chances of success and advancement."
+      }
+    }
+  },
+  "answer_29": {
+    "answer text": "He continued with his career",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer uses similar words to the concept and implies knowledge of career advancement."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.2,
+        "justification": "The answer does not mention anything about seeing a counselor, so it is unlikely that the user knows this concept."
+      },
+      "Concept 3": {
+        "is_known": "false",
+        "confidence": 0.4,
+        "justification": "The answer does not mention anything about being at full strength to succeed and advance better, so it is uncertain if the user knows this concept."
+      }
+    }
+  }
+}
+

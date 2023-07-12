@@ -1,0 +1,31 @@
+exp_num,text,label
+0,It helped his mental health,bad
+1,It helped his mental health,good
+2,It helped his mental health,good
+0,He said it definitely helped him both personally and his career,good
+1,He said it definitely helped him both personally and his career,bad
+2,He said it definitely helped him both personally and his career,good
+0,"You deal with your problems now, so they don't bother you later",bad
+1,"You deal with your problems now, so they don't bother you later",good
+2,"You deal with your problems now, so they don't bother you later",good
+0,It continued in a positive direction,good
+1,It continued in a positive direction,bad
+2,It continued in a positive direction,good
+0,he kept rising in the ranks and he is a corporal,good
+1,he kept rising in the ranks and he is a corporal,bad
+2,he kept rising in the ranks and he is a corporal,bad
+0,He kept rising in the ranks. He was a SECNAV.,good
+1,He kept rising in the ranks. He was a SECNAV.,bad
+2,He kept rising in the ranks. He was a SECNAV.,bad
+0,it went a different direction,bad
+1,it went a different direction,bad
+2,it went a different direction,bad
+0,Because it resolves problems that will appear later,bad
+1,Because it resolves problems that will appear later,good
+2,Because it resolves problems that will appear later,good
+0,His career went well,good
+1,His career went well,bad
+2,His career went well,bad
+0,he rose in rank and promotions,good
+1,he rose in rank and promotions,bad
+2,he rose in rank and promotions,bad

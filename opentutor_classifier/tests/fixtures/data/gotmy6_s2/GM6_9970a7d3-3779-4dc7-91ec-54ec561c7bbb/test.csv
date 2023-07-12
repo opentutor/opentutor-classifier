@@ -1,0 +1,51 @@
+exp_num,text,label
+0,calling the person,good
+1,calling the person,good
+2,calling the person,bad
+3,calling the person,bad
+4,calling the person,bad
+0,they buy you a drink when youre down,good
+1,they buy you a drink when youre down,bad
+2,they buy you a drink when youre down,good
+3,they buy you a drink when youre down,bad
+4,they buy you a drink when youre down,bad
+0,Reliable,bad
+1,Reliable,good
+2,Reliable,bad
+3,Reliable,bad
+4,Reliable,bad
+0,calliing somebody in the middle of the night,bad
+1,calliing somebody in the middle of the night,good
+2,calliing somebody in the middle of the night,bad
+3,calliing somebody in the middle of the night,bad
+4,calliing somebody in the middle of the night,bad
+0,they can call you out on your bullshit,bad
+1,they can call you out on your bullshit,bad
+2,they can call you out on your bullshit,bad
+3,they can call you out on your bullshit,good
+4,they can call you out on your bullshit,bad
+0,Being there,bad
+1,Being there,good
+2,Being there,good
+3,Being there,bad
+4,Being there,bad
+0,"checking in, they contact you",good
+1,"checking in, they contact you",bad
+2,"checking in, they contact you",bad
+3,"checking in, they contact you",bad
+4,"checking in, they contact you",bad
+0,you can help me think of ways to solve it,bad
+1,you can help me think of ways to solve it,bad
+2,you can help me think of ways to solve it,bad
+3,you can help me think of ways to solve it,bad
+4,you can help me think of ways to solve it,good
+0,by not socializing,bad
+1,by not socializing,bad
+2,by not socializing,bad
+3,by not socializing,bad
+4,by not socializing,bad
+0,you can let them talk it through to you,bad
+1,you can let them talk it through to you,bad
+2,you can let them talk it through to you,bad
+3,you can let them talk it through to you,bad
+4,you can let them talk it through to you,good

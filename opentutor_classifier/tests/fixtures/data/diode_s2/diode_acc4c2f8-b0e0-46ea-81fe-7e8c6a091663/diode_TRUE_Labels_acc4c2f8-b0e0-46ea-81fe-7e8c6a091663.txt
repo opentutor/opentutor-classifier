@@ -1,0 +1,52 @@
+{
+      "answer_43": {
+            "Answer text": "It stops",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_18": {
+            "Answer text": "It will be off",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_4": {
+            "Answer text": "No current allowed to flow",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_10": {
+            "Answer text": "it burn out",
+            "concept_1": "false",
+            "concept_2": "true"
+      },
+      "answer_7": {
+            "Answer text": "The current is blocked",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_26": {
+            "Answer text": "it won't allow diode to flow and the circuit will be off",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_16": {
+            "Answer text": "increases a diode's resistance",
+            "concept_1": "false",
+            "concept_2": "false"
+      },
+      "answer_35": {
+            "Answer text": "It could burn out",
+            "concept_1": "false",
+            "concept_2": "true"
+      },
+      "answer_21": {
+            "Answer text": "Will not allow current to flow.",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_11": {
+            "Answer text": "I think that's all -",
+            "concept_1": "false",
+            "concept_2": "false"
+      }
+}

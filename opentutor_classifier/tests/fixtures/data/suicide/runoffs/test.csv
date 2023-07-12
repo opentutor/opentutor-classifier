@@ -1,0 +1,11 @@
+exp_num,text,label
+0,"very likely",bad
+1,"very likely",good
+0,"slightly less",good
+1,"slightly less",bad
+0,"they are less likely",good
+1,"they are less likely",bad
+0,"Within a hour gets higher",bad
+1,"Within a hour gets higher",bad
+0,"more at risk",bad
+1,"more at risk",good

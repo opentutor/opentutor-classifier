@@ -1,0 +1,21 @@
+exp_num,text,label
+0,not attempt it later,good
+1,not attempt it later,bad
+0,If they lose their gun they are still at higher risk than other people but they are at low risk over,good
+1,If they lose their gun they are still at higher risk than other people but they are at low risk over,good
+0,they may not have anything else to use,bad
+1,they may not have anything else to use,bad
+0,I don’t know,bad
+1,I don’t know,bad
+0,This person is still more likely to commit suicide,bad
+1,This person is still more likely to commit suicide,good
+0,increases long term risk,bad
+1,increases long term risk,bad
+0,It slows it down for the time being.,good
+1,It slows it down for the time being.,bad
+0,it slightly reduces it,good
+1,it slightly reduces it,bad
+0,more likely to attempt suicide later,bad
+1,more likely to attempt suicide later,good
+0,They will probably try to find another way.,bad
+1,They will probably try to find another way.,good

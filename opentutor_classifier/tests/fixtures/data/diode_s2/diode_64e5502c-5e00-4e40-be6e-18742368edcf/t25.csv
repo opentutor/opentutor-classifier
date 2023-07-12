@@ -1,0 +1,51 @@
+exp_num,text,label
+0,It turns off,good
+1,It turns off,bad
+0,The diode might burn out.,bad
+1,The diode might burn out.,good
+0,it explodes,bad
+1,it explodes,good
+0,I think that's all -,bad
+1,I think that's all -,bad
+0,It will not allow current to flow through it,good
+1,It will not allow current to flow through it,bad
+0,It redirects the current.,good
+1,It redirects the current.,bad
+0,I'm not sure what you are asking.,bad
+1,I'm not sure what you are asking.,bad
+0,It turns off.,good
+1,It turns off.,bad
+0,"It turns off, and blocks the voltage.",good
+1,"It turns off, and blocks the voltage.",bad
+0,current will not flow through the circuit and it will be off,good
+1,current will not flow through the circuit and it will be off,bad
+0,The diode is off.,good
+1,The diode is off.,bad
+0,The current won't flow and the diode will be off.,good
+1,The current won't flow and the diode will be off.,bad
+0,it will burn out,bad
+1,it will burn out,good
+0,The current is blocked,good
+1,The current is blocked,bad
+0,the voltage fries the diode,bad
+1,the voltage fries the diode,good
+0,It stops,good
+1,It stops,bad
+0,It could burn out,bad
+1,It could burn out,good
+0,increases a diode's resistance,bad
+1,increases a diode's resistance,bad
+0,The diode prevents the current from flowing or burning out the diode,good
+1,The diode prevents the current from flowing or burning out the diode,good
+0,turns off,good
+1,turns off,bad
+0,it can burn out,bad
+1,it can burn out,good
+0,You want to make sure you can have a diode that can handle a lot of current.,bad
+1,You want to make sure you can have a diode that can handle a lot of current.,bad
+0,"if the current is small enough, it'll just block the current. If there is too much current, it'll burn out the diode",good
+1,"if the current is small enough, it'll just block the current. If there is too much current, it'll burn out the diode",good
+0,the diode will not allow current to flow in the circuit,good
+1,the diode will not allow current to flow in the circuit,bad
+0,Will not allow current to flow.,good
+1,Will not allow current to flow.,bad

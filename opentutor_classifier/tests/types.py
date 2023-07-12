@@ -41,6 +41,12 @@ class _TestExpectation:
     comparison: ComparisonType = ComparisonType.GTE
     epsilon: float = 0.01  # used only for eq
 
+@dataclass
+class _TestMetrics:
+    expectation: str = ""
+    y_true: str = "" #int = 99 #If something goes wrong, want to be able to see it. 
+    y_pred: str = "" #fint = 99 #same
+
 
 @dataclass
 class _TestExample:

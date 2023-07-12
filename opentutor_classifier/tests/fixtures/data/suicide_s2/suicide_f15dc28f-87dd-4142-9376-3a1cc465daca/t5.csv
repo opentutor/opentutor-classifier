@@ -1,0 +1,11 @@
+exp_num,text,label
+0,It decreases.,good
+1,It decreases.,bad
+0,I would say they are still more likely to commit suicide and they would still need help from a professional and the people around them.,bad
+1,I would say they are still more likely to commit suicide and they would still need help from a professional and the people around them.,good
+0,They are less likely to commit suicide.,good
+1,They are less likely to commit suicide.,bad
+0,They will likely not attempt suicide later,good
+1,They will likely not attempt suicide later,bad
+0,very likely,bad
+1,very likely,good

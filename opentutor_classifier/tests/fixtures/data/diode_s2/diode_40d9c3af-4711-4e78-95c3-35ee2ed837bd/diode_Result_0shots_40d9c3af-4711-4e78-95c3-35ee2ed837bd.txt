@@ -1,0 +1,153 @@
+content:{
+  "answer_12": {
+    "answer text": "it explodes",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not provide any information that shows knowledge of the concept. The answer is not related to the concept."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not provide any information that shows knowledge of the concept. The answer is not related to the concept."
+      }
+    }
+  },
+  "answer_45": {
+    "answer text": "nothing",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything related to the concept of normal diodes and their behavior in reverse bias. Therefore, it is highly unlikely that the user knows this concept."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention anything related to the concept of diode breakdown mode. Therefore, it is highly unlikely that the user knows this concept."
+      }
+    }
+  },
+  "answer_46": {
+    "answer text": "I'm not sure what you are asking.",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0,
+        "justification": "The answer does not address the concept at all."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0,
+        "justification": "The answer does not address the concept at all."
+      }
+    }
+  },
+  "answer_40": {
+    "answer text": "conduct current in reverse direction",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "true",
+        "confidence": 0.7,
+        "justification": "The answer implies knowledge of reverse bias behavior of diodes, which is described in Concept 1."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention anything about the damage caused by breakdown mode, which is described in Concept 2."
+      }
+    }
+  },
+  "answer_5": {
+    "answer text": "It turns off",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "true",
+        "confidence": 0.2,
+        "justification": "The answer mentions turning off, but does not specifically mention the behavior of diodes in reverse bias."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.2,
+        "justification": "The answer does not mention anything about the diode being damaged in breakdown mode."
+      }
+    }
+  },
+  "answer_14": {
+    "answer text": "the circuit is off",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer mentions that the circuit is off, which implies that the diode is acting like an \"off\" switch. However, it does not explicitly mention the term \"reverse bias\", which is necessary to fully demonstrate knowledge of Concept 1."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention anything about the diode being damaged by going into breakdown mode, which is necessary to demonstrate knowledge of Concept 2."
+      }
+    }
+  },
+  "answer_32": {
+    "answer text": "turns off",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "true",
+        "confidence": 0.6,
+        "justification": "The answer implies that the diode is acting like an 'off' switch, which is consistent with the definition of normal diodes not conducting current in reverse bias."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.4,
+        "justification": "The answer does not provide any information on whether the diode will be damaged by going into breakdown mode or not."
+      }
+    }
+  },
+  "answer_36": {
+    "answer text": "The diode might burn out.",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.6,
+        "justification": "The answer mentions burning out, which suggests some knowledge of the behavior of a diode in reverse bias. However, it does not specifically mention the fact that normal diodes do not conduct current in reverse bias, so confidence is moderate."
+      },
+      "Concept 2": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer mentions the possibility of the diode burning out, which implies knowledge of the fact that the diode can be damaged by going into breakdown mode. Confidence is high."
+      }
+    }
+  },
+  "answer_18": {
+    "answer text": "It will be off",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "true",
+        "confidence": 0.7,
+        "justification": "The answer correctly states that a diode in reverse bias acts like an \"off\" switch, which is the concept being tested. However, the answer is not very detailed and could be improved."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about the diode being damaged by going into breakdown mode, which is the concept being tested. Therefore, it is not sufficient to determine if the user knows this concept."
+      }
+    }
+  },
+  "answer_38": {
+    "answer text": "it will conduct when you don't want it to and it won't conduct when you do want it to",
+    "concepts": {
+      "Concept 1": {
+        "is_known": "false",
+        "confidence": 0.6,
+        "justification": "The answer implies a general understanding of diodes, but does not specifically address the concept of normal diodes not conducting current in reverse bias."
+      },
+      "Concept 2": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer implies a general understanding of diodes, but does not specifically address the concept of diode breakdown mode."
+      }
+    }
+  }
+}
+

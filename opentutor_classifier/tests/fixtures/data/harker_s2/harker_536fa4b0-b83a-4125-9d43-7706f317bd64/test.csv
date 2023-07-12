@@ -1,0 +1,31 @@
+exp_num,text,label
+0,it sees it as something essential,bad
+1,it sees it as something essential,good
+2,it sees it as something essential,bad
+0,he kept rising in the ranks and he is a corporal,good
+1,he kept rising in the ranks and he is a corporal,bad
+2,he kept rising in the ranks and he is a corporal,bad
+0,it'sok,bad
+1,it'sok,bad
+2,it'sok,bad
+0,He thinks it's necessary and beneficial.,bad
+1,He thinks it's necessary and beneficial.,good
+2,He thinks it's necessary and beneficial.,bad
+0,It lets you deal with problems that will become worse if they are not handled,bad
+1,It lets you deal with problems that will become worse if they are not handled,good
+2,It lets you deal with problems that will become worse if they are not handled,good
+0,test,bad
+1,test,bad
+2,test,bad
+0,he thinks that it is important,bad
+1,he thinks that it is important,good
+2,he thinks that it is important,bad
+0,it affected his career positively and he feels grateful for it,good
+1,it affected his career positively and he feels grateful for it,good
+2,it affected his career positively and he feels grateful for it,good
+0,He kept rising in rank,good
+1,He kept rising in rank,bad
+2,He kept rising in rank,bad
+0,Getting a promotion,good
+1,Getting a promotion,bad
+2,Getting a promotion,bad

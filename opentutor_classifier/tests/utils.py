@@ -11,11 +11,17 @@ from pathlib import Path
 from typing import Any, Callable, List, Optional
 from unittest.mock import patch
 
+import math
 import pandas as pd
 import pytest
 import responses
+import numpy as np
+import csv
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
-from opentutor_classifier.training import train_default_data_root
+
+from opentutor_classifier.training import train_default_data_root, train_data_root_N_shot
+
 
 
 from opentutor_classifier import (
@@ -47,6 +53,7 @@ from opentutor_classifier import DataDao
 import opentutor_classifier.dao
 from opentutor_classifier.dao import FileDataDao
 from .types import (
+    _TestMetrics,
     ComparisonType,
     _TestConfig,
     _TestExample,
@@ -62,8 +69,8 @@ def assert_train_expectation_results(
     observed: List[ExpectationTrainingResult], expected: List[ExpectationTrainingResult]
 ):
     for o, e in zip(observed, expected):
-        assert o.accuracy >= e.accuracy
-
+        assert math.isclose(o.accuracy, e.accuracy, rel_tol= .1)
+#Modified to math is close for experimentation purposes
 
 def to_expectation_result(
     expected: _TestExpectation, observed: ExpectationClassifierResult
@@ -128,7 +135,7 @@ def run_classifier_tests(
     for ex in examples:
         assert_classifier_evaluate(classifier.evaluate(ex.input), ex.expectations)
 
-
+#Original Version
 def run_classifier_testset(
     arch: str, model_path: str, shared_root: str, testset: _TestSet
 ) -> _TestSetResult:
@@ -143,8 +150,32 @@ def run_classifier_testset(
         arch=arch,
     )
     result = _TestSetResult(testset=testset)
+    #Testset.examples holds all of the original classifications, these are then compared against the classifier iteratively with ex.input, which are the features. 
+    #Note, as far as I can tell, capitalization would matter for 'good' vs 'Good'
     for ex in testset.examples:
         result.results.append(to_example_result(ex, classifier.evaluate(ex.input)))
+        #The above is expected and observed! FOUND IT AT LAST!!!!!!!!
+    return result
+
+#New Version
+def get_robust_metrics(
+    arch: str, model_path: str, shared_root: str, testset: _TestSet    
+) -> _TestMetrics:
+    #This is all the same
+    model_root, model_name = path.split(model_path)
+    classifier = ClassifierFactory().new_classifier(
+        ClassifierConfig(
+            dao=opentutor_classifier.dao.find_data_dao(),
+            model_name=model_name,
+            model_roots=[model_root],
+            shared_root=shared_root,
+        ),
+        arch=arch,
+    )
+    #This is different
+    result = []
+    for ex in testset.examples:
+        result.append(to_result_metrics(ex, classifier.evaluate(ex.input)))
     return result
 
 
@@ -161,6 +192,48 @@ def assert_testset_accuracy(
         return
     assert metrics.accuracy >= expected_accuracy
 
+def show_testset_accuracy(
+    arch: str,
+    model_path: str,
+    shared_root: str,
+    testset: _TestSet,
+):
+    result = run_classifier_testset(arch, model_path, shared_root, testset)
+    metrics = result.metrics()
+    return metrics
+
+def show_robust_metrics(
+    arch: str,
+    model_path: str,
+    shared_root: str,
+    testset: _TestSet,
+):
+    result = get_robust_metrics(arch, model_path, shared_root, testset)
+    #result is a testsetresult, which has a results component, which has expected, which has evaluation.
+    #Here is where we are going to build our metrics. Then return
+    y_true = []
+    y_pred = []
+    concepts = {} 
+    cconcept = []
+    for r in result:
+        y_true.append(r.y_true)
+        y_pred.append(r.y_pred)
+        if r.expectation not in concepts:
+            concepts[r.expectation] = {'yt':[], 'yp':[]}
+            cconcept.append(int(r.expectation)+1)
+        concepts[r.expectation]['yt'].append(r.y_true)
+        concepts[r.expectation]['yp'].append(r.y_pred)
+    batchsize = len(y_true)
+    h_acc = accuracy_score(y_true, y_pred)
+    metrics = precision_recall_fscore_support(np.array(y_true), np.array(y_pred), average='macro')
+    byconcept = {}
+    for k,v in concepts.items():
+        byconcept["C_" + str(int(k)+1)] = accuracy_score(v['yt'], v['yp'])
+    cconcept.sort()
+    #print("This is holistic accuracy", h_acc)
+    #print("This is metrics", metrics)
+    #print("This is accuracy by concept", byconcept)
+    return (h_acc, metrics[:-1], byconcept, batchsize, cconcept[-1])
 
 def create_and_test_classifier(
     lesson: str,
@@ -380,13 +453,24 @@ def test_env_isolated(
 
 
 def train_classifier(lesson: str, config: _TestConfig) -> TrainingResult:
+    #first step out of my test
+    #This is basically passing the above to train_data_root, but with using
     return train_data_root(
         data_root=path.join(config.data_root, lesson),
-        config=TrainingConfig(shared_root=config.shared_root),
+        config=TrainingConfig(shared_root=config.shared_root), #TrainingConfig is an instance of data class
         output_dir=config.output_dir,
         arch=config.arch,
     )
 
+def train_classifier_N_shot(lesson: str, config: _TestConfig) -> TrainingResult:
+    #first step out of my test
+    #This is basically passing the above to train_data_root, but with using
+    return train_data_root_N_shot(
+        data_root=path.join(config.data_root, lesson),
+        config=TrainingConfig(shared_root=config.shared_root), #TrainingConfig is an instance of data class
+        output_dir=config.output_dir,
+        arch=config.arch,
+    )
 
 def train_default_classifier(config: _TestConfig) -> TrainingResult:
     return train_default_data_root(
@@ -441,10 +525,60 @@ def to_example_result(
     expected: _TestExample, observed: AnswerClassifierResult
 ) -> _TestExampleResult:
     result_expectations = []
+    #print("this is expected:", expected)
+    #print("This is observed:", observed)
+    #The loops here are taking each answer and lining up the expectations. In this way each answer is evaluated against all expectations. i.e. 10 answers x 2 expectations = 20 classifications.
     for e in expected.expectations:
+        #print("This is e being iterated over from expected.expectations", e)
         for o in observed.expectation_results:
             if e.expectation == o.expectation_id:
+                #print(e.expectation, o.expectation_id, "This is matching")
                 result_expectations.append(to_expectation_result(e, o))
+    #print("This is test example result, expected, which includes the string sentence", expected.input)
+    #print("This is result_expectations", result_expectations)
+    print(len(result_expectations)) 
+    for r in result_expectations: #iterating over the objects that are returned
+        print("This is the evaluations extracted and iterated over")
+        print(r.expected.expectation, r.expected.evaluation, r.observed.evaluation)
     return _TestExampleResult(
         expected=expected, observed=observed, expectations=result_expectations
     )
+
+#This is to be able to harvest the zeroes and ones, for comparison of metrics
+def to_result_metrics(
+    expected: _TestExample, observed: AnswerClassifierResult
+) -> _TestMetrics: 
+    result_expectations = []
+    myresult = _TestMetrics
+    for e in expected.expectations:
+        for o in observed.expectation_results:
+            if e.expectation == o.expectation_id:
+                result_expectations.append(to_expectation_result(e, o)) #e is an expectation, o is observed. 
+    #The result_expectation list is going to be populated by a single instance of the class test expectation result, which has in it two classes
+    #The first is expected, which is a test expectation, 
+    #the second is observed, which is a expectation classifier result. 
+    return _TestMetrics(
+        expectation = result_expectations[0].expected.expectation, 
+        y_true = result_expectations[0].expected.evaluation.lower(),
+        y_pred = result_expectations[0].observed.evaluation.lower()
+    )
+    #y_true= 1 if result_expectations[0].expected.evaluation.lower() == 'good' else 0, 
+    #y_pred= 1 if result_expectations[0].observed.evaluation.lower() == 'bad' else 0 
+
+def write_csv(data, headers, filename): #To build the run csvs and the opentutor csvs
+    with open('{}.csv'.format(filename), 'w') as csvfile:
+        csvwriter = csv.writer(csvfile)
+        csvwriter.writerow(headers)
+        csvwriter.writerows(data)
+
+def build_new_result_sheets(run_headers, run_target):
+    write_csv([], run_headers, run_target)
+
+def save_result(addition, target):
+    #This is append, the other one is write.
+    #This one does not have any headers write, because they already exist (presumably)
+    with open('{}.csv'.format(target), 'a') as csvfile:
+        csvwriter = csv.writer(csvfile)
+        print(addition)
+        csvwriter.writerow(addition)
+

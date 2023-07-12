@@ -1,0 +1,31 @@
+exp_num,text,label
+0,It decreases.,good
+1,It decreases.,bad
+0,I would say they are still more likely to commit suicide and they would still need help from a professional and the people around them.,bad
+1,I would say they are still more likely to commit suicide and they would still need help from a professional and the people around them.,good
+0,They are less likely to commit suicide.,good
+1,They are less likely to commit suicide.,bad
+0,They will likely not attempt suicide later,good
+1,They will likely not attempt suicide later,bad
+0,very likely,bad
+1,very likely,good
+0,Not attempt suicide?,good
+1,Not attempt suicide?,bad
+0,It decreases their risk of suicide in the long run,good
+1,It decreases their risk of suicide in the long run,bad
+0,they are much less likely to commit suicide,good
+1,they are much less likely to commit suicide,bad
+0,It would decrease it.,good
+1,It would decrease it.,bad
+0,somewhat more likely,bad
+1,somewhat more likely,good
+0,theyre less likely because the suicidal urge is short,good
+1,theyre less likely because the suicidal urge is short,bad
+0,Less than others,bad
+1,Less than others,bad
+0,Theyre less likely to commit suicide.,good
+1,Theyre less likely to commit suicide.,bad
+0,more likely to find another way,bad
+1,more likely to find another way,good
+0,"If their plan is disrupted, the odds of a suicide attempt go down",good
+1,"If their plan is disrupted, the odds of a suicide attempt go down",bad

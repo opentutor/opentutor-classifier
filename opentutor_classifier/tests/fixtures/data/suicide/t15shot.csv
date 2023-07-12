@@ -1,0 +1,31 @@
+exp_num,text,label
+0,increases long term risk,bad
+1,increases long term risk,bad
+0,It gives them more time to think about what their \about to do. Maybe regret.,good
+1,It gives them more time to think about what their \about to do. Maybe regret.,bad
+0,They're less likely to commit suicide.,good
+1,They're less likely to commit suicide.,bad
+0,lowers it,good
+1,lowers it,bad
+0,they may not have anything else to use,bad
+1,they may not have anything else to use,bad
+0,it lowers,good
+1,it lowers,bad
+0,I don’t know,bad
+1,I don’t know,bad
+0,risk decreases,good
+1,risk decreases,bad
+0,Maybe less given they have more time to think about it.,good
+1,Maybe less given they have more time to think about it.,bad
+0,They won't have the urge anymore,good
+1,They won't have the urge anymore,bad
+0,Still more likely to commit suicide than the general public,bad
+1,Still more likely to commit suicide than the general public,good
+0,Not having a gun lowers their risk of suicide,good
+1,Not having a gun lowers their risk of suicide,bad
+0,Equally likely,bad
+1,Equally likely,bad
+0,"Much less likely, because suicidal urges are very short",good
+1,"Much less likely, because suicidal urges are very short",bad
+0,Lower,good
+1,Lower,bad

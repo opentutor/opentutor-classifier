@@ -1,0 +1,21 @@
+exp_num,text,label
+0,The current won't flow and the diode will be off.,good
+1,The current won't flow and the diode will be off.,bad
+0,You want to make sure you can have a diode that can handle a lot of current.,bad
+1,You want to make sure you can have a diode that can handle a lot of current.,bad
+0,It could burn off if the current is too high,bad
+1,It could burn off if the current is too high,good
+0,it will be off,good
+1,it will be off,bad
+0,increases a diode's resistance,bad
+1,increases a diode's resistance,bad
+0,no current will flow until the electric field is so high that the diode breaks down,good
+1,no current will flow until the electric field is so high that the diode breaks down,good
+0,It cannot go in the right direction,good
+1,It cannot go in the right direction,bad
+0,Diode will be off,good
+1,Diode will be off,bad
+0,nothing,bad
+1,nothing,bad
+0,The current is blocked,good
+1,The current is blocked,bad

@@ -1,0 +1,16 @@
+exp_num,text,label
+0,It lets you deal with problems that will become worse if they are not handled,bad
+1,It lets you deal with problems that will become worse if they are not handled,good
+2,It lets you deal with problems that will become worse if they are not handled,good
+0,he continued to advance in his career,good
+1,he continued to advance in his career,bad
+2,he continued to advance in his career,bad
+0,It helped his mental health,bad
+1,It helped his mental health,good
+2,It helped his mental health,good
+0,To help a\ person deal better and understand things better.,bad
+1,To help a\ person deal better and understand things better.,good
+2,To help a\ person deal better and understand things better.,good
+0,Test,bad
+1,Test,bad
+2,Test,bad

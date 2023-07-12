@@ -1,0 +1,11 @@
+exp_num,text,label
+0,it slightly reduces it,good
+1,it slightly reduces it,bad
+0,not attempt it later,good
+1,not attempt it later,bad
+0,It reduces,good
+1,It reduces,bad
+0,they lose the urge to commit suicide,good
+1,they lose the urge to commit suicide,bad
+0,theyre less likely because the suicidal urge is short,good
+1,theyre less likely because the suicidal urge is short,bad

@@ -1,0 +1,26 @@
+exp_num,text,label
+0,they tear you down when you succeed,bad
+1,they tear you down when you succeed,bad
+2,they tear you down when you succeed,bad
+3,they tear you down when you succeed,bad
+4,they tear you down when you succeed,bad
+0,they kick you when youre down,bad
+1,they kick you when youre down,bad
+2,they kick you when youre down,bad
+3,they kick you when youre down,bad
+4,they kick you when youre down,bad
+0,They could be a friend who calls you and reaches out,good
+1,They could be a friend who calls you and reaches out,bad
+2,They could be a friend who calls you and reaches out,bad
+3,They could be a friend who calls you and reaches out,bad
+4,They could be a friend who calls you and reaches out,bad
+0,"you need somebody to help you snap out of it, tell you something else",bad
+1,"you need somebody to help you snap out of it, tell you something else",bad
+2,"you need somebody to help you snap out of it, tell you something else",bad
+3,"you need somebody to help you snap out of it, tell you something else",good
+4,"you need somebody to help you snap out of it, tell you something else",good
+0,they want to destroy you,bad
+1,they want to destroy you,bad
+2,they want to destroy you,bad
+3,they want to destroy you,bad
+4,they want to destroy you,bad

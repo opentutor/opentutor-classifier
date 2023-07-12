@@ -1,0 +1,11 @@
+exp_num,text,label
+0,The risk would decrease.,bad
+1,The risk would decrease.,bad
+0,I think they wouldnt want to take the time to come up with another plan,good
+1,I think they wouldnt want to take the time to come up with another plan,bad
+0,"This lowers there immediate risk, but does not lower the ideation",good
+1,"This lowers there immediate risk, but does not lower the ideation",good
+0,theyre still more likely as they have suicidal ideation,bad
+1,theyre still more likely as they have suicidal ideation,bad
+0,theyre less likely because the suicidal urge is short,good
+1,theyre less likely because the suicidal urge is short,bad

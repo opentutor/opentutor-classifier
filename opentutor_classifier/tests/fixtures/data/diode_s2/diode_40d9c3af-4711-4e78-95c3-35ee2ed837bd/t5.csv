@@ -1,0 +1,11 @@
+exp_num,text,label
+0,diode is off,good
+1,diode is off,bad
+0,It could burn out,bad
+1,It could burn out,good
+0,current will not flow through the circuit and it will be off,good
+1,current will not flow through the circuit and it will be off,bad
+0,You want to make sure you can have a diode that can handle a lot of current.,bad
+1,You want to make sure you can have a diode that can handle a lot of current.,bad
+0,the diode only lets the current go in one direction,good
+1,the diode only lets the current go in one direction,bad

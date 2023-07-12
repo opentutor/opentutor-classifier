@@ -1,0 +1,11 @@
+exp_num,text,label
+0,doesn't work,bad
+1,doesn't work,good
+0,I'm not sure what you are asking.,bad
+1,I'm not sure what you are asking.,bad
+0,"if the current is small enough, it'll just block the current. If there is too much current, it'll burn out the diode",good
+1,"if the current is small enough, it'll just block the current. If there is too much current, it'll burn out the diode",good
+0,It stops,good
+1,It stops,bad
+0,It will be off,good
+1,It will be off,bad

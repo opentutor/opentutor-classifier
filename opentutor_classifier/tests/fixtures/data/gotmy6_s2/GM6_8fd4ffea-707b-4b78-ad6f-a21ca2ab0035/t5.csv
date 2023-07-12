@@ -1,0 +1,26 @@
+exp_num,text,label
+0,by not socializing,bad
+1,by not socializing,bad
+2,by not socializing,bad
+3,by not socializing,bad
+4,by not socializing,bad
+0,they buy you a drink when youre down,good
+1,they buy you a drink when youre down,bad
+2,they buy you a drink when youre down,good
+3,they buy you a drink when youre down,bad
+4,they buy you a drink when youre down,bad
+0,somebody to give you some ideas,bad
+1,somebody to give you some ideas,bad
+2,somebody to give you some ideas,bad
+3,somebody to give you some ideas,bad
+4,somebody to give you some ideas,good
+0,Reliable,bad
+1,Reliable,good
+2,Reliable,bad
+3,Reliable,bad
+4,Reliable,bad
+0,they better be good to me be positive,bad
+1,they better be good to me be positive,bad
+2,they better be good to me be positive,good
+3,they better be good to me be positive,bad
+4,they better be good to me be positive,bad

@@ -1,0 +1,11 @@
+exp_num,text,label
+0,probably not,bad
+1,probably not,bad
+0,Lessens it but they can still find another means.,good
+1,Lessens it but they can still find another means.,good
+0,I think they wouldn't want to take the time to come up with another plan,good
+1,I think they wouldn't want to take the time to come up with another plan,bad
+0,somewhat more likely,bad
+1,somewhat more likely,good
+0,same likelihood,bad
+1,same likelihood,bad

@@ -1,0 +1,31 @@
+exp_num,text,label
+0,it went a different direction,bad
+1,it went a different direction,bad
+2,it went a different direction,bad
+0,It helps talking to someone. Counseling helped his career.,good
+1,It helps talking to someone. Counseling helped his career.,good
+2,It helps talking to someone. Counseling helped his career.,bad
+0,Helps others when they see somebody getting assistance dealing with their problems.,bad
+1,Helps others when they see somebody getting assistance dealing with their problems.,good
+2,Helps others when they see somebody getting assistance dealing with their problems.,bad
+0,Encouraged him to help others because he benefited from counseling,bad
+1,Encouraged him to help others because he benefited from counseling,good
+2,Encouraged him to help others because he benefited from counseling,bad
+0,You get to talk to someone about what you’re going through,bad
+1,You get to talk to someone about what you’re going through,good
+2,You get to talk to someone about what you’re going through,bad
+0,He sees it positively and thinks it can help lots of people,bad
+1,He sees it positively and thinks it can help lots of people,good
+2,He sees it positively and thinks it can help lots of people,good
+0,It helped his mental health,bad
+1,It helped his mental health,good
+2,It helped his mental health,good
+0,It continued in a positive direction,good
+1,It continued in a positive direction,bad
+2,It continued in a positive direction,good
+0,it helps you get pass some hard issues,bad
+1,it helps you get pass some hard issues,good
+2,it helps you get pass some hard issues,bad
+0,helped his career and also helped out other crew members,good
+1,helped his career and also helped out other crew members,bad
+2,helped his career and also helped out other crew members,bad

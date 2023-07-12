@@ -1,0 +1,254 @@
+role:system
+
+content:"The user provided a list of one or more \"answers\" to a tutoring question. The answers are provided in JSON format. You are a tutor who is evaluating if the answer is sufficient to show that the user knows a one or more \"concepts\" which will be labeled \"concept_1\" to \"concept_N\". For each answer you evaluate, you must also express how confident you are in your evaluation of how well the answer shows knowledge of each concept. You will also provide a brief justification."
+
+role:user
+
+content:{
+  "These are the concepts for this lesson.": {
+    "Concept 1": " Checks In: Reaches out to you on their own and asks how you're doing.",
+    "Concept 2": " Reliable: You can count on them, contact anytime, and they want to help even when it's inconvenient.",
+    "Concept 3": " Encouraging: Cheers you up after failures and celebrates your successes with you.",
+    "Concept 4": " Challenges You: Healthy accountability and real talk to push past your biases and limits.",
+    "Concept 5": " Problem Solving: Thinking through alternate solutions and action plans."
+  }
+}
+
+role:user
+
+content:{
+  "This is my answer for you to evaluate.": {
+    "answer_45": {
+      "Answer text": "you need somebody who really cares and wants to talk to you"
+    }
+  }
+}
+
+role:user
+
+content:{
+  "Please respond in the following format": {
+    "answer_N": {
+      "answer text": "string // State the text of the particular answer being classified.",
+      "concepts": {
+        "concept_N": {
+          "is_known": "string // true or false. If the input answer implies that the concept is known, the classification should be true. Otherwise it should be false.",
+          "confidence": "float // A 0 to 1 score indicating certainty that a classification is correct. Confidence scores closer to 1 represent higher certainty, and confidence scores closer to 0 represent lower certainty.",
+          "justification": "string // Why you believe the user answer is or is not sufficient to determine if they know the concepts."
+        }
+      }
+    }
+  }
+}
+
+role:user
+
+content:"Only respond with the JSON output in the exact format of the template and no other words or symbols. The output must be valid JSON. Check that the output is valid JSON. "
+
+role:user
+
+content:{
+  "Here are some examples that have already been labeled. Consider these to be ground truth examples. ": {
+    "answer_20": {
+      "Answer text": "Someone taking a phone call",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_28": {
+      "Answer text": "they care about you",
+      "concept_1": "true",
+      "concept_2": "false",
+      "concept_3": "true",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_52": {
+      "Answer text": "they need to be in your corner",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "true",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_61": {
+      "Answer text": "you can let them talk it through to you",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "true"
+    },
+    "answer_34": {
+      "Answer text": "they want to destroy you",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_49": {
+      "Answer text": "you need somebody to help you snap out of it, tell you something else",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "true",
+      "concept_5": "true"
+    },
+    "answer_50": {
+      "Answer text": "you can help me think of ways to solve it",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "true"
+    },
+    "answer_18": {
+      "Answer text": "somebody to give you some ideas",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "true"
+    },
+    "answer_58": {
+      "Answer text": "your friend needs to have the talk with you and tell you what you're really about",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "true",
+      "concept_5": "false"
+    },
+    "answer_23": {
+      "Answer text": "talk to push my limits",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "true",
+      "concept_5": "false"
+    },
+    "answer_4": {
+      "Answer text": "by challenging you",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "true",
+      "concept_5": "false"
+    },
+    "answer_5": {
+      "Answer text": "by not socializing",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_55": {
+      "Answer text": "They're being a regular person like a close friend",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_32": {
+      "Answer text": "they never let anything go",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_47": {
+      "Answer text": "they better be good to me be positive",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "true",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_7": {
+      "Answer text": "calliing somebody in the middle of the night",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_59": {
+      "Answer text": "they can call you out on your bullshit",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "true",
+      "concept_5": "false"
+    },
+    "answer_60": {
+      "Answer text": "calling me up",
+      "concept_1": "true",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_16": {
+      "Answer text": "i don't know",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_53": {
+      "Answer text": "want that steady ride or die frined",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_26": {
+      "Answer text": "They can check in with you and navigate change and challenges",
+      "concept_1": "true",
+      "concept_2": "false",
+      "concept_3": "true",
+      "concept_4": "true",
+      "concept_5": "true"
+    },
+    "answer_56": {
+      "Answer text": "you can get helped by people checking how you are doing, letting you call and cry at 4 AM, always trying to pick you up when you're down, giving you a big hug,",
+      "concept_1": "true",
+      "concept_2": "true",
+      "concept_3": "true",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_44": {
+      "Answer text": "you want somebody who is going to pick up that phone",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_41": {
+      "Answer text": "you're looking for someone with empathy",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "true",
+      "concept_4": "false",
+      "concept_5": "false"
+    },
+    "answer_29": {
+      "Answer text": "they check in with you and contact you",
+      "concept_1": "true",
+      "concept_2": "false",
+      "concept_3": "false",
+      "concept_4": "false",
+      "concept_5": "false"
+    }
+  }
+}
+

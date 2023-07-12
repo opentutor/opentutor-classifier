@@ -1,0 +1,51 @@
+exp_num,text,label
+0,it slightly reduces it,good
+1,it slightly reduces it,bad
+0,not attempt it later,good
+1,not attempt it later,bad
+0,It reduces,good
+1,It reduces,bad
+0,they lose the urge to commit suicide,good
+1,they lose the urge to commit suicide,bad
+0,theyre less likely because the suicidal urge is short,good
+1,theyre less likely because the suicidal urge is short,bad
+0,Yes their risk is reduced,good
+1,Yes their risk is reduced,bad
+0,They wont have the urge anymore,good
+1,They wont have the urge anymore,bad
+0,I see it would not make any difference.,bad
+1,I see it would not make any difference.,bad
+0,highly likely,bad
+1,highly likely,bad
+0,it increases?,bad
+1,it increases?,bad
+0,They will probably find another way,bad
+1,They will probably find another way,bad
+0,Lower,good
+1,Lower,bad
+0,They will stop and think about it,good
+1,They will stop and think about it,bad
+0,I think they might find another way,bad
+1,I think they might find another way,good
+0,more likely to attempt suicide later,bad
+1,more likely to attempt suicide later,good
+0,The is still a risk long term.,bad
+1,The is still a risk long term.,good
+0,does not affect,bad
+1,does not affect,bad
+0,I think it goes down slightly.,good
+1,I think it goes down slightly.,bad
+0,Equally likely,bad
+1,Equally likely,bad
+0,higher than most people,bad
+1,higher than most people,good
+0,Lessens it but they can still find another means.,good
+1,Lessens it but they can still find another means.,good
+0,Their risk is lower,good
+1,Their risk is lower,bad
+0,I think not,bad
+1,I think not,bad
+0,Greatly increases their risk,bad
+1,Greatly increases their risk,bad
+0,The risk would decrease.,good
+1,The risk would decrease.,bad

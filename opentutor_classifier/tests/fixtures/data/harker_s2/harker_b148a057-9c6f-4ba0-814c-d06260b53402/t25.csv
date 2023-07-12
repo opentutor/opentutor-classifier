@@ -1,0 +1,76 @@
+exp_num,text,label
+0,"You deal with your problems now, so they don't bother you later",bad
+1,"You deal with your problems now, so they don't bother you later",good
+2,"You deal with your problems now, so they don't bother you later",good
+0,He kept rising in rank,good
+1,He kept rising in rank,bad
+2,He kept rising in rank,bad
+0,His career went well,good
+1,His career went well,bad
+2,His career went well,bad
+0,Test,bad
+1,Test,bad
+2,Test,bad
+0,help deal with issues in his career,bad
+1,help deal with issues in his career,bad
+2,help deal with issues in his career,good
+0,he thinks that it is important,bad
+1,he thinks that it is important,good
+2,he thinks that it is important,bad
+0,"when they made him talk to someone, he realized how much it would help. now he wants to make sure other sailors talk about it and get help when they need it",bad
+1,"when they made him talk to someone, he realized how much it would help. now he wants to make sure other sailors talk about it and get help when they need it",good
+2,"when they made him talk to someone, he realized how much it would help. now he wants to make sure other sailors talk about it and get help when they need it",bad
+0,Because it resolves problems that will appear later,bad
+1,Because it resolves problems that will appear later,good
+2,Because it resolves problems that will appear later,good
+0,It is helpful and important,bad
+1,It is helpful and important,good
+2,It is helpful and important,bad
+0,It helps him to this day,bad
+1,It helps him to this day,bad
+2,It helps him to this day,good
+0,To help a\ person deal better and understand things better.,bad
+1,To help a\ person deal better and understand things better.,good
+2,To help a\ person deal better and understand things better.,good
+0,Encouraged him to help others because he benefited from counseling,bad
+1,Encouraged him to help others because he benefited from counseling,good
+2,Encouraged him to help others because he benefited from counseling,bad
+0,Getting a promotion,good
+1,Getting a promotion,bad
+2,Getting a promotion,bad
+0,it'sok,bad
+1,it'sok,bad
+2,it'sok,bad
+0,It made him feel better about himself.,bad
+1,It made him feel better about himself.,good
+2,It made him feel better about himself.,bad
+0,He thinks it's necessary and beneficial.,bad
+1,He thinks it's necessary and beneficial.,good
+2,He thinks it's necessary and beneficial.,bad
+0,it helps you get pass some hard issues,bad
+1,it helps you get pass some hard issues,good
+2,it helps you get pass some hard issues,bad
+0,Save your kife,bad
+1,Save your kife,bad
+2,Save your kife,bad
+0,he rose in rank and promotions,good
+1,he rose in rank and promotions,bad
+2,he rose in rank and promotions,bad
+0,he continued to advance in his career,good
+1,he continued to advance in his career,bad
+2,he continued to advance in his career,bad
+0,He sees it positively and thinks it can help lots of people,bad
+1,He sees it positively and thinks it can help lots of people,good
+2,He sees it positively and thinks it can help lots of people,good
+0,he did poorly,bad
+1,he did poorly,bad
+2,he did poorly,bad
+0,It lets you deal with problems that will become worse if they are not handled,bad
+1,It lets you deal with problems that will become worse if they are not handled,good
+2,It lets you deal with problems that will become worse if they are not handled,good
+0,He was promoted,good
+1,He was promoted,bad
+2,He was promoted,bad
+0,It really helped me long-term,bad
+1,It really helped me long-term,bad
+2,It really helped me long-term,good

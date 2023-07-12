@@ -1,0 +1,11 @@
+exp_num,text,label
+0,I'm not sure what you are asking.,bad
+1,I'm not sure what you are asking.,bad
+0,Current will not be allowed to flow through the circuit.,good
+1,Current will not be allowed to flow through the circuit.,bad
+0,circuit will be off,good
+1,circuit will be off,bad
+0,doesn't work,bad
+1,doesn't work,good
+0,the diode only lets the current go in one direction,good
+1,the diode only lets the current go in one direction,bad

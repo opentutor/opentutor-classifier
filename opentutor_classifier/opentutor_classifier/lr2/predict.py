@@ -239,6 +239,7 @@ class LRAnswerClassifier(AnswerClassifier):
     def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = preprocess_sentence(answer.input_sentence)
         m_by_e, conf = self.model_and_config
+        #expectations is a list of classes, where there is an expectation and the classifier. 
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
@@ -267,6 +268,7 @@ class LRAnswerClassifier(AnswerClassifier):
         self.batch_preload_evaluate_features(answer, index2word, conf, expectations)
 
         for exp in expectations:
+            #print(exp, "This is exp that is looped through expectations.", type(exp))
             exp_conf = conf.get_expectation(exp.expectation)
             sent_features = LRExpectationClassifier.calculate_features(
                 question_proc,

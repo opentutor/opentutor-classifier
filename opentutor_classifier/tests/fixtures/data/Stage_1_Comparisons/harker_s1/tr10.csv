@@ -1,0 +1,31 @@
+exp_num,text,label
+0,he thinks that it is important,bad
+1,he thinks that it is important,good
+2,he thinks that it is important,bad
+0,It benefited him,bad
+1,It benefited him,good
+2,It benefited him,bad
+0,uncomfortable,bad
+1,uncomfortable,bad
+2,uncomfortable,bad
+0,Getting a promotion,good
+1,Getting a promotion,bad
+2,Getting a promotion,bad
+0,help deal with issues in his career,bad
+1,help deal with issues in his career,bad
+2,help deal with issues in his career,good
+0,he did poorly,bad
+1,he did poorly,bad
+2,he did poorly,bad
+0,helped his career and also helped out other crew members,good
+1,helped his career and also helped out other crew members,bad
+2,helped his career and also helped out other crew members,bad
+0,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,bad
+1,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,good
+2,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,good
+0,He says mental health counseling as essential,bad
+1,He says mental health counseling as essential,good
+2,He says mental health counseling as essential,good
+0,It helped him to go on with his career and not to break down.,good
+1,It helped him to go on with his career and not to break down.,bad
+2,It helped him to go on with his career and not to break down.,good

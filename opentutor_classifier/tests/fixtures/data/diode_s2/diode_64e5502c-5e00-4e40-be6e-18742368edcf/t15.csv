@@ -1,0 +1,31 @@
+exp_num,text,label
+0,It turns off,good
+1,It turns off,bad
+0,The diode might burn out.,bad
+1,The diode might burn out.,good
+0,it explodes,bad
+1,it explodes,good
+0,I think that's all -,bad
+1,I think that's all -,bad
+0,It will not allow current to flow through it,good
+1,It will not allow current to flow through it,bad
+0,It redirects the current.,good
+1,It redirects the current.,bad
+0,I'm not sure what you are asking.,bad
+1,I'm not sure what you are asking.,bad
+0,It turns off.,good
+1,It turns off.,bad
+0,"It turns off, and blocks the voltage.",good
+1,"It turns off, and blocks the voltage.",bad
+0,current will not flow through the circuit and it will be off,good
+1,current will not flow through the circuit and it will be off,bad
+0,The diode is off.,good
+1,The diode is off.,bad
+0,The current won't flow and the diode will be off.,good
+1,The current won't flow and the diode will be off.,bad
+0,it will burn out,bad
+1,it will burn out,good
+0,The current is blocked,good
+1,The current is blocked,bad
+0,the voltage fries the diode,bad
+1,the voltage fries the diode,good

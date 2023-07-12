@@ -1,0 +1,52 @@
+{
+      "answer_39": {
+            "Answer text": "Current will not be allowed to flow through the circuit.",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_24": {
+            "Answer text": "the voltage changes direction",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_21": {
+            "Answer text": "Will not allow current to flow.",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_49": {
+            "Answer text": "the diode will not allow current to flow in the circuit",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_29": {
+            "Answer text": "the diode will allow current to flow in the opposite direction",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_34": {
+            "Answer text": "It redirects the current.",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_41": {
+            "Answer text": "they can burn out",
+            "concept_1": "false",
+            "concept_2": "true"
+      },
+      "answer_50": {
+            "Answer text": "The diode is off.",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_38": {
+            "Answer text": "it will conduct when you don't want it to and it won't conduct when you do want it to",
+            "concept_1": "true",
+            "concept_2": "false"
+      },
+      "answer_22": {
+            "Answer text": "the voltage fries the diode",
+            "concept_1": "false",
+            "concept_2": "true"
+      }
+}

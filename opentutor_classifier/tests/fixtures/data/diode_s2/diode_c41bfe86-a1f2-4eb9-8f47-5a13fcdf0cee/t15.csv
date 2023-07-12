@@ -1,0 +1,31 @@
+exp_num,text,label
+0,it explodes,bad
+1,it explodes,good
+0,it will be off,good
+1,it will be off,bad
+0,It turns off,good
+1,It turns off,bad
+0,It cannot go in the right direction,good
+1,It cannot go in the right direction,bad
+0,It stops,good
+1,It stops,bad
+0,I think that's all -,bad
+1,I think that's all -,bad
+0,increases a diode's resistance,bad
+1,increases a diode's resistance,bad
+0,The diode might burn out.,bad
+1,The diode might burn out.,good
+0,No current allowed to flow,good
+1,No current allowed to flow,bad
+0,It could burn off if the current is too high,bad
+1,It could burn off if the current is too high,good
+0,it can burn out,bad
+1,it can burn out,good
+0,it won't allow diode to flow and the circuit will be off,good
+1,it won't allow diode to flow and the circuit will be off,bad
+0,It will not allow current to flow through it,good
+1,It will not allow current to flow through it,bad
+0,diode is off,good
+1,diode is off,bad
+0,no current will flow until the electric field is so high that the diode breaks down,good
+1,no current will flow until the electric field is so high that the diode breaks down,good

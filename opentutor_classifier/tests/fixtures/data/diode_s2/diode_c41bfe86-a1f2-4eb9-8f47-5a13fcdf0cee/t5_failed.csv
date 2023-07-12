@@ -1,0 +1,11 @@
+exp_num,text,label
+0,it explodes,bad
+1,it explodes,good
+0,it will be off,good
+1,it will be off,bad
+0,It turns off,good
+1,It turns off,bad
+0,It cannot go in the right direction,good
+1,It cannot go in the right direction,bad
+0,It stops,good
+1,It stops,bad

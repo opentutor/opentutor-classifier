@@ -1,0 +1,51 @@
+exp_num,text,label
+0,they can call you out on your bullshit,bad
+1,they can call you out on your bullshit,bad
+2,they can call you out on your bullshit,bad
+3,they can call you out on your bullshit,good
+4,they can call you out on your bullshit,bad
+0,you need somebody with a third party view to go look at it from another side,bad
+1,you need somebody with a third party view to go look at it from another side,bad
+2,you need somebody with a third party view to go look at it from another side,bad
+3,you need somebody with a third party view to go look at it from another side,good
+4,you need somebody with a third party view to go look at it from another side,good
+0,you can let them talk it through to you,bad
+1,you can let them talk it through to you,bad
+2,you can let them talk it through to you,bad
+3,you can let them talk it through to you,bad
+4,you can let them talk it through to you,good
+0,you're looking for someone with empathy,bad
+1,you're looking for someone with empathy,bad
+2,you're looking for someone with empathy,good
+3,you're looking for someone with empathy,bad
+4,you're looking for someone with empathy,bad
+0,calliing somebody in the middle of the night,bad
+1,calliing somebody in the middle of the night,good
+2,calliing somebody in the middle of the night,bad
+3,calliing somebody in the middle of the night,bad
+4,calliing somebody in the middle of the night,bad
+0,They could be a friend who calls you and reaches out,good
+1,They could be a friend who calls you and reaches out,bad
+2,They could be a friend who calls you and reaches out,bad
+3,They could be a friend who calls you and reaches out,bad
+4,They could be a friend who calls you and reaches out,bad
+0,"people can give you money, they can give you a lot of hugs, they can call every week.  They can just solve all your problems",good
+1,"people can give you money, they can give you a lot of hugs, they can call every week.  They can just solve all your problems",bad
+2,"people can give you money, they can give you a lot of hugs, they can call every week.  They can just solve all your problems",good
+3,"people can give you money, they can give you a lot of hugs, they can call every week.  They can just solve all your problems",bad
+4,"people can give you money, they can give you a lot of hugs, they can call every week.  They can just solve all your problems",good
+0,they can shut their mouth,bad
+1,they can shut their mouth,bad
+2,they can shut their mouth,bad
+3,they can shut their mouth,bad
+4,they can shut their mouth,bad
+0,They can check in with you and navigate change and challenges,good
+1,They can check in with you and navigate change and challenges,bad
+2,They can check in with you and navigate change and challenges,good
+3,They can check in with you and navigate change and challenges,good
+4,They can check in with you and navigate change and challenges,good
+0,"checking in, they contact you",good
+1,"checking in, they contact you",bad
+2,"checking in, they contact you",bad
+3,"checking in, they contact you",bad
+4,"checking in, they contact you",bad

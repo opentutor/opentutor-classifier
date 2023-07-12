@@ -1,0 +1,76 @@
+exp_num,text,label
+0,You need someone to talk to,good
+1,You need someone to talk to,good
+2,You need someone to talk to,bad
+3,You need someone to talk to,bad
+4,You need someone to talk to,bad
+0,they better be good to me be positive,bad
+1,they better be good to me be positive,bad
+2,they better be good to me be positive,good
+3,they better be good to me be positive,bad
+4,they better be good to me be positive,bad
+0,asking about it,good
+1,asking about it,bad
+2,asking about it,bad
+3,asking about it,bad
+4,asking about it,bad
+0,you need somebody who really cares and wants to talk to you,good
+1,you need somebody who really cares and wants to talk to you,good
+2,you need somebody who really cares and wants to talk to you,good
+3,you need somebody who really cares and wants to talk to you,bad
+4,you need somebody who really cares and wants to talk to you,bad
+0,checks in,good
+1,checks in,bad
+2,checks in,bad
+3,checks in,bad
+4,checks in,bad
+0,Reliable,bad
+1,Reliable,good
+2,Reliable,bad
+3,Reliable,bad
+4,Reliable,bad
+0,they check in with you and contact you,good
+1,they check in with you and contact you,bad
+2,they check in with you and contact you,bad
+3,they check in with you and contact you,bad
+4,they check in with you and contact you,bad
+0,They can check in with you and navigate change and challenges,good
+1,They can check in with you and navigate change and challenges,bad
+2,They can check in with you and navigate change and challenges,good
+3,They can check in with you and navigate change and challenges,good
+4,They can check in with you and navigate change and challenges,good
+0,"checking in, they contact you",good
+1,"checking in, they contact you",bad
+2,"checking in, they contact you",bad
+3,"checking in, they contact you",bad
+4,"checking in, they contact you",bad
+0,somebody to give you some ideas,bad
+1,somebody to give you some ideas,bad
+2,somebody to give you some ideas,bad
+3,somebody to give you some ideas,bad
+4,somebody to give you some ideas,good
+0,they can shut their mouth,bad
+1,they can shut their mouth,bad
+2,they can shut their mouth,bad
+3,they can shut their mouth,bad
+4,they can shut their mouth,bad
+0,they are checking in,good
+1,they are checking in,bad
+2,they are checking in,bad
+3,they are checking in,bad
+4,they are checking in,bad
+0,youre looking for someone with empathy,bad
+1,youre looking for someone with empathy,bad
+2,youre looking for someone with empathy,good
+3,youre looking for someone with empathy,bad
+4,youre looking for someone with empathy,bad
+0,they care about you,good
+1,they care about you,bad
+2,they care about you,good
+3,they care about you,bad
+4,they care about you,bad
+0,working the problem,bad
+1,working the problem,bad
+2,working the problem,bad
+3,working the problem,bad
+4,working the problem,good

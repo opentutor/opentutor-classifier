@@ -1,0 +1,61 @@
+exp_num,text,label
+0,it went a different direction,bad
+1,it went a different direction,bad
+2,it went a different direction,bad
+0,It helps talking to someone. Counseling helped his career.,good
+1,It helps talking to someone. Counseling helped his career.,good
+2,It helps talking to someone. Counseling helped his career.,bad
+0,Helps others when they see somebody getting assistance dealing with their problems.,bad
+1,Helps others when they see somebody getting assistance dealing with their problems.,good
+2,Helps others when they see somebody getting assistance dealing with their problems.,bad
+0,Encouraged him to help others because he benefited from counseling,bad
+1,Encouraged him to help others because he benefited from counseling,good
+2,Encouraged him to help others because he benefited from counseling,bad
+0,You get to talk to someone about what you’re going through,bad
+1,You get to talk to someone about what you’re going through,good
+2,You get to talk to someone about what you’re going through,bad
+0,He sees it positively and thinks it can help lots of people,bad
+1,He sees it positively and thinks it can help lots of people,good
+2,He sees it positively and thinks it can help lots of people,good
+0,It helped his mental health,bad
+1,It helped his mental health,good
+2,It helped his mental health,good
+0,It continued in a positive direction,good
+1,It continued in a positive direction,bad
+2,It continued in a positive direction,good
+0,it helps you get pass some hard issues,bad
+1,it helps you get pass some hard issues,good
+2,it helps you get pass some hard issues,bad
+0,helped his career and also helped out other crew members,good
+1,helped his career and also helped out other crew members,bad
+2,helped his career and also helped out other crew members,bad
+0,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,bad
+1,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,good
+2,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,good
+0,He continued with his career,good
+1,He continued with his career,bad
+2,He continued with his career,bad
+0,He was promoted,good
+1,He was promoted,bad
+2,He was promoted,bad
+0,Test,bad
+1,Test,bad
+2,Test,bad
+0,"You deal with your problems now, so they don't bother you later",bad
+1,"You deal with your problems now, so they don't bother you later",good
+2,"You deal with your problems now, so they don't bother you later",good
+0,It can help deal with issue in the future.,bad
+1,It can help deal with issue in the future.,bad
+2,It can help deal with issue in the future.,good
+0,It benefited him,bad
+1,It benefited him,good
+2,It benefited him,bad
+0,"he thinks that mental health treatment should be for any sailor who needs it, and we should talk about it",bad
+1,"he thinks that mental health treatment should be for any sailor who needs it, and we should talk about it",good
+2,"he thinks that mental health treatment should be for any sailor who needs it, and we should talk about it",bad
+0,because you won't carry your pain with you like a burden,bad
+1,because you won't carry your pain with you like a burden,good
+2,because you won't carry your pain with you like a burden,good
+0,he did poorly,bad
+1,he did poorly,bad
+2,he did poorly,bad

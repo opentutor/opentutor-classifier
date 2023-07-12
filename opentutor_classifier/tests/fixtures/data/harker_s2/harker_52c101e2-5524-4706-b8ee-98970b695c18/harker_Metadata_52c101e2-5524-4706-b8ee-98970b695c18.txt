@@ -1,0 +1,74 @@
+{
+      "TRUE": {
+            "answer_38": {
+                  "Answer text": "It benefited him",
+                  "concept_1": "false",
+                  "concept_2": "true",
+                  "concept_3": "false"
+            },
+            "answer_16": {
+                  "Answer text": "Save your kife",
+                  "concept_1": "false",
+                  "concept_2": "false",
+                  "concept_3": "false"
+            },
+            "answer_45": {
+                  "Answer text": "It lets you deal with problems that will become worse if they are not handled",
+                  "concept_1": "false",
+                  "concept_2": "true",
+                  "concept_3": "true"
+            },
+            "answer_4": {
+                  "Answer text": "Getting a promotion",
+                  "concept_1": "true",
+                  "concept_2": "false",
+                  "concept_3": "false"
+            },
+            "answer_43": {
+                  "Answer text": "It can help deal with issue in the future.",
+                  "concept_1": "false",
+                  "concept_2": "false",
+                  "concept_3": "true"
+            },
+            "answer_31": {
+                  "Answer text": "it affected his career positively and he feels grateful for it",
+                  "concept_1": "true",
+                  "concept_2": "true",
+                  "concept_3": "true"
+            },
+            "answer_13": {
+                  "Answer text": "It is helpful and important",
+                  "concept_1": "false",
+                  "concept_2": "true",
+                  "concept_3": "false"
+            },
+            "answer_17": {
+                  "Answer text": "he kept rising in the ranks and he is a corporal",
+                  "concept_1": "true",
+                  "concept_2": "false",
+                  "concept_3": "false"
+            },
+            "answer_12": {
+                  "Answer text": "he was healthier",
+                  "concept_1": "false",
+                  "concept_2": "false",
+                  "concept_3": "true"
+            },
+            "answer_29": {
+                  "Answer text": "He continued with his career",
+                  "concept_1": "true",
+                  "concept_2": "false",
+                  "concept_3": "false"
+            }
+      },
+      "dialog": "harker",
+      "stamp": "52c101e2-5524-4706-b8ee-98970b695c18",
+      "prompt": "API_PT_Revised.txt",
+      "batch": 10,
+      "concept_count": [
+            1,
+            2,
+            3
+      ],
+      "n_shot": 25
+}

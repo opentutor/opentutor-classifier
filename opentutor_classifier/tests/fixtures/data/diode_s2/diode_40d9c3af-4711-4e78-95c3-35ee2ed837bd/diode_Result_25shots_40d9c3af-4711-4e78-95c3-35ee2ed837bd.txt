@@ -1,0 +1,153 @@
+content:{
+  "answer_12": {
+    "answer text": "it explodes",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything about diodes not conducting current in reverse bias, which is the definition of an off switch. Therefore, it is unlikely that the user knows this concept."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer mentions that the diode explodes, but does not mention anything about breakdown mode. Therefore, it is unlikely that the user knows this concept."
+      }
+    }
+  },
+  "answer_45": {
+    "answer text": "nothing",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention diodes or their behavior in any way."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention diodes or their behavior in any way."
+      }
+    }
+  },
+  "answer_46": {
+    "answer text": "I'm not sure what you are asking.",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 1.0,
+        "justification": "The answer does not mention any of the concepts, so it cannot be classified as showing knowledge or lack of knowledge."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 1.0,
+        "justification": "The answer does not mention any of the concepts, so it cannot be classified as showing knowledge or lack of knowledge."
+      }
+    }
+  },
+  "answer_40": {
+    "answer text": "conduct current in reverse direction",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer correctly states that current can flow in reverse direction, which is a characteristic of a diode in reverse bias. This shows knowledge of Concept 1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about the diode going into breakdown mode, so it is unclear if the user knows about this concept. Confidence is moderate."
+      }
+    }
+  },
+  "answer_5": {
+    "answer text": "It turns off",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer mentions that the diode turns off, which is consistent with Concept 1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about the diode being damaged, so it is not clear if the user knows Concept 2."
+      }
+    }
+  },
+  "answer_14": {
+    "answer text": "the circuit is off",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer mentions that the circuit is off, which implies that the user knows that the diode is acting like an \"off\" switch."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about the diode being damaged by going into breakdown mode, so it is uncertain whether the user knows this concept or not."
+      }
+    }
+  },
+  "answer_32": {
+    "answer text": "turns off",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer explicitly states that the diode turns off, which is consistent with Concept 1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "There is no mention of the diode being damaged by going into breakdown mode, so it is unclear whether the user knows Concept 2."
+      }
+    }
+  },
+  "answer_36": {
+    "answer text": "The diode might burn out.",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.6,
+        "justification": "The answer mentions burning out, which is related to the concept of diode breakdown. However, it does not directly state that the user knows that normal diodes do not conduct current in reverse bias."
+      },
+      "concept_2": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer mentions the possibility of the diode burning out, which is related to the concept of diode breakdown. This indicates that the user knows that the diode will be damaged by going into breakdown mode."
+      }
+    }
+  },
+  "answer_18": {
+    "answer text": "It will be off",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer directly states that the diode will be off, which is the same as saying it does not conduct current in reverse bias. This shows knowledge of concept_1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about the diode being damaged by going into breakdown mode. Therefore, there is not enough evidence to show knowledge of concept_2."
+      }
+    }
+  },
+  "answer_38": {
+    "answer text": "it will conduct when you don't want it to and it won't conduct when you do want it to",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.6,
+        "justification": "The answer mentions conduction, but it is not clear if the user understands the concept of reverse bias and the diode acting like an \"off\" switch."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer mentions the possibility of unwanted conduction, but it is not clear if the user understands the concept of breakdown mode and the potential damage to the diode."
+      }
+    }
+  }
+}
+

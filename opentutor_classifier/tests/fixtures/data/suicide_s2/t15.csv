@@ -1,0 +1,31 @@
+exp_num,text,label
+0,Lowers it,good
+1,Lowers it,bad
+0,they are much less likely to commit suicide,good
+1,they are much less likely to commit suicide,bad
+0,it narrows their risk,good
+1,it narrows their risk,bad
+0,theyre still more likely as they have suicidal ideation,bad
+1,theyre still more likely as they have suicidal ideation,good
+0,It gives them more time to think about what their \about to do. Maybe regret.,good
+1,It gives them more time to think about what their \about to do. Maybe regret.,bad
+0,more likely,bad
+1,more likely,good
+0,same likelihood,bad
+1,same likelihood,bad
+0,Still more likely to commit suicide than the general public,bad
+1,Still more likely to commit suicide than the general public,good
+0,higher than most people,bad
+1,higher than most people,good
+0,it lowers,good
+1,it lowers,bad
+0,I think it does change but I do not know specifically how.,bad
+1,I think it does change but I do not know specifically how.,bad
+0,more at risk,bad
+1,more at risk,good
+0,lower,good
+1,lower,bad
+0,lowers it,good
+1,lowers it,bad
+0,I would say they are still more likely to commit suicide and they would still need help from a professional and the people around them.,bad
+1,I would say they are still more likely to commit suicide and they would still need help from a professional and the people around them.,good

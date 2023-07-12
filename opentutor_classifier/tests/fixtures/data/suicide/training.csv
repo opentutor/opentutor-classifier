@@ -1,47 +1,51 @@
 exp_num,text,label
-0,they will have a lower risk than before and will probably not commit suicide,Good
-1,they will have a lower risk than before and will probably not commit suicide,Bad
-0,They will have a higher risk,Bad
-0,"They will probably find another way, yah",Bad
-1,"They will probably find another way, yah",Bad
-0,Their risk is the same,Bad
-1,Their risk is the same,Bad
-0,They will be more likely to commit suicide,Bad
-1,They will be more likely to commit suicide,Good
-0,"compared to other people, they'll be more likely to suicidie",Bad
-1,"compared to other people, they'll be more likely to suicidie",Good
-0,They'll be higher risk to commit suicide than other people,Bad
-1,They'll be higher risk to commit suicide than other people,Good
-0,They'll probably find another way,Bad
-1,They'll probably find another way,Bad
-0,They'll be less likely to commit suicide than before,Good
-1,They'll be less likely to commit suicide than before,Bad
-0,"If they lose their gun, they're less likely to commit suicide",Good
-1,"If they lose their gun, they're less likely to commit suicide",Bad
-0,"they're still more likely, I think",Bad
-1,"they're still more likely, I think",Good
-1,they're more likely than me,Good
-0,it doesn't really,Bad
-1,it doesn't really,Bad
-0,"they have the same risk, you can't change it. it's genetic.",Bad
-1,"they have the same risk, you can't change it. it's genetic.",Bad
-0,"their risk is lower than it was before, I'd bet",Good
-1,"their risk is lower than it was before, I'd bet",Bad
-0,they're less likely now,Good
-1,they're less likely now,Bad
-1,"probably less likely than other people, who have means to commit suicide",Bad
-0,they're less likely to commit suicide than before,Good
-0,"Yes, they're less likely to have a suicide attempt",Good
-1,"Yes, they're less likely to have a suicide attempt",Bad
-0,Long term they probably won't commit suicide,Good
-1,Long term they probably won't commit suicide,Bad
-0,their risk goes down,Good
-0,They're more likely to commit suicide still,Bad
-1,They're more likely to commit suicide still,Good
-0,they're still a bit more likely than others,Bad
-1,they're still a bit more likely than others,Good
-0,It is less,Good
-1,It is less,Bad
-0,more likely even without a gun,Bad
-1,more likely even without a gun,Good
-
+0,increases long term risk,bad
+1,increases long term risk,bad
+0,It gives them more time to think about what their \about to do. Maybe regret.,good
+1,It gives them more time to think about what their \about to do. Maybe regret.,bad
+0,They're less likely to commit suicide.,good
+1,They're less likely to commit suicide.,bad
+0,lowers it,good
+1,lowers it,bad
+0,they may not have anything else to use,bad
+1,they may not have anything else to use,bad
+0,it lowers,good
+1,it lowers,bad
+0,I don’t know,bad
+1,I don’t know,bad
+0,risk decreases,good
+1,risk decreases,bad
+0,Maybe less given they have more time to think about it.,good
+1,Maybe less given they have more time to think about it.,bad
+0,They won't have the urge anymore,good
+1,They won't have the urge anymore,bad
+0,Still more likely to commit suicide than the general public,bad
+1,Still more likely to commit suicide than the general public,good
+0,Not having a gun lowers their risk of suicide,good
+1,Not having a gun lowers their risk of suicide,bad
+0,Equally likely,bad
+1,Equally likely,bad
+0,"Much less likely, because suicidal urges are very short",good
+1,"Much less likely, because suicidal urges are very short",bad
+0,Lower,good
+1,Lower,bad
+0,Their risk lessens but will not change.,bad
+1,Their risk lessens but will not change.,bad
+0,It goes down.,good
+1,It goes down.,bad
+0,Find another way,bad
+1,Find another way,bad
+0,They are less likely to commit suicide.,good
+1,They are less likely to commit suicide.,bad
+0,less likely if their gun is taken away because urges last less than hour,good
+1,less likely if their gun is taken away because urges last less than hour,bad
+0,lower,good
+1,lower,bad
+0,It decreases their risk of suicide in the long run,good
+1,It decreases their risk of suicide in the long run,bad
+0,The is still a risk long term.,bad
+1,The is still a risk long term.,good
+0,find another way,bad
+1,find another way,bad
+0,Within a hour gets higher,bad
+1,Within a hour gets higher,bad

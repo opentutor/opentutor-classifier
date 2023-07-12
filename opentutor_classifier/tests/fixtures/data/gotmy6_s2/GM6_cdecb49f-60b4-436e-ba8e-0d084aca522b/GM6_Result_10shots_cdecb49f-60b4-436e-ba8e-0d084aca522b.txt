@@ -1,0 +1,303 @@
+content:{
+  "answer_10": {
+    "answer text": "challenging you",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer text does not mention anything about reaching out or asking how someone is doing, which is the definition of concept_1. Therefore, it is likely that the user does not know concept_1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer text does not mention anything about being reliable or being available to help, which is the definition of concept_2. Therefore, it is likely that the user does not know concept_2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer text does not mention anything about cheering someone up after failures or celebrating successes, which is the definition of concept_3. Therefore, it is likely that the user does not know concept_3."
+      },
+      "concept_4": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer text mentions 'challenging you', which is the definition of concept_4. Therefore, it is likely that the user knows concept_4."
+      },
+      "concept_5": {
+        "is_known": "false",
+        "confidence": 0.6,
+        "justification": "The answer text does not mention anything about thinking through alternate solutions or action plans, which is the definition of concept_5. Therefore, it is likely that the user does not know concept_5."
+      }
+    }
+  },
+  "answer_25": {
+    "answer text": "they buy you a drink when you're down",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention anything about reaching out to the user, so it is unlikely that the user knows Concept 1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything about being reliable or being available to help, so it is unlikely that the user knows Concept 2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention anything about encouraging the user after failures or celebrating successes, so it is unlikely that the user knows Concept 3."
+      },
+      "concept_4": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention anything about healthy accountability or pushing past biases and limits, so it is unlikely that the user knows Concept 4."
+      },
+      "concept_5": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about thinking through alternate solutions or action plans, so it is unlikely that the user knows Concept 5."
+      }
+    }
+  },
+  "answer_45": {
+    "answer text": "you need somebody who really cares and wants to talk to you",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.7,
+        "justification": "The answer mentions the need for someone who cares, which is a characteristic of concept_1. However, the answer is not explicit in stating that the user knows this concept."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention reliability, which is a characteristic of concept_2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention encouragement, which is a characteristic of concept_3."
+      },
+      "concept_4": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention challenging the user, which is a characteristic of concept_4."
+      },
+      "concept_5": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention problem solving, which is a characteristic of concept_5."
+      }
+    }
+  },
+  "answer_6": {
+    "answer text": "by reaching out",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer mentions 'reaching out', which is similar to the concept of 'Checks In: Reaches out to you on their own and asks how you're doing.' However, the answer is not a complete definition of the concept, so there is some uncertainty."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about being reliable, so it is unlikely that the user knows this concept."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about being encouraging, so it is unlikely that the user knows this concept."
+      },
+      "concept_4": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about challenging you, so it is unlikely that the user knows this concept."
+      },
+      "concept_5": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about problem solving, so it is unlikely that the user knows this concept."
+      }
+    }
+  },
+  "answer_8": {
+    "answer text": "calling the person",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not imply that the person is reaching out on their own and asking how you're doing, which is the definition of Checks In."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not imply that the person is reliable, which is defined as someone you can count on, contact anytime, and who wants to help even when it's inconvenient."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not imply that the person is encouraging, which is defined as someone who cheers you up after failures and celebrates your successes with you."
+      },
+      "concept_4": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not imply that the person challenges you with healthy accountability and real talk to push past your biases and limits."
+      },
+      "concept_5": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not imply that the person engages in problem solving, which is defined as thinking through alternate solutions and action plans."
+      }
+    }
+  },
+  "answer_40": {
+    "answer text": "You need to talk with a professional",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention anything about reaching out to the tutor or checking in with them, which is what concept 1 is about."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything about being reliable or being available to help, which is what concept 2 is about."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about encouraging or celebrating successes, which is what concept 3 is about."
+      },
+      "concept_4": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention anything about healthy accountability or pushing past biases and limits, which is what concept 4 is about."
+      },
+      "concept_5": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention anything about problem solving or thinking through alternate solutions, which is what concept 5 is about."
+      }
+    }
+  },
+  "answer_35": {
+    "answer text": "they're sad",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention anything about reaching out or checking in, which are the key components of Concept 1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything about being reliable or being available to help, which are the key components of Concept 2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention anything about encouraging or celebrating successes, which are the key components of Concept 3."
+      },
+      "concept_4": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention anything about challenging biases or pushing past limits, which are the key components of Concept 4."
+      },
+      "concept_5": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about problem solving or thinking through alternate solutions, which are the key components of Concept 5. However, the answer does imply that the person may need help with finding a solution."
+      }
+    }
+  },
+  "answer_30": {
+    "answer text": "They could be a friend who calls you and reaches out",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.7,
+        "justification": "The answer mentions a friend reaching out, which implies that they are checking in on you. This aligns with the definition of Concept 1."
+      },
+      "concept_2": {
+        "is_known": "true",
+        "confidence": 0.5,
+        "justification": "The answer mentions a friend calling you, which implies that they are reliable. However, the answer does not provide enough information to be certain about this concept."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention anything about encouraging or celebrating successes, so it is unlikely that the user knows this concept."
+      },
+      "concept_4": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention anything about healthy accountability or pushing past biases and limits, so it is unlikely that the user knows this concept."
+      },
+      "concept_5": {
+        "is_known": "false",
+        "confidence": 0.3,
+        "justification": "The answer does not mention anything about problem solving or thinking through alternate solutions, so it is unlikely that the user knows this concept."
+      }
+    }
+  },
+  "answer_14": {
+    "answer text": "checks in",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer text 'checks in' matches the definition of 'Concept 1: Checks In: Reaches out to you on their own and asks how you're doing.' with high confidence."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer text 'checks in' does not match the definition of 'Concept 2: Reliable: You can count on them, contact anytime, and they want to help even when it's inconvenient.' with moderate confidence."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer text 'checks in' does not match the definition of 'Concept 3: Encouraging: Cheers you up after failures and celebrates your successes with you.' with moderate confidence."
+      },
+      "concept_4": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer text 'checks in' does not match the definition of 'Concept 4: Challenges You: Healthy accountability and real talk to push past your biases and limits.' with moderate confidence."
+      },
+      "concept_5": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer text 'checks in' does not match the definition of 'Concept 5: Problem Solving: Thinking through alternate solutions and action plans.' with moderate confidence."
+      }
+    }
+  },
+  "answer_31": {
+    "answer text": "they kick you when you're down",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not imply that the person is reaching out to ask how you're doing, which is the definition of concept_1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not imply that the person is reliable, which is the definition of concept_2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not imply that the person is encouraging, which is the definition of concept_3."
+      },
+      "concept_4": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer implies the opposite of concept_4, which is healthy accountability and real talk to push past your biases and limits."
+      },
+      "concept_5": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not imply that the person is thinking through alternate solutions and action plans, which is the definition of concept_5."
+      }
+    }
+  }
+}
+

@@ -1,0 +1,16 @@
+exp_num,text,label
+0,"You deal with your problems now, so they don't bother you later",bad
+1,"You deal with your problems now, so they don't bother you later",good
+2,"You deal with your problems now, so they don't bother you later",good
+0,He kept rising in rank,good
+1,He kept rising in rank,bad
+2,He kept rising in rank,bad
+0,His career went well,good
+1,His career went well,bad
+2,His career went well,bad
+0,Test,bad
+1,Test,bad
+2,Test,bad
+0,help deal with issues in his career,bad
+1,help deal with issues in his career,bad
+2,help deal with issues in his career,good

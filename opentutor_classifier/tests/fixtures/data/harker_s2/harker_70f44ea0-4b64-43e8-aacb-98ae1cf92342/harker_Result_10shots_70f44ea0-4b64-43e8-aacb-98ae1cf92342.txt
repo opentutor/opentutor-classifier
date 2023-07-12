@@ -1,0 +1,203 @@
+content:{
+  "answer_17": {
+    "answer text": "he kept rising in the ranks and he is a corporal",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer mentions that the person continued to advance in their career, which implies knowledge of Concept 1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about seeing a counselor, which makes it less likely that the user knows Concept 2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about being at full strength to succeed and advance better, which makes it less likely that the user knows Concept 3."
+      }
+    }
+  },
+  "answer_36": {
+    "answer text": "it went a different direction",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything related to advancing in one's career, which is the topic of concept_1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.6,
+        "justification": "The answer does not mention anything related to seeing a counselor, which is the topic of concept_2. However, the answer is somewhat related to the idea of things going in a different direction, which could be interpreted as a loose connection to the concept."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything related to being at full strength to succeed and advance better, which is the topic of concept_3."
+      }
+    }
+  },
+  "answer_46": {
+    "answer text": "he thinks that mental health treatment should be for any sailor who needs it, and we should talk about it",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything about career advancement, which is the focus of concept_1."
+      },
+      "concept_2": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer mentions mental health treatment and the importance of talking about it, which aligns with the focus of concept_2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about being at full strength to succeed and advance better, which is the focus of concept_3."
+      }
+    }
+  },
+  "answer_20": {
+    "answer text": "You get to talk to someone about what you\u2019re going through",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything about career advancement, which is the focus of concept_1."
+      },
+      "concept_2": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer mentions talking to someone, which is related to seeing a counselor, the focus of concept_2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about being at full strength to succeed and advance better, which is the focus of concept_3."
+      }
+    }
+  },
+  "answer_6": {
+    "answer text": "He was promoted",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.7,
+        "justification": "The answer implies that the person advanced in their career, which is concept_1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention seeing a counselor, which is concept_2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention being at full strength to succeed and advance better, which is concept_3."
+      }
+    }
+  },
+  "answer_11": {
+    "answer text": "he rose in rank and promotions",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer directly mentions the subject's career advancement, which is the focus of concept_1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "While the answer mentions career advancement, it does not directly relate to the importance of seeing a counselor, which is the focus of concept_2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not relate to the concept of being at full strength to succeed and advance better, which is the focus of concept_3."
+      }
+    }
+  },
+  "answer_9": {
+    "answer text": "helped his career and also helped out other crew members",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.7,
+        "justification": "The answer mentions that the person's career was helped, which implies knowledge of the concept of career advancement."
+      },
+      "concept_2": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer mentions that other crew members were helped, which implies knowledge of the concept of helping others."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.4,
+        "justification": "The answer does not mention anything about being at full strength to succeed and advance better, so it is unlikely that the user knows this concept."
+      }
+    }
+  },
+  "answer_40": {
+    "answer text": "It helps him to this day",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention any career advancement, so it is unlikely that the user knows Concept 1 with high confidence. However, there is a small chance that the user may have indirectly learned about career advancement through the lesson, so the confidence score is not zero."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not directly mention seeing a counselor, but it does imply that seeking help can have long-term benefits. Therefore, it is possible that the user knows Concept 2 with some confidence."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything about being at full strength to succeed and advance better, so it is unlikely that the user knows Concept 3 with high confidence. However, there is a small chance that the user may have indirectly learned about this concept through the lesson, so the confidence score is not zero."
+      }
+    }
+  },
+  "answer_18": {
+    "answer text": "Helps others when they see somebody getting assistance dealing with their problems.",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything about career advancement, which is the focus of concept_1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer mentions helping others deal with their problems, which is related to seeking counseling, but it does not explicitly mention the importance of counseling as in concept_2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about being at full strength to succeed and advance better, which is the focus of concept_3."
+      }
+    }
+  },
+  "answer_24": {
+    "answer text": "It really helped me long-term",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything about career advancement, so it is unlikely that the user knows Concept 1."
+      },
+      "concept_2": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer mentions that the counseling helped the user long-term, which implies that they understand the importance of seeking help. Therefore, it is likely that the user knows Concept 2."
+      },
+      "concept_3": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about being at full strength to succeed and advance better, so it is unlikely that the user knows Concept 3."
+      }
+    }
+  }
+}
+

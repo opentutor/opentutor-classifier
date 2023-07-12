@@ -1,0 +1,41 @@
+exp_num,text,label
+0,I'm not sure what you are asking.,bad
+1,I'm not sure what you are asking.,bad
+0,Current will not be allowed to flow through the circuit.,good
+1,Current will not be allowed to flow through the circuit.,bad
+0,circuit will be off,good
+1,circuit will be off,bad
+0,doesn't work,bad
+1,doesn't work,good
+0,the diode only lets the current go in one direction,good
+1,the diode only lets the current go in one direction,bad
+0,"yes, explain it",bad
+1,"yes, explain it",bad
+0,The current won't flow and the diode will be off.,good
+1,The current won't flow and the diode will be off.,bad
+0,It won't work.,bad
+1,It won't work.,bad
+0,I don't know,bad
+1,I don't know,bad
+0,"if the current is small enough, it'll just block the current. If there is too much current, it'll burn out the diode",good
+1,"if the current is small enough, it'll just block the current. If there is too much current, it'll burn out the diode",good
+0,It turns off,good
+1,It turns off,bad
+0,it can burn out,bad
+1,it can burn out,good
+0,It could burn off if the current is too high,bad
+1,It could burn off if the current is too high,good
+0,It turns off.,good
+1,It turns off.,bad
+0,It redirects the current.,good
+1,It redirects the current.,bad
+0,turns off,good
+1,turns off,bad
+0,the diode will not allow current to flow in the circuit,good
+1,the diode will not allow current to flow in the circuit,bad
+0,it explodes,bad
+1,it explodes,good
+0,it will burn out,bad
+1,it will burn out,good
+0,Diode will be off,good
+1,Diode will be off,bad

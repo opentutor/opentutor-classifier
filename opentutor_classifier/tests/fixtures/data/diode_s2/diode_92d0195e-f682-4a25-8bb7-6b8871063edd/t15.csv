@@ -1,0 +1,31 @@
+exp_num,text,label
+0,doesn't work,bad
+1,doesn't work,good
+0,I'm not sure what you are asking.,bad
+1,I'm not sure what you are asking.,bad
+0,"if the current is small enough, it'll just block the current. If there is too much current, it'll burn out the diode",good
+1,"if the current is small enough, it'll just block the current. If there is too much current, it'll burn out the diode",good
+0,It stops,good
+1,It stops,bad
+0,It will be off,good
+1,It will be off,bad
+0,it will burn out,bad
+1,it will burn out,good
+0,it won't allow diode to flow and the circuit will be off,good
+1,it won't allow diode to flow and the circuit will be off,bad
+0,The diode prevents the current from flowing or burning out the diode,good
+1,The diode prevents the current from flowing or burning out the diode,good
+0,circuit will be off,good
+1,circuit will be off,bad
+0,the diode only lets the current go in one direction,good
+1,the diode only lets the current go in one direction,bad
+0,Current will not flow in a circuit,good
+1,Current will not flow in a circuit,bad
+0,it can burn out,bad
+1,it can burn out,good
+0,It will not allow current to flow through it,good
+1,It will not allow current to flow through it,bad
+0,"yes, explain it",bad
+1,"yes, explain it",bad
+0,the circuit is off,good
+1,the circuit is off,bad

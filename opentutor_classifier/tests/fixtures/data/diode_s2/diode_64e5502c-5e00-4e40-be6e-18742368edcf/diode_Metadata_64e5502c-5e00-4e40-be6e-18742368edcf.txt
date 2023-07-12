@@ -1,0 +1,63 @@
+{
+      "TRUE": {
+            "answer_25": {
+                  "Answer text": "Diode will be off",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_23": {
+                  "Answer text": "Current will not flow in a circuit",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_10": {
+                  "Answer text": "it burn out",
+                  "concept_1": "false",
+                  "concept_2": "true"
+            },
+            "answer_33": {
+                  "Answer text": "diode is off",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_24": {
+                  "Answer text": "the voltage changes direction",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_39": {
+                  "Answer text": "Current will not be allowed to flow through the circuit.",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_37": {
+                  "Answer text": "It won't work.",
+                  "concept_1": "false",
+                  "concept_2": "false"
+            },
+            "answer_9": {
+                  "Answer text": "circuit will be off",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_48": {
+                  "Answer text": "the diode only lets the current go in one direction",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_2": {
+                  "Answer text": "I don't know",
+                  "concept_1": "false",
+                  "concept_2": "false"
+            }
+      },
+      "dialog": "diode",
+      "stamp": "64e5502c-5e00-4e40-be6e-18742368edcf",
+      "prompt": "API_PT_Revised.txt",
+      "batch": 10,
+      "concept_count": [
+            1,
+            2
+      ],
+      "n_shot": 25
+}

@@ -1,0 +1,26 @@
+exp_num,text,label
+0,asking about it,good
+1,asking about it,bad
+2,asking about it,bad
+3,asking about it,bad
+4,asking about it,bad
+0,your friend needs to have the talk with you and tell you what youre really about,bad
+1,your friend needs to have the talk with you and tell you what youre really about,bad
+2,your friend needs to have the talk with you and tell you what youre really about,bad
+3,your friend needs to have the talk with you and tell you what youre really about,good
+4,your friend needs to have the talk with you and tell you what youre really about,bad
+0,urgent support,bad
+1,urgent support,good
+2,urgent support,bad
+3,urgent support,bad
+4,urgent support,bad
+0,you want somebody who is going to pick up that phone,bad
+1,you want somebody who is going to pick up that phone,good
+2,you want somebody who is going to pick up that phone,bad
+3,you want somebody who is going to pick up that phone,bad
+4,you want somebody who is going to pick up that phone,bad
+0,They could be a friend who calls you and reaches out,good
+1,They could be a friend who calls you and reaches out,bad
+2,They could be a friend who calls you and reaches out,bad
+3,They could be a friend who calls you and reaches out,bad
+4,They could be a friend who calls you and reaches out,bad

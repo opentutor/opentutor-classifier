@@ -1,0 +1,27 @@
+##
+## This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved. 
+## Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
+##
+## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
+##
+question: "How did seeking out mental health affect commander Harker's life and career?"
+expectations:
+  - expectationId: "0"
+    ideal: He continued to advance in his career, eventually rising to Acting Secretary of the Navy.
+    features:        
+      bad: []
+      good:        
+        - "(promot|advance|climb|rise|rising|up|reputation|top|high|excel|succeed|success|ahead|progress|\\buo\\b)|(not.*(hurt|harm|stop))|(secretary|secnav|(\\bsec\\b)|head|chief|leader|big|DC|Washington|career)"
+  - expectationId: "1"
+    ideal: Even though he didn't want to talk about it, seeing a counselor was \"the most important port call I ever had\"
+    features: 
+      bad: []
+      good:
+        - "(realize|significant|important|essential|critical|vital|central|pivot|most|positive|health|heal|well|help|benefit|encourage|everyone|should|other|need|care|help|beneficial|better|good)|(talk|process|save|saving|counsel|deal|therapy|handle|trauma|initiative|feel|needed|cope)|port|oort"
+  - expectationId: "2"
+    ideal: By treating your mental health issues, you can be at full strength to succeed and advance better.
+    features:
+      bad: []
+      good:
+        - (long|term|full|strong|strength|reserves|future|goal|plans|continue|serve|100|hundred|weight|chest|light|speed|(move.*on)|heal|forward|next)
+

@@ -1,0 +1,31 @@
+exp_num,text,label
+0,he kept rising in the ranks and he is a corporal,good
+1,he kept rising in the ranks and he is a corporal,bad
+2,he kept rising in the ranks and he is a corporal,bad
+0,it went a different direction,bad
+1,it went a different direction,bad
+2,it went a different direction,bad
+0,"he thinks that mental health treatment should be for any sailor who needs it, and we should talk about it",bad
+1,"he thinks that mental health treatment should be for any sailor who needs it, and we should talk about it",good
+2,"he thinks that mental health treatment should be for any sailor who needs it, and we should talk about it",bad
+0,You get to talk to someone about what you’re going through,bad
+1,You get to talk to someone about what you’re going through,good
+2,You get to talk to someone about what you’re going through,bad
+0,He was promoted,good
+1,He was promoted,bad
+2,He was promoted,bad
+0,he rose in rank and promotions,good
+1,he rose in rank and promotions,bad
+2,he rose in rank and promotions,bad
+0,helped his career and also helped out other crew members,good
+1,helped his career and also helped out other crew members,bad
+2,helped his career and also helped out other crew members,bad
+0,It helps him to this day,bad
+1,It helps him to this day,bad
+2,It helps him to this day,good
+0,Helps others when they see somebody getting assistance dealing with their problems.,bad
+1,Helps others when they see somebody getting assistance dealing with their problems.,good
+2,Helps others when they see somebody getting assistance dealing with their problems.,bad
+0,It really helped me long-term,bad
+1,It really helped me long-term,bad
+2,It really helped me long-term,good

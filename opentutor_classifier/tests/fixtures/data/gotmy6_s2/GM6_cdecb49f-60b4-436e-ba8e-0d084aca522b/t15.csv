@@ -1,0 +1,76 @@
+exp_num,text,label
+0,Someone taking a phone call,bad
+1,Someone taking a phone call,good
+2,Someone taking a phone call,bad
+3,Someone taking a phone call,bad
+4,Someone taking a phone call,bad
+0,they care about you,good
+1,they care about you,bad
+2,they care about you,good
+3,they care about you,bad
+4,they care about you,bad
+0,they need to be in your corner,bad
+1,they need to be in your corner,bad
+2,they need to be in your corner,good
+3,they need to be in your corner,bad
+4,they need to be in your corner,bad
+0,you can let them talk it through to you,bad
+1,you can let them talk it through to you,bad
+2,you can let them talk it through to you,bad
+3,you can let them talk it through to you,bad
+4,you can let them talk it through to you,good
+0,they want to destroy you,bad
+1,they want to destroy you,bad
+2,they want to destroy you,bad
+3,they want to destroy you,bad
+4,they want to destroy you,bad
+0,"you need somebody to help you snap out of it, tell you something else",bad
+1,"you need somebody to help you snap out of it, tell you something else",bad
+2,"you need somebody to help you snap out of it, tell you something else",bad
+3,"you need somebody to help you snap out of it, tell you something else",good
+4,"you need somebody to help you snap out of it, tell you something else",good
+0,you can help me think of ways to solve it,bad
+1,you can help me think of ways to solve it,bad
+2,you can help me think of ways to solve it,bad
+3,you can help me think of ways to solve it,bad
+4,you can help me think of ways to solve it,good
+0,somebody to give you some ideas,bad
+1,somebody to give you some ideas,bad
+2,somebody to give you some ideas,bad
+3,somebody to give you some ideas,bad
+4,somebody to give you some ideas,good
+0,your friend needs to have the talk with you and tell you what youre really about,bad
+1,your friend needs to have the talk with you and tell you what youre really about,bad
+2,your friend needs to have the talk with you and tell you what youre really about,bad
+3,your friend needs to have the talk with you and tell you what youre really about,good
+4,your friend needs to have the talk with you and tell you what youre really about,bad
+0,talk to push my limits,bad
+1,talk to push my limits,bad
+2,talk to push my limits,bad
+3,talk to push my limits,good
+4,talk to push my limits,bad
+0,by challenging you,bad
+1,by challenging you,bad
+2,by challenging you,bad
+3,by challenging you,good
+4,by challenging you,bad
+0,by not socializing,bad
+1,by not socializing,bad
+2,by not socializing,bad
+3,by not socializing,bad
+4,by not socializing,bad
+0,Theyre being a regular person like a close friend,bad
+1,Theyre being a regular person like a close friend,good
+2,Theyre being a regular person like a close friend,bad
+3,Theyre being a regular person like a close friend,bad
+4,Theyre being a regular person like a close friend,bad
+0,they never let anything go,bad
+1,they never let anything go,bad
+2,they never let anything go,bad
+3,they never let anything go,bad
+4,they never let anything go,bad
+0,they better be good to me be positive,bad
+1,they better be good to me be positive,bad
+2,they better be good to me be positive,good
+3,they better be good to me be positive,bad
+4,they better be good to me be positive,bad

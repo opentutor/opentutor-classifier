@@ -1,0 +1,16 @@
+exp_num,text,label
+0,"when they made him talk to someone, he realized how much it would help. now he wants to make sure other sailors talk about it and get help when they need it",bad
+1,"when they made him talk to someone, he realized how much it would help. now he wants to make sure other sailors talk about it and get help when they need it",good
+2,"when they made him talk to someone, he realized how much it would help. now he wants to make sure other sailors talk about it and get help when they need it",bad
+0,Save your kife,bad
+1,Save your kife,bad
+2,Save your kife,bad
+0,He kept rising in rank,good
+1,He kept rising in rank,bad
+2,He kept rising in rank,bad
+0,he rose in rank and promotions,good
+1,he rose in rank and promotions,bad
+2,he rose in rank and promotions,bad
+0,He was promoted,good
+1,He was promoted,bad
+2,He was promoted,bad

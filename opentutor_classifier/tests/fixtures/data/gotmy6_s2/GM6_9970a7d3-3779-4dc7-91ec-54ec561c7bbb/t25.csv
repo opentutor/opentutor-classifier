@@ -1,0 +1,126 @@
+exp_num,text,label
+0,asking about it,good
+1,asking about it,bad
+2,asking about it,bad
+3,asking about it,bad
+4,asking about it,bad
+0,your friend needs to have the talk with you and tell you what youre really about,bad
+1,your friend needs to have the talk with you and tell you what youre really about,bad
+2,your friend needs to have the talk with you and tell you what youre really about,bad
+3,your friend needs to have the talk with you and tell you what youre really about,good
+4,your friend needs to have the talk with you and tell you what youre really about,bad
+0,urgent support,bad
+1,urgent support,good
+2,urgent support,bad
+3,urgent support,bad
+4,urgent support,bad
+0,you want somebody who is going to pick up that phone,bad
+1,you want somebody who is going to pick up that phone,good
+2,you want somebody who is going to pick up that phone,bad
+3,you want somebody who is going to pick up that phone,bad
+4,you want somebody who is going to pick up that phone,bad
+0,They could be a friend who calls you and reaches out,good
+1,They could be a friend who calls you and reaches out,bad
+2,They could be a friend who calls you and reaches out,bad
+3,They could be a friend who calls you and reaches out,bad
+4,They could be a friend who calls you and reaches out,bad
+0,working the problem,bad
+1,working the problem,bad
+2,working the problem,bad
+3,working the problem,bad
+4,working the problem,good
+0,They can check in with you and navigate change and challenges,good
+1,They can check in with you and navigate change and challenges,bad
+2,They can check in with you and navigate change and challenges,good
+3,They can check in with you and navigate change and challenges,good
+4,They can check in with you and navigate change and challenges,good
+0,calling me up,good
+1,calling me up,bad
+2,calling me up,bad
+3,calling me up,bad
+4,calling me up,bad
+0,its showing up and being there for you,good
+1,its showing up and being there for you,good
+2,its showing up and being there for you,bad
+3,its showing up and being there for you,bad
+4,its showing up and being there for you,bad
+0,youre looking for someone with empathy,bad
+1,youre looking for someone with empathy,bad
+2,youre looking for someone with empathy,good
+3,youre looking for someone with empathy,bad
+4,youre looking for someone with empathy,bad
+0,checking in,good
+1,checking in,bad
+2,checking in,bad
+3,checking in,bad
+4,checking in,bad
+0,they want to destroy you,bad
+1,they want to destroy you,bad
+2,they want to destroy you,bad
+3,they want to destroy you,bad
+4,they want to destroy you,bad
+0,theyre just seeing if I am okay. talking,good
+1,theyre just seeing if I am okay. talking,bad
+2,theyre just seeing if I am okay. talking,bad
+3,theyre just seeing if I am okay. talking,bad
+4,theyre just seeing if I am okay. talking,bad
+0,they can shut their mouth,bad
+1,they can shut their mouth,bad
+2,they can shut their mouth,bad
+3,they can shut their mouth,bad
+4,they can shut their mouth,bad
+0,they kick you when youre down,bad
+1,they kick you when youre down,bad
+2,they kick you when youre down,bad
+3,they kick you when youre down,bad
+4,they kick you when youre down,bad
+0,checks,good
+1,checks,bad
+2,checks,bad
+3,checks,bad
+4,checks,bad
+0,want that steady ride or die frined,bad
+1,want that steady ride or die frined,good
+2,want that steady ride or die frined,bad
+3,want that steady ride or die frined,bad
+4,want that steady ride or die frined,bad
+0,checks in,good
+1,checks in,bad
+2,checks in,bad
+3,checks in,bad
+4,checks in,bad
+0,talk to push my limits,bad
+1,talk to push my limits,bad
+2,talk to push my limits,bad
+3,talk to push my limits,good
+4,talk to push my limits,bad
+0,encouraging me,bad
+1,encouraging me,bad
+2,encouraging me,good
+3,encouraging me,bad
+4,encouraging me,bad
+0,Someone taking a phone call,bad
+1,Someone taking a phone call,good
+2,Someone taking a phone call,bad
+3,Someone taking a phone call,bad
+4,Someone taking a phone call,bad
+0,someone challenging about difficult situations,bad
+1,someone challenging about difficult situations,bad
+2,someone challenging about difficult situations,bad
+3,someone challenging about difficult situations,good
+4,someone challenging about difficult situations,bad
+0,i dont know,bad
+1,i dont know,bad
+2,i dont know,bad
+3,i dont know,bad
+4,i dont know,bad
+0,you need somebody with a third party view to go look at it from another side,bad
+1,you need somebody with a third party view to go look at it from another side,bad
+2,you need somebody with a third party view to go look at it from another side,bad
+3,you need somebody with a third party view to go look at it from another side,good
+4,you need somebody with a third party view to go look at it from another side,good
+0,they are checking in,good
+1,they are checking in,bad
+2,they are checking in,bad
+3,they are checking in,bad
+4,they are checking in,bad

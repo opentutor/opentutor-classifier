@@ -1,0 +1,21 @@
+exp_num,text,label
+0,I would think they might calm down,good
+1,I would think they might calm down,bad
+0,Theyre more likely to not attempt later.,good
+1,Theyre more likely to not attempt later.,bad
+0,they lose the urge to commit suicide,good
+1,they lose the urge to commit suicide,bad
+0,It may deter their desire altogether,good
+1,It may deter their desire altogether,bad
+0,it slightly reduces it,good
+1,it slightly reduces it,bad
+0,More likely.,bad
+1,More likely.,good
+0,it increases?,bad
+1,it increases?,bad
+0,Itll deter them from wanting to commit suicide.,good
+1,Itll deter them from wanting to commit suicide.,bad
+0,I think it does change but I do not know specifically how.,bad
+1,I think it does change but I do not know specifically how.,bad
+0,It doesnt,bad
+1,It doesnt,bad

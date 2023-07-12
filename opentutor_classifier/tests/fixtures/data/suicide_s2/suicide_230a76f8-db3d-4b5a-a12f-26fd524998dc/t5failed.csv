@@ -1,0 +1,11 @@
+exp_num,text,label
+0,More likely than what? Overall to commit suicide? I think it would drop some.,good
+1,More likely than what? Overall to commit suicide? I think it would drop some.,bad
+0,I think it goes down slightly.,good
+1,I think it goes down slightly.,bad
+0,If their plan is disrupted the odds of a suicide attempt go down,good
+1,If their plan is disrupted the odds of a suicide attempt go down,bad
+0,less likely,good
+1,less likely,bad
+0,It decreases,good
+1,It decreases,bad

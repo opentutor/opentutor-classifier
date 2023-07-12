@@ -131,7 +131,11 @@ class TrainingInput:
 @dataclass
 class ExpectationTrainingResult:
     expectation_id: str
+    f1score: float = 0
     accuracy: float = 0
+    precision: float = 0
+    recall: float = 0
+
 
 
 @dataclass

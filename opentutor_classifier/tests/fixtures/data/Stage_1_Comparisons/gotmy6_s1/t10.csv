@@ -1,0 +1,51 @@
+exp_num,text,label
+0,they tear you down when you succeed,bad
+1,they tear you down when you succeed,bad
+2,they tear you down when you succeed,bad
+3,they tear you down when you succeed,bad
+4,they tear you down when you succeed,bad
+0,A buddy who will take a phone call,bad
+1,A buddy who will take a phone call,good
+2,A buddy who will take a phone call,bad
+3,A buddy who will take a phone call,bad
+4,A buddy who will take a phone call,bad
+0,Being there,bad
+1,Being there,good
+2,Being there,good
+3,Being there,bad
+4,Being there,bad
+0,They can reach out to you,good
+1,They can reach out to you,bad
+2,They can reach out to you,bad
+3,They can reach out to you,bad
+4,They can reach out to you,bad
+0,checking in,good
+1,checking in,bad
+2,checking in,bad
+3,checking in,bad
+4,checking in,bad
+0,your friend needs to have the talk with you and tell you what you're really about,bad
+1,your friend needs to have the talk with you and tell you what you're really about,bad
+2,your friend needs to have the talk with you and tell you what you're really about,bad
+3,your friend needs to have the talk with you and tell you what you're really about,good
+4,your friend needs to have the talk with you and tell you what you're really about,bad
+0,You need to talk with a professional,bad
+1,You need to talk with a professional,bad
+2,You need to talk with a professional,bad
+3,You need to talk with a professional,bad
+4,You need to talk with a professional,bad
+0,they're just seeing if I am okay. talking,good
+1,they're just seeing if I am okay. talking,bad
+2,they're just seeing if I am okay. talking,bad
+3,they're just seeing if I am okay. talking,bad
+4,they're just seeing if I am okay. talking,bad
+0,they can just show you love,bad
+1,they can just show you love,bad
+2,they can just show you love,good
+3,they can just show you love,bad
+4,they can just show you love,bad
+0,working the problem,bad
+1,working the problem,bad
+2,working the problem,bad
+3,working the problem,bad
+4,working the problem,good

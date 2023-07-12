@@ -1,0 +1,61 @@
+exp_num,text,label
+0,It made him feel better about himself.,bad
+1,It made him feel better about himself.,good
+2,It made him feel better about himself.,bad
+0,help deal with issues in his career,bad
+1,help deal with issues in his career,bad
+2,help deal with issues in his career,good
+0,"he thinks that mental health treatment should be for any sailor who needs it, and we should talk about it",bad
+1,"he thinks that mental health treatment should be for any sailor who needs it, and we should talk about it",good
+2,"he thinks that mental health treatment should be for any sailor who needs it, and we should talk about it",bad
+0,Because it resolves problems that will appear later,bad
+1,Because it resolves problems that will appear later,good
+2,Because it resolves problems that will appear later,good
+0,It continued in a positive direction,good
+1,It continued in a positive direction,bad
+2,It continued in a positive direction,good
+0,His career went well,good
+1,His career went well,bad
+2,His career went well,bad
+0,He sees it positively and thinks it can help lots of people,bad
+1,He sees it positively and thinks it can help lots of people,good
+2,He sees it positively and thinks it can help lots of people,good
+0,Test,bad
+1,Test,bad
+2,Test,bad
+0,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,bad
+1,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,good
+2,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,good
+0,He kept rising in the ranks. He was a SECNAV.,good
+1,He kept rising in the ranks. He was a SECNAV.,bad
+2,He kept rising in the ranks. He was a SECNAV.,bad
+0,test,bad
+1,test,bad
+2,test,bad
+0,He kept rising in rank,good
+1,He kept rising in rank,bad
+2,He kept rising in rank,bad
+0,It helps talking to someone. Counseling helped his career.,good
+1,It helps talking to someone. Counseling helped his career.,good
+2,It helps talking to someone. Counseling helped his career.,bad
+0,it helps you get pass some hard issues,bad
+1,it helps you get pass some hard issues,good
+2,it helps you get pass some hard issues,bad
+0,It helped him to go on with his career and not to break down.,good
+1,It helped him to go on with his career and not to break down.,bad
+2,It helped him to go on with his career and not to break down.,good
+0,He thinks it's necessary and beneficial.,bad
+1,He thinks it's necessary and beneficial.,good
+2,He thinks it's necessary and beneficial.,bad
+0,It helped his mental health,bad
+1,It helped his mental health,good
+2,It helped his mental health,good
+0,he did poorly,bad
+1,he did poorly,bad
+2,he did poorly,bad
+0,he continued to advance in his career,good
+1,he continued to advance in his career,bad
+2,he continued to advance in his career,bad
+0,helped his career and also helped out other crew members,good
+1,helped his career and also helped out other crew members,bad
+2,helped his career and also helped out other crew members,bad

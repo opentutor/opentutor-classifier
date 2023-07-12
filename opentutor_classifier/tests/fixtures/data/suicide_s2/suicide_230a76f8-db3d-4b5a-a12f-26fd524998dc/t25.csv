@@ -1,0 +1,51 @@
+exp_num,text,label
+0,More likely than what? Overall to commit suicide? I think it would drop some.,good
+1,More likely than what? Overall to commit suicide? I think it would drop some.,bad
+0,I think it goes down slightly.,good
+1,I think it goes down slightly.,bad
+0,"If their plan is disrupted, the odds of a suicide attempt go down",good
+1,"If their plan is disrupted, the odds of a suicide attempt go down",bad
+0,less likely,good
+1,less likely,bad
+0,It decreases,good
+1,It decreases,bad
+0,it lowers,good
+1,it lowers,bad
+0,Less than others,bad
+1,Less than others,bad
+0,more likely,bad
+1,more likely,good
+0,I think I would be less likely give more time to think about it. Just thinking about the effect it would have in other peoples lifes.,good
+1,I think I would be less likely give more time to think about it. Just thinking about the effect it would have in other peoples lifes.,bad
+0,they are much less likely to commit suicide,good
+1,they are much less likely to commit suicide,bad
+0,it narrows their risk,good
+1,it narrows their risk,bad
+0,I don’t know,bad
+1,I don’t know,bad
+0,"More likely, I assume",bad
+1,"More likely, I assume",good
+0,It slows it down for the time being.,good
+1,It slows it down for the time being.,bad
+0,They are more likely still as they have more of an inclination for suicide.,bad
+1,They are more likely still as they have more of an inclination for suicide.,good
+0,higher than most people,bad
+1,higher than most people,good
+0,It decreases.,good
+1,It decreases.,bad
+0,Lowers the risk,good
+1,Lowers the risk,bad
+0,Equally likely,bad
+1,Equally likely,bad
+0,theyre less likely because the suicidal urge is short,good
+1,theyre less likely because the suicidal urge is short,bad
+0,I think they wouldnt want to take the time to come up with another plan,good
+1,I think they wouldnt want to take the time to come up with another plan,bad
+0,It gives them more time to think about what their \about to do. Maybe regret.,good
+1,It gives them more time to think about what their \about to do. Maybe regret.,bad
+0,Higher,bad
+1,Higher,good
+0,more at risk,bad
+1,more at risk,good
+0,Yes. They need a new plan,bad
+1,Yes. They need a new plan,bad

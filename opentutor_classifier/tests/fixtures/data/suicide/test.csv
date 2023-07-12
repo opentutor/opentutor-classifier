@@ -1,0 +1,11 @@
+exp_num,text,label
+0,more likely to attempt suicide later,bad
+1,more likely to attempt suicide later,good
+0,Higher,bad
+1,Higher,good
+0,It lowers the risk.,good
+1,It lowers the risk.,bad
+0,very likely,bad
+1,very likely,good
+0,Within a hour is much higher to commit suicide,bad
+1,Within a hour is much higher to commit suicide,bad

@@ -1,0 +1,21 @@
+exp_num,text,label
+0,Higher,bad
+1,Higher,good
+0,They are more likely willing.,bad
+1,They are more likely willing.,good
+0,probably not,bad
+1,probably not,bad
+0,I don’t know,bad
+1,I don’t know,bad
+0,Lower,good
+1,Lower,bad
+0,it narrows their risk,good
+1,it narrows their risk,bad
+0,Equally likely,bad
+1,Equally likely,bad
+0,higher than most people,bad
+1,higher than most people,good
+0,it increases?,bad
+1,it increases?,bad
+0,very likely,bad
+1,very likely,good

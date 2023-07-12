@@ -1,0 +1,38 @@
+##
+## This software is Copyright ©️ 2020 The University of Southern California. All Rights Reserved. 
+## Permission to use, copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and subject to the full license file found in the root of this software deliverable. Permission to make commercial use of this software may be obtained by contacting:  USC Stevens Center for Innovation University of Southern California 1150 S. Olive Street, Suite 2300, Los Angeles, CA 90115, USA Email: accounting@stevens.usc.edu
+##
+## The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
+##
+question: "In this Got My Six clip, what are examples of social support are noted?"
+expectations:
+  - expectationId: "0"
+    ideal: "Checks In: Reaches out to you on their own and asks how you're doing."
+    features:        
+      bad:  []      
+      good:        
+        - check(s)|initiate(s)|contact(s)|reach|reaches|ask(s)|seek(s)|call(s)|checking|asking|detect|monitor|checkup|reaching|text(s)|habit|baseline|regular|often|frequently|daily|everyday
+  - expectationId: "1"
+    ideal: "Reliable: You can count on them, contact anytime, and they want to help even when it's inconvenient."
+    features: 
+      bad: []       
+      good:
+        - rely|reliable|depend|late|night|anytime|always|rock|steady
+  - expectationId: "2"
+    ideal: "Encouraging: Cheers you up after failures and celebrates your successes with you."
+    features:
+      bad: []       
+      good:
+        - encourage|positive|accept|celebrate|cheer|hope|happy|happiness|joy|love|care|empathy|empathetic|supportive|hug|friendly|(personal support)|supporter|booster|boost|distract|better|shoulder|pump|listen|safe|validate|feeling|feel|emotional|needsuccess|milestone|up|down|sad|mess|issue"
+  - expectationId: "3"
+    ideal: "Challenges You: Healthy accountability and real talk to push past your biases and limits."
+    features:
+      bad: []
+      good:
+        - real|truth|honest|straight|accountable|trust|opinion|biases|push|limits|challenge|better|grow|new|boundaries|perspective
+  - expectationId: "4"
+    ideal: "Problem Solving: Thinking through alternate solutions and action plans."
+    features:        
+      bad: []       
+      good:        
+        - solve|think|idea|smart|solution|plan|suggest|advise|alternative|wise|wisdom|navigate|smarter|tricky|clever|option|knows

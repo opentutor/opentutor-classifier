@@ -1,0 +1,21 @@
+exp_num,text,label
+0,It will not allow current to flow through it,good
+1,It will not allow current to flow through it,bad
+0,The diode is off.,good
+1,The diode is off.,bad
+0,I'm not sure what you are asking.,bad
+1,I'm not sure what you are asking.,bad
+0,It could burn out,bad
+1,It could burn out,good
+0,the voltage changes direction,good
+1,the voltage changes direction,bad
+0,circuit will be off,good
+1,circuit will be off,bad
+0,Current will not flow in a circuit,good
+1,Current will not flow in a circuit,bad
+0,the circuit is off,good
+1,the circuit is off,bad
+0,the voltage fries the diode,bad
+1,the voltage fries the diode,good
+0,increases a diode's resistance,bad
+1,increases a diode's resistance,bad

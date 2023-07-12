@@ -1,0 +1,26 @@
+exp_num,text,label
+0,Someone taking a phone call,bad
+1,Someone taking a phone call,good
+2,Someone taking a phone call,bad
+3,Someone taking a phone call,bad
+4,Someone taking a phone call,bad
+0,they care about you,good
+1,they care about you,bad
+2,they care about you,good
+3,they care about you,bad
+4,they care about you,bad
+0,they need to be in your corner,bad
+1,they need to be in your corner,bad
+2,they need to be in your corner,good
+3,they need to be in your corner,bad
+4,they need to be in your corner,bad
+0,you can let them talk it through to you,bad
+1,you can let them talk it through to you,bad
+2,you can let them talk it through to you,bad
+3,you can let them talk it through to you,bad
+4,you can let them talk it through to you,good
+0,they want to destroy you,bad
+1,they want to destroy you,bad
+2,they want to destroy you,bad
+3,they want to destroy you,bad
+4,they want to destroy you,bad

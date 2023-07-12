@@ -1,0 +1,16 @@
+exp_num,text,label
+0,he thinks that it is important,bad
+1,he thinks that it is important,good
+2,he thinks that it is important,bad
+0,It benefited him,bad
+1,It benefited him,good
+2,It benefited him,bad
+0,uncomfortable,bad
+1,uncomfortable,bad
+2,uncomfortable,bad
+0,Getting a promotion,good
+1,Getting a promotion,bad
+2,Getting a promotion,bad
+0,help deal with issues in his career,bad
+1,help deal with issues in his career,bad
+2,help deal with issues in his career,good

@@ -1,0 +1,153 @@
+content:{
+  "answer_12": {
+    "answer text": "it explodes",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything about current flow or the behavior of a diode in reverse bias, which are key aspects of Concept 1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer mentions an extreme outcome of the diode, but does not provide any information on how or why the diode would be damaged in breakdown mode, which is the main aspect of Concept 2."
+      }
+    }
+  },
+  "answer_45": {
+    "answer text": "nothing",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention diodes or current flow, which are key components of Concept 1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not mention diode breakdown or damage, which is the main idea behind Concept 2."
+      }
+    }
+  },
+  "answer_46": {
+    "answer text": "I'm not sure what you are asking.",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not address the concept at all."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.9,
+        "justification": "The answer does not address the concept at all."
+      }
+    }
+  },
+  "answer_40": {
+    "answer text": "conduct current in reverse direction",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer correctly states that normal diodes do not conduct current in reverse bias, which is the opposite direction of forward bias. This shows a good understanding of the concept."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about the diode being damaged by going into breakdown mode, so it is unclear if the user knows this concept or not. The confidence score is lower as a result."
+      }
+    }
+  },
+  "answer_5": {
+    "answer text": "It turns off",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer directly states that the diode turns off, which is consistent with Concept 1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not provide any information about the diode being damaged by going into breakdown mode, so it is not sufficient to determine if the user knows Concept 2."
+      }
+    }
+  },
+  "answer_14": {
+    "answer text": "the circuit is off",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer mentions that the circuit is off, which implies that the user knows that the diode is not conducting current in reverse bias."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about the diode being damaged by going into breakdown mode, so it is uncertain whether the user knows this concept or not."
+      }
+    }
+  },
+  "answer_32": {
+    "answer text": "turns off",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer mentions that the diode 'turns off', which implies that it is not conducting current in reverse bias, which is the concept being tested."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about the diode being damaged by going into breakdown mode, so it is unclear if the user knows this concept."
+      }
+    }
+  },
+  "answer_36": {
+    "answer text": "The diode might burn out.",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer text mentions burning out, but does not specifically mention the concept of normal diodes not conducting current in reverse bias."
+      },
+      "concept_2": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer text specifically mentions the possibility of the diode burning out, which is related to the concept that the diode will be damaged by going into breakdown mode."
+      }
+    }
+  },
+  "answer_18": {
+    "answer text": "It will be off",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer directly states that the diode will be off, which is the behavior of a normal diode in reverse bias."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about the diode being damaged in breakdown mode, so it is unclear if the user knows this concept or not."
+      }
+    }
+  },
+  "answer_38": {
+    "answer text": "it will conduct when you don't want it to and it won't conduct when you do want it to",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.6,
+        "justification": "The answer mentions conducting in reverse bias, but it is not clear if the user understands that this is not desirable. The confidence is moderate because the answer is partially correct."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer mentions not conducting when you want it to, which implies an understanding of forward bias. However, it is not clear if the user understands that breakdown mode is damaging. The confidence is high because the answer is partially correct and shows some understanding."
+      }
+    }
+  }
+}
+

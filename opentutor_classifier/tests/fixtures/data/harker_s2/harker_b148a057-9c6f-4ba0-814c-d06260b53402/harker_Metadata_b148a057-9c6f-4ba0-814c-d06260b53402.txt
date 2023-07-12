@@ -1,0 +1,74 @@
+{
+      "TRUE": {
+            "answer_20": {
+                  "Answer text": "You get to talk to someone about what you\u2019re going through",
+                  "concept_1": "false",
+                  "concept_2": "true",
+                  "concept_3": "false"
+            },
+            "answer_32": {
+                  "Answer text": "It helps talking to someone. Counseling helped his career.",
+                  "concept_1": "true",
+                  "concept_2": "true",
+                  "concept_3": "false"
+            },
+            "answer_29": {
+                  "Answer text": "He continued with his career",
+                  "concept_1": "true",
+                  "concept_2": "false",
+                  "concept_3": "false"
+            },
+            "answer_18": {
+                  "Answer text": "Helps others when they see somebody getting assistance dealing with their problems.",
+                  "concept_1": "false",
+                  "concept_2": "true",
+                  "concept_3": "false"
+            },
+            "answer_36": {
+                  "Answer text": "it went a different direction",
+                  "concept_1": "false",
+                  "concept_2": "false",
+                  "concept_3": "false"
+            },
+            "answer_49": {
+                  "Answer text": "He kept rising in the ranks. He was a SECNAV.",
+                  "concept_1": "true",
+                  "concept_2": "false",
+                  "concept_3": "false"
+            },
+            "answer_47": {
+                  "Answer text": "It continued in a positive direction",
+                  "concept_1": "true",
+                  "concept_2": "false",
+                  "concept_3": "true"
+            },
+            "answer_43": {
+                  "Answer text": "It can help deal with issue in the future.",
+                  "concept_1": "false",
+                  "concept_2": "false",
+                  "concept_3": "true"
+            },
+            "answer_44": {
+                  "Answer text": "because you won't carry your pain with you like a burden",
+                  "concept_1": "false",
+                  "concept_2": "true",
+                  "concept_3": "true"
+            },
+            "answer_35": {
+                  "Answer text": "It helped his mental health",
+                  "concept_1": "false",
+                  "concept_2": "true",
+                  "concept_3": "true"
+            }
+      },
+      "dialog": "harker",
+      "stamp": "b148a057-9c6f-4ba0-814c-d06260b53402",
+      "prompt": "API_PT_Revised.txt",
+      "batch": 10,
+      "concept_count": [
+            1,
+            2,
+            3
+      ],
+      "n_shot": 25
+}

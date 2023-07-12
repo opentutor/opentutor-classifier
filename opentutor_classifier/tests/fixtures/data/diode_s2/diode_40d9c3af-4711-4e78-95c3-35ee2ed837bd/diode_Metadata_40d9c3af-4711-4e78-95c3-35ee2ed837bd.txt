@@ -1,0 +1,63 @@
+{
+      "TRUE": {
+            "answer_12": {
+                  "Answer text": "it explodes",
+                  "concept_1": "false",
+                  "concept_2": "true"
+            },
+            "answer_45": {
+                  "Answer text": "nothing",
+                  "concept_1": "false",
+                  "concept_2": "false"
+            },
+            "answer_46": {
+                  "Answer text": "I'm not sure what you are asking.",
+                  "concept_1": "false",
+                  "concept_2": "false"
+            },
+            "answer_40": {
+                  "Answer text": "conduct current in reverse direction",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_5": {
+                  "Answer text": "It turns off",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_14": {
+                  "Answer text": "the circuit is off",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_32": {
+                  "Answer text": "turns off",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_36": {
+                  "Answer text": "The diode might burn out.",
+                  "concept_1": "false",
+                  "concept_2": "true"
+            },
+            "answer_18": {
+                  "Answer text": "It will be off",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            },
+            "answer_38": {
+                  "Answer text": "it will conduct when you don't want it to and it won't conduct when you do want it to",
+                  "concept_1": "true",
+                  "concept_2": "false"
+            }
+      },
+      "dialog": "diode",
+      "stamp": "40d9c3af-4711-4e78-95c3-35ee2ed837bd",
+      "prompt": "API_PT_Revised.txt",
+      "batch": 10,
+      "concept_count": [
+            1,
+            2
+      ],
+      "n_shot": 25
+}

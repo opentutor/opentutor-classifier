@@ -1,0 +1,46 @@
+exp_num,text,label
+0,It lets you deal with problems that will become worse if they are not handled,bad
+1,It lets you deal with problems that will become worse if they are not handled,good
+2,It lets you deal with problems that will become worse if they are not handled,good
+0,he continued to advance in his career,good
+1,he continued to advance in his career,bad
+2,he continued to advance in his career,bad
+0,It helped his mental health,bad
+1,It helped his mental health,good
+2,It helped his mental health,good
+0,To help a\ person deal better and understand things better.,bad
+1,To help a\ person deal better and understand things better.,good
+2,To help a\ person deal better and understand things better.,good
+0,Test,bad
+1,Test,bad
+2,Test,bad
+0,he did poorly,bad
+1,he did poorly,bad
+2,he did poorly,bad
+0,It made him feel better about himself.,bad
+1,It made him feel better about himself.,good
+2,It made him feel better about himself.,bad
+0,"when they made him talk to someone, he realized how much it would help. now he wants to make sure other sailors talk about it and get help when they need it",bad
+1,"when they made him talk to someone, he realized how much it would help. now he wants to make sure other sailors talk about it and get help when they need it",good
+2,"when they made him talk to someone, he realized how much it would help. now he wants to make sure other sailors talk about it and get help when they need it",bad
+0,It is helpful and important,bad
+1,It is helpful and important,good
+2,It is helpful and important,bad
+0,Save your kife,bad
+1,Save your kife,bad
+2,Save your kife,bad
+0,he thinks that it is important,bad
+1,he thinks that it is important,good
+2,he thinks that it is important,bad
+0,It continued in a positive direction,good
+1,It continued in a positive direction,bad
+2,It continued in a positive direction,good
+0,test,bad
+1,test,bad
+2,test,bad
+0,It helped him to go on with his career and not to break down.,good
+1,It helped him to go on with his career and not to break down.,bad
+2,It helped him to go on with his career and not to break down.,good
+0,It can help deal with issue in the future.,bad
+1,It can help deal with issue in the future.,bad
+2,It can help deal with issue in the future.,good

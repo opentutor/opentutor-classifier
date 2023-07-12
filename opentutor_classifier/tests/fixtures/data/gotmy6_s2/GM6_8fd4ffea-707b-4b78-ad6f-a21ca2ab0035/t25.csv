@@ -1,0 +1,126 @@
+exp_num,text,label
+0,by not socializing,bad
+1,by not socializing,bad
+2,by not socializing,bad
+3,by not socializing,bad
+4,by not socializing,bad
+0,they buy you a drink when youre down,good
+1,they buy you a drink when youre down,bad
+2,they buy you a drink when youre down,good
+3,they buy you a drink when youre down,bad
+4,they buy you a drink when youre down,bad
+0,somebody to give you some ideas,bad
+1,somebody to give you some ideas,bad
+2,somebody to give you some ideas,bad
+3,somebody to give you some ideas,bad
+4,somebody to give you some ideas,good
+0,Reliable,bad
+1,Reliable,good
+2,Reliable,bad
+3,Reliable,bad
+4,Reliable,bad
+0,they better be good to me be positive,bad
+1,they better be good to me be positive,bad
+2,they better be good to me be positive,good
+3,they better be good to me be positive,bad
+4,they better be good to me be positive,bad
+0,"checking in, they contact you",good
+1,"checking in, they contact you",bad
+2,"checking in, they contact you",bad
+3,"checking in, they contact you",bad
+4,"checking in, they contact you",bad
+0,theyre just seeing if I am okay. talking,good
+1,theyre just seeing if I am okay. talking,bad
+2,theyre just seeing if I am okay. talking,bad
+3,theyre just seeing if I am okay. talking,bad
+4,theyre just seeing if I am okay. talking,bad
+0,talk to push my limits,bad
+1,talk to push my limits,bad
+2,talk to push my limits,bad
+3,talk to push my limits,good
+4,talk to push my limits,bad
+0,want that steady ride or die frined,bad
+1,want that steady ride or die frined,good
+2,want that steady ride or die frined,bad
+3,want that steady ride or die frined,bad
+4,want that steady ride or die frined,bad
+0,Someone taking a phone call,bad
+1,Someone taking a phone call,good
+2,Someone taking a phone call,bad
+3,Someone taking a phone call,bad
+4,Someone taking a phone call,bad
+0,you can help me think of ways to solve it,bad
+1,you can help me think of ways to solve it,bad
+2,you can help me think of ways to solve it,bad
+3,you can help me think of ways to solve it,bad
+4,you can help me think of ways to solve it,good
+0,they want to destroy you,bad
+1,they want to destroy you,bad
+2,they want to destroy you,bad
+3,they want to destroy you,bad
+4,they want to destroy you,bad
+0,urgent support,bad
+1,urgent support,good
+2,urgent support,bad
+3,urgent support,bad
+4,urgent support,bad
+0,your friend needs to have the talk with you and tell you what youre really about,bad
+1,your friend needs to have the talk with you and tell you what youre really about,bad
+2,your friend needs to have the talk with you and tell you what youre really about,bad
+3,your friend needs to have the talk with you and tell you what youre really about,good
+4,your friend needs to have the talk with you and tell you what youre really about,bad
+0,A buddy who will take a phone call,bad
+1,A buddy who will take a phone call,good
+2,A buddy who will take a phone call,bad
+3,A buddy who will take a phone call,bad
+4,A buddy who will take a phone call,bad
+0,calliing somebody in the middle of the night,bad
+1,calliing somebody in the middle of the night,good
+2,calliing somebody in the middle of the night,bad
+3,calliing somebody in the middle of the night,bad
+4,calliing somebody in the middle of the night,bad
+0,calling me up,good
+1,calling me up,bad
+2,calling me up,bad
+3,calling me up,bad
+4,calling me up,bad
+0,checks,good
+1,checks,bad
+2,checks,bad
+3,checks,bad
+4,checks,bad
+0,by reaching out,good
+1,by reaching out,bad
+2,by reaching out,bad
+3,by reaching out,bad
+4,by reaching out,bad
+0,you need someone you can call who will pick up that phone,bad
+1,you need someone you can call who will pick up that phone,good
+2,you need someone you can call who will pick up that phone,bad
+3,you need someone you can call who will pick up that phone,bad
+4,you need someone you can call who will pick up that phone,bad
+0,theyre sad,bad
+1,theyre sad,bad
+2,theyre sad,bad
+3,theyre sad,bad
+4,theyre sad,bad
+0,they tear you down when you succeed,bad
+1,they tear you down when you succeed,bad
+2,they tear you down when you succeed,bad
+3,they tear you down when you succeed,bad
+4,they tear you down when you succeed,bad
+0,challenging the person,bad
+1,challenging the person,bad
+2,challenging the person,bad
+3,challenging the person,good
+4,challenging the person,bad
+0,they can shut their mouth,bad
+1,they can shut their mouth,bad
+2,they can shut their mouth,bad
+3,they can shut their mouth,bad
+4,they can shut their mouth,bad
+0,they are checking in,good
+1,they are checking in,bad
+2,they are checking in,bad
+3,they are checking in,bad
+4,they are checking in,bad

@@ -1,0 +1,21 @@
+exp_num,text,label
+0,less likely,good
+1,less likely,bad
+0,less likely if their gun is taken away because urges last less than hour,good
+1,less likely if their gun is taken away because urges last less than hour,bad
+0,Still more likely to commit suicide than the general public,bad
+1,Still more likely to commit suicide than the general public,good
+0,theyre still more likely as they have suicidal ideation,bad
+1,theyre still more likely as they have suicidal ideation,good
+0,it slightly reduces it,good
+1,it slightly reduces it,bad
+0,This person is still more likely to commit suicide,bad
+1,This person is still more likely to commit suicide,good
+0,Losing the means to commit suicide lowers the risk,good
+1,Losing the means to commit suicide lowers the risk,bad
+0,It decreases,good
+1,It decreases,bad
+0,"No, I dont think so.",bad
+1,"No, I dont think so.",bad
+0,Less likely,good
+1,Less likely,bad

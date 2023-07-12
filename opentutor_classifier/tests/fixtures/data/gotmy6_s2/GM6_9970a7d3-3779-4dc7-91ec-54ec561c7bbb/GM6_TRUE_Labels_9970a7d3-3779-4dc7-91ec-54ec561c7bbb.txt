@@ -1,0 +1,82 @@
+{
+      "answer_8": {
+            "Answer text": "calling the person",
+            "concept_1": "true",
+            "concept_2": "true",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_25": {
+            "Answer text": "they buy you a drink when you're down",
+            "concept_1": "true",
+            "concept_2": "false",
+            "concept_3": "true",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_17": {
+            "Answer text": "Reliable",
+            "concept_1": "false",
+            "concept_2": "true",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_7": {
+            "Answer text": "calliing somebody in the middle of the night",
+            "concept_1": "false",
+            "concept_2": "true",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_59": {
+            "Answer text": "they can call you out on your bullshit",
+            "concept_1": "false",
+            "concept_2": "false",
+            "concept_3": "false",
+            "concept_4": "true",
+            "concept_5": "false"
+      },
+      "answer_3": {
+            "Answer text": "Being there",
+            "concept_1": "false",
+            "concept_2": "true",
+            "concept_3": "true",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_12": {
+            "Answer text": "checking in, they contact you",
+            "concept_1": "true",
+            "concept_2": "false",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_50": {
+            "Answer text": "you can help me think of ways to solve it",
+            "concept_1": "false",
+            "concept_2": "false",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "true"
+      },
+      "answer_5": {
+            "Answer text": "by not socializing",
+            "concept_1": "false",
+            "concept_2": "false",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_61": {
+            "Answer text": "you can let them talk it through to you",
+            "concept_1": "false",
+            "concept_2": "false",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "true"
+      }
+}

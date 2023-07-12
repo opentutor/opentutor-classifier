@@ -1,0 +1,21 @@
+exp_num,text,label
+0,it explodes,bad
+1,it explodes,good
+0,nothing,bad
+1,nothing,bad
+0,I'm not sure what you are asking.,bad
+1,I'm not sure what you are asking.,bad
+0,conduct current in reverse direction,good
+1,conduct current in reverse direction,bad
+0,It turns off,good
+1,It turns off,bad
+0,the circuit is off,good
+1,the circuit is off,bad
+0,turns off,good
+1,turns off,bad
+0,The diode might burn out.,bad
+1,The diode might burn out.,good
+0,It will be off,good
+1,It will be off,bad
+0,it will conduct when you don't want it to and it won't conduct when you do want it to,good
+1,it will conduct when you don't want it to and it won't conduct when you do want it to,bad

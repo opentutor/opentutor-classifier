@@ -1,0 +1,51 @@
+exp_num,text,label
+0,You need someone to talk to,good
+1,You need someone to talk to,good
+2,You need someone to talk to,bad
+3,You need someone to talk to,bad
+4,You need someone to talk to,bad
+0,somebody to give you some ideas,bad
+1,somebody to give you some ideas,bad
+2,somebody to give you some ideas,bad
+3,somebody to give you some ideas,bad
+4,somebody to give you some ideas,good
+0,contact anytime and let them know we can help,good
+1,contact anytime and let them know we can help,good
+2,contact anytime and let them know we can help,bad
+3,contact anytime and let them know we can help,bad
+4,contact anytime and let them know we can help,bad
+0,by not socializing,bad
+1,by not socializing,bad
+2,by not socializing,bad
+3,by not socializing,bad
+4,by not socializing,bad
+0,calliing somebody in the middle of the night,bad
+1,calliing somebody in the middle of the night,good
+2,calliing somebody in the middle of the night,bad
+3,calliing somebody in the middle of the night,bad
+4,calliing somebody in the middle of the night,bad
+0,they never let anything go,bad
+1,they never let anything go,bad
+2,they never let anything go,bad
+3,they never let anything go,bad
+4,they never let anything go,bad
+0,They can check in with you and navigate change and challenges,good
+1,They can check in with you and navigate change and challenges,bad
+2,They can check in with you and navigate change and challenges,good
+3,They can check in with you and navigate change and challenges,good
+4,They can check in with you and navigate change and challenges,good
+0,you need someone you can call who will pick up that phone,bad
+1,you need someone you can call who will pick up that phone,good
+2,you need someone you can call who will pick up that phone,bad
+3,you need someone you can call who will pick up that phone,bad
+4,you need someone you can call who will pick up that phone,bad
+0,they need to be in your corner,bad
+1,they need to be in your corner,bad
+2,they need to be in your corner,good
+3,they need to be in your corner,bad
+4,they need to be in your corner,bad
+0,they buy you a drink when youre down,good
+1,they buy you a drink when youre down,bad
+2,they buy you a drink when youre down,good
+3,they buy you a drink when youre down,bad
+4,they buy you a drink when youre down,bad

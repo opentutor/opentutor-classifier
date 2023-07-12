@@ -1,0 +1,51 @@
+exp_num,text,label
+0,checking in,good
+1,checking in,bad
+2,checking in,bad
+3,checking in,bad
+4,checking in,bad
+0,you can let them talk it through to you,bad
+1,you can let them talk it through to you,bad
+2,you can let them talk it through to you,bad
+3,you can let them talk it through to you,bad
+4,you can let them talk it through to you,good
+0,Being there,bad
+1,Being there,good
+2,Being there,good
+3,Being there,bad
+4,Being there,bad
+0,They could be a friend who calls you and reaches out,good
+1,They could be a friend who calls you and reaches out,bad
+2,They could be a friend who calls you and reaches out,bad
+3,They could be a friend who calls you and reaches out,bad
+4,They could be a friend who calls you and reaches out,bad
+0,you want somebody who is going to pick up that phone,bad
+1,you want somebody who is going to pick up that phone,good
+2,you want somebody who is going to pick up that phone,bad
+3,you want somebody who is going to pick up that phone,bad
+4,you want somebody who is going to pick up that phone,bad
+0,by challenging you,bad
+1,by challenging you,bad
+2,by challenging you,bad
+3,by challenging you,good
+4,by challenging you,bad
+0,Theyre being a regular person like a close friend,bad
+1,Theyre being a regular person like a close friend,good
+2,Theyre being a regular person like a close friend,bad
+3,Theyre being a regular person like a close friend,bad
+4,Theyre being a regular person like a close friend,bad
+0,"people can give you money, they can give you a lot of hugs, they can call every week.  They can just solve all your problems",good
+1,"people can give you money, they can give you a lot of hugs, they can call every week.  They can just solve all your problems",bad
+2,"people can give you money, they can give you a lot of hugs, they can call every week.  They can just solve all your problems",good
+3,"people can give you money, they can give you a lot of hugs, they can call every week.  They can just solve all your problems",bad
+4,"people can give you money, they can give you a lot of hugs, they can call every week.  They can just solve all your problems",good
+0,checks in,good
+1,checks in,bad
+2,checks in,bad
+3,checks in,bad
+4,checks in,bad
+0,challenging you,bad
+1,challenging you,bad
+2,challenging you,bad
+3,challenging you,good
+4,challenging you,bad

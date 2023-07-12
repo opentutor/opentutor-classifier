@@ -1,0 +1,202 @@
+role:system
+
+content:"The user provided a list of one or more \"answers\" to a tutoring question. The answers are provided in JSON format. You are a tutor who is evaluating if the answer is sufficient to show that the user knows a one or more \"concepts\" which will be labeled \"concept_1\" to \"concept_N\". For each answer you evaluate, you must also express how confident you are in your evaluation of how well the answer shows knowledge of each concept. You will also provide a brief justification."
+
+role:user
+
+content:{
+  "These are the concepts for this lesson.": {
+    "Concept 1": " He continued to advance in his career.",
+    "Concept 2": " Seeing a counselor was the most important port call I ever had.",
+    "Concept 3": " You can be at full strength to succeed and advance better."
+  }
+}
+
+role:user
+
+content:{
+  "This is my answer for you to evaluate.": {
+    "answer_35": {
+      "Answer text": "It helped his mental health"
+    }
+  }
+}
+
+role:user
+
+content:{
+  "Please respond in the following format": {
+    "answer_N": {
+      "answer text": "string // State the text of the particular answer being classified.",
+      "concepts": {
+        "concept_N": {
+          "is_known": "string // true or false. If the input answer implies that the concept is known, the classification should be true. Otherwise it should be false.",
+          "confidence": "float // A 0 to 1 score indicating certainty that a classification is correct. Confidence scores closer to 1 represent higher certainty, and confidence scores closer to 0 represent lower certainty.",
+          "justification": "string // Why you believe the user answer is or is not sufficient to determine if they know the concepts."
+        }
+      }
+    }
+  }
+}
+
+role:user
+
+content:"Only respond with the JSON output in the exact format of the template and no other words or symbols. The output must be valid JSON. Check that the output is valid JSON. "
+
+role:user
+
+content:{
+  "Here are some examples that have already been labeled. Consider these to be ground truth examples. ": {
+    "answer_2": {
+      "Answer text": "You deal with your problems now, so they don't bother you later",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "true"
+    },
+    "answer_15": {
+      "Answer text": "He kept rising in rank",
+      "concept_1": "true",
+      "concept_2": "false",
+      "concept_3": "false"
+    },
+    "answer_50": {
+      "Answer text": "His career went well",
+      "concept_1": "true",
+      "concept_2": "false",
+      "concept_3": "false"
+    },
+    "answer_39": {
+      "Answer text": "Test",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false"
+    },
+    "answer_48": {
+      "Answer text": "help deal with issues in his career",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "true"
+    },
+    "answer_37": {
+      "Answer text": "he thinks that it is important",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false"
+    },
+    "answer_33": {
+      "Answer text": "when they made him talk to someone, he realized how much it would help. now he wants to make sure other sailors talk about it and get help when they need it",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false"
+    },
+    "answer_27": {
+      "Answer text": "Because it resolves problems that will appear later",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "true"
+    },
+    "answer_13": {
+      "Answer text": "It is helpful and important",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false"
+    },
+    "answer_40": {
+      "Answer text": "It helps him to this day",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "true"
+    },
+    "answer_22": {
+      "Answer text": "To help a\\ person deal better and understand things better.",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "true"
+    },
+    "answer_8": {
+      "Answer text": "Encouraged him to help others because he benefited from counseling",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false"
+    },
+    "answer_4": {
+      "Answer text": "Getting a promotion",
+      "concept_1": "true",
+      "concept_2": "false",
+      "concept_3": "false"
+    },
+    "answer_19": {
+      "Answer text": "it'sok",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false"
+    },
+    "answer_21": {
+      "Answer text": "It made him feel better about himself.",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false"
+    },
+    "answer_26": {
+      "Answer text": "He thinks it's necessary and beneficial.",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false"
+    },
+    "answer_34": {
+      "Answer text": "it helps you get pass some hard issues",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "false"
+    },
+    "answer_16": {
+      "Answer text": "Save your kife",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false"
+    },
+    "answer_11": {
+      "Answer text": "he rose in rank and promotions",
+      "concept_1": "true",
+      "concept_2": "false",
+      "concept_3": "false"
+    },
+    "answer_23": {
+      "Answer text": "he continued to advance in his career",
+      "concept_1": "true",
+      "concept_2": "false",
+      "concept_3": "false"
+    },
+    "answer_30": {
+      "Answer text": "He sees it positively and thinks it can help lots of people",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "true"
+    },
+    "answer_25": {
+      "Answer text": "he did poorly",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "false"
+    },
+    "answer_45": {
+      "Answer text": "It lets you deal with problems that will become worse if they are not handled",
+      "concept_1": "false",
+      "concept_2": "true",
+      "concept_3": "true"
+    },
+    "answer_6": {
+      "Answer text": "He was promoted",
+      "concept_1": "true",
+      "concept_2": "false",
+      "concept_3": "false"
+    },
+    "answer_24": {
+      "Answer text": "It really helped me long-term",
+      "concept_1": "false",
+      "concept_2": "false",
+      "concept_3": "true"
+    }
+  }
+}
+

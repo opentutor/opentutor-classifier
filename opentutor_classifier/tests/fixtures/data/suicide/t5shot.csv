@@ -1,0 +1,11 @@
+exp_num,text,label
+0,increases long term risk,bad
+1,increases long term risk,bad
+0,It gives them more time to think about what their \about to do. Maybe regret.,good
+1,It gives them more time to think about what their \about to do. Maybe regret.,bad
+0,They're less likely to commit suicide.,good
+1,They're less likely to commit suicide.,bad
+0,lowers it,good
+1,lowers it,bad
+0,they may not have anything else to use,bad
+1,they may not have anything else to use,bad

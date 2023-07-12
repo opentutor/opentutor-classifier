@@ -1,0 +1,82 @@
+{
+      "answer_11": {
+            "Answer text": "checking in",
+            "concept_1": "true",
+            "concept_2": "false",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_61": {
+            "Answer text": "you can let them talk it through to you",
+            "concept_1": "false",
+            "concept_2": "false",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "true"
+      },
+      "answer_3": {
+            "Answer text": "Being there",
+            "concept_1": "false",
+            "concept_2": "true",
+            "concept_3": "true",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_30": {
+            "Answer text": "They could be a friend who calls you and reaches out",
+            "concept_1": "true",
+            "concept_2": "false",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_44": {
+            "Answer text": "you want somebody who is going to pick up that phone",
+            "concept_1": "false",
+            "concept_2": "true",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_4": {
+            "Answer text": "by challenging you",
+            "concept_1": "false",
+            "concept_2": "false",
+            "concept_3": "false",
+            "concept_4": "true",
+            "concept_5": "false"
+      },
+      "answer_55": {
+            "Answer text": "They're being a regular person like a close friend",
+            "concept_1": "false",
+            "concept_2": "true",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_46": {
+            "Answer text": "people can give you money, they can give you a lot of hugs, they can call every week.  They can just solve all your problems",
+            "concept_1": "true",
+            "concept_2": "false",
+            "concept_3": "true",
+            "concept_4": "false",
+            "concept_5": "true"
+      },
+      "answer_14": {
+            "Answer text": "checks in",
+            "concept_1": "true",
+            "concept_2": "false",
+            "concept_3": "false",
+            "concept_4": "false",
+            "concept_5": "false"
+      },
+      "answer_10": {
+            "Answer text": "challenging you",
+            "concept_1": "false",
+            "concept_2": "false",
+            "concept_3": "false",
+            "concept_4": "true",
+            "concept_5": "false"
+      }
+}

@@ -1,0 +1,21 @@
+exp_num,text,label
+0,Diode will be off,good
+1,Diode will be off,bad
+0,It won't work.,bad
+1,It won't work.,bad
+0,no current will flow until the electric field is so high that the diode breaks down,good
+1,no current will flow until the electric field is so high that the diode breaks down,good
+0,it will be off,good
+1,it will be off,bad
+0,it burn out,bad
+1,it burn out,good
+0,The current won't flow and the diode will be off.,good
+1,The current won't flow and the diode will be off.,bad
+0,The current is blocked,good
+1,The current is blocked,bad
+0,the diode will allow current to flow in the opposite direction,good
+1,the diode will allow current to flow in the opposite direction,bad
+0,the diode only lets the current go in one direction,good
+1,the diode only lets the current go in one direction,bad
+0,It will be off,good
+1,It will be off,bad

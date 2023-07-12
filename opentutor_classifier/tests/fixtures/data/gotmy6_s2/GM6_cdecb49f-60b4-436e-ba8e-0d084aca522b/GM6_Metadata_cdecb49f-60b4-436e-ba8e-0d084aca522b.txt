@@ -1,0 +1,96 @@
+{
+      "TRUE": {
+            "answer_10": {
+                  "Answer text": "challenging you",
+                  "concept_1": "false",
+                  "concept_2": "false",
+                  "concept_3": "false",
+                  "concept_4": "true",
+                  "concept_5": "false"
+            },
+            "answer_25": {
+                  "Answer text": "they buy you a drink when you're down",
+                  "concept_1": "true",
+                  "concept_2": "false",
+                  "concept_3": "true",
+                  "concept_4": "false",
+                  "concept_5": "false"
+            },
+            "answer_45": {
+                  "Answer text": "you need somebody who really cares and wants to talk to you",
+                  "concept_1": "true",
+                  "concept_2": "true",
+                  "concept_3": "true",
+                  "concept_4": "false",
+                  "concept_5": "false"
+            },
+            "answer_6": {
+                  "Answer text": "by reaching out",
+                  "concept_1": "true",
+                  "concept_2": "false",
+                  "concept_3": "false",
+                  "concept_4": "false",
+                  "concept_5": "false"
+            },
+            "answer_8": {
+                  "Answer text": "calling the person",
+                  "concept_1": "true",
+                  "concept_2": "true",
+                  "concept_3": "false",
+                  "concept_4": "false",
+                  "concept_5": "false"
+            },
+            "answer_40": {
+                  "Answer text": "You need to talk with a professional",
+                  "concept_1": "false",
+                  "concept_2": "false",
+                  "concept_3": "false",
+                  "concept_4": "false",
+                  "concept_5": "false"
+            },
+            "answer_35": {
+                  "Answer text": "they're sad",
+                  "concept_1": "false",
+                  "concept_2": "false",
+                  "concept_3": "false",
+                  "concept_4": "false",
+                  "concept_5": "false"
+            },
+            "answer_30": {
+                  "Answer text": "They could be a friend who calls you and reaches out",
+                  "concept_1": "true",
+                  "concept_2": "false",
+                  "concept_3": "false",
+                  "concept_4": "false",
+                  "concept_5": "false"
+            },
+            "answer_14": {
+                  "Answer text": "checks in",
+                  "concept_1": "true",
+                  "concept_2": "false",
+                  "concept_3": "false",
+                  "concept_4": "false",
+                  "concept_5": "false"
+            },
+            "answer_31": {
+                  "Answer text": "they kick you when you're down",
+                  "concept_1": "false",
+                  "concept_2": "false",
+                  "concept_3": "false",
+                  "concept_4": "false",
+                  "concept_5": "false"
+            }
+      },
+      "dialog": "GM6",
+      "stamp": "cdecb49f-60b4-436e-ba8e-0d084aca522b",
+      "prompt": "API_PT_Revised.txt",
+      "batch": 10,
+      "concept_count": [
+            1,
+            2,
+            3,
+            4,
+            5
+      ],
+      "n_shot": 25
+}

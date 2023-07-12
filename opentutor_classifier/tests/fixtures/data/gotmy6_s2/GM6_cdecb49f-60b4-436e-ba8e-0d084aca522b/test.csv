@@ -1,0 +1,51 @@
+exp_num,text,label
+0,challenging you,bad
+1,challenging you,bad
+2,challenging you,bad
+3,challenging you,good
+4,challenging you,bad
+0,they buy you a drink when youre down,good
+1,they buy you a drink when youre down,bad
+2,they buy you a drink when youre down,good
+3,they buy you a drink when youre down,bad
+4,they buy you a drink when youre down,bad
+0,you need somebody who really cares and wants to talk to you,good
+1,you need somebody who really cares and wants to talk to you,good
+2,you need somebody who really cares and wants to talk to you,good
+3,you need somebody who really cares and wants to talk to you,bad
+4,you need somebody who really cares and wants to talk to you,bad
+0,by reaching out,good
+1,by reaching out,bad
+2,by reaching out,bad
+3,by reaching out,bad
+4,by reaching out,bad
+0,calling the person,good
+1,calling the person,good
+2,calling the person,bad
+3,calling the person,bad
+4,calling the person,bad
+0,You need to talk with a professional,bad
+1,You need to talk with a professional,bad
+2,You need to talk with a professional,bad
+3,You need to talk with a professional,bad
+4,You need to talk with a professional,bad
+0,theyre sad,bad
+1,theyre sad,bad
+2,theyre sad,bad
+3,theyre sad,bad
+4,theyre sad,bad
+0,They could be a friend who calls you and reaches out,good
+1,They could be a friend who calls you and reaches out,bad
+2,They could be a friend who calls you and reaches out,bad
+3,They could be a friend who calls you and reaches out,bad
+4,They could be a friend who calls you and reaches out,bad
+0,checks in,good
+1,checks in,bad
+2,checks in,bad
+3,checks in,bad
+4,checks in,bad
+0,they kick you when youre down,bad
+1,they kick you when youre down,bad
+2,they kick you when youre down,bad
+3,they kick you when youre down,bad
+4,they kick you when youre down,bad

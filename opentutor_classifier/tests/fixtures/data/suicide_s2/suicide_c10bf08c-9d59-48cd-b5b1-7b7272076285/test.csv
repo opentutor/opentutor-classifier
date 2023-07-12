@@ -1,0 +1,21 @@
+exp_num,text,label
+0,Lowers the risk,good
+1,Lowers the risk,bad
+0,very likely,bad
+1,very likely,good
+0,This person is still more likely to commit suicide,bad
+1,This person is still more likely to commit suicide,good
+0,Less likely,good
+1,Less likely,bad
+0,it narrows their risk,good
+1,it narrows their risk,bad
+0,It decreases,good
+1,It decreases,bad
+0,not attempt,bad
+1,not attempt,bad
+0,the risk increases with time,bad
+1,the risk increases with time,bad
+0,risk decreases,good
+1,risk decreases,bad
+0,More likely?,bad
+1,More likely?,good

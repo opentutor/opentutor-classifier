@@ -1,0 +1,21 @@
+exp_num,text,label
+0,Diode will be off,good
+1,Diode will be off,bad
+0,Current will not flow in a circuit,good
+1,Current will not flow in a circuit,bad
+0,it burn out,bad
+1,it burn out,good
+0,diode is off,good
+1,diode is off,bad
+0,the voltage changes direction,good
+1,the voltage changes direction,bad
+0,Current will not be allowed to flow through the circuit.,good
+1,Current will not be allowed to flow through the circuit.,bad
+0,It won't work.,bad
+1,It won't work.,bad
+0,circuit will be off,good
+1,circuit will be off,bad
+0,the diode only lets the current go in one direction,good
+1,the diode only lets the current go in one direction,bad
+0,I don't know,bad
+1,I don't know,bad

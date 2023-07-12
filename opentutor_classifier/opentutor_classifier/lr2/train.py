@@ -33,6 +33,7 @@ import numpy as np
 import pandas as pd
 from sklearn import model_selection, linear_model
 from sklearn.model_selection import LeaveOneOut
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 from opentutor_classifier import DataDao, QuestionConfig
 from opentutor_classifier import (
@@ -174,11 +175,15 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             )
         )
         train_y = np.array(LRExpectationClassifier.encode_y(data["label"]))
+        #This is train_default NOT train, changes to big four metrics need to be in train!
+        #This is the model that is used if there isn't any specific features to train, basically the catch all. 
         model.fit(all_features, train_y)
         results_loocv = model_selection.cross_val_score(
             model, all_features, train_y, cv=LeaveOneOut(), scoring="accuracy"
         )
         accuracy = results_loocv.mean()
+
+
         expectation_models[data["exp_num"].iloc[0]] = model
         dao.save_default_pickle(
             DefaultModelSaveReq(
@@ -240,6 +245,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 str(train_data["text"][i]).lower().strip()
             )
             split_training_sets[exp_num][1].append(label)
+        print(split_training_sets, flush=True)
         index2word_set: set = set(self.word2vec_wrapper.index_to_key(False))
         clustering = CustomDBScanClustering(self.word2vec_wrapper, index2word_set)
         config_updated = train_input.config.clone()
@@ -342,13 +348,23 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             ]
             train_y = np.array(LRExpectationClassifier.encode_y(train_y))
             model = LRExpectationClassifier.initialize_model()
+            #print("this is features", features)
+            print("This is train_y", train_y)
             model.fit(features, train_y)
-            results_loocv = model_selection.cross_val_score(
-                model, features, train_y, cv=LeaveOneOut(), scoring="accuracy"
-            )
+            results_loocv = model_selection.cross_val_predict(
+                model, features, train_y, cv=LeaveOneOut()
+            ) #if cv = LeaveOneOut(), then you can't get f1 etc, because it's returning an array of correct 1 and incorrect 0 validated scores, NOT predictions.
+
+            #print(results_loocv, "These are the results")
+            #print(train_y, "These are the true classifications")
+            accuracy = accuracy_score(results_loocv, train_y)
+            metrics = precision_recall_fscore_support(results_loocv, train_y, average='macro')
+            f1score = metrics[2]
+            precision = metrics[0]
+            recall = metrics[1]
             expectation_results.append(
                 ExpectationTrainingResult(
-                    expectation_id=exp_num, accuracy=results_loocv.mean()
+                    expectation_id=exp_num, accuracy=accuracy, f1score=f1score, precision=precision, recall=recall
                 )
             )
             slim_embeddings.update(

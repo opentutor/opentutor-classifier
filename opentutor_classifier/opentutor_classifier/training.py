@@ -29,11 +29,24 @@ def train(
     res = training.train(data, dao)
     return res
 
+def train_N_shot(
+    lesson: str,
+    arch="",
+    config: TrainingConfig = None,
+    dao: DataDao = None,
+) -> TrainingResult:
+    dao = dao or opentutor_classifier.dao.find_data_dao()
+    data = dao.find_training_input(lesson)
+    fac = ClassifierFactory()
+    training = fac.new_training(config or TrainingConfig(), arch=arch)
+    res = training.train(data, dao)
+    return res, len(data.data)
 
 def train_data_root(
     arch="", config: TrainingConfig = None, data_root="data", output_dir=""
 ) -> TrainingResult:
     droot, lesson = path.split(path.abspath(data_root))
+    # Second step out from _test file,  
     return train(
         lesson,
         arch=arch,
@@ -41,6 +54,17 @@ def train_data_root(
         dao=FileDataDao(droot, model_root=output_dir),
     )
 
+def train_data_root_N_shot(
+    arch="", config: TrainingConfig = None, data_root="data", output_dir=""
+) -> TrainingResult:
+    droot, lesson = path.split(path.abspath(data_root))
+    # Second step out from _test file,  
+    return train_N_shot(
+        lesson,
+        arch=arch,
+        config=config,
+        dao=FileDataDao(droot, model_root=output_dir),
+    )
 
 def train_default_data_root(
     arch="", config: TrainingConfig = None, data_root="data", output_dir=""

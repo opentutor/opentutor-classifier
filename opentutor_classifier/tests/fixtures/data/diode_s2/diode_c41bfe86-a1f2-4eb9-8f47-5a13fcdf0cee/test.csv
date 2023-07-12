@@ -1,0 +1,21 @@
+exp_num,text,label
+0,Current will not be allowed to flow through the circuit.,good
+1,Current will not be allowed to flow through the circuit.,bad
+0,the voltage changes direction,good
+1,the voltage changes direction,bad
+0,Will not allow current to flow.,good
+1,Will not allow current to flow.,bad
+0,the diode will not allow current to flow in the circuit,good
+1,the diode will not allow current to flow in the circuit,bad
+0,the diode will allow current to flow in the opposite direction,good
+1,the diode will allow current to flow in the opposite direction,bad
+0,It redirects the current.,good
+1,It redirects the current.,bad
+0,they can burn out,bad
+1,they can burn out,good
+0,The diode is off.,good
+1,The diode is off.,bad
+0,it will conduct when you don't want it to and it won't conduct when you do want it to,good
+1,it will conduct when you don't want it to and it won't conduct when you do want it to,bad
+0,the voltage fries the diode,bad
+1,the voltage fries the diode,good

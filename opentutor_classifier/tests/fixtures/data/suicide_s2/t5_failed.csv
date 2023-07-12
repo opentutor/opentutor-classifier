@@ -1,0 +1,11 @@
+exp_num,text,label
+0,Lowers it,good
+1,Lowers it,bad
+0,they are much less likely to commit suicide,good
+1,they are much less likely to commit suicide,bad
+0,it narrows their risk,good
+1,it narrows their risk,bad
+0,theyre still more likely as they have suicidal ideation,bad
+1,theyre still more likely as they have suicidal ideation,good
+0,It gives them more time to think about what their \about to do. Maybe regret.,good
+1,It gives them more time to think about what their \about to do. Maybe regret.,bad

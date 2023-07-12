@@ -1,0 +1,62 @@
+{
+      "answer_14": {
+            "Answer text": "it sees it as something essential",
+            "concept_1": "false",
+            "concept_2": "true",
+            "concept_3": "false"
+      },
+      "answer_17": {
+            "Answer text": "he kept rising in the ranks and he is a corporal",
+            "concept_1": "true",
+            "concept_2": "false",
+            "concept_3": "false"
+      },
+      "answer_19": {
+            "Answer text": "it'sok",
+            "concept_1": "false",
+            "concept_2": "false",
+            "concept_3": "false"
+      },
+      "answer_26": {
+            "Answer text": "He thinks it's necessary and beneficial.",
+            "concept_1": "false",
+            "concept_2": "true",
+            "concept_3": "false"
+      },
+      "answer_45": {
+            "Answer text": "It lets you deal with problems that will become worse if they are not handled",
+            "concept_1": "false",
+            "concept_2": "true",
+            "concept_3": "true"
+      },
+      "answer_41": {
+            "Answer text": "test",
+            "concept_1": "false",
+            "concept_2": "false",
+            "concept_3": "false"
+      },
+      "answer_37": {
+            "Answer text": "he thinks that it is important",
+            "concept_1": "false",
+            "concept_2": "true",
+            "concept_3": "false"
+      },
+      "answer_31": {
+            "Answer text": "it affected his career positively and he feels grateful for it",
+            "concept_1": "true",
+            "concept_2": "true",
+            "concept_3": "true"
+      },
+      "answer_15": {
+            "Answer text": "He kept rising in rank",
+            "concept_1": "true",
+            "concept_2": "false",
+            "concept_3": "false"
+      },
+      "answer_4": {
+            "Answer text": "Getting a promotion",
+            "concept_1": "true",
+            "concept_2": "false",
+            "concept_3": "false"
+      }
+}

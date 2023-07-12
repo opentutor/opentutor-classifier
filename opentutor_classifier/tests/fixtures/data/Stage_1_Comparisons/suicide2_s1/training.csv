@@ -1,0 +1,51 @@
+exp_num,text,label
+0,"No, I don't think so.",bad
+1,"No, I don't think so.",bad
+0,Not attempt suicide?,good
+1,Not attempt suicide?,bad
+0,I would say they are still more likely to commit suicide and they would still need help from a professional and the people around them.,bad
+1,I would say they are still more likely to commit suicide and they would still need help from a professional and the people around them.,good
+0,They will probably find another way,bad
+1,They will probably find another way,bad
+0,It'll deter them from wanting to commit suicide.,good
+1,It'll deter them from wanting to commit suicide.,bad
+0,They will stop and think about it,good
+1,They will stop and think about it,bad
+0,It decreases.,good
+1,It decreases.,bad
+0,not attempt,bad
+1,not attempt,bad
+0,It may deter their desire altogether,good
+1,It may deter their desire altogether,bad
+0,It reduces,good
+1,It reduces,bad
+0,Less likely,good
+1,Less likely,bad
+0,Yes their risk is reduced,good
+1,Yes their risk is reduced,bad
+0,how to help someone not commit suicide,bad
+1,how to help someone not commit suicide,bad
+0,I think I would be less likely give more time to think about it. Just thinking about the effect it would have in other peoples lifes.,good
+1,I think I would be less likely give more time to think about it. Just thinking about the effect it would have in other peoples lifes.,bad
+0,Still more likely to commit suicide than the general public,bad
+1,Still more likely to commit suicide than the general public,good
+0,It slightly lowers their risk?,good
+1,It slightly lowers their risk?,bad
+0,it slightly reduces it,good
+1,it slightly reduces it,bad
+0,They are less likely to commit suicide.,good
+1,They are less likely to commit suicide.,bad
+0,It's lessened,good
+1,It's lessened,bad
+0,they are less likely,good
+1,they are less likely,bad
+0,Not having a gun lowers their risk of suicide,good
+1,Not having a gun lowers their risk of suicide,bad
+0,It slows it down for the time being.,good
+1,It slows it down for the time being.,bad
+0,less likely,good
+1,less likely,bad
+0,Their risk is lower,good
+1,Their risk is lower,bad
+0,More likely.,bad
+1,More likely.,good

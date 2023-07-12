@@ -1,0 +1,31 @@
+exp_num,text,label
+0,Because it resolves problems that will appear later,bad
+1,Because it resolves problems that will appear later,good
+2,Because it resolves problems that will appear later,good
+0,It made him feel better about himself.,bad
+1,It made him feel better about himself.,good
+2,It made him feel better about himself.,bad
+0,Encouraged him to help others because he benefited from counseling,bad
+1,Encouraged him to help others because he benefited from counseling,good
+2,Encouraged him to help others because he benefited from counseling,bad
+0,Test,bad
+1,Test,bad
+2,Test,bad
+0,he continued to advance in his career,good
+1,he continued to advance in his career,bad
+2,he continued to advance in his career,bad
+0,it went a different direction,bad
+1,it went a different direction,bad
+2,it went a different direction,bad
+0,He was helped in the long term,good
+1,He was helped in the long term,bad
+2,He was helped in the long term,good
+0,You get to talk to someone about what you’re going through,bad
+1,You get to talk to someone about what you’re going through,good
+2,You get to talk to someone about what you’re going through,bad
+0,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,bad
+1,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,good
+2,It allows you to deal with problems and helps prevent them from becoming more serious and bigger down the road,good
+0,His career went well,good
+1,His career went well,bad
+2,His career went well,bad

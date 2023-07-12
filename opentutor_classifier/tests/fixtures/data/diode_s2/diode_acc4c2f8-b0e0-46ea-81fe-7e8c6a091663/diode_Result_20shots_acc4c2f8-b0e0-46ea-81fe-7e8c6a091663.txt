@@ -1,0 +1,153 @@
+content:{
+  "answer_43": {
+    "answer text": "It stops",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer correctly states that the diode stops conducting current, which is the behavior of a diode in reverse bias."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not provide any information about the diode going into breakdown mode, so it is uncertain if the user knows this concept."
+      }
+    }
+  },
+  "answer_18": {
+    "answer text": "It will be off",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer correctly states that the diode will be off in reverse bias, which is a characteristic of normal diodes."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention the possibility of the diode being damaged in breakdown mode, so it is unclear if the user knows this concept."
+      }
+    }
+  },
+  "answer_4": {
+    "answer text": "No current allowed to flow",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer explicitly states that no current is allowed to flow, which is consistent with the concept that normal diodes do not conduct current in reverse bias and act like an \"off\" switch."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention the concept that the diode will be damaged by going into breakdown mode, so it is unclear whether the user knows this concept or not."
+      }
+    }
+  },
+  "answer_10": {
+    "answer text": "it burn out",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer mentions burning out, which could imply that the user knows that the diode can be damaged. However, the answer does not specifically mention reverse bias or the diode acting like an \"off\" switch, which are key aspects of concept 1."
+      },
+      "concept_2": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer mentions burning out, which implies that the user knows that the diode can be damaged. This aligns with concept 2, which states that the diode can be damaged by going into breakdown mode."
+      }
+    }
+  },
+  "answer_7": {
+    "answer text": "The current is blocked",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer explicitly states that the current is blocked, which is a key characteristic of a diode in reverse bias. This shows knowledge of Concept 1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "While it is true that a diode can be damaged by going into breakdown mode, the answer does not provide any indication that the user knows this concept. Therefore, confidence is lower. "
+      }
+    }
+  },
+  "answer_26": {
+    "answer text": "it won't allow diode to flow and the circuit will be off",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer correctly states that the diode won't allow current to flow, which is a key aspect of the concept."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention the possibility of the diode being damaged, so it is unclear if the user knows this concept."
+      }
+    }
+  },
+  "answer_16": {
+    "answer text": "increases a diode's resistance",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.8,
+        "justification": "The answer mentions a diode's resistance, which is related to its ability to conduct current. This suggests that the user understands the basic behavior of a diode in a circuit."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.5,
+        "justification": "The answer does not mention anything about the diode going into breakdown mode, so it is unclear whether the user understands this concept."
+      }
+    }
+  },
+  "answer_35": {
+    "answer text": "It could burn out",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer mentions burning out, which is a potential consequence of too much current flowing through the diode. However, it does not explicitly state that the diode will not conduct current in reverse bias like an \"off\" switch, which is the main concept being evaluated."
+      },
+      "concept_2": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer mentions the possibility of the diode burning out, which is a consequence of going into breakdown mode. This shows knowledge of the concept that the diode will be damaged by going into breakdown mode."
+      }
+    }
+  },
+  "answer_21": {
+    "answer text": "Will not allow current to flow.",
+    "concepts": {
+      "concept_1": {
+        "is_known": "true",
+        "confidence": 0.9,
+        "justification": "The answer specifically mentions that current will not flow, which is a characteristic of a diode in reverse bias."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.6,
+        "justification": "The answer does not mention anything about the diode being damaged by going into breakdown mode."
+      }
+    }
+  },
+  "answer_11": {
+    "answer text": "I think that's all -",
+    "concepts": {
+      "concept_1": {
+        "is_known": "false",
+        "confidence": 0.7,
+        "justification": "The answer does not mention anything about diodes or current flow, so it is unlikely that the user knows concept_1."
+      },
+      "concept_2": {
+        "is_known": "false",
+        "confidence": 0.8,
+        "justification": "The answer does not mention anything about diode breakdown, so it is unlikely that the user knows concept_2."
+      }
+    }
+  }
+}
+

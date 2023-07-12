@@ -1,0 +1,41 @@
+exp_num,text,label
+0,The risk would decrease.,good
+1,The risk would decrease.,bad
+0,I think they wouldnt want to take the time to come up with another plan,good
+1,I think they wouldnt want to take the time to come up with another plan,bad
+0,"This lowers there immediate risk, but does not lower the ideation",good
+1,"This lowers there immediate risk, but does not lower the ideation",good
+0,theyre still more likely as they have suicidal ideation,bad
+1,theyre still more likely as they have suicidal ideation,good
+0,theyre less likely because the suicidal urge is short,good
+1,theyre less likely because the suicidal urge is short,bad
+0,They are more likely willing.,bad
+1,They are more likely willing.,good
+0,More likely than what? Overall to commit suicide? I think it would drop some.,good
+1,More likely than what? Overall to commit suicide? I think it would drop some.,bad
+0,same likelihood,bad
+1,same likelihood,bad
+0,"More likely, I assume",bad
+1,"More likely, I assume",good
+0,theyre at risk because theyre still thinking about suicide,bad
+1,theyre at risk because theyre still thinking about suicide,good
+0,It decreases their risk of suicide in the long run,good
+1,It decreases their risk of suicide in the long run,bad
+0,Their risk is lower,good
+1,Their risk is lower,bad
+0,It slightly lowers their risk?,good
+1,It slightly lowers their risk?,bad
+0,they lose the urge to commit suicide,good
+1,they lose the urge to commit suicide,bad
+0,less likely,good
+1,less likely,bad
+0,It goes up.,bad
+1,It goes up.,bad
+0,I would think they might calm down,good
+1,I would think they might calm down,bad
+0,Not attempt suicide?,good
+1,Not attempt suicide?,bad
+0,more likely,bad
+1,more likely,good
+0,It gives them more time to think about what their \about to do. Maybe regret.,good
+1,It gives them more time to think about what their \about to do. Maybe regret.,bad
