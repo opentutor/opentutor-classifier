@@ -8,6 +8,6 @@ ENV PATH="/app/bin:${PATH}"
 COPY requirements-training_config.txt ./requirements.txt
 # RUN python -m pip install --upgrade pip
 RUN pip install --no-cache -r requirements.txt
-COPY serverless/functions/training_config.py ./
-COPY serverless serverless
-COPY opentutor_classifier/opentutor_classifier opentutor_classifier
+COPY functions/training_config.py ./
+COPY src src
+COPY ../opentutor_classifier/opentutor_classifier opentutor_classifier

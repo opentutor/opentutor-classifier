@@ -5,9 +5,9 @@ WORKDIR /app
 ENV PYTHONPATH /app
 ENV PATH="/app/bin:${PATH}"
 
-COPY requirements-train_job.txt ./requirements.txt
+COPY requirements-training_data.txt ./requirements.txt
 # RUN python -m pip install --upgrade pip
 RUN pip install --no-cache -r requirements.txt
-COPY serverless/functions/train_job.py ./
-COPY serverless serverless
-COPY opentutor_classifier/opentutor_classifier opentutor_classifier
+COPY functions/training_data.py ./
+COPY src src
+COPY ../opentutor_classifier/opentutor_classifier opentutor_classifier
