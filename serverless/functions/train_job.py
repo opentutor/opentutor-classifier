@@ -8,8 +8,8 @@ import json
 import datetime
 import os
 import boto3
-from serverless.src.utils import require_env
-from serverless.src.logger import get_logger
+from src.utils import require_env
+from src.logger import get_logger
 
 from opentutor_classifier.dao import (
     find_data_dao,

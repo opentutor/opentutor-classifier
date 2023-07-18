@@ -10,8 +10,8 @@ import uuid
 import datetime
 import os
 import boto3
-from serverless.src.utils import create_json_response, require_env
-from serverless.src.logger import get_logger
+from src.utils import create_json_response, require_env
+from src.logger import get_logger
 
 log = get_logger("train_request")
 JOBS_TABLE_NAME = require_env("JOBS_TABLE_NAME")

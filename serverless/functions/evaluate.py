@@ -8,8 +8,8 @@ import json
 import os
 import base64
 import boto3
-from serverless.src.utils import create_json_response, require_env, to_camelcase
-from serverless.src.logger import get_logger
+from src.utils import create_json_response, require_env, to_camelcase
+from src.logger import get_logger
 
 from opentutor_classifier.classifier_dao import ClassifierDao
 from opentutor_classifier.dao import find_data_dao
