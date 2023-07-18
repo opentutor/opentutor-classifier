@@ -10,4 +10,4 @@ COPY requirements-training_config.txt ./requirements.txt
 RUN pip install --no-cache -r requirements.txt
 COPY functions/training_config.py ./
 COPY src src
-COPY ../opentutor_classifier/opentutor_classifier opentutor_classifier
+COPY opentutor_classifier opentutor_classifier
