@@ -167,7 +167,8 @@ package:
     # and then add back in only the files we need:
      - '*.py'
      - '../opentutor_classifier/opentutor_classifier/**'
-     - './**'
+     - './functions/**'
+     - './src/**'
 
 functions:
   train_request:
