@@ -9,9 +9,9 @@
     "serverless-layers": "2.5.2"
   },
   "scripts": {
-    "deploy:dev": "NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s dev --region us-east-1",
-    "deploy:qa": "NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s qa --region us-east-1",
-    "deploy:prod": "NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s prod --region us-east-1"
+    "deploy:dev": "cp -r opentutor_classifier/opentutor_classifier serverless/opentutor_classifier && cd serverless && NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s dev --region us-east-1 && rm -r opentutor_classifier",
+    "deploy:qa": "cp -r opentutor_classifier/opentutor_classifier serverless/opentutor_classifier && cd serverless && NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s qa --region us-east-1 && rm -r opentutor_classifier",
+    "deploy:prod": "cp -r opentutor_classifier/opentutor_classifier serverless/opentutor_classifier && cd serverless && NODE_OPTIONS=--max_old_space_size=4000 sls deploy -s prod --region us-east-1 && rm -r opentutor_classifier"
   },
   "engines": {
     "node": ">=18"
