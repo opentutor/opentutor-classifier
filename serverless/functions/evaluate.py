@@ -4,16 +4,24 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from dataclasses import dataclass
 import json
 import os
 import base64
 import boto3
+from dataclass_wizard import JSONWizard
 from src.utils import create_json_response, require_env, to_camelcase
 from src.logger import get_logger
 
 from opentutor_classifier.classifier_dao import ClassifierDao
 from opentutor_classifier.dao import find_data_dao
-from opentutor_classifier import ClassifierConfig, AnswerClassifierInput
+from opentutor_classifier import AnswerClassifierResult, ClassifierConfig, AnswerClassifierInput, ARCH_DEFAULT
+
+
+@dataclass
+class Output(JSONWizard):
+    output: AnswerClassifierResult
+
 
 log = get_logger("status")
 JOBS_TABLE_NAME = require_env("JOBS_TABLE_NAME")
@@ -54,6 +62,11 @@ def handler(event, context):
     if "input" not in request_body and ping is False:
         return create_json_response(400, {"error": "lesson is a required param"}, event)
 
+    if "arch" not in request_body:
+        arch = ARCH_DEFAULT
+    else:
+        arch = request_body["arch"]
+
     lesson = request_body["lesson"]
     input_sentence = request_body["input"] if ping is False else ""
     exp_num = request_body["expectation"] if "expectation" in request_body else ""
@@ -63,14 +76,18 @@ def handler(event, context):
         os.environ.get("MODEL_DEPLOYED_ROOT") or "models_deployed",
     ]
     shared_root = os.environ.get("SHARED_ROOT") or "shared"
+
+    data_dao = find_data_dao()
+
     classifier = _get_dao().find_classifier(
         lesson,
         ClassifierConfig(
-            dao=find_data_dao(),
+            dao=data_dao,
             model_name=lesson,
             model_roots=model_roots,
             shared_root=shared_root,
         ),
+        arch=arch
     )
     if ping:
         return create_json_response(200, {"ping": "pong"}, event)
@@ -79,9 +96,10 @@ def handler(event, context):
             AnswerClassifierInput(
                 input_sentence=input_sentence,
                 expectation=exp_num,
+                config_data=data_dao.find_training_config(lesson)
             )
         )
 
         return create_json_response(
-            200, {"output": to_camelcase(_model_op.to_dict())}, event
+            200, json.loads(Output(_model_op).to_json()), event
         )

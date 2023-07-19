@@ -38,6 +38,7 @@ def handler(event, context):
     for record in event["Records"]:
         request = json.loads(str(record["body"]))
         lesson = request["lesson"]
+        arch = request["arch"]
         should_train_default = request["train_default"]
         lesson_name = DEFAULT_LESSON_NAME if should_train_default else lesson
         # ping = request["ping"] if "ping" in request else False
@@ -50,32 +51,32 @@ def handler(event, context):
 
             if should_train_default:
                 data = dao.find_default_training_data()
-                training = fac.new_training(config, arch=ARCH_DEFAULT)
+                training = fac.new_training(config, arch=arch)
                 training.train_default(data, dao)
             else:
                 data = dao.find_training_input(lesson_name)
-                training = fac.new_training(config, arch=ARCH_DEFAULT)
+                training = fac.new_training(config, arch=arch)
                 training.train(data, dao)
 
             # upload model
             s3.upload_file(
                 os.path.join(
                     MODEL_ROOT_DEFAULT,
-                    ARCH_DEFAULT,
+                    arch,
                     lesson_name,
                     MODEL_FILE_NAME,
                 ),
                 MODELS_BUCKET,
-                os.path.join(lesson_name, ARCH_DEFAULT, MODEL_FILE_NAME),
+                os.path.join(lesson_name, arch, MODEL_FILE_NAME),
             )
 
             # upload model config
             s3.upload_file(
                 os.path.join(
-                    MODEL_ROOT_DEFAULT, ARCH_DEFAULT, lesson_name, _CONFIG_YAML
+                    MODEL_ROOT_DEFAULT, arch, lesson_name, _CONFIG_YAML
                 ),
                 MODELS_BUCKET,
-                os.path.join(lesson_name, ARCH_DEFAULT, _CONFIG_YAML),
+                os.path.join(lesson_name, arch, _CONFIG_YAML),
             )
 
             update_status(request["id"], "SUCCESS")
