@@ -7,8 +7,8 @@
 import json
 import os
 import boto3
-from serverless.src.utils import create_json_response, require_env
-from serverless.src.logger import get_logger
+from src.utils import create_json_response, require_env
+from src.logger import get_logger
 
 
 log = get_logger("status")

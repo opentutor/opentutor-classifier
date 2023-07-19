@@ -47,7 +47,7 @@ custom:
   serverless-layers:
     - dependencies:
         layersDeploymentBucket: ${self:provider.deploymentBucket.name}
-        dependenciesPath: ./serverless/src/requirements.txt
+        dependenciesPath: ./requirements.txt
         compatibleRuntimes:
           - python3.8
         functions:
@@ -166,12 +166,13 @@ package:
      - '!./**'
     # and then add back in only the files we need:
      - '*.py'
-     - 'opentutor_classifier/opentutor_classifier/**'
-     - 'serverless/**'
+     - '../opentutor_classifier/opentutor_classifier/**'
+     - './functions/**'
+     - './src/**'
 
 functions:
   train_request:
-    handler: serverless/functions/train_request.handler
+    handler: functions/train_request.handler
     timeout: 30
     memorySize: 1024
     events:
@@ -204,7 +205,7 @@ functions:
           method: post
           cors: true
   train_status:
-    handler: serverless/functions/train_status.handler
+    handler: functions/train_status.handler
     memorySize: 512
     timeout: 10
     events:
@@ -262,7 +263,7 @@ functions:
           cors: true
   check_model:
     timeout: 30
-    handler: serverless/functions/check_model.handler
+    handler: functions/check_model.handler
     events:
       - http:
           path: /check_model
@@ -270,7 +271,7 @@ functions:
           cors: true
   delete_model:
     timeout: 30
-    handler: serverless/functions/delete_model.handler
+    handler: functions/delete_model.handler
     events:
       - http:
           path: /delete_model
