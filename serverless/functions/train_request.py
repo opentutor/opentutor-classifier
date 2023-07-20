@@ -10,7 +10,6 @@ import uuid
 import datetime
 import os
 import boto3
-from opentutor_classifier import ARCH_DEFAULT
 from src.utils import create_json_response, require_env
 from src.logger import get_logger
 
@@ -53,7 +52,7 @@ def handler(event, context):
             },
             event,
         )
-    arch = train_request["arch"] if "arch" in train_request else ARCH_DEFAULT
+    arch = train_request["arch"] if "arch" in train_request else None
     lesson = train_request["lesson"] if "lesson" in train_request else "default"
     ping = train_request["ping"] if "ping" in train_request else False
 

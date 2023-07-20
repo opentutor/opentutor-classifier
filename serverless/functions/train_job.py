@@ -17,7 +17,7 @@ from opentutor_classifier.dao import (
     MODEL_ROOT_DEFAULT,
     DEFAULT_LESSON_NAME,
 )
-from opentutor_classifier import ClassifierFactory, TrainingConfig
+from opentutor_classifier import ClassifierFactory, TrainingConfig, ARCH_DEFAULT
 from opentutor_classifier.lr2 import MODEL_FILE_NAME
 
 log = get_logger("train-job")
@@ -38,7 +38,7 @@ def handler(event, context):
     for record in event["Records"]:
         request = json.loads(str(record["body"]))
         lesson = request["lesson"]
-        arch = request["arch"]
+        arch = request["arch"] if request["arch"] != None else ARCH_DEFAULT
         should_train_default = request["train_default"]
         lesson_name = DEFAULT_LESSON_NAME if should_train_default else lesson
         # ping = request["ping"] if "ping" in request else False
