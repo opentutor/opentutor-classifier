@@ -38,7 +38,7 @@ def handler(event, context):
     for record in event["Records"]:
         request = json.loads(str(record["body"]))
         lesson = request["lesson"]
-        arch = request["arch"] if request["arch"] != None else ARCH_DEFAULT
+        arch = request["arch"] if request["arch"] is not None else ARCH_DEFAULT
         should_train_default = request["train_default"]
         lesson_name = DEFAULT_LESSON_NAME if should_train_default else lesson
         # ping = request["ping"] if "ping" in request else False
