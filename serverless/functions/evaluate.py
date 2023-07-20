@@ -10,12 +10,17 @@ import os
 import base64
 import boto3
 from dataclass_wizard import JSONWizard
-from src.utils import create_json_response, require_env, to_camelcase
+from src.utils import create_json_response, require_env
 from src.logger import get_logger
 
 from opentutor_classifier.classifier_dao import ClassifierDao
 from opentutor_classifier.dao import find_data_dao
-from opentutor_classifier import AnswerClassifierResult, ClassifierConfig, AnswerClassifierInput, ARCH_DEFAULT
+from opentutor_classifier import (
+    AnswerClassifierResult,
+    ClassifierConfig,
+    AnswerClassifierInput,
+    ARCH_DEFAULT,
+)
 
 
 @dataclass
@@ -87,7 +92,7 @@ def handler(event, context):
             model_roots=model_roots,
             shared_root=shared_root,
         ),
-        arch=arch
+        arch=arch,
     )
     if ping:
         return create_json_response(200, {"ping": "pong"}, event)
@@ -96,10 +101,8 @@ def handler(event, context):
             AnswerClassifierInput(
                 input_sentence=input_sentence,
                 expectation=exp_num,
-                config_data=data_dao.find_training_config(lesson)
+                config_data=data_dao.find_training_config(lesson),
             )
         )
 
-        return create_json_response(
-            200, json.loads(Output(_model_op).to_json()), event
-        )
+        return create_json_response(200, json.loads(Output(_model_op).to_json()), event)

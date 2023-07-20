@@ -17,7 +17,7 @@ from opentutor_classifier.dao import (
     MODEL_ROOT_DEFAULT,
     DEFAULT_LESSON_NAME,
 )
-from opentutor_classifier import ClassifierFactory, TrainingConfig, ARCH_DEFAULT
+from opentutor_classifier import ClassifierFactory, TrainingConfig
 from opentutor_classifier.lr2 import MODEL_FILE_NAME
 
 log = get_logger("train-job")
@@ -72,9 +72,7 @@ def handler(event, context):
 
             # upload model config
             s3.upload_file(
-                os.path.join(
-                    MODEL_ROOT_DEFAULT, arch, lesson_name, _CONFIG_YAML
-                ),
+                os.path.join(MODEL_ROOT_DEFAULT, arch, lesson_name, _CONFIG_YAML),
                 MODELS_BUCKET,
                 os.path.join(lesson_name, arch, _CONFIG_YAML),
             )
