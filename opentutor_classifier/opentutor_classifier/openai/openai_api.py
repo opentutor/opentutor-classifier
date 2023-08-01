@@ -5,9 +5,9 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import json
-from typing import Dict, Generator, List
+from typing import Dict, Generator, List, Any
 from dataclass_wizard import JSONWizard
 import openai
 import backoff
@@ -20,6 +20,12 @@ openai.api_key = require_env(OPENAI_API_KEY)
 
 
 @dataclass
+class ConceptMask(JSONWizard):
+    uuid_to_numbers: Dict[str, str] = field(default_factory=dict)
+    numbers_to_uuid: Dict[str, str] = field(default_factory=dict)
+
+
+@dataclass
 class OpenAICall(JSONWizard):
     system_assignment: str
     user_concepts: List[ExpectationConfig]
@@ -27,20 +33,31 @@ class OpenAICall(JSONWizard):
     user_template: dict
     user_guardrails: str
 
-    def to_openai_json(self) -> str:
-        result: dict = {}
-        result["system-assignment"] = self.system_assignment
+
+
+    def mask_concept_uuids(self) -> ConceptMask:
+        concept_mask: ConceptMask = ConceptMask()
+        for index, concept in enumerate(self.user_concepts):
+            concept_mask.uuid_to_numbers[concept.expectation_id] = "concept_" + str(index)
+            concept_mask.numbers_to_uuid["concept_" + str(index)] = concept.expectation_id
+            concept.expectation_id = "concept_" + str(index)
+
+        return concept_mask
+
+    def to_openai_json(self) -> list:
+        result: list = []
+        result.append({"role": "system", "content": self.system_assignment})
         user_concepts: dict = {}
         for index, concept in enumerate(self.user_concepts):
             user_concepts[concept.expectation_id] = concept.ideal
-        result["user-concepts"] = user_concepts
+        result.append({"role": "user", "content": json.dumps(user_concepts)})
         user_answer: dict = {}
         for index, answer in enumerate(self.user_answer):
             user_answer["Answer " + str(index)] = {"Answer Text": answer}
-        result["user-answer"] = user_answer
-        result["user-template"] = self.user_template
-        result["user-guardrails"] = self.user_guardrails
-        return json.dumps(result, indent=2)
+        result.append({"role": "user", "content": json.dumps(user_answer)})
+        result.append({"role": "user", "content": json.dumps(self.user_template)})
+        result.append({"role": "user", "content": self.user_guardrails})
+        return result
 
 
 @dataclass
@@ -54,6 +71,13 @@ class Concept(JSONWizard):
 class Answer(JSONWizard):
     answer_text: str
     concepts: Dict[str, Concept]
+
+    def unmask_concept_uuids(self, concept_mask: ConceptMask):
+        newConcepts: Dict[str, Concept] = {}
+        for key in self.concepts.keys():
+            current_concept = self.concepts[key]
+            newConcepts[concept_mask.numbers_to_uuid[key]] = current_concept
+        self.concepts = newConcepts
 
 
 @dataclass
@@ -76,22 +100,25 @@ def completions_with_backoff(**kwargs) -> Generator:
 
 
 def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
-    mesasges = {"role": "user", "content": call_data.to_openai_json()}
-
+    concept_mask = call_data.mask_concept_uuids()
+    messages = call_data.to_openai_json()
     attempts = 0
     result_valid = False
     temperature = OPENAI_DEFAULT_TEMP
 
+    logger.info("Sending messages to OpenAI: " + str(messages))
+
     while attempts < 5 and not result_valid:
         attempts += 1
         raw_result = completions_with_backoff(
-            model=OPENAI_MODEL, temperature=temperature, messages=mesasges
+            model=OPENAI_MODEL, temperature=temperature, messages=messages
         )
         content = raw_result.choices[0].message.content
 
         if validate_json(content, OpenAIResultContent):
             result_valid = True
             result: OpenAIResultContent = OpenAIResultContent.from_json(content)
+            result.answers[result.answers.__iter__().__next__()].unmask_concept_uuids(concept_mask)
             return result
         else:
             temperature += 0.1
