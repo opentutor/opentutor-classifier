@@ -112,6 +112,7 @@ provider:
     NODE_ENV: opentutor-${self:provider.stage}
     NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=50'
     API_SECRET: ${ssm:/shared/api-secret, ''}
+    OPENAI_API_KEY: ${ssm:/shared/openai-api-key, ''}
     SBERT_API_SECRET: ${self:custom.stages.${self:provider.stage}.SBERT_API_SECRET}
     SBERT_ENDPOINT: ${self:custom.stages.${self:provider.stage}.SBERT_ENDPOINT}
     SBERT_WAF_SECRET_HEADER: ${ssm:/shared/sbert-waf-secret-header, ''}
