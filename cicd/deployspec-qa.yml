@@ -15,6 +15,7 @@ phases:
   pre_build:
     commands:
       - n 18
+      - pyenv install $PYTHON_38_VERSION
       - pyenv global $PYTHON_38_VERSION
 
   build:
