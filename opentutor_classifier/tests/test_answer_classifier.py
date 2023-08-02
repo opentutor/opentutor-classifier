@@ -116,12 +116,12 @@ def _find_or_train_classifier(
                     "answer_1": {
                         "answer text": "it explodes",
                         "concepts": {
-                            "0": {
+                            "concept_0": {
                                 "is_known": "false",
                                 "confidence": 0.9,
                                 "justification": "The answer does not mention anything about normal diodes not conducting current in reverse bias, which is the concept being tested.",
                             },
-                            "1": {
+                            "concept_1": {
                                 "is_known": "true",
                                 "confidence": 0.7,
                                 "justification": "The answer mentions that the diode explodes, which implies that it goes into breakdown mode and gets damaged.",
