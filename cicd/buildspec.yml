@@ -10,9 +10,11 @@ phases:
   install:
     runtime-versions:
       nodejs: 14
-      python: 3.8
     commands:
-      - pip install poetry
+      - pyenv global $PYTHON_38_VERSION
+      - python3 -m venv /root/venv
+      - . /root/venv/bin/activate
+      - pip3 install poetry
       - poetry install --no-root
       - n 16
       - NODE_ENV=dev npm ci
@@ -29,3 +31,8 @@ artifacts:
   files:
     - '**/*'
   enable-symlinks: yes
+cache:
+  paths:
+    - '/root/venv/**/*'
+    - '/root/.cache/pip/**/*'
+    - '/root/.cache/pypoetry/virtualenvs/**/*'
