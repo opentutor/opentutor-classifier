@@ -12,7 +12,7 @@ phases:
       nodejs: 14
       python: 3.8
     commands:
-      - pip3 install poetry
+      - pip install poetry
       - poetry install --no-root
       - n 16
       - NODE_ENV=dev npm ci
