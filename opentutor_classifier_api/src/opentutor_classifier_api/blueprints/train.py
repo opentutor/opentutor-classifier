@@ -9,6 +9,7 @@ from flask import Blueprint, jsonify, request
 
 import opentutor_classifier_tasks
 import opentutor_classifier_tasks.tasks
+from opentutor_classifier import ARCH_DEFAULT
 
 
 train_blueprint = Blueprint("train", __name__)
@@ -22,7 +23,8 @@ def _to_status_url(root: str, id: str) -> str:
 @train_blueprint.route("", methods=["POST"])
 def train():
     lesson: str = request.json.get("lesson")
-    t = opentutor_classifier_tasks.tasks.train_task.apply_async(args=[lesson])
+    arch: str = request.json.get("arch", ARCH_DEFAULT)
+    t = opentutor_classifier_tasks.tasks.train_task.apply_async(args=[lesson, arch])
     return jsonify(
         {
             "data": {

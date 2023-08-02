@@ -52,7 +52,7 @@ def handler(event, context):
             },
             event,
         )
-
+    arch = train_request["arch"] if "arch" in train_request else None
     lesson = train_request["lesson"] if "lesson" in train_request else "default"
     ping = train_request["ping"] if "ping" in train_request else False
 
@@ -62,6 +62,7 @@ def handler(event, context):
         "lesson": lesson,
         "ping": ping,
         "train_default": should_train_default,
+        "arch": arch,
         "status": "QUEUED",
         "created": datetime.datetime.now().isoformat(),
         # https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/time-to-live-ttl-before-you-start.html#time-to-live-ttl-before-you-start-formatting

@@ -7,9 +7,9 @@
 import json
 import base64
 import os
-from serverless.src.constants import ARCH_DEFAULT, MODEL_FILE_NAME, _CONFIG_YAML
-from serverless.src.utils import create_json_response, require_env
-from serverless.src.logger import get_logger
+from src.constants import ARCH_DEFAULT, MODEL_FILE_NAME, _CONFIG_YAML
+from src.utils import create_json_response, require_env
+from src.logger import get_logger
 import boto3
 import botocore
 

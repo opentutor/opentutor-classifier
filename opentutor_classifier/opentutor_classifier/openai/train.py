@@ -4,27 +4,23 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import os
 
-from celery import Celery
-
-config = {
-    "broker_url": os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0"),
-    "result_backend": os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379/0"),
-    "accept_content": ["json"],
-    "task_serializer": os.environ.get("CELERY_TASK_SERIALIZER", "json"),
-    "event_serializer": os.environ.get("CELERY_EVENT_SERIALIZER", "json"),
-    "result_serializer": os.environ.get("CELERY_RESULT_SERIALIZER", "json"),
-}
-celery = Celery("opentutor-classifier-tasks", broker=config["broker_url"])
-celery.conf.update(config)
+import pandas as pd
+from opentutor_classifier import (
+    AnswerClassifierTraining,
+    TrainingConfig,
+    DataDao,
+    TrainingInput,
+    TrainingResult,
+)
 
 
-@celery.task()
-def train_task(lesson, arch):
-    pass
+class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):
+    def configure(self, config: TrainingConfig) -> "AnswerClassifierTraining":
+        return self
 
+    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
+        raise NotImplementedError()
 
-@celery.task()
-def train_default_task(arch):
-    pass
+    def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
+        raise NotImplementedError()

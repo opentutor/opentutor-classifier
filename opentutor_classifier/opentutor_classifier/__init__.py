@@ -9,6 +9,7 @@ from dataclasses import dataclass, field, asdict
 from enum import Enum
 from importlib import import_module
 from os import environ, makedirs, path
+from dataclass_wizard import JSONWizard
 import pandas as pd
 from typing import Any, Dict, List, Optional
 import yaml
@@ -29,6 +30,9 @@ class ExpectationConfig:
     expectation_id: str = ""
     ideal: str = ""
     features: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict:
+        return asdict(self)
 
 
 @dataclass
@@ -256,7 +260,7 @@ class AnswerClassifierInput:
 
 
 @dataclass
-class AnswerClassifierResult:
+class AnswerClassifierResult(JSONWizard):
     input: AnswerClassifierInput
     expectation_results: List[ExpectationClassifierResult] = field(default_factory=list)
     speech_acts: Dict[str, SpeechActClassifierResult] = field(default_factory=dict)
@@ -362,6 +366,7 @@ def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
 
 
 ARCH_LR2_CLASSIFIER = "opentutor_classifier.lr2"
+ARCH_OPENAI_CLASSIFIER = "opentutor_classifier.openai"
 ARCH_DEFAULT = ARCH_LR2_CLASSIFIER
 
 

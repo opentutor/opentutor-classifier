@@ -14,3 +14,4 @@ text2num >=2.2.1
 tok >=0.1.14
 scipy==1.6.3
 gensim >=4.0.1
+dataclass-wizard >= 0.22.2
