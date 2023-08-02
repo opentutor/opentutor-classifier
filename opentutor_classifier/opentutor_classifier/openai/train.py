@@ -4,18 +4,23 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-import json
-from src.utils import create_json_response
-from opentutor_classifier.api import fetch_training_data
+
+import pandas as pd
+from opentutor_classifier import (
+    AnswerClassifierTraining,
+    TrainingConfig,
+    DataDao,
+    TrainingInput,
+    TrainingResult,
+)
 
 
-def handler(event, context):
-    print(json.dumps(event))
-    lesson_id = event["pathParameters"]["lesson_id"]
-    data = fetch_training_data(lesson_id)
-    data_config = data.config.to_dict()
-    extra_headers = {
-        "Content-Disposition": "attachment; filename=mentor.csv",
-        "Content-type": "text/csv",
-    }
-    return create_json_response(200, data_config, event, extra_headers)
+class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):
+    def configure(self, config: TrainingConfig) -> "AnswerClassifierTraining":
+        return self
+
+    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
+        raise NotImplementedError()
+
+    def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
+        raise NotImplementedError()

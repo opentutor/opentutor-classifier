@@ -29,10 +29,11 @@ SHARED_ROOT = os.environ.get("SHARED_ROOT") or "shared"
 
 
 @celery.task()
-def train_task(lesson: str) -> dict:
+def train_task(lesson: str, arch: str) -> dict:
     try:
         return train(
             lesson,
+            arch,
             config=TrainingConfig(shared_root=SHARED_ROOT),
         ).to_dict()
     except BaseException as ex:
@@ -41,9 +42,10 @@ def train_task(lesson: str) -> dict:
 
 
 @celery.task()
-def train_default_task() -> dict:
+def train_default_task(arch) -> dict:
     try:
         return train_default(
+            arch,
             config=TrainingConfig(shared_root=SHARED_ROOT),
         ).to_dict()
     except BaseException as ex:
