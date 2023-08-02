@@ -34,6 +34,7 @@ class ExpectationConfig:
     def to_dict(self) -> dict:
         return asdict(self)
 
+
 @dataclass
 class QuestionConfig:
     question: str = ""

@@ -7,7 +7,7 @@
 
 from dataclasses import dataclass, field
 import json
-from typing import Dict, Generator, List, Any
+from typing import Dict, Generator, List
 from dataclass_wizard import JSONWizard
 import openai
 import backoff
@@ -33,13 +33,15 @@ class OpenAICall(JSONWizard):
     user_template: dict
     user_guardrails: str
 
-
-
     def mask_concept_uuids(self) -> ConceptMask:
         concept_mask: ConceptMask = ConceptMask()
         for index, concept in enumerate(self.user_concepts):
-            concept_mask.uuid_to_numbers[concept.expectation_id] = "concept_" + str(index)
-            concept_mask.numbers_to_uuid["concept_" + str(index)] = concept.expectation_id
+            concept_mask.uuid_to_numbers[concept.expectation_id] = "concept_" + str(
+                index
+            )
+            concept_mask.numbers_to_uuid[
+                "concept_" + str(index)
+            ] = concept.expectation_id
             concept.expectation_id = "concept_" + str(index)
 
         return concept_mask
@@ -73,11 +75,11 @@ class Answer(JSONWizard):
     concepts: Dict[str, Concept]
 
     def unmask_concept_uuids(self, concept_mask: ConceptMask):
-        newConcepts: Dict[str, Concept] = {}
+        new_concepts: Dict[str, Concept] = {}
         for key in self.concepts.keys():
             current_concept = self.concepts[key]
-            newConcepts[concept_mask.numbers_to_uuid[key]] = current_concept
-        self.concepts = newConcepts
+            new_concepts[concept_mask.numbers_to_uuid[key]] = current_concept
+        self.concepts = new_concepts
 
 
 @dataclass
@@ -118,7 +120,9 @@ def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
         if validate_json(content, OpenAIResultContent):
             result_valid = True
             result: OpenAIResultContent = OpenAIResultContent.from_json(content)
-            result.answers[result.answers.__iter__().__next__()].unmask_concept_uuids(concept_mask)
+            result.answers[result.answers.__iter__().__next__()].unmask_concept_uuids(
+                concept_mask
+            )
             return result
         else:
             temperature += 0.1
