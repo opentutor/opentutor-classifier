@@ -29,8 +29,3 @@ artifacts:
   files:
     - '**/*'
   enable-symlinks: yes
-cache:
-  paths:
-    - '/root/venv/**/*'
-    - '/root/.cache/pip/**/*'
-    - '/root/.cache/pypoetry/virtualenvs/**/*'
