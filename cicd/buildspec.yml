@@ -11,6 +11,7 @@ phases:
     runtime-versions:
       nodejs: 14
     commands:
+      - pyenv install $PYTHON_38_VERSION
       - pyenv global $PYTHON_38_VERSION
       - python3 -m venv /root/venv
       - . /root/venv/bin/activate
