@@ -9,7 +9,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 14
+      python: 3.8
     commands:
       - pyenv global $PYTHON_38_VERSION
       - python3 -m venv /root/venv
