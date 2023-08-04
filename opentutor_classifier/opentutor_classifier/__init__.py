@@ -367,6 +367,7 @@ def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
 
 ARCH_LR2_CLASSIFIER = "opentutor_classifier.lr2"
 ARCH_OPENAI_CLASSIFIER = "opentutor_classifier.openai"
+ARCH_COMPOSITE_CLASSIFIER = "opentutor_classifier.composite"
 ARCH_DEFAULT = ARCH_LR2_CLASSIFIER
 
 
