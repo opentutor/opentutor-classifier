@@ -18,10 +18,10 @@ from opentutor_classifier.lr2.train import LRAnswerClassifierTraining
 
 class CompositeAnswerClassifierTraining(AnswerClassifierTraining):
 
-    lr_training: LRAnswerClassifierTraining = LRAnswerClassifierTraining()
+    lr_training: AnswerClassifierTraining = LRAnswerClassifierTraining()
 
     def configure(self, config: TrainingConfig) -> "AnswerClassifierTraining":
-        self.lr_training = LRAnswerClassifierTraining.configure(config)
+        self.lr_training = self.lr_training.configure(config)
         return self
 
     def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:

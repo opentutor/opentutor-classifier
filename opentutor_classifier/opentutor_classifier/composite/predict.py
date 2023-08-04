@@ -14,13 +14,13 @@ from opentutor_classifier import (
 import asyncio
 from opentutor_classifier.lr2.predict import LRAnswerClassifier
 from opentutor_classifier.openai.predict import OpenAIAnswerClassifier
-from typing import Dict, Any, Union
+from typing import Dict, Any, Tuple, Union, cast
 
 
 class CompositeAnswerClassifier(AnswerClassifier):
 
-    lr_classifier: LRAnswerClassifier = LRAnswerClassifier()
-    openai_classifier: OpenAIAnswerClassifier = OpenAIAnswerClassifier()
+    lr_classifier: AnswerClassifier = LRAnswerClassifier()
+    openai_classifier: AnswerClassifier = OpenAIAnswerClassifier()
 
     async def run_lr_evaluate(
         self, answer: AnswerClassifierInput
@@ -35,17 +35,24 @@ class CompositeAnswerClassifier(AnswerClassifier):
     def configure(self, config: ClassifierConfig) -> "AnswerClassifier":
         self.lr_classifier = self.lr_classifier.configure(config)
         self.openai_classifier = self.openai_classifier.configure(config)
+        return self
 
-    async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
-        lr_task = asyncio.wait_for(self.run_lr_evaluate(answer))
+    async def evaluate_async(
+        self, answer: AnswerClassifierInput
+    ) -> AnswerClassifierResult:
+        lr_task = asyncio.wait_for(self.run_lr_evaluate(answer), timeout=0)
         openai_task = asyncio.wait_for(self.run_openai_evaluate(answer), timeout=10)
-        results: list[Union[AnswerClassifierResult, Exception]] = await asyncio.gather(
-            lr_task, openai_task, return_exceptions=True
-        )
-        if type(results[1]) == Exception:
-            return results[0]
+        results: Tuple[
+            Union[AnswerClassifierResult, BaseException],
+            Union[AnswerClassifierResult, BaseException],
+        ] = await asyncio.gather(lr_task, openai_task, return_exceptions=True)
+        if type(results[1]) == BaseException:
+            return cast(AnswerClassifierResult, results[0])
         else:
-            return results[1]
+            return cast(AnswerClassifierResult, results[1])
+
+    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+        return asyncio.run(self.evaluate_async(answer))
 
     def get_last_trained_at(self) -> float:
         return self.lr_classifier.get_last_trained_at()
