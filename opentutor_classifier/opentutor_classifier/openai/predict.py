@@ -32,7 +32,7 @@ class OpenAIAnswerClassifier(AnswerClassifier):
     def configure(self, config: ClassifierConfig) -> "AnswerClassifier":
         return self
 
-    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+    async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         if answer.config_data is None:
             raise Exception("missing question data in answer")
         concepts: List[ExpectationConfig] = answer.config_data.expectations
@@ -43,7 +43,7 @@ class OpenAIAnswerClassifier(AnswerClassifier):
             user_template=ANSWER_TEMPLATE,
             user_guardrails=USER_GUARDRAILS,
         )
-        response: OpenAIResultContent = openai_create(call_data=call)
+        response: OpenAIResultContent = await openai_create(call_data=call)
         expectations: List[ExpectationClassifierResult] = []
         print(response.to_json())
         open_ai_answer: Answer = response.answers[

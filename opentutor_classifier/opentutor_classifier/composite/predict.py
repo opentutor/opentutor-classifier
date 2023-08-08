@@ -15,22 +15,40 @@ import asyncio
 from opentutor_classifier.lr2.predict import LRAnswerClassifier
 from opentutor_classifier.openai.predict import OpenAIAnswerClassifier
 from typing import Dict, Any, Tuple, Union, cast
+from opentutor_classifier.log import logger
+import time
+from async_timeout import timeout
 
 
 class CompositeAnswerClassifier(AnswerClassifier):
 
     lr_classifier: AnswerClassifier = LRAnswerClassifier()
-    openai_classifier: AnswerClassifier = OpenAIAnswerClassifier()
+    openai_classifier: OpenAIAnswerClassifier = OpenAIAnswerClassifier()
 
     async def run_lr_evaluate(
         self, answer: AnswerClassifierInput
     ) -> AnswerClassifierResult:
-        return self.lr_classifier.evaluate(answer)
-
+        startTime = time.time()
+        logger.info("running lr evaluate " + str(startTime))
+        result = self.lr_classifier.evaluate(answer)
+        endTime= time.time()
+        logger.info("finished lr evaluate " + str(endTime))
+        logger.info("lr evaluate took " + str(endTime - startTime))
+        return result
+    
     async def run_openai_evaluate(
         self, answer: AnswerClassifierInput
     ) -> AnswerClassifierResult:
-        return self.openai_classifier.evaluate(answer)
+        try:
+            startTime = time.time()
+            logger.info("running openai evaluate " + str(startTime))
+            result = await self.openai_classifier.evaluate(answer)
+            endTime = time.time()
+            logger.info("finished openai evaluate " + str(endTime))
+            logger.info("openai evaluate took " + str(endTime - startTime))
+            return result
+        except BaseException as e:
+            raise
 
     def configure(self, config: ClassifierConfig) -> "AnswerClassifier":
         self.lr_classifier = self.lr_classifier.configure(config)
@@ -40,12 +58,21 @@ class CompositeAnswerClassifier(AnswerClassifier):
     async def evaluate_async(
         self, answer: AnswerClassifierInput
     ) -> AnswerClassifierResult:
-        lr_task = asyncio.wait_for(self.run_lr_evaluate(answer), timeout=0)
-        openai_task = asyncio.wait_for(self.run_openai_evaluate(answer), timeout=10)
-        results: Tuple[
-            Union[AnswerClassifierResult, BaseException],
-            Union[AnswerClassifierResult, BaseException],
-        ] = await asyncio.gather(lr_task, openai_task, return_exceptions=True)
+        startTime= time.time()
+        logger.info("starting composite evaluate " + str(startTime))
+        #lr_task = asyncio.wait_for(self.run_lr_evaluate(answer), timeout=20)
+        try:
+          openai_task = asyncio.wait_for(self.run_openai_evaluate(answer), timeout=1.0)
+          await openai_task
+        except asyncio.TimeoutError:
+            logger.info("openai timed out")
+        #results: Tuple[
+        #    Union[AnswerClassifierResult, BaseException],
+        #    Union[AnswerClassifierResult, BaseException],
+        #] = await asyncio.gather(openai_task, return_exceptions=True)
+        endTime = time.time()
+        logger.info("finished composite evaluate " + str(endTime))
+
         if type(results[1]) == BaseException:
             return cast(AnswerClassifierResult, results[0])
         else:
