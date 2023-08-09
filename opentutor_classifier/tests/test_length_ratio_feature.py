@@ -7,6 +7,7 @@
 from os import path
 import pytest
 import responses
+import asyncio
 
 from opentutor_classifier import (
     ARCH_LR2_CLASSIFIER,
@@ -134,11 +135,13 @@ def _train_classifier_and_get_confidence(
 
         classifier = ClassifierDao().find_classifier(lesson, classifier_config, arch)
 
-        answer_classifier_result = classifier.evaluate(
-            AnswerClassifierInput(
-                input_sentence=input_answer,
-                config_data=question_config,
-                expectation="0",
+        answer_classifier_result = asyncio.run(
+            classifier.evaluate(
+                AnswerClassifierInput(
+                    input_sentence=input_answer,
+                    config_data=question_config,
+                    expectation="0",
+                )
             )
         )
         return answer_classifier_result.expectation_results[0].score

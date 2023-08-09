@@ -9,6 +9,7 @@ from typing import List
 import pytest
 import responses
 import json
+import asyncio
 from unittest.mock import patch
 from opentutor_classifier import (
     get_classifier_arch,
@@ -21,7 +22,7 @@ from opentutor_classifier import (
     ARCH_OPENAI_CLASSIFIER,
     ARCH_COMPOSITE_CLASSIFIER,
 )
-from opentutor_classifier.config import confidence_threshold_default, LABEL_BAD
+from opentutor_classifier.config import confidence_threshold_default, EVALUATION_BAD
 import opentutor_classifier.dao
 from opentutor_classifier.log import logger
 from opentutor_classifier.training import train_data_root, train_default_data_root
@@ -37,7 +38,6 @@ from .utils import (
     mock_openai_timeout,
 )
 from .types import ComparisonType, _TestExpectation
-import time;
 
 CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
 
@@ -92,7 +92,7 @@ def _find_or_train_classifier(
             )
     return cfac.new_classifier(cconf, arch=arch)
 
-@pytest.mark.only
+
 @pytest.mark.parametrize(
     "lesson,arch,input_answer,config_data,mock_payload",
     [
@@ -150,15 +150,17 @@ def test_composite_answer_classifier_json_response(
             lesson, model_roots[0], model_roots[2], shared_root, arch=arch
         )
         with patch("openai.ChatCompletion.acreate") as mock_create:
-            mock_create.side_effect= mock_openai_timeout(json.dumps(mock_payload))
-            result = classifier.evaluate(
-                AnswerClassifierInput(
-                    input_sentence=input_answer,
-                    config_data=dict_to_config(config_data),
+            mock_create.side_effect = mock_openai_timeout(json.dumps(mock_payload))
+            result = asyncio.run(
+                classifier.evaluate(
+                    AnswerClassifierInput(
+                        input_sentence=input_answer,
+                        config_data=dict_to_config(config_data),
+                    )
                 )
             )
         print(json.dumps(result.to_dict(), indent=2))
-        assert False #result.expectation_results[0].evaluation == LABEL_BAD
+        assert result.expectation_results[0].evaluation == EVALUATION_BAD
 
 
 @pytest.mark.parametrize(
@@ -217,16 +219,18 @@ def test_openai_answer_classifier_json_response(
         classifier = _find_or_train_classifier(
             lesson, model_roots[0], model_roots[2], shared_root, arch=arch
         )
-        with patch("openai.ChatCompletion.create") as mock_create:
+        with patch("openai.ChatCompletion.acreate") as mock_create:
             mock_create.return_value = mock_openai_object(json.dumps(mock_payload))
-            result = classifier.evaluate(
-                AnswerClassifierInput(
-                    input_sentence=input_answer,
-                    config_data=dict_to_config(config_data),
+            result = asyncio.run(
+                classifier.evaluate(
+                    AnswerClassifierInput(
+                        input_sentence=input_answer,
+                        config_data=dict_to_config(config_data),
+                    )
                 )
             )
         print(json.dumps(result.to_dict(), indent=2))
-        assert result.expectation_results[0].evaluation == LABEL_BAD
+        assert result.expectation_results[0].evaluation == EVALUATION_BAD
 
 
 @pytest.mark.parametrize(
@@ -346,11 +350,13 @@ def test_evaluates_for_default_model(
                 shared_root=shared_root,
             )
         )
-        result = classifier.evaluate(
-            AnswerClassifierInput(
-                input_sentence=input_answer,
-                config_data=dict_to_config(config_data),
-                expectation=input_expectation_number,
+        result = asyncio.run(
+            classifier.evaluate(
+                AnswerClassifierInput(
+                    input_sentence=input_answer,
+                    config_data=dict_to_config(config_data),
+                    expectation=input_expectation_number,
+                )
             )
         )
         assert_classifier_evaluate(result, expected_results)
@@ -464,11 +470,13 @@ def test_evaluates_meta_cognitive_sentences(
         classifier = _find_or_train_classifier(
             lesson, model_roots[0], model_roots[2], shared_root, arch=arch
         )
-        result = classifier.evaluate(
-            AnswerClassifierInput(
-                input_sentence=input_answer,
-                config_data=dict_to_config(config_data),
-                expectation=input_expectation_number,
+        result = asyncio.run(
+            classifier.evaluate(
+                AnswerClassifierInput(
+                    input_sentence=input_answer,
+                    config_data=dict_to_config(config_data),
+                    expectation=input_expectation_number,
+                )
             )
         )
         assert (

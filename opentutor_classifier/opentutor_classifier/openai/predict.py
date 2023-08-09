@@ -14,7 +14,7 @@ from opentutor_classifier import (
     ExpectationConfig,
 )
 from opentutor_classifier.speechact import SpeechActClassifier
-from opentutor_classifier.config import LABEL_BAD, LABEL_GOOD
+from opentutor_classifier.config import EVALUATION_GOOD, EVALUATION_BAD
 from opentutor_classifier.openai.openai_api import (
     Answer,
     OpenAICall,
@@ -51,7 +51,7 @@ class OpenAIAnswerClassifier(AnswerClassifier):
         ]
         for concept_key in open_ai_answer.concepts.keys():
             concept = open_ai_answer.concepts[concept_key]
-            evaluation = LABEL_GOOD if concept.is_known else LABEL_BAD
+            evaluation = EVALUATION_GOOD if concept.is_known else EVALUATION_BAD
             concept_result = ExpectationClassifierResult(
                 expectation_id=concept_key,
                 evaluation=evaluation,
