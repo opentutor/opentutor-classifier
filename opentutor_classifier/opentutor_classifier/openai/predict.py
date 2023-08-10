@@ -14,7 +14,7 @@ from opentutor_classifier import (
     ExpectationConfig,
 )
 from opentutor_classifier.speechact import SpeechActClassifier
-from opentutor_classifier.config import LABEL_BAD, LABEL_GOOD
+from opentutor_classifier.config import EVALUATION_GOOD, EVALUATION_BAD
 from opentutor_classifier.openai.openai_api import (
     Answer,
     OpenAICall,
@@ -32,7 +32,7 @@ class OpenAIAnswerClassifier(AnswerClassifier):
     def configure(self, config: ClassifierConfig) -> "AnswerClassifier":
         return self
 
-    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+    async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         if answer.config_data is None:
             raise Exception("missing question data in answer")
         concepts: List[ExpectationConfig] = answer.config_data.expectations
@@ -43,7 +43,7 @@ class OpenAIAnswerClassifier(AnswerClassifier):
             user_template=ANSWER_TEMPLATE,
             user_guardrails=USER_GUARDRAILS,
         )
-        response: OpenAIResultContent = openai_create(call_data=call)
+        response: OpenAIResultContent = await openai_create(call_data=call)
         expectations: List[ExpectationClassifierResult] = []
         print(response.to_json())
         open_ai_answer: Answer = response.answers[
@@ -51,7 +51,7 @@ class OpenAIAnswerClassifier(AnswerClassifier):
         ]
         for concept_key in open_ai_answer.concepts.keys():
             concept = open_ai_answer.concepts[concept_key]
-            evaluation = LABEL_GOOD if concept.is_known else LABEL_BAD
+            evaluation = EVALUATION_GOOD if concept.is_known else EVALUATION_BAD
             concept_result = ExpectationClassifierResult(
                 expectation_id=concept_key,
                 evaluation=evaluation,

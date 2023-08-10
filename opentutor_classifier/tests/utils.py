@@ -15,6 +15,7 @@ from openai.openai_object import OpenAIObject
 import pandas as pd
 import pytest
 import responses
+import asyncio
 
 from opentutor_classifier.training import train_default_data_root
 
@@ -57,6 +58,14 @@ from .types import (
     _TestSet,
     _TestSetResult,
 )
+
+
+def mock_openai_timeout(payload):
+    async def side_effects(**kwargs) -> OpenAIObject:
+        await asyncio.sleep(25)
+        return mock_openai_object(payload)
+
+    return side_effects
 
 
 def mock_openai_object(payload) -> OpenAIObject:
@@ -137,7 +146,9 @@ def run_classifier_tests(
         arch=arch,
     )
     for ex in examples:
-        assert_classifier_evaluate(classifier.evaluate(ex.input), ex.expectations)
+        assert_classifier_evaluate(
+            asyncio.run(classifier.evaluate(ex.input)), ex.expectations
+        )
 
 
 def run_classifier_testset(
@@ -155,7 +166,9 @@ def run_classifier_testset(
     )
     result = _TestSetResult(testset=testset)
     for ex in testset.examples:
-        result.results.append(to_example_result(ex, classifier.evaluate(ex.input)))
+        result.results.append(
+            to_example_result(ex, asyncio.run(classifier.evaluate(ex.input)))
+        )
     return result
 
 

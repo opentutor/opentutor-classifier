@@ -9,6 +9,7 @@ from os import path
 import pytest
 import pandas as pd
 import responses
+import asyncio
 
 from opentutor_classifier.config import confidence_threshold_default
 from typing import List
@@ -72,7 +73,7 @@ def predict_replicate_model(
         arch=arch,
     )
     class_input = AnswerClassifierInput(input, None, expectation)
-    results = classifier.evaluate(class_input)
+    results = asyncio.run(classifier.evaluate(class_input))
     return results.expectation_results[0].score
 
 

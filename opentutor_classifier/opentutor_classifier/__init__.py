@@ -285,7 +285,7 @@ class AnswerClassifier(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+    async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         raise NotImplementedError()
 
     @abstractmethod

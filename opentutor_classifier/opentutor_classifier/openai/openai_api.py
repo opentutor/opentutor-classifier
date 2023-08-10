@@ -97,11 +97,11 @@ class OpenAIResultContent(JSONWizard):
     ),
     logger=logger,
 )
-def completions_with_backoff(**kwargs) -> Generator:
-    return openai.ChatCompletion.create(**kwargs)
+async def completions_with_backoff(**kwargs) -> Generator:
+    return await openai.ChatCompletion.acreate(**kwargs)
 
 
-def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
+async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
     concept_mask = call_data.mask_concept_uuids()
     messages = call_data.to_openai_json()
     attempts = 0
@@ -112,7 +112,7 @@ def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
 
     while attempts < 5 and not result_valid:
         attempts += 1
-        raw_result = completions_with_backoff(
+        raw_result = await completions_with_backoff(
             model=OPENAI_MODEL, temperature=temperature, messages=messages
         )
         content = raw_result.choices[0].message.content

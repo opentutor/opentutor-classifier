@@ -40,6 +40,7 @@ from .clustering_features import CustomDBScanClustering
 from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
+from opentutor_classifier.config import EVALUATION_BAD, EVALUATION_GOOD
 
 DEPLOYMENT_MODE = environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
 
@@ -205,12 +206,16 @@ class LRAnswerClassifier(AnswerClassifier):
     def find_score_and_class(
         self, classifier, exp_num_i: str, sent_features: List[List[float]]
     ):
-        _evaluation = "Good" if classifier.predict(sent_features)[0] == 1 else "Bad"
+        _evaluation = (
+            EVALUATION_GOOD
+            if classifier.predict(sent_features)[0] == 1
+            else EVALUATION_BAD
+        )
         _score = _confidence_score(classifier, sent_features)
         return ExpectationClassifierResult(
             expectation_id=exp_num_i,
             evaluation=_evaluation,
-            score=_score if _evaluation == "Good" else 1 - _score,
+            score=_score if _evaluation == EVALUATION_GOOD else 1 - _score,
         )
 
     def batch_preload_evaluate_features(
@@ -236,7 +241,7 @@ class LRAnswerClassifier(AnswerClassifier):
         final_set = set(final_list).intersection(index2word)
         word2vec.get_feature_vectors(final_set)
 
-    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+    async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = preprocess_sentence(answer.input_sentence)
         m_by_e, conf = self.model_and_config
         expectations = [

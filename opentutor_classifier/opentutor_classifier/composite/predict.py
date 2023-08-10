@@ -25,34 +25,36 @@ class CompositeAnswerClassifier(AnswerClassifier):
     async def run_lr_evaluate(
         self, answer: AnswerClassifierInput
     ) -> AnswerClassifierResult:
-        return self.lr_classifier.evaluate(answer)
+        result = await self.lr_classifier.evaluate(answer)
+        return result
 
     async def run_openai_evaluate(
         self, answer: AnswerClassifierInput
     ) -> AnswerClassifierResult:
-        return self.openai_classifier.evaluate(answer)
+        try:
+            result = await self.openai_classifier.evaluate(answer)
+            return result
+        except BaseException as e:
+            raise e
 
     def configure(self, config: ClassifierConfig) -> "AnswerClassifier":
         self.lr_classifier = self.lr_classifier.configure(config)
         self.openai_classifier = self.openai_classifier.configure(config)
         return self
 
-    async def evaluate_async(
-        self, answer: AnswerClassifierInput
-    ) -> AnswerClassifierResult:
-        lr_task = asyncio.wait_for(self.run_lr_evaluate(answer), timeout=0)
-        openai_task = asyncio.wait_for(self.run_openai_evaluate(answer), timeout=10)
+    async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+        # lr_task = asyncio.wait_for(self.run_lr_evaluate(answer), timeout=20)
+        openai_task = asyncio.wait_for(self.run_openai_evaluate(answer), timeout=10.0)
+        lr_task = self.run_lr_evaluate(answer)
         results: Tuple[
             Union[AnswerClassifierResult, BaseException],
             Union[AnswerClassifierResult, BaseException],
         ] = await asyncio.gather(lr_task, openai_task, return_exceptions=True)
-        if type(results[1]) == BaseException:
+
+        if not isinstance(results[1], AnswerClassifierResult):
             return cast(AnswerClassifierResult, results[0])
         else:
             return cast(AnswerClassifierResult, results[1])
-
-    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
-        return asyncio.run(self.evaluate_async(answer))
 
     def get_last_trained_at(self) -> float:
         return self.lr_classifier.get_last_trained_at()
