@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from dataclass_wizard import JSONWizard
 import os
 import re
+import asyncio
 from flask import Blueprint, jsonify, request
 from typing import Any
 from cerberus import Validator
@@ -109,11 +110,13 @@ def evaluate():
         ),
         arch,
     )
-    _model_op = classifier.evaluate(
-        AnswerClassifierInput(
-            input_sentence=input_sentence,
-            config_data=config,
-            expectation=exp_num,
+    _model_op = asyncio.run(
+        classifier.evaluate(
+            AnswerClassifierInput(
+                input_sentence=input_sentence,
+                config_data=config,
+                expectation=exp_num,
+            )
         )
     )
     return (

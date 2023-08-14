@@ -4,22 +4,28 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from os import environ
-from typing import Final
 
-PROP_TRAIN_QUALITY: Final[str] = "TRAIN_QUALITY"
-LABEL_GOOD = "good"
-LABEL_BAD = "bad"
-LABEL_NEUTRAL = "neutral"
-LABEL_UNSPECIFIED = ""
-
-EVALUATION_GOOD = "Good"
-EVALUATION_BAD = "Bad"
-
-
-def confidence_threshold_default() -> float:
-    return float(environ.get("CONFIDENCE_THRESHOLD_DEFAULT", "0.6"))
+import pandas as pd
+from opentutor_classifier import (
+    AnswerClassifierTraining,
+    TrainingConfig,
+    DataDao,
+    TrainingInput,
+    TrainingResult,
+)
+from opentutor_classifier.lr2.train import LRAnswerClassifierTraining
 
 
-def get_train_quality_default() -> int:
-    return int(environ.get("TRAIN_QUALITY_DEFAULT", 2))
+class CompositeAnswerClassifierTraining(AnswerClassifierTraining):
+
+    lr_training: AnswerClassifierTraining = LRAnswerClassifierTraining()
+
+    def configure(self, config: TrainingConfig) -> "AnswerClassifierTraining":
+        self.lr_training = self.lr_training.configure(config)
+        return self
+
+    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
+        return self.lr_training.train(train_input, dao)
+
+    def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
+        return self.lr_training.train_default(data, dao)
