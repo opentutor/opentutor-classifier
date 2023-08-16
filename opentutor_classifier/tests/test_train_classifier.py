@@ -64,7 +64,9 @@ def test_outputs_models_at_specified_root(
 def test_outputs_models_at_specified_model_root_for_default_model(
     arch: str, expected_model_file_name: str, tmpdir, data_root: str, shared_root: str
 ):
-    with test_env_isolated(tmpdir, data_root, shared_root, lesson=DEF) as test_config:
+    with test_env_isolated(
+        tmpdir, data_root, shared_root, lesson=DEFAULT_LESSON_NAME
+    ) as test_config:
         result = train_default_classifier(test_config)
         assert path.exists(path.join(result.models, expected_model_file_name))
 

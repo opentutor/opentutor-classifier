@@ -124,11 +124,12 @@ class LRAnswerClassifier(AnswerClassifier):
 
     def save_config_and_model(self, embedding: bool = True) -> Dict[str, Any]:
         m_by_e, conf = self.model_and_config
+        default_m_by_e, default_conf = self.default_model_and_config
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
                 classifier=self.find_model_for_expectation(
-                    m_by_e, i, return_first_model_if_only_one=True
+                    m_by_e, default_m_by_e, i, return_first_model_if_only_one=True
                 ),
             )
             for i in conf.get_all_expectation_names()
@@ -262,11 +263,12 @@ class LRAnswerClassifier(AnswerClassifier):
     async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = preprocess_sentence(answer.input_sentence)
         m_by_e, conf = self.model_and_config
+        default_m_by_e, default_conf = self.default_model_and_config
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
                 classifier=self.find_model_for_expectation(
-                    m_by_e, i, return_first_model_if_only_one=True
+                    m_by_e, default_m_by_e, i, return_first_model_if_only_one=True
                 ),
             )
             for i in (
