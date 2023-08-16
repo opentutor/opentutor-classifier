@@ -21,6 +21,7 @@ from opentutor_classifier.training import train_default_data_root
 
 
 from opentutor_classifier import (
+    DEFAULT_LESSON_NAME,
     AnswerClassifierInput,
     AnswerClassifierResult,
     ArchLesson,
@@ -245,7 +246,8 @@ def copy_test_env_to_tmp(
     copy_tree(path.join(data_root, lesson), path.join(config.data_root, lesson))
     if is_default_model:
         copy_tree(
-            path.join(data_root, "default"), path.join(config.data_root, "default")
+            path.join(data_root, DEFAULT_LESSON_NAME),
+            path.join(config.data_root, DEFAULT_LESSON_NAME),
         )
     return config
 
@@ -414,7 +416,7 @@ def train_classifier(lesson: str, config: _TestConfig) -> TrainingResult:
 
 def train_default_classifier(config: _TestConfig) -> TrainingResult:
     return train_default_data_root(
-        data_root=path.join(config.data_root, "default"),
+        data_root=path.join(config.data_root, DEFAULT_LESSON_NAME),
         config=TrainingConfig(shared_root=config.shared_root),
         output_dir=config.output_dir,
         arch=config.arch,

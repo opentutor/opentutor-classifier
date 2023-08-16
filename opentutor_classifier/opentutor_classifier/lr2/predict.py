@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Tuple, Any
 from sklearn import linear_model
 
 from opentutor_classifier import (
+    DEFAULT_LESSON_NAME,
     ARCH_LR2_CLASSIFIER,
     AnswerClassifier,
     AnswerClassifierInput,
@@ -72,21 +73,21 @@ class LRAnswerClassifier(AnswerClassifier):
         self.model_roots = config.model_roots
         self.shared_root = config.shared_root
         return self
-    
+
     @property
     def default_model_and_config(self) -> ModelAndConfig:
         if not self._default_model_and_config:
             cm = find_predicton_config_and_pickle(
                 ModelRef(
                     arch=ARCH_LR2_CLASSIFIER,
-                    lesson="default",
+                    lesson=DEFAULT_LESSON_NAME,
                     filename=MODEL_FILE_NAME,
                 ),
                 self.dao,
             )
             self._default_model_and_config = (cm.model, cm.config)
         return self._default_model_and_config
-    
+
     @property
     def model_and_config(self) -> ModelAndConfig:
         if not self._model_and_config:

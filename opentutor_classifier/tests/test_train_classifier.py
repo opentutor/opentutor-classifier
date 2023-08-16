@@ -13,6 +13,7 @@ import responses
 from opentutor_classifier import (
     ExpectationTrainingResult,
     ARCH_LR2_CLASSIFIER,
+    DEFAULT_LESSON_NAME,
 )
 from opentutor_classifier.config import confidence_threshold_default
 from opentutor_classifier.lr2.constants import MODEL_FILE_NAME
@@ -63,9 +64,7 @@ def test_outputs_models_at_specified_root(
 def test_outputs_models_at_specified_model_root_for_default_model(
     arch: str, expected_model_file_name: str, tmpdir, data_root: str, shared_root: str
 ):
-    with test_env_isolated(
-        tmpdir, data_root, shared_root, lesson="default"
-    ) as test_config:
+    with test_env_isolated(tmpdir, data_root, shared_root, lesson=DEF) as test_config:
         result = train_default_classifier(test_config)
         assert path.exists(path.join(result.models, expected_model_file_name))
 
@@ -232,7 +231,7 @@ def test_predict_off_model_trained_with_cluster_features_but_cluster_features_la
         testset = read_example_testset(lesson)
         run_classifier_testset(
             arch,
-            path.join(path.dirname(train_result.models), "default")
+            path.join(path.dirname(train_result.models), DEFAULT_LESSON_NAME)
             if use_default
             else train_result.models,
             shared_root,

@@ -249,7 +249,7 @@ class WebAppDataDao(DataDao):
     def save_config(self, req: QuestionConfigSaveReq) -> None:
         if not req.skip_feature_update:
             update_features(req)
-        if req.lesson != "default":
+        if req.lesson != DEFAULT_LESSON_NAME:
             update_last_trained_at(req.lesson)
         self.file_dao.save_config(req)
 

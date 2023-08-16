@@ -21,6 +21,7 @@ from opentutor_classifier import (
     TrainingConfig,
     ARCH_OPENAI_CLASSIFIER,
     ARCH_COMPOSITE_CLASSIFIER,
+    DEFAULT_LESSON_NAME,
 )
 from opentutor_classifier.config import confidence_threshold_default, EVALUATION_BAD
 import opentutor_classifier.dao
@@ -76,7 +77,7 @@ def _find_or_train_classifier(
         logger.warning(
             f"trained model not found in fixtures for test lesson {lesson}, attempting to train..."
         )
-        if lesson == "default":
+        if lesson == DEFAULT_LESSON_NAME:
             train_default_data_root(
                 data_root=example_dir,
                 config=TrainingConfig(shared_root=shared_root),
@@ -340,7 +341,7 @@ def test_evaluates_for_default_model(
         is_default_model=True,
     ):
         _find_or_train_classifier(
-            "default", model_roots[0], model_roots[2], shared_root
+            DEFAULT_LESSON_NAME, model_roots[0], model_roots[2], shared_root
         )
         classifier = ClassifierFactory().new_classifier(
             ClassifierConfig(
