@@ -21,6 +21,7 @@ from opentutor_classifier.training import train_default_data_root
 
 
 from opentutor_classifier import (
+    ARCH_LR2_CLASSIFIER,
     DEFAULT_LESSON_NAME,
     AnswerClassifierInput,
     AnswerClassifierResult,
@@ -227,7 +228,7 @@ def copy_test_env_to_tmp(
     shared_root: str,
     find_data_dao: Callable[[], DataDao],
     arch="",
-    deployed_models="",
+    deployed_models=fixture_path("models"),
     lesson="",
     is_default_model: bool = False,
 ) -> _TestConfig:
@@ -235,7 +236,7 @@ def copy_test_env_to_tmp(
     config = _TestConfig(
         arch=arch,
         data_root=path.join(testdir, "data"),
-        deployed_models=deployed_models or fixture_path("models_deployed"),
+        deployed_models=deployed_models or fixture_path("models"),
         is_default_model=is_default_model,
         find_data_dao=find_data_dao,
         output_dir=path.join(
@@ -244,11 +245,14 @@ def copy_test_env_to_tmp(
         shared_root=shared_root,
     )
     copy_tree(path.join(data_root, lesson), path.join(config.data_root, lesson))
-    if is_default_model:
-        copy_tree(
-            path.join(data_root, DEFAULT_LESSON_NAME),
-            path.join(config.data_root, DEFAULT_LESSON_NAME),
-        )
+    copy_tree(
+        path.join(data_root, DEFAULT_LESSON_NAME),
+        path.join(config.data_root, DEFAULT_LESSON_NAME),
+    )
+    copy_tree(
+        path.join(deployed_models, ARCH_LR2_CLASSIFIER, DEFAULT_LESSON_NAME),
+        path.join(config.output_dir, ARCH_LR2_CLASSIFIER, DEFAULT_LESSON_NAME),
+    )
     return config
 
 
