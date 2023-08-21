@@ -37,12 +37,11 @@ from .api import (
     update_last_trained_at,
 )
 from .utils import load_data, load_config, require_env
-from .logger import get_logger
+from opentutor_classifier.log import logger
 
 import boto3
 import botocore
 
-logger = get_logger("dao")
 s3 = boto3.client("s3")
 SHARED = environ.get("SHARED_ROOT") or "shared"
 logger.info(f"shared: {SHARED}")
@@ -229,7 +228,12 @@ class WebAppDataDao(DataDao):
         return fetch_all_training_data()
 
     def find_prediction_config(self, lesson: ArchLesson) -> QuestionConfig:
-        return self.file_dao.find_prediction_config(lesson)
+        # the config in the s3 bucket may be stale, always pull from graphql unless it's the default model
+        # which doesn't have a graphql entry.
+        if lesson.lesson == DEFAULT_LESSON_NAME:
+            return self.file_dao.find_prediction_config(lesson)
+        else:
+            return fetch_config(lesson.lesson)
 
     def find_training_config(self, lesson: str) -> QuestionConfig:
         return fetch_config(lesson)

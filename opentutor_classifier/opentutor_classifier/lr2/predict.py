@@ -43,6 +43,7 @@ from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
 from opentutor_classifier.config import EVALUATION_BAD, EVALUATION_GOOD
 
+
 DEPLOYMENT_MODE = environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
 
 
@@ -208,7 +209,7 @@ class LRAnswerClassifier(AnswerClassifier):
             key = list(m_by_e.keys())[0]
             return m_by_e[key]
         else:
-            key = list(m_by_e.keys())[0]
+            key = list(default_m_by_e.keys())[0]
             return default_m_by_e[key]
 
     def find_word2vec(self) -> Word2VecWrapper:
