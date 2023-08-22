@@ -24,9 +24,7 @@ from opentutor_classifier import (
     TrainingInput,
     dict_to_question_config,
 )
-from opentutor_classifier.logger import get_logger
-
-logger = get_logger("api")
+from opentutor_classifier.log import logger
 
 
 def get_graphql_endpoint() -> str:

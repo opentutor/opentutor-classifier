@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Tuple, Any
 from sklearn import linear_model
 
 from opentutor_classifier import (
+    DEFAULT_LESSON_NAME,
     ARCH_LR2_CLASSIFIER,
     AnswerClassifier,
     AnswerClassifierInput,
@@ -42,6 +43,7 @@ from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
 from opentutor_classifier.config import EVALUATION_BAD, EVALUATION_GOOD
 
+
 DEPLOYMENT_MODE = environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
 
 
@@ -60,6 +62,7 @@ class LRAnswerClassifier(AnswerClassifier):
         self._instance_models: Optional[InstanceModels] = None
         self.speech_act_classifier = SpeechActClassifier()
         self._model_and_config: ModelAndConfig = None
+        self._default_model_and_config: ModelAndConfig = None
         self._is_default = False
 
     def configure(
@@ -71,6 +74,20 @@ class LRAnswerClassifier(AnswerClassifier):
         self.model_roots = config.model_roots
         self.shared_root = config.shared_root
         return self
+
+    @property
+    def default_model_and_config(self) -> ModelAndConfig:
+        if not self._default_model_and_config:
+            cm = find_predicton_config_and_pickle(
+                ModelRef(
+                    arch=ARCH_LR2_CLASSIFIER,
+                    lesson=DEFAULT_LESSON_NAME,
+                    filename=MODEL_FILE_NAME,
+                ),
+                self.dao,
+            )
+            self._default_model_and_config = (cm.model, cm.config)
+        return self._default_model_and_config
 
     @property
     def model_and_config(self) -> ModelAndConfig:
@@ -108,11 +125,12 @@ class LRAnswerClassifier(AnswerClassifier):
 
     def save_config_and_model(self, embedding: bool = True) -> Dict[str, Any]:
         m_by_e, conf = self.model_and_config
+        default_m_by_e, default_conf = self.default_model_and_config
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
                 classifier=self.find_model_for_expectation(
-                    m_by_e, i, return_first_model_if_only_one=True
+                    m_by_e, default_m_by_e, i, return_first_model_if_only_one=True
                 ),
             )
             for i in conf.get_all_expectation_names()
@@ -181,6 +199,7 @@ class LRAnswerClassifier(AnswerClassifier):
     def find_model_for_expectation(
         self,
         m_by_e: Dict[str, linear_model.LogisticRegression],
+        default_m_by_e: Dict[str, linear_model.LogisticRegression],
         expectation: str,
         return_first_model_if_only_one=False,
     ) -> linear_model.LogisticRegression:
@@ -190,7 +209,8 @@ class LRAnswerClassifier(AnswerClassifier):
             key = list(m_by_e.keys())[0]
             return m_by_e[key]
         else:
-            return m_by_e[expectation]
+            key = list(default_m_by_e.keys())[0]
+            return default_m_by_e[key]
 
     def find_word2vec(self) -> Word2VecWrapper:
         if not self._word2vec:
@@ -244,11 +264,12 @@ class LRAnswerClassifier(AnswerClassifier):
     async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         sent_proc = preprocess_sentence(answer.input_sentence)
         m_by_e, conf = self.model_and_config
+        default_m_by_e, default_conf = self.default_model_and_config
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
                 classifier=self.find_model_for_expectation(
-                    m_by_e, i, return_first_model_if_only_one=True
+                    m_by_e, default_m_by_e, i, return_first_model_if_only_one=True
                 ),
             )
             for i in (

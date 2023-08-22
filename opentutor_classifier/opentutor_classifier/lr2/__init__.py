@@ -6,6 +6,7 @@
 #
 from opentutor_classifier import (
     ARCH_LR2_CLASSIFIER,
+    DEFAULT_LESSON_NAME,
     AnswerClassifier,
     AnswerClassifierTraining,
     ArchClassifierFactory,
@@ -29,7 +30,7 @@ class __ArchClassifierFactory(ArchClassifierFactory):
         return LRAnswerClassifier().configure(config)
 
     def new_classifier_default(self, config: ClassifierConfig) -> AnswerClassifier:
-        if config.model_name != "default":
+        if config.model_name != DEFAULT_LESSON_NAME:
             raise Exception("model name for default classifier must be default")
         return LRAnswerClassifier().configure(config)
 
