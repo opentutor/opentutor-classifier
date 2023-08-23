@@ -318,7 +318,9 @@ class AnswerClassifierTraining(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
+    def train(
+        self, train_input: TrainingInput, dao: DataDao, developer_mode: bool = False
+    ) -> TrainingResult:
         raise NotImplementedError()
 
     @abstractmethod

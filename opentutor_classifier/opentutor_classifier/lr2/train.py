@@ -65,7 +65,7 @@ from .features import feature_length_ratio_enabled, preprocess_sentence
 from .clustering_features import CustomDBScanClustering
 
 DEPLOYMENT_MODE = environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
-MINIMUM_NUMBER_OF_GRADED_ENTRIES = 3
+MINIMUM_NUMBER_OF_GRADED_ENTRIES = 10
 
 
 def _preprocess_trainx(data: List[str]) -> List[List[str]]:
@@ -228,9 +228,14 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
         return result
 
-    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
+    def train(
+        self, train_input: TrainingInput, dao: DataDao, developer_mode: bool = False
+    ) -> TrainingResult:
         self.preload_all_feature_vectors_train(train_input)
-        trainable_expectations = self.get_trainable_expectations(train_input)
+        if not developer_mode:
+            trainable_expectations = self.get_trainable_expectations(train_input)
+        else:
+            trainable_expectations = train_input.config.expectations
         question = train_input.config.question or ""
         if not question:
             raise ValueError("config must have a 'question'")

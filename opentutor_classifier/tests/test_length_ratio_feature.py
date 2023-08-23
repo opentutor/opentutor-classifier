@@ -46,7 +46,7 @@ def _test_feature_length_ratio_enabled(
     with test_env_isolated(
         tmpdir, data_root, shared_root, arch=arch, lesson=lesson
     ) as test_config:
-        train_classifier(lesson, test_config)
+        train_classifier(lesson, test_config, True)
         from opentutor_classifier.dao import find_data_dao
 
         dao = find_data_dao()

@@ -24,8 +24,10 @@ class CompositeAnswerClassifierTraining(AnswerClassifierTraining):
         self.lr_training = self.lr_training.configure(config)
         return self
 
-    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
-        return self.lr_training.train(train_input, dao)
+    def train(
+        self, train_input: TrainingInput, dao: DataDao, developer_mode: bool = False
+    ) -> TrainingResult:
+        return self.lr_training.train(train_input, dao, developer_mode)
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         return self.lr_training.train_default(data, dao)
