@@ -19,7 +19,9 @@ class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):
     def configure(self, config: TrainingConfig) -> "AnswerClassifierTraining":
         return self
 
-    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
+    def train(
+        self, train_input: TrainingInput, dao: DataDao, developer_mode: bool = False
+    ) -> TrainingResult:
         raise NotImplementedError()
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:

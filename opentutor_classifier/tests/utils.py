@@ -409,12 +409,15 @@ def test_env_isolated(
         patcher.stop()
 
 
-def train_classifier(lesson: str, config: _TestConfig) -> TrainingResult:
+def train_classifier(
+    lesson: str, config: _TestConfig, developer_mode: bool = False
+) -> TrainingResult:
     return train_data_root(
         data_root=path.join(config.data_root, lesson),
         config=TrainingConfig(shared_root=config.shared_root),
         output_dir=config.output_dir,
         arch=config.arch,
+        developer_mode=developer_mode,
     )
 
 
