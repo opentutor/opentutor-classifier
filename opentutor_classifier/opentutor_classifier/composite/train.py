@@ -13,16 +13,21 @@ from opentutor_classifier import (
     TrainingInput,
     TrainingResult,
 )
+from opentutor_classifier.lr2.train import LRAnswerClassifierTraining
 
 
-class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):
+class CompositeAnswerClassifierTraining(AnswerClassifierTraining):
+
+    lr_training: AnswerClassifierTraining = LRAnswerClassifierTraining()
+
     def configure(self, config: TrainingConfig) -> "AnswerClassifierTraining":
+        self.lr_training = self.lr_training.configure(config)
         return self
 
     def train(
         self, train_input: TrainingInput, dao: DataDao, developer_mode: bool = False
     ) -> TrainingResult:
-        raise NotImplementedError()
+        return self.lr_training.train(train_input, dao, developer_mode)
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
-        raise NotImplementedError()
+        return self.lr_training.train_default(data, dao)

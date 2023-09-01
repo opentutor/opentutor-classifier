@@ -9,6 +9,7 @@ import json
 import os
 import base64
 import boto3
+import asyncio
 from dataclass_wizard import JSONWizard
 from src.utils import create_json_response, require_env
 from src.logger import get_logger
@@ -97,11 +98,13 @@ def handler(event, context):
     if ping:
         return create_json_response(200, {"ping": "pong"}, event)
     else:
-        _model_op = classifier.evaluate(
-            AnswerClassifierInput(
-                input_sentence=input_sentence,
-                expectation=exp_num,
-                config_data=data_dao.find_training_config(lesson),
+        _model_op = asyncio.run(
+            classifier.evaluate(
+                AnswerClassifierInput(
+                    input_sentence=input_sentence,
+                    expectation=exp_num,
+                    config_data=data_dao.find_training_config(lesson),
+                )
             )
         )
 

@@ -21,17 +21,22 @@ def train(
     arch="",
     config: TrainingConfig = None,
     dao: DataDao = None,
+    developer_mode: bool = False,
 ) -> TrainingResult:
     dao = dao or opentutor_classifier.dao.find_data_dao()
     data = dao.find_training_input(lesson)
     fac = ClassifierFactory()
     training = fac.new_training(config or TrainingConfig(), arch=arch)
-    res = training.train(data, dao)
+    res = training.train(data, dao, developer_mode)
     return res
 
 
 def train_data_root(
-    arch="", config: TrainingConfig = None, data_root="data", output_dir=""
+    arch="",
+    config: TrainingConfig = None,
+    data_root="data",
+    output_dir="",
+    developer_mode: bool = False,
 ) -> TrainingResult:
     droot, lesson = path.split(path.abspath(data_root))
     return train(
@@ -39,6 +44,7 @@ def train_data_root(
         arch=arch,
         config=config,
         dao=FileDataDao(droot, model_root=output_dir),
+        developer_mode=developer_mode,
     )
 
 
