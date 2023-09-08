@@ -4,7 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from os import path
+from os import path, environ
 from typing import List
 
 import pytest
@@ -14,6 +14,7 @@ from opentutor_classifier import (
     ExpectationTrainingResult,
     ARCH_LR2_CLASSIFIER,
     DEFAULT_LESSON_NAME,
+    ARCH_COMPOSITE_CLASSIFIER,
 )
 from opentutor_classifier.config import confidence_threshold_default
 from opentutor_classifier.lr2.constants import MODEL_FILE_NAME
@@ -109,7 +110,7 @@ def _test_train_and_predict(
     [
         (
             "missing-expectation-training-data",
-            ARCH_LR2_CLASSIFIER,
+            ARCH_COMPOSITE_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,
             [
                 ExpectationTrainingResult(expectation_id="1", accuracy=0.6875),
@@ -155,7 +156,9 @@ def test_train_and_predict_slow(
     tmpdir,
     data_root: str,
     shared_root: str,
+    monkeypatch,
 ):
+    monkeypatch.setenv("OPENAI_API_KEY", "dummy")
     _test_train_and_predict(
         example,
         arch,
