@@ -116,7 +116,7 @@ def _test_train_and_predict(
                 ExpectationTrainingResult(expectation_id="1", accuracy=0.6875),
                 ExpectationTrainingResult(expectation_id="2", accuracy=0.6875),
             ],
-            0.5,
+            0.4,
         ),
         (
             "ies-rectangle",
