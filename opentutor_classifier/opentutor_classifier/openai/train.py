@@ -6,6 +6,7 @@
 #
 
 import pandas as pd
+from typing import Any
 from opentutor_classifier import (
     AnswerClassifierTraining,
     TrainingConfig,
@@ -25,4 +26,7 @@ class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):
         raise NotImplementedError()
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
+        raise NotImplementedError()
+
+    def upload_model(self, s3: Any, lesson: str, s3_bucket: str):
         raise NotImplementedError()

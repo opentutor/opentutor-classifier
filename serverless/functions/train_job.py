@@ -13,17 +13,13 @@ from src.logger import get_logger
 
 from opentutor_classifier.dao import (
     find_data_dao,
-    _CONFIG_YAML,
-    MODEL_ROOT_DEFAULT,
     DEFAULT_LESSON_NAME,
 )
 from opentutor_classifier import (
     ClassifierFactory,
     TrainingConfig,
     ARCH_DEFAULT,
-    ARCH_COMPOSITE_CLASSIFIER,
 )
-from opentutor_classifier.lr2 import MODEL_FILE_NAME
 
 log = get_logger("train-job")
 shared_root = os.environ.get("SHARED_ROOT") or "shared"
@@ -64,28 +60,7 @@ def handler(event, context):
                 training.train(data, dao)
 
             # upload model
-
-            actual_arch = ARCH_DEFAULT if arch == ARCH_COMPOSITE_CLASSIFIER else arch
-
-            s3.upload_file(
-                os.path.join(
-                    MODEL_ROOT_DEFAULT,
-                    actual_arch,
-                    lesson_name,
-                    MODEL_FILE_NAME,
-                ),
-                MODELS_BUCKET,
-                os.path.join(lesson_name, actual_arch, MODEL_FILE_NAME),
-            )
-
-            # upload model config
-            s3.upload_file(
-                os.path.join(
-                    MODEL_ROOT_DEFAULT, actual_arch, lesson_name, _CONFIG_YAML
-                ),
-                MODELS_BUCKET,
-                os.path.join(lesson_name, actual_arch, _CONFIG_YAML),
-            )
+            training.upload_model(s3, lesson_name, MODELS_BUCKET)
 
             update_status(request["id"], "SUCCESS")
         except Exception as e:
