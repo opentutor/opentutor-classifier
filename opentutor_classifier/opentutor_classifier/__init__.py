@@ -327,6 +327,10 @@ class AnswerClassifierTraining(ABC):
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         raise NotImplementedError()
 
+    @abstractmethod
+    def upload_model(self, s3: Any, lesson: str, s3_bucket: str):
+        raise NotImplementedError()
+
 
 def dict_to_question_config(d: Dict[str, Any]) -> QuestionConfig:
     return QuestionConfig(
