@@ -10,6 +10,7 @@ from os import path
 import pytest
 import responses
 
+from typing import Dict, Any
 from opentutor_classifier import (
     ARCH_LR2_CLASSIFIER,
     ArchLesson,
@@ -33,6 +34,28 @@ def data_root() -> str:
 @pytest.fixture(scope="module")
 def shared_root(word2vec) -> str:
     return path.dirname(word2vec)
+
+
+@pytest.mark.parametrize(
+    "input_dictionary,expected_output",
+    [
+        (
+            {"GOOD": ["on", "off", "true", "false", "|"]},
+            {"GOOD": ["|on", "|off", "|true", "|false", "||"]},
+        )
+    ],
+)
+def test_feature_escaping(
+    input_dictionary: Dict[str, Any], expected_output: Dict[str, Any]
+):
+    expectation_config = ExpectationConfig("expectation_id", "ideal", input_dictionary)
+    dictionary = expectation_config.to_dict()
+
+    assert dictionary["features"] == expected_output
+    assert expectation_config.features == input_dictionary
+
+    copy_of_expectation_config = ExpectationConfig(**dictionary)
+    assert copy_of_expectation_config.features == input_dictionary
 
 
 @pytest.mark.parametrize("arch", [(ARCH_LR2_CLASSIFIER)])
