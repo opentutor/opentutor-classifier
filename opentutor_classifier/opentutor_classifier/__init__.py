@@ -69,7 +69,7 @@ class ExpectationConfig:
                         if (
                             len(list_item_as_string) > 1
                             and list_item_as_string[0] == ESCAPE_CHARACTER
-                            and list_item_as_string[1:] in WORDS_TO_ESCAPE
+                            and list_item_as_string[1:].lower() in WORDS_TO_ESCAPE
                         ):
                             new_feature_list.append(list_item_as_string[1:])
                         else:
