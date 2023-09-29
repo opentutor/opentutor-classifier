@@ -57,13 +57,13 @@ class CompositeAnswerClassifier(AnswerClassifier):
         ] = await asyncio.gather(lr_task, openai_task, return_exceptions=True)
 
         if isinstance(results[0], BaseException):
-            log.info(f"lr classifier returned exception:")
+            log.info("lr classifier returned exception:")
             traceback.print_exception(
                 BaseException, results[0], results[0].__traceback__
             )
 
         if isinstance(results[1], BaseException):
-            log.info(f"openai returned exception:")
+            log.info("openai returned exception:")
             traceback.print_exception(
                 BaseException, results[1], results[1].__traceback__
             )
