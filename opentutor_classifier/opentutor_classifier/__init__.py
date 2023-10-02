@@ -47,7 +47,7 @@ class ExpectationConfig:
                 for list_item in feature_list:
                     if (
                         isinstance(list_item, str)
-                        and cast(str, list_item).lower() in WORDS_TO_ESCAPE
+                        and cast(str, list_item).strip().lower() in WORDS_TO_ESCAPE
                     ):
                         new_feature_list.append(f"{ESCAPE_CHARACTER}{list_item}")
                     else:
@@ -69,7 +69,8 @@ class ExpectationConfig:
                         if (
                             len(list_item_as_string) > 1
                             and list_item_as_string[0] == ESCAPE_CHARACTER
-                            and list_item_as_string[1:].lower() in WORDS_TO_ESCAPE
+                            and list_item_as_string[1:].strip().lower()
+                            in WORDS_TO_ESCAPE
                         ):
                             new_feature_list.append(list_item_as_string[1:])
                         else:
@@ -125,13 +126,26 @@ class QuestionConfig:
         expectation_list = [x for x in self.expectations if exp == x.expectation_id]
         return expectation_list[0].ideal if len(expectation_list) > 0 else ""
 
+    def escape_features(self):
+        for expectation in self.expectations:
+            expectation.escape_features()
+
+    def unescape_features(self):
+        for expectation in self.expectations:
+            expectation.unescape_features()
+
     def to_dict(self) -> dict:
-        return asdict(self)
+        self.escape_features()
+        result = asdict(self)
+        self.unescape_features()
+        return result
 
     def write_to(self, file_path: str):
         makedirs(path.split(path.abspath(file_path))[0], exist_ok=True)
+        self.escape_features()
         with open(file_path, "w") as config_file:
             yaml.safe_dump(self.to_dict(), config_file)
+        self.unescape_features()
 
 
 @dataclass

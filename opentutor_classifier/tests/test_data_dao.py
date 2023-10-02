@@ -40,9 +40,33 @@ def shared_root(word2vec) -> str:
     "input_dictionary,expected_output",
     [
         (
-            {"GOOD": ["on", "off", "true", "false", "|"]},
-            {"GOOD": ["|on", "|off", "|true", "|false", "||"]},
-        )
+            {"GOOD": ["on", "off", "true", "false", "yes", "no", "|"]},
+            {"GOOD": ["|on", "|off", "|true", "|false", "|yes", "|no", "||"]},
+        ),
+        (
+            {
+                "GOOD": [
+                    "on the way  ",
+                    " yes  ",
+                    "Yes",
+                    "   True",
+                    "OFF     ",
+                    "",
+                    "  ",
+                ]
+            },
+            {
+                "GOOD": [
+                    "on the way  ",
+                    "| yes  ",
+                    "|Yes",
+                    "|   True",
+                    "|OFF     ",
+                    "",
+                    "  ",
+                ]
+            },
+        ),
     ],
 )
 def test_feature_escaping(
