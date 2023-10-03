@@ -11,10 +11,15 @@ from opentutor_classifier import (
     AnswerClassifierInput,
     AnswerClassifierResult,
 )
+import traceback
 import asyncio
 from opentutor_classifier.lr2.predict import LRAnswerClassifier
 from opentutor_classifier.openai.predict import OpenAIAnswerClassifier
 from typing import Dict, Any, Tuple, Union, cast
+from opentutor_classifier.logger import get_logger
+
+
+log = get_logger()
 
 
 class CompositeAnswerClassifier(AnswerClassifier):
@@ -50,6 +55,18 @@ class CompositeAnswerClassifier(AnswerClassifier):
             Union[AnswerClassifierResult, BaseException],
             Union[AnswerClassifierResult, BaseException],
         ] = await asyncio.gather(lr_task, openai_task, return_exceptions=True)
+
+        if isinstance(results[0], BaseException):
+            log.info("lr classifier returned exception:")
+            traceback.print_exception(
+                BaseException, results[0], results[0].__traceback__
+            )
+
+        if isinstance(results[1], BaseException):
+            log.info("openai returned exception:")
+            traceback.print_exception(
+                BaseException, results[1], results[1].__traceback__
+            )
 
         if not isinstance(results[1], AnswerClassifierResult):
             return cast(AnswerClassifierResult, results[0])
