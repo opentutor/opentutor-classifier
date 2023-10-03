@@ -142,10 +142,8 @@ class QuestionConfig:
 
     def write_to(self, file_path: str):
         makedirs(path.split(path.abspath(file_path))[0], exist_ok=True)
-        self.escape_features()
         with open(file_path, "w") as config_file:
             yaml.safe_dump(self.to_dict(), config_file)
-        self.unescape_features()
 
 
 @dataclass
