@@ -6,10 +6,11 @@
 #
 import os
 from typing import List
-
 import pytest
 import responses
-
+import json
+import asyncio
+from unittest.mock import patch
 from opentutor_classifier import (
     get_classifier_arch,
     AnswerClassifier,
@@ -18,8 +19,11 @@ from opentutor_classifier import (
     ClassifierFactory,
     SpeechActClassifierResult,
     TrainingConfig,
+    ARCH_OPENAI_CLASSIFIER,
+    ARCH_COMPOSITE_CLASSIFIER,
+    DEFAULT_LESSON_NAME,
 )
-from opentutor_classifier.config import confidence_threshold_default
+from opentutor_classifier.config import confidence_threshold_default, EVALUATION_BAD
 import opentutor_classifier.dao
 from opentutor_classifier.log import logger
 from opentutor_classifier.training import train_data_root, train_default_data_root
@@ -31,9 +35,10 @@ from .utils import (
     example_data_path,
     mocked_data_dao,
     read_example_testset,
+    mock_openai_object,
+    mock_openai_timeout,
 )
 from .types import ComparisonType, _TestExpectation
-
 
 CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
 
@@ -72,7 +77,7 @@ def _find_or_train_classifier(
         logger.warning(
             f"trained model not found in fixtures for test lesson {lesson}, attempting to train..."
         )
-        if lesson == "default":
+        if lesson == DEFAULT_LESSON_NAME:
             train_default_data_root(
                 data_root=example_dir,
                 config=TrainingConfig(shared_root=shared_root),
@@ -87,6 +92,146 @@ def _find_or_train_classifier(
                 arch=arch,
             )
     return cfac.new_classifier(cconf, arch=arch)
+
+
+@pytest.mark.parametrize(
+    "lesson,arch,input_answer,config_data,mock_payload",
+    [
+        (
+            "candles",
+            ARCH_COMPOSITE_CLASSIFIER,
+            "The penguins are full of fish",
+            {
+                "question": "What are the challenges to demonstrating integrity in a group?",
+                "expectations": [
+                    {
+                        "expectation_id": "0",
+                        "ideal": "Peer pressure can cause you to allow inappropriate behavior",
+                    },
+                    {
+                        "expectation_id": "1",
+                        "ideal": "Enforcing the rules can make you unpopular",
+                    },
+                ],
+            },
+            {
+                "answers": {
+                    "answer_1": {
+                        "answer text": "it explodes",
+                        "concepts": {
+                            "concept_0": {
+                                "is_known": "false",
+                                "confidence": 0.9,
+                                "justification": "The answer does not mention anything about normal diodes not conducting current in reverse bias, which is the concept being tested.",
+                            },
+                            "concept_1": {
+                                "is_known": "true",
+                                "confidence": 0.7,
+                                "justification": "The answer mentions that the diode explodes, which implies that it goes into breakdown mode and gets damaged.",
+                            },
+                        },
+                    }
+                }
+            },
+        ),
+    ],
+)
+def test_composite_answer_classifier_json_response(
+    model_roots,
+    shared_root,
+    lesson: str,
+    arch: str,
+    input_answer: str,
+    config_data: dict,
+    mock_payload: dict,
+):
+    os.environ["OPENAI_API_KEY"] = "fake"
+    with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
+        classifier = _find_or_train_classifier(
+            lesson, model_roots[0], model_roots[2], shared_root, arch=arch
+        )
+        with patch("openai.ChatCompletion.acreate") as mock_create:
+            mock_create.side_effect = mock_openai_timeout(json.dumps(mock_payload))
+            result = asyncio.run(
+                classifier.evaluate(
+                    AnswerClassifierInput(
+                        input_sentence=input_answer,
+                        config_data=dict_to_config(config_data),
+                    )
+                )
+            )
+        print(json.dumps(result.to_dict(), indent=2))
+        assert result.expectation_results[0].evaluation == EVALUATION_BAD
+
+
+@pytest.mark.parametrize(
+    "lesson,arch,input_answer,config_data,mock_payload",
+    [
+        (
+            "candles",
+            ARCH_OPENAI_CLASSIFIER,
+            "The penguins are full of fish",
+            {
+                "question": "What are the challenges to demonstrating integrity in a group?",
+                "expectations": [
+                    {
+                        "expectation_id": "0",
+                        "ideal": "Peer pressure can cause you to allow inappropriate behavior",
+                    },
+                    {
+                        "expectation_id": "1",
+                        "ideal": "Enforcing the rules can make you unpopular",
+                    },
+                ],
+            },
+            {
+                "answers": {
+                    "answer_1": {
+                        "answer text": "it explodes",
+                        "concepts": {
+                            "concept_0": {
+                                "is_known": "false",
+                                "confidence": 0.9,
+                                "justification": "The answer does not mention anything about normal diodes not conducting current in reverse bias, which is the concept being tested.",
+                            },
+                            "concept_1": {
+                                "is_known": "true",
+                                "confidence": 0.7,
+                                "justification": "The answer mentions that the diode explodes, which implies that it goes into breakdown mode and gets damaged.",
+                            },
+                        },
+                    }
+                }
+            },
+        ),
+    ],
+)
+def test_openai_answer_classifier_json_response(
+    model_roots,
+    shared_root,
+    lesson: str,
+    arch: str,
+    input_answer: str,
+    config_data: dict,
+    mock_payload: dict,
+):
+    os.environ["OPENAI_API_KEY"] = "fake"
+    with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
+        classifier = _find_or_train_classifier(
+            lesson, model_roots[0], model_roots[2], shared_root, arch=arch
+        )
+        with patch("openai.ChatCompletion.acreate") as mock_create:
+            mock_create.return_value = mock_openai_object(json.dumps(mock_payload))
+            result = asyncio.run(
+                classifier.evaluate(
+                    AnswerClassifierInput(
+                        input_sentence=input_answer,
+                        config_data=dict_to_config(config_data),
+                    )
+                )
+            )
+        print(json.dumps(result.to_dict(), indent=2))
+        assert result.expectation_results[0].evaluation == EVALUATION_BAD
 
 
 @pytest.mark.parametrize(
@@ -129,9 +274,13 @@ def test_evaluate_example(
                 "question": "What are the challenges to demonstrating integrity in a group?",
                 "expectations": [
                     {
-                        "ideal": "Peer pressure can cause you to allow inappropriate behavior"
+                        "expectation_id": "0",
+                        "ideal": "Peer pressure can cause you to allow inappropriate behavior",
                     },
-                    {"ideal": "Enforcing the rules can make you unpopular"},
+                    {
+                        "expectation_id": "1",
+                        "ideal": "Enforcing the rules can make you unpopular",
+                    },
                 ],
             },
             [
@@ -156,9 +305,13 @@ def test_evaluate_example(
                 "question": "What are the challenges to demonstrating integrity in a group?",
                 "expectations": [
                     {
-                        "ideal": "Peer pressure can cause you to allow inappropriate behavior"
+                        "expectation_id": "0",
+                        "ideal": "Peer pressure can cause you to allow inappropriate behavior",
                     },
-                    {"ideal": "Enforcing the rules can make you unpopular"},
+                    {
+                        "expectation_id": "1",
+                        "ideal": "Enforcing the rules can make you unpopular",
+                    },
                 ],
             },
             [
@@ -188,7 +341,7 @@ def test_evaluates_for_default_model(
         is_default_model=True,
     ):
         _find_or_train_classifier(
-            "default", model_roots[0], model_roots[2], shared_root
+            DEFAULT_LESSON_NAME, model_roots[0], model_roots[2], shared_root
         )
         classifier = ClassifierFactory().new_classifier(
             ClassifierConfig(
@@ -198,11 +351,13 @@ def test_evaluates_for_default_model(
                 shared_root=shared_root,
             )
         )
-        result = classifier.evaluate(
-            AnswerClassifierInput(
-                input_sentence=input_answer,
-                config_data=dict_to_config(config_data),
-                expectation=input_expectation_number,
+        result = asyncio.run(
+            classifier.evaluate(
+                AnswerClassifierInput(
+                    input_sentence=input_answer,
+                    config_data=dict_to_config(config_data),
+                    expectation=input_expectation_number,
+                )
             )
         )
         assert_classifier_evaluate(result, expected_results)
@@ -316,11 +471,13 @@ def test_evaluates_meta_cognitive_sentences(
         classifier = _find_or_train_classifier(
             lesson, model_roots[0], model_roots[2], shared_root, arch=arch
         )
-        result = classifier.evaluate(
-            AnswerClassifierInput(
-                input_sentence=input_answer,
-                config_data=dict_to_config(config_data),
-                expectation=input_expectation_number,
+        result = asyncio.run(
+            classifier.evaluate(
+                AnswerClassifierInput(
+                    input_sentence=input_answer,
+                    config_data=dict_to_config(config_data),
+                    expectation=input_expectation_number,
+                )
             )
         )
         assert (

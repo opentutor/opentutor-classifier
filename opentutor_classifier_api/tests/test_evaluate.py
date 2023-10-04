@@ -90,7 +90,8 @@ def test_evaluate_uses_default_model_when_question_untrained(
             content_type="application/json",
         )
         assert res.status_code == 200
-        results = res.json["output"]["expectationResults"]
+        result = json.loads(res.json)
+        results = result["output"]["expectationResults"]
         assert len(results) == len(expected_results)
         for res, res_expected in zip(results, expected_results):
             assert res["expectationId"] == res_expected.expectation_id
@@ -182,7 +183,8 @@ def test_evaluate_classifies_user_answers(
             ),
             content_type="application/json",
         )
-        speech_acts = res.json["output"]["speechActs"]
+        result = json.loads(res.json)
+        speech_acts = result["output"]["speechActs"]
         assert (
             speech_acts["metacognitive"]["evaluation"]
             == expected_sa_results["metacognitive"].evaluation
@@ -198,7 +200,7 @@ def test_evaluate_classifies_user_answers(
         assert (
             speech_acts["profanity"]["score"] == expected_sa_results["profanity"].score
         )
-        results = res.json["output"]["expectationResults"]
+        results = result["output"]["expectationResults"]
         assert len(results) == len(expected_results)
         for res, res_expected in zip(results, expected_results):
             assert res["expectationId"] == res_expected.expectation_id

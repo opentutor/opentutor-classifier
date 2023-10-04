@@ -6,15 +6,16 @@
 #
 from collections import defaultdict
 import json
+import os
 from opentutor_classifier.constants import DEPLOYMENT_MODE_OFFLINE
 
 from opentutor_classifier.utils import prop_bool
 from os import path, environ
 
-from typing import Dict, List
+from typing import Dict, List, Any
 
 from opentutor_classifier.word2vec_wrapper import Word2VecWrapper, get_word2vec
-
+from opentutor_classifier.dao import MODEL_ROOT_DEFAULT, _CONFIG_YAML
 from .constants import (
     ARCHETYPE_BAD,
     ARCHETYPE_GOOD,
@@ -48,6 +49,7 @@ from opentutor_classifier import (
     TrainingInput,
     TrainingResult,
     ClassifierMode,
+    ExpectationConfig,
 )
 from opentutor_classifier.config import (
     LABEL_BAD,
@@ -64,6 +66,7 @@ from .features import feature_length_ratio_enabled, preprocess_sentence
 from .clustering_features import CustomDBScanClustering
 
 DEPLOYMENT_MODE = environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
+MINIMUM_NUMBER_OF_GRADED_ENTRIES = 10
 
 
 def _preprocess_trainx(data: List[str]) -> List[List[str]]:
@@ -210,9 +213,30 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         all_data_text_set = set(all_data_text)
         self.word2vec_wrapper.get_feature_vectors(all_data_text_set)
 
-    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
-        self.preload_all_feature_vectors_train(train_input)
+    def get_trainable_expectations(
+        self, train_input: TrainingInput
+    ) -> List[ExpectationConfig]:
+        value_counts = train_input.data["exp_num"].value_counts()
+        result: List[ExpectationConfig] = []
 
+        for expectation in train_input.config.expectations:
+            if (
+                expectation.expectation_id in value_counts
+                and value_counts[expectation.expectation_id]
+                >= MINIMUM_NUMBER_OF_GRADED_ENTRIES
+            ):
+                result.append(expectation)
+
+        return result
+
+    def train(
+        self, train_input: TrainingInput, dao: DataDao, developer_mode: bool = False
+    ) -> TrainingResult:
+        self.preload_all_feature_vectors_train(train_input)
+        if not developer_mode:
+            trainable_expectations = self.get_trainable_expectations(train_input)
+        else:
+            trainable_expectations = train_input.config.expectations
         question = train_input.config.question or ""
         if not question:
             raise ValueError("config must have a 'question'")
@@ -220,7 +244,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             pd.DataFrame(
                 [
                     [x.expectation_id, x.ideal, LABEL_GOOD]
-                    for i, x in enumerate(train_input.config.expectations)
+                    for i, x in enumerate(trainable_expectations)
                     if x.ideal
                 ],
                 columns=["exp_num", "text", "label"],
@@ -228,6 +252,9 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
         ).sort_values(by=["exp_num"], ignore_index=True)
         split_training_sets: dict = defaultdict(int)
         for i, exp_num in enumerate(train_data["exp_num"]):
+            # skip non-trainable expectations
+            if exp_num not in [e.expectation_id for e in trainable_expectations]:
+                continue
             label = str(train_data["label"][i]).lower().strip()
             if label not in [LABEL_GOOD, LABEL_BAD]:
                 logger.warning(
@@ -393,3 +420,23 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 ArchLesson(arch=ARCH_LR2_CLASSIFIER, lesson=train_input.lesson)
             ),
         )
+
+    def upload_model(self, s3: Any, lesson: str, s3_bucket: str):
+        s3.upload_file(
+            os.path.join(
+                MODEL_ROOT_DEFAULT,
+                ARCH_LR2_CLASSIFIER,
+                lesson,
+                MODEL_FILE_NAME,
+            ),
+            s3_bucket,
+            os.path.join(lesson, ARCH_LR2_CLASSIFIER, MODEL_FILE_NAME),
+        )
+
+        # upload model config
+        s3.upload_file(
+            os.path.join(MODEL_ROOT_DEFAULT, ARCH_LR2_CLASSIFIER, lesson, _CONFIG_YAML),
+            s3_bucket,
+            os.path.join(lesson, ARCH_LR2_CLASSIFIER, _CONFIG_YAML),
+        )
+        return

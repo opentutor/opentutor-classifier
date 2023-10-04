@@ -10,8 +10,8 @@ import uuid
 import datetime
 import os
 import boto3
-from serverless.src.utils import create_json_response, require_env
-from serverless.src.logger import get_logger
+from src.utils import create_json_response, require_env
+from src.logger import get_logger
 
 log = get_logger("train_request")
 JOBS_TABLE_NAME = require_env("JOBS_TABLE_NAME")
@@ -52,7 +52,7 @@ def handler(event, context):
             },
             event,
         )
-
+    arch = train_request["arch"] if "arch" in train_request else None
     lesson = train_request["lesson"] if "lesson" in train_request else "default"
     ping = train_request["ping"] if "ping" in train_request else False
 
@@ -62,6 +62,7 @@ def handler(event, context):
         "lesson": lesson,
         "ping": ping,
         "train_default": should_train_default,
+        "arch": arch,
         "status": "QUEUED",
         "created": datetime.datetime.now().isoformat(),
         # https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/time-to-live-ttl-before-you-start.html#time-to-live-ttl-before-you-start-formatting

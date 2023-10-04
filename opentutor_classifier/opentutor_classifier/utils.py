@@ -5,7 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from os import path, _Environ, environ
-from typing import Any, Dict, Iterable, Optional, Union
+from typing import Any, Dict, Iterable, Optional, Union, Type
 import pandas as pd
 import yaml
 from pathlib import Path
@@ -28,7 +28,7 @@ def dict_to_config(config_data: dict) -> Optional[QuestionConfig]:
         QuestionConfig(
             question=config_data.get("question", ""),
             expectations=[
-                ExpectationConfig(ideal=i["ideal"])
+                ExpectationConfig(ideal=i["ideal"], expectation_id=i["expectation_id"])
                 for i in config_data.get("expectations", [])
             ],
         )
@@ -72,3 +72,11 @@ def require_env(n: str) -> str:
     if not env_val:
         raise EnvironmentError(f"missing required env var {n}")
     return env_val
+
+
+def validate_json(json_data: str, data_type: Type) -> bool:
+    try:
+        data_type.from_json(json_data)
+    except Exception:
+        return False
+    return True

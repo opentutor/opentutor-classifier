@@ -24,9 +24,7 @@ from opentutor_classifier import (
     TrainingInput,
     dict_to_question_config,
 )
-from opentutor_classifier.logger import get_logger
-
-logger = get_logger("api")
+from opentutor_classifier.log import logger
 
 
 def get_graphql_endpoint() -> str:
@@ -175,7 +173,8 @@ def query_lesson_training_data_gql(lesson: str) -> GQLQueryBody:
 
 
 def update_features_gql(req: QuestionConfigSaveReq) -> GQLQueryBody:
-    return {
+    req.config.escape_features()
+    result: GQLQueryBody = {
         "query": GQL_UPDATE_LESSON_FEATURES,
         "variables": {
             "lessonId": req.lesson,
@@ -185,6 +184,8 @@ def update_features_gql(req: QuestionConfigSaveReq) -> GQLQueryBody:
             ],
         },
     }
+    req.config.unescape_features()
+    return result
 
 
 def update_last_trained_at_gql(lesson: str) -> GQLQueryBody:

@@ -4,15 +4,20 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
+from dataclasses import dataclass
+from dataclass_wizard import JSONWizard
 import os
 import re
+import asyncio
 from flask import Blueprint, jsonify, request
-
+from typing import Any
 from cerberus import Validator
 
 from opentutor_classifier import (
     AnswerClassifierInput,
+    AnswerClassifierResult,
     ClassifierConfig,
+    ARCH_DEFAULT,
 )
 import opentutor_classifier.dao
 
@@ -22,20 +27,33 @@ eval_blueprint = Blueprint("evaluate", __name__)
 under_pat = re.compile(r"_([a-z])")
 
 
+@dataclass
+class Output(JSONWizard):
+    output: AnswerClassifierResult
+
+
 def underscore_to_camel(name: str) -> str:
     return under_pat.sub(lambda x: x.group(1).upper(), name)
 
 
-def to_camelcase(d: dict) -> dict:
-    new_d = {}
-    for k, v in d.items():
-        if isinstance(v, dict):
-            new_d[underscore_to_camel(k)] = to_camelcase(v)
-        elif isinstance(v, list):
-            new_d[underscore_to_camel(k)] = [to_camelcase(x) for x in v]
-        else:
-            new_d[underscore_to_camel(k)] = v
-    return new_d
+def to_camelcase(d: Any) -> dict:
+    if isinstance(d, list):
+        new_d = []
+        for x in d:
+            new_d.append(to_camelcase(x))
+        return new_d
+    elif isinstance(d, dict):
+        for k, v in d.items():
+            new_d = {}
+            if isinstance(v, dict):
+                new_d[underscore_to_camel(k)] = to_camelcase(v)
+            elif isinstance(v, list):
+                new_d[underscore_to_camel(k)] = [to_camelcase(x) for x in v]
+            else:
+                new_d[underscore_to_camel(k)] = v
+        return new_d
+    else:
+        return d
 
 
 _dao: ClassifierDao = None
@@ -77,23 +95,31 @@ def evaluate():
     input_sentence = args.get("input")
     exp_num = args.get("expectation", "")
     lesson = args.get("lesson")
+    arch = args.get("arch", ARCH_DEFAULT)
     shared_root = os.environ.get("SHARED_ROOT") or "shared"
+    dao = opentutor_classifier.dao.find_data_dao()
+    config = dao.find_training_config(lesson)
+
     classifier = _get_dao().find_classifier(
         lesson,
         ClassifierConfig(
-            dao=opentutor_classifier.dao.find_data_dao(),
+            dao=dao,
             model_name=model_name,
             model_roots=model_roots,
             shared_root=shared_root,
         ),
+        arch,
     )
-    _model_op = classifier.evaluate(
-        AnswerClassifierInput(
-            input_sentence=input_sentence,
-            expectation=exp_num,
+    _model_op = asyncio.run(
+        classifier.evaluate(
+            AnswerClassifierInput(
+                input_sentence=input_sentence,
+                config_data=config,
+                expectation=exp_num,
+            )
         )
     )
     return (
-        jsonify({"output": to_camelcase(_model_op.to_dict())}),
+        jsonify(Output(output=_model_op).to_json()),
         200,
     )
