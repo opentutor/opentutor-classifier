@@ -9,8 +9,9 @@ from dataclasses import dataclass, field, asdict
 from enum import Enum
 from importlib import import_module
 from os import environ, makedirs, path
+from dataclass_wizard import JSONWizard
 import pandas as pd
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 import yaml
 
 from opentutor_classifier.camelcase import dict_camel_to_snake
@@ -24,11 +25,66 @@ class ExpectationClassifierResult:
     score: float = 0.0
 
 
+ESCAPE_CHARACTER = "|"
+WORDS_TO_ESCAPE = ["true", "false", "on", "off", "yes", "no", ESCAPE_CHARACTER]
+
+
 @dataclass
 class ExpectationConfig:
     expectation_id: str = ""
     ideal: str = ""
     features: Dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self):
+        self.unescape_features()
+
+    def escape_features(self):
+        new_features_dict = {}
+        for key in self.features.keys():
+            if isinstance(self.features[key], list):
+                feature_list = cast(list, self.features[key])
+                new_feature_list = []
+                for list_item in feature_list:
+                    if (
+                        isinstance(list_item, str)
+                        and cast(str, list_item).strip().lower() in WORDS_TO_ESCAPE
+                    ):
+                        new_feature_list.append(f"{ESCAPE_CHARACTER}{list_item}")
+                    else:
+                        new_feature_list.append(list_item)
+                new_features_dict[key] = new_feature_list
+            else:
+                new_features_dict[key] = self.features[key]
+        self.features = new_features_dict
+        return
+
+    def unescape_features(self):
+        for key in self.features.keys():
+            if isinstance(self.features[key], list):
+                feature_list = cast(list, self.features[key])
+                new_feature_list = []
+                for list_item in feature_list:
+                    if isinstance(list_item, str):
+                        list_item_as_string = cast(str, list_item)
+                        if (
+                            len(list_item_as_string) > 1
+                            and list_item_as_string[0] == ESCAPE_CHARACTER
+                            and list_item_as_string[1:].strip().lower()
+                            in WORDS_TO_ESCAPE
+                        ):
+                            new_feature_list.append(list_item_as_string[1:])
+                        else:
+                            new_feature_list.append(list_item_as_string)
+                    else:
+                        new_feature_list.append(list_item)
+                self.features[key] = new_feature_list
+        return
+
+    def to_dict(self) -> dict:
+        self.escape_features()
+        result = asdict(self)
+        self.unescape_features()
+        return result
 
 
 @dataclass
@@ -70,8 +126,19 @@ class QuestionConfig:
         expectation_list = [x for x in self.expectations if exp == x.expectation_id]
         return expectation_list[0].ideal if len(expectation_list) > 0 else ""
 
+    def escape_features(self):
+        for expectation in self.expectations:
+            expectation.escape_features()
+
+    def unescape_features(self):
+        for expectation in self.expectations:
+            expectation.unescape_features()
+
     def to_dict(self) -> dict:
-        return asdict(self)
+        self.escape_features()
+        result = asdict(self)
+        self.unescape_features()
+        return result
 
     def write_to(self, file_path: str):
         makedirs(path.split(path.abspath(file_path))[0], exist_ok=True)
@@ -256,7 +323,7 @@ class AnswerClassifierInput:
 
 
 @dataclass
-class AnswerClassifierResult:
+class AnswerClassifierResult(JSONWizard):
     input: AnswerClassifierInput
     expectation_results: List[ExpectationClassifierResult] = field(default_factory=list)
     speech_acts: Dict[str, SpeechActClassifierResult] = field(default_factory=dict)
@@ -281,7 +348,7 @@ class AnswerClassifier(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+    async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         raise NotImplementedError()
 
     @abstractmethod
@@ -314,11 +381,17 @@ class AnswerClassifierTraining(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def train(self, train_input: TrainingInput, dao: DataDao) -> TrainingResult:
+    def train(
+        self, train_input: TrainingInput, dao: DataDao, developer_mode: bool = False
+    ) -> TrainingResult:
         raise NotImplementedError()
 
     @abstractmethod
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def upload_model(self, s3: Any, lesson: str, s3_bucket: str):
         raise NotImplementedError()
 
 
@@ -362,6 +435,8 @@ def register_classifier_factory(arch: str, fac: ArchClassifierFactory) -> None:
 
 
 ARCH_LR2_CLASSIFIER = "opentutor_classifier.lr2"
+ARCH_OPENAI_CLASSIFIER = "opentutor_classifier.openai"
+ARCH_COMPOSITE_CLASSIFIER = "opentutor_classifier.composite"
 ARCH_DEFAULT = ARCH_LR2_CLASSIFIER
 
 

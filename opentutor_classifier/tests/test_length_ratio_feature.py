@@ -7,6 +7,7 @@
 from os import path
 import pytest
 import responses
+import asyncio
 
 from opentutor_classifier import (
     ARCH_LR2_CLASSIFIER,
@@ -45,7 +46,7 @@ def _test_feature_length_ratio_enabled(
     with test_env_isolated(
         tmpdir, data_root, shared_root, arch=arch, lesson=lesson
     ) as test_config:
-        train_classifier(lesson, test_config)
+        train_classifier(lesson, test_config, True)
         from opentutor_classifier.dao import find_data_dao
 
         dao = find_data_dao()
@@ -134,11 +135,13 @@ def _train_classifier_and_get_confidence(
 
         classifier = ClassifierDao().find_classifier(lesson, classifier_config, arch)
 
-        answer_classifier_result = classifier.evaluate(
-            AnswerClassifierInput(
-                input_sentence=input_answer,
-                config_data=question_config,
-                expectation="0",
+        answer_classifier_result = asyncio.run(
+            classifier.evaluate(
+                AnswerClassifierInput(
+                    input_sentence=input_answer,
+                    config_data=question_config,
+                    expectation="0",
+                )
             )
         )
         return answer_classifier_result.expectation_results[0].score

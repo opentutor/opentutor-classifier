@@ -7,7 +7,7 @@
 import json
 import base64
 import os
-from serverless.src.utils import create_json_response, require_env
+from src.utils import create_json_response, require_env
 
 from opentutor_classifier.dao import (
     find_data_dao,
@@ -19,7 +19,7 @@ from opentutor_classifier import ARCH_DEFAULT, ClassifierConfig
 from opentutor_classifier.lr2 import MODEL_FILE_NAME
 from opentutor_classifier.classifier_dao import ClassifierDao
 
-from serverless.src.logger import get_logger
+from src.logger import get_logger
 import boto3
 
 logger = get_logger("extract_config")

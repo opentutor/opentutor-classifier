@@ -8,17 +8,18 @@ import json
 import datetime
 import os
 import boto3
-from serverless.src.utils import require_env
-from serverless.src.logger import get_logger
+from src.utils import require_env
+from src.logger import get_logger
 
 from opentutor_classifier.dao import (
     find_data_dao,
-    _CONFIG_YAML,
-    MODEL_ROOT_DEFAULT,
     DEFAULT_LESSON_NAME,
 )
-from opentutor_classifier import ClassifierFactory, TrainingConfig, ARCH_DEFAULT
-from opentutor_classifier.lr2 import MODEL_FILE_NAME
+from opentutor_classifier import (
+    ClassifierFactory,
+    TrainingConfig,
+    ARCH_DEFAULT,
+)
 
 log = get_logger("train-job")
 shared_root = os.environ.get("SHARED_ROOT") or "shared"
@@ -38,6 +39,7 @@ def handler(event, context):
     for record in event["Records"]:
         request = json.loads(str(record["body"]))
         lesson = request["lesson"]
+        arch = request["arch"] if request["arch"] is not None else ARCH_DEFAULT
         should_train_default = request["train_default"]
         lesson_name = DEFAULT_LESSON_NAME if should_train_default else lesson
         # ping = request["ping"] if "ping" in request else False
@@ -50,33 +52,15 @@ def handler(event, context):
 
             if should_train_default:
                 data = dao.find_default_training_data()
-                training = fac.new_training(config, arch=ARCH_DEFAULT)
+                training = fac.new_training(config, arch=arch)
                 training.train_default(data, dao)
             else:
                 data = dao.find_training_input(lesson_name)
-                training = fac.new_training(config, arch=ARCH_DEFAULT)
+                training = fac.new_training(config, arch=arch)
                 training.train(data, dao)
 
             # upload model
-            s3.upload_file(
-                os.path.join(
-                    MODEL_ROOT_DEFAULT,
-                    ARCH_DEFAULT,
-                    lesson_name,
-                    MODEL_FILE_NAME,
-                ),
-                MODELS_BUCKET,
-                os.path.join(lesson_name, ARCH_DEFAULT, MODEL_FILE_NAME),
-            )
-
-            # upload model config
-            s3.upload_file(
-                os.path.join(
-                    MODEL_ROOT_DEFAULT, ARCH_DEFAULT, lesson_name, _CONFIG_YAML
-                ),
-                MODELS_BUCKET,
-                os.path.join(lesson_name, ARCH_DEFAULT, _CONFIG_YAML),
-            )
+            training.upload_model(s3, lesson_name, MODELS_BUCKET)
 
             update_status(request["id"], "SUCCESS")
         except Exception as e:

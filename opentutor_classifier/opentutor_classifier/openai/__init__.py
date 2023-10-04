@@ -5,37 +5,30 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from opentutor_classifier import (
-    ARCH_LR2_CLASSIFIER,
-    DEFAULT_LESSON_NAME,
-    AnswerClassifier,
-    AnswerClassifierTraining,
     ArchClassifierFactory,
     ClassifierConfig,
-    ModelRef,
+    AnswerClassifier,
+    AnswerClassifierTraining,
     TrainingConfig,
+    ARCH_OPENAI_CLASSIFIER,
     register_classifier_factory,
 )
-from .constants import MODEL_FILE_NAME
-from .predict import LRAnswerClassifier
-from .train import LRAnswerClassifierTraining
+from .train import OpenAIAnswerClassifierTraining
+from .predict import OpenAIAnswerClassifier
 
 
 class __ArchClassifierFactory(ArchClassifierFactory):
     def has_trained_model(self, lesson: str, config: ClassifierConfig) -> bool:
-        return config.dao.trained_model_exists(
-            ModelRef(arch=ARCH_LR2_CLASSIFIER, lesson=lesson, filename=MODEL_FILE_NAME)
-        )
+        return True
 
     def new_classifier(self, config: ClassifierConfig) -> AnswerClassifier:
-        return LRAnswerClassifier().configure(config)
+        return OpenAIAnswerClassifier().configure(config)
 
     def new_classifier_default(self, config: ClassifierConfig) -> AnswerClassifier:
-        if config.model_name != DEFAULT_LESSON_NAME:
-            raise Exception("model name for default classifier must be default")
-        return LRAnswerClassifier().configure(config)
+        raise Exception("OpenAI has no default model")
 
     def new_training(self, config: TrainingConfig) -> AnswerClassifierTraining:
-        return LRAnswerClassifierTraining().configure(config)
+        return OpenAIAnswerClassifierTraining().configure(config)
 
 
-register_classifier_factory(ARCH_LR2_CLASSIFIER, __ArchClassifierFactory())
+register_classifier_factory(ARCH_OPENAI_CLASSIFIER, __ArchClassifierFactory())
