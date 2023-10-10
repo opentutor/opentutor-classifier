@@ -172,6 +172,7 @@ class FileDataDao(DataDao):
 
     def save_config(self, req: QuestionConfigSaveReq) -> None:
         tmpf = self._setup_tmp(_CONFIG_YAML)
+        req.config.escape_features()
         req.config.write_to(tmpf)
         self._replace(
             tmpf,
@@ -179,6 +180,7 @@ class FileDataDao(DataDao):
                 ModelRef(arch=req.arch, lesson=req.lesson, filename=_CONFIG_YAML)
             ),
         )
+        req.config.unescape_features()
 
     def save_pickle(self, req: ModelSaveReq) -> None:
         tmpf = self._setup_tmp(req.filename)

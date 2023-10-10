@@ -6,15 +6,16 @@
 #
 from collections import defaultdict
 import json
+import os
 from opentutor_classifier.constants import DEPLOYMENT_MODE_OFFLINE
 
 from opentutor_classifier.utils import prop_bool
 from os import path, environ
 
-from typing import Dict, List
+from typing import Dict, List, Any
 
 from opentutor_classifier.word2vec_wrapper import Word2VecWrapper, get_word2vec
-
+from opentutor_classifier.dao import MODEL_ROOT_DEFAULT, _CONFIG_YAML
 from .constants import (
     ARCHETYPE_BAD,
     ARCHETYPE_GOOD,
@@ -419,3 +420,23 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 ArchLesson(arch=ARCH_LR2_CLASSIFIER, lesson=train_input.lesson)
             ),
         )
+
+    def upload_model(self, s3: Any, lesson: str, s3_bucket: str):
+        s3.upload_file(
+            os.path.join(
+                MODEL_ROOT_DEFAULT,
+                ARCH_LR2_CLASSIFIER,
+                lesson,
+                MODEL_FILE_NAME,
+            ),
+            s3_bucket,
+            os.path.join(lesson, ARCH_LR2_CLASSIFIER, MODEL_FILE_NAME),
+        )
+
+        # upload model config
+        s3.upload_file(
+            os.path.join(MODEL_ROOT_DEFAULT, ARCH_LR2_CLASSIFIER, lesson, _CONFIG_YAML),
+            s3_bucket,
+            os.path.join(lesson, ARCH_LR2_CLASSIFIER, _CONFIG_YAML),
+        )
+        return

@@ -6,6 +6,7 @@
 #
 
 import pandas as pd
+from typing import Any
 from opentutor_classifier import (
     AnswerClassifierTraining,
     TrainingConfig,
@@ -31,3 +32,6 @@ class CompositeAnswerClassifierTraining(AnswerClassifierTraining):
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         return self.lr_training.train_default(data, dao)
+
+    def upload_model(self, s3: Any, lesson: str, s3_bucket: str):
+        return self.lr_training.upload_model(s3, lesson, s3_bucket)
