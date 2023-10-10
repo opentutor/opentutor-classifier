@@ -118,11 +118,11 @@ async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
         content = raw_result.choices[0].message.content
 
         if validate_json(content, OpenAIResultContent):
-            result_valid = True
             result: OpenAIResultContent = OpenAIResultContent.from_json(content)
             if len(
                 result.answers[result.answers.__iter__().__next__()].concepts
             ) == len(call_data.user_concepts):
+                result_valid = True
                 result.answers[
                     result.answers.__iter__().__next__()
                 ].unmask_concept_uuids(concept_mask)
