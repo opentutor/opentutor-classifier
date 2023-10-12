@@ -6,6 +6,7 @@
 #
 
 import pandas as pd
+import os
 from typing import Any
 from opentutor_classifier import (
     AnswerClassifierTraining,
@@ -16,7 +17,7 @@ from opentutor_classifier import (
     ExpectationTrainingResult,
 )
 from opentutor_classifier.openai import ARCH_OPENAI_CLASSIFIER
-from opentutor_classifier.dao import ModelSaveReq, ArchLesson
+from opentutor_classifier.dao import ModelSaveReq, ArchLesson, MODEL_ROOT_DEFAULT
 from opentutor_classifier.config import LABEL_BAD, LABEL_GOOD
 from opentutor_classifier.openai.constants import GROUNDTRUTH_FILENAME
 from dataclasses import dataclass, field
@@ -98,4 +99,13 @@ class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):
         raise NotImplementedError()
 
     def upload_model(self, s3: Any, lesson: str, s3_bucket: str):
-        raise NotImplementedError()
+        s3.upload_file(
+            os.path.join(
+                MODEL_ROOT_DEFAULT,
+                ARCH_OPENAI_CLASSIFIER,
+                lesson,
+                GROUNDTRUTH_FILENAME,
+            ),
+            s3_bucket,
+            os.path.join(lesson, ARCH_OPENAI_CLASSIFIER, GROUNDTRUTH_FILENAME),
+        )
