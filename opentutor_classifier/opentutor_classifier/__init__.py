@@ -308,6 +308,10 @@ class DataDao(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def save_ground_truth(self, req: ModelSaveReq) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
     def save_embeddings(self, req: EmbeddingSaveReq) -> None:
         raise NotImplementedError()
 

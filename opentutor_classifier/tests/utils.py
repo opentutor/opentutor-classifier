@@ -333,6 +333,9 @@ class _TestDataDao(DataDao):
     def save_pickle(self, req: ModelSaveReq) -> None:
         self.dao.save_pickle(req)
 
+    def save_ground_truth(self, req: ModelSaveReq) -> None:
+        self.dao.save_ground_truth(req)
+
     def save_embeddings(self, req: EmbeddingSaveReq) -> None:
         self.dao.save_embeddings(req)
 

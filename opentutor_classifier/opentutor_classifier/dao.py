@@ -188,6 +188,12 @@ class FileDataDao(DataDao):
             pickle.dump(req.model, f)
         self._replace(tmpf, self._get_model_file(req))
 
+    def save_ground_truth(self, req: ModelSaveReq) -> None:
+        tmpf = self._setup_tmp(req.filename)
+        with open(tmpf, "w") as f:
+            json.dump(req.model, f)
+        self._replace(tmpf, self._get_model_file(req))
+
     def save_embeddings(self, req: EmbeddingSaveReq) -> None:
         tmpf = self._setup_tmp(req.filename)
         with open(tmpf, "w") as f:
@@ -261,6 +267,9 @@ class WebAppDataDao(DataDao):
 
     def save_pickle(self, req: ModelSaveReq) -> None:
         self.file_dao.save_pickle(req)
+
+    def save_ground_truth(self, req: ModelSaveReq) -> None:
+        self.file_dao.save_ground_truth(req)
 
     def save_embeddings(self, req: EmbeddingSaveReq) -> None:
         self.file_dao.save_embeddings(req)

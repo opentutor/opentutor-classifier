@@ -13,7 +13,28 @@ from opentutor_classifier import (
     DataDao,
     TrainingInput,
     TrainingResult,
+    ExpectationTrainingResult,
 )
+from opentutor_classifier.openai import ARCH_OPENAI_CLASSIFIER
+from opentutor_classifier.dao import ModelSaveReq, ArchLesson
+from opentutor_classifier.config import LABEL_BAD, LABEL_GOOD
+from opentutor_classifier.openai.constants import GROUNDTRUTH_FILENAME
+from dataclasses import dataclass, field
+from dataclass_wizard import JSONWizard
+from typing import Dict, cast
+
+MAX_NUMBER_OF_ANSWERS = 100
+
+
+@dataclass
+class OpenAIGroundTruthEntry(JSONWizard):
+    answer_text: str
+    concepts: Dict[str, str] = field(default_factory=dict)
+
+
+@dataclass
+class OpenAIGroundTruth(JSONWizard):
+    training_answers: Dict[str, OpenAIGroundTruthEntry] = field(default_factory=dict)
 
 
 class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):
@@ -23,7 +44,55 @@ class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):
     def train(
         self, train_input: TrainingInput, dao: DataDao, developer_mode: bool = False
     ) -> TrainingResult:
-        raise NotImplementedError()
+        expectation_ids = [
+            expectation.expectation_id
+            for expectation in train_input.config.expectations
+        ]
+        unique_text = train_input.data.groupby("text", group_keys=True)
+
+        training_json = OpenAIGroundTruth({})
+
+        for group in unique_text.groups:
+            group_frame = cast(pd.DataFrame, unique_text.get_group(group))
+
+            if (
+                len(group_frame.index) < len(expectation_ids)
+                or len(training_json.training_answers) >= MAX_NUMBER_OF_ANSWERS
+            ):
+                continue
+
+            entry = OpenAIGroundTruthEntry(answer_text=cast(str, group), concepts={})
+
+            for row in group_frame:
+                if row["exp_num"] in expectation_ids and row["label"] in [
+                    LABEL_GOOD,
+                    LABEL_BAD,
+                ]:
+                    entry.concepts[row["exp_num"]] = row["label"]
+
+            if len(entry.concepts) == len(expectation_ids):
+                training_json.training_answers[cast(str, group)] = entry
+
+        dao.save_ground_truth(
+            ModelSaveReq(
+                arch=ARCH_OPENAI_CLASSIFIER,
+                lesson=train_input.lesson,
+                filename=GROUNDTRUTH_FILENAME,
+                model=training_json.to_dict(),
+            )
+        )
+
+        expectation_results = [
+            ExpectationTrainingResult(expectation_id=exp_id, accuracy=1.0)
+            for exp_id in expectation_ids
+        ]
+        return TrainingResult(
+            lesson=train_input.lesson,
+            expectations=expectation_results,
+            models=dao.get_model_root(
+                ArchLesson(arch=ARCH_OPENAI_CLASSIFIER, lesson=train_input.lesson)
+            ),
+        )
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         raise NotImplementedError()
