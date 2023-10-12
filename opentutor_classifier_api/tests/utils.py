@@ -103,6 +103,9 @@ class _TestDataDao(DataDao):
             is_default_model=self.is_default_model,
         )
 
+    def save_ground_truth(self, req: ModelSaveReq) -> None:
+        self.dao.save_ground_truth(req)
+
     def save_pickle(self, req: ModelSaveReq) -> None:
         self.dao.save_pickle(req)
 
