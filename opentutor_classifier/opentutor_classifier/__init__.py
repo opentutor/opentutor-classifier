@@ -292,6 +292,10 @@ class DataDao(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def load_ground_truth(self, ref: ModelRef) -> Any:
+        raise NotImplementedError()
+
+    @abstractmethod
     def trained_model_exists(self, ref: ModelRef) -> bool:
         raise NotImplementedError()
 
