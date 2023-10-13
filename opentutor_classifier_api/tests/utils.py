@@ -89,6 +89,9 @@ class _TestDataDao(DataDao):
     def load_pickle(self, ref: ModelRef) -> Any:
         return self.dao.load_pickle(ref)
 
+    def load_ground_truth(self, ref: ModelRef) -> Any:
+        return self.file_dao.load_ground_truth(ref)
+
     def trained_model_exists(self, ref: ModelRef) -> bool:
         return self.dao.trained_model_exists(ref)
 
