@@ -25,23 +25,11 @@ from opentutor_classifier.config import (
     EVALUATION_BAD,
     EVALUATION_GOOD,
 )
+from opentutor_classifier.openai.shared import OpenAIGroundTruth, OpenAIGroundTruthEntry
 from opentutor_classifier.openai.constants import GROUNDTRUTH_FILENAME
-from dataclasses import dataclass, field
-from dataclass_wizard import JSONWizard
-from typing import Dict, cast
+from typing import cast
 
 MAX_NUMBER_OF_ANSWERS = 100
-
-
-@dataclass
-class OpenAIGroundTruthEntry(JSONWizard):
-    answer_text: str
-    concepts: Dict[str, str] = field(default_factory=dict)
-
-
-@dataclass
-class OpenAIGroundTruth(JSONWizard):
-    training_answers: Dict[str, OpenAIGroundTruthEntry] = field(default_factory=dict)
 
 
 class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):

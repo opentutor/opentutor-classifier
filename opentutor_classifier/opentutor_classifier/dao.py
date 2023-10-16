@@ -167,7 +167,7 @@ class FileDataDao(DataDao):
             return pickle.load(f)
 
     def load_ground_truth(self, ref: ModelRef) -> Any:
-        with open(self._find_model_file(ref), "r") as f:
+        with open(self._find_model_file(ref, False), "r") as f:
             return json.load(f)
 
     def trained_model_exists(self, ref: ModelRef) -> bool:

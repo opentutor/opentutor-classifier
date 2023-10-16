@@ -66,7 +66,6 @@ def test_train_openai_ground_truth(tmpdir, data_root: str, shared_root: str):
             ModelRef(arch, lesson, GROUNDTRUTH_FILENAME), dao
         )
         result: OpenAIGroundTruth = OpenAIGroundTruth.from_dict(config_and_model.model)
-        print(config_and_model.model)
 
         assert len(result.training_answers) == expected
 
