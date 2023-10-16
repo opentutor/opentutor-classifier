@@ -52,7 +52,6 @@ def shared_root(word2vec) -> str:
     return path.dirname(word2vec)
 
 
-
 def test_train_openai_ground_truth(tmpdir, data_root: str, shared_root: str):
     lesson = "candles"
     arch = ARCH_OPENAI_CLASSIFIER
