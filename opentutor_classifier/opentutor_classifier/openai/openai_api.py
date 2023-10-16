@@ -16,8 +16,6 @@ from .constants import OPENAI_API_KEY, OPENAI_DEFAULT_TEMP, OPENAI_MODEL
 from opentutor_classifier.utils import require_env, validate_json
 from opentutor_classifier.log import logger
 
-openai.api_key = require_env(OPENAI_API_KEY)
-
 
 @dataclass
 class ConceptMask(JSONWizard):
@@ -107,6 +105,8 @@ async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
     attempts = 0
     result_valid = False
     temperature = OPENAI_DEFAULT_TEMP
+
+    openai.api_key = require_env(OPENAI_API_KEY)
 
     logger.info("Sending messages to OpenAI: " + str(messages))
 

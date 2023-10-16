@@ -9,15 +9,23 @@ from typing import List
 
 import pytest
 import responses
+import os
 
 from opentutor_classifier import (
     ExpectationTrainingResult,
     ARCH_LR2_CLASSIFIER,
     DEFAULT_LESSON_NAME,
     ARCH_COMPOSITE_CLASSIFIER,
+    ARCH_OPENAI_CLASSIFIER,
+)
+from opentutor_classifier.dao import (
+    ModelRef,
+    find_predicton_config_and_pickle,
 )
 from opentutor_classifier.config import confidence_threshold_default
 from opentutor_classifier.lr2.constants import MODEL_FILE_NAME
+from opentutor_classifier.openai.constants import GROUNDTRUTH_FILENAME
+from opentutor_classifier.openai.train import OpenAIGroundTruth
 from .utils import (
     assert_testset_accuracy,
     assert_train_expectation_results,
@@ -42,6 +50,26 @@ def data_root() -> str:
 @pytest.fixture(scope="module")
 def shared_root(word2vec) -> str:
     return path.dirname(word2vec)
+
+
+
+def test_train_openai_ground_truth(tmpdir, data_root: str, shared_root: str):
+    lesson = "candles"
+    arch = ARCH_OPENAI_CLASSIFIER
+    expected = 85
+    os.environ["OPENAI_API_KEY"] = "fake"
+    with test_env_isolated(
+        tmpdir, data_root, shared_root, lesson=lesson, arch=arch
+    ) as test_config:
+        train_classifier(lesson, test_config, False)
+        dao = test_config.find_data_dao()
+        config_and_model = find_predicton_config_and_pickle(
+            ModelRef(arch, lesson, GROUNDTRUTH_FILENAME), dao
+        )
+        result: OpenAIGroundTruth = OpenAIGroundTruth.from_dict(config_and_model.model)
+        print(config_and_model.model)
+
+        assert len(result.training_answers) == expected
 
 
 @pytest.mark.parametrize("lesson", [("question1"), ("question2")])

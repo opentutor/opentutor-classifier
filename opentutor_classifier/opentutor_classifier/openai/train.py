@@ -15,10 +15,16 @@ from opentutor_classifier import (
     TrainingInput,
     TrainingResult,
     ExpectationTrainingResult,
+    QuestionConfigSaveReq,
 )
 from opentutor_classifier.openai import ARCH_OPENAI_CLASSIFIER
 from opentutor_classifier.dao import ModelSaveReq, ArchLesson, MODEL_ROOT_DEFAULT
-from opentutor_classifier.config import LABEL_BAD, LABEL_GOOD
+from opentutor_classifier.config import (
+    LABEL_BAD,
+    LABEL_GOOD,
+    EVALUATION_BAD,
+    EVALUATION_GOOD,
+)
 from opentutor_classifier.openai.constants import GROUNDTRUTH_FILENAME
 from dataclasses import dataclass, field
 from dataclass_wizard import JSONWizard
@@ -64,10 +70,12 @@ class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):
 
             entry = OpenAIGroundTruthEntry(answer_text=cast(str, group), concepts={})
 
-            for row in group_frame:
+            for index, row in group_frame.iterrows():
                 if row["exp_num"] in expectation_ids and row["label"] in [
                     LABEL_GOOD,
                     LABEL_BAD,
+                    EVALUATION_GOOD,
+                    EVALUATION_BAD,
                 ]:
                     entry.concepts[row["exp_num"]] = row["label"]
 
@@ -80,6 +88,14 @@ class OpenAIAnswerClassifierTraining(AnswerClassifierTraining):
                 lesson=train_input.lesson,
                 filename=GROUNDTRUTH_FILENAME,
                 model=training_json.to_dict(),
+            )
+        )
+
+        dao.save_config(
+            QuestionConfigSaveReq(
+                arch=ARCH_OPENAI_CLASSIFIER,
+                lesson=train_input.lesson,
+                config=train_input.config,
             )
         )
 
