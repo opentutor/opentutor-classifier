@@ -57,7 +57,7 @@ class OpenAICall(JSONWizard):
                 for concept_uuid in entry.concepts.keys():
                     if concept_uuid in concept_mask.uuid_to_numbers.keys():
                         masked_concepts[
-                            concept_mask.uuid_to_numbers[concept_mask]
+                            concept_mask.uuid_to_numbers[concept_uuid]
                         ] = str(entry.concepts[concept_uuid].lower() == LABEL_GOOD)
                 entry.concepts = masked_concepts
 
