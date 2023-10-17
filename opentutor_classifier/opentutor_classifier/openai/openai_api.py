@@ -7,16 +7,21 @@
 
 from dataclasses import dataclass, field
 import json
-from typing import Dict, Generator, List
+from typing import Dict, Generator, List, Union
 from dataclass_wizard import JSONWizard
 import openai
 import backoff
 from opentutor_classifier import ExpectationConfig
-from .constants import OPENAI_API_KEY, OPENAI_DEFAULT_TEMP, OPENAI_MODEL
+from opentutor_classifier.config import LABEL_GOOD
+from .train import OpenAIGroundTruth
+from .constants import (
+    OPENAI_API_KEY,
+    OPENAI_DEFAULT_TEMP,
+    OPENAI_MODEL,
+    USER_GROUNDTRUTH,
+)
 from opentutor_classifier.utils import require_env, validate_json
 from opentutor_classifier.log import logger
-
-openai.api_key = require_env(OPENAI_API_KEY)
 
 
 @dataclass
@@ -32,6 +37,7 @@ class OpenAICall(JSONWizard):
     user_answer: List[str]
     user_template: dict
     user_guardrails: str
+    user_groundtruth: Union[OpenAIGroundTruth, None]
 
     def mask_concept_uuids(self) -> ConceptMask:
         concept_mask: ConceptMask = ConceptMask()
@@ -43,6 +49,17 @@ class OpenAICall(JSONWizard):
                 "concept_" + str(index)
             ] = concept.expectation_id
             concept.expectation_id = "concept_" + str(index)
+
+        if self.user_groundtruth is not None:
+            for key in self.user_groundtruth.training_answers.keys():
+                entry = self.user_groundtruth.training_answers[key]
+                masked_concepts: Dict[str, str] = {}
+                for concept_uuid in entry.concepts.keys():
+                    if concept_uuid in concept_mask.uuid_to_numbers.keys():
+                        masked_concepts[
+                            concept_mask.uuid_to_numbers[concept_uuid]
+                        ] = str(entry.concepts[concept_uuid].lower() == LABEL_GOOD)
+                entry.concepts = masked_concepts
 
         return concept_mask
 
@@ -59,6 +76,13 @@ class OpenAICall(JSONWizard):
         result.append({"role": "user", "content": json.dumps(user_answer)})
         result.append({"role": "user", "content": json.dumps(self.user_template)})
         result.append({"role": "user", "content": self.user_guardrails})
+        if self.user_groundtruth is not None:
+            result.append(
+                {
+                    "role": "user",
+                    "content": f"{USER_GROUNDTRUTH}\n{json.dumps(self.user_groundtruth.to_dict())}",
+                }
+            )
         return result
 
 
@@ -108,6 +132,10 @@ async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
     result_valid = False
     temperature = OPENAI_DEFAULT_TEMP
 
+    openai.api_key = require_env(OPENAI_API_KEY)
+
+    # logger is not properly logging to cloudwatch.  using print instead for now
+    print(f"Sending messages to openAI: {str(messages)}")
     logger.info("Sending messages to OpenAI: " + str(messages))
 
     while attempts < 5 and not result_valid:
