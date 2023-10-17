@@ -89,6 +89,9 @@ class _TestDataDao(DataDao):
     def load_pickle(self, ref: ModelRef) -> Any:
         return self.dao.load_pickle(ref)
 
+    def load_ground_truth(self, ref: ModelRef) -> Any:
+        return self.file_dao.load_ground_truth(ref)
+
     def trained_model_exists(self, ref: ModelRef) -> bool:
         return self.dao.trained_model_exists(ref)
 
@@ -102,6 +105,9 @@ class _TestDataDao(DataDao):
             self.dao.data_root,
             is_default_model=self.is_default_model,
         )
+
+    def save_ground_truth(self, req: ModelSaveReq) -> None:
+        self.dao.save_ground_truth(req)
 
     def save_pickle(self, req: ModelSaveReq) -> None:
         self.dao.save_pickle(req)
