@@ -134,6 +134,8 @@ async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
 
     openai.api_key = require_env(OPENAI_API_KEY)
 
+    # logger is not properly logging to cloudwatch.  using print instead for now
+    print(f"Sending messages to openAI: {str(messages)}")
     logger.info("Sending messages to OpenAI: " + str(messages))
 
     while attempts < 5 and not result_valid:
