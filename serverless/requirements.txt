@@ -5,7 +5,7 @@ botocore==1.23.53
 boto3_type_annotations>=0.3.1
 jsonschema==4.4.0
 pyjwt==2.3.0
-urllib3==1.26.6
+urllib3==1.26.18
 tqdm>=4.52.0
 pyyaml >=5.4.1
 dataclass-wizard >= 0.22.2
