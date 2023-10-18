@@ -27,6 +27,6 @@ ANSWER_TEMPLATE = {
 USER_GUARDRAILS = "Only respond with the JSON output in the exact format of the template and no other words or symbols. The output must be valid JSON. Check that the output is valid JSON. \n\n"
 USER_GROUNDTRUTH = "Here are some examples that have already been labeled. They are presented in JSON format, where the answer is given, followed by each concept and a true or false label. Consider these to be ground truth examples.\n"
 OPENAI_API_KEY = "OPENAI_API_KEY"
-OPENAI_MODEL = "gpt-3.5-turbo"
+OPENAI_MODEL = "gpt-3.5-turbo-16k"  # TODO: use tiktoken to estimate token cost and use appropriate model
 OPENAI_DEFAULT_TEMP = 0.1
 GROUNDTRUTH_FILENAME = "groundtruth.json"
