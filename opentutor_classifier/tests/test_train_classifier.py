@@ -52,10 +52,17 @@ def shared_root(word2vec) -> str:
     return path.dirname(word2vec)
 
 
-def test_train_openai_ground_truth(tmpdir, data_root: str, shared_root: str):
-    lesson = "candles"
-    arch = ARCH_OPENAI_CLASSIFIER
-    expected = 85
+@pytest.mark.parametrize(
+    "lesson,arch,expected_length", [("candles", ARCH_OPENAI_CLASSIFIER, 85)]
+)
+def test_train_openai_ground_truth(
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    lesson: str,
+    arch: str,
+    expected_length: int,
+):
     os.environ["OPENAI_API_KEY"] = "fake"
     with test_env_isolated(
         tmpdir, data_root, shared_root, lesson=lesson, arch=arch
@@ -67,7 +74,7 @@ def test_train_openai_ground_truth(tmpdir, data_root: str, shared_root: str):
         )
         result: OpenAIGroundTruth = OpenAIGroundTruth.from_dict(config_and_model.model)
 
-        assert len(result.training_answers) == expected
+        assert len(result.training_answers) == expected_length
 
 
 @pytest.mark.parametrize("lesson", [("question1"), ("question2")])
