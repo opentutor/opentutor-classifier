@@ -309,16 +309,16 @@ yaml = ["PyYAML (>=5.3)"]
 
 [[package]]
 name = "filelock"
-version = "3.12.4"
+version = "3.13.0"
 description = "A platform independent file lock."
 category = "main"
 optional = false
 python-versions = ">=3.8"
 
 [package.extras]
-docs = ["furo (>=2023.7.26)", "sphinx (>=7.1.2)", "sphinx-autodoc-typehints (>=1.24)"]
-testing = ["covdefaults (>=2.3)", "coverage (>=7.3)", "diff-cover (>=7.7)", "pytest (>=7.4)", "pytest-cov (>=4.1)", "pytest-mock (>=3.11.1)", "pytest-timeout (>=2.1)"]
-typing = ["typing-extensions (>=4.7.1)"]
+docs = ["furo (>=2023.9.10)", "sphinx (>=7.2.6)", "sphinx-autodoc-typehints (>=1.24)"]
+testing = ["covdefaults (>=2.3)", "coverage (>=7.3.2)", "diff-cover (>=8)", "pytest (>=7.4.3)", "pytest-cov (>=4.1)", "pytest-mock (>=3.12)", "pytest-timeout (>=2.2)"]
+typing = ["typing-extensions (>=4.8)"]
 
 [[package]]
 name = "frozenlist"
@@ -479,14 +479,17 @@ optional = false
 python-versions = ">=3.8.4,<3.9.0"
 
 [package.dependencies]
+backoff = ">=2.2.1,<3.0.0"
 blinker = ">=1.4,<2.0"
 boto3 = "1.20.53"
 boto3-type-annotations = ">=0.3.1,<0.4.0"
 botocore = "1.23.53"
 celery = ">=5.0.5,<6.0.0"
 click = "<8"
+dataclass-wizard = ">=0.22.2,<0.23.0"
 gensim = ">=4.0.1,<5.0.0"
 numpy = ">=1.23.0,<2.0.0"
+openai = ">=0.27.8,<0.28.0"
 pandas = ">=1.2.4,<2.0.0"
 pylru = ">=1.2.0,<2.0.0"
 python-dotenv = ">=0.17.1,<0.18.0"
@@ -1246,8 +1249,8 @@ dataclass-wizard = [
     {file = "dataclass_wizard-0.22.2-py2.py3-none-any.whl", hash = "sha256:49be36ecc64bc5a1e9a35a6bad1d71d33b6b9b06877404931a17c6a3a6dfbb10"},
 ]
 filelock = [
-    {file = "filelock-3.12.4-py3-none-any.whl", hash = "sha256:08c21d87ded6e2b9da6728c3dff51baf1dcecf973b768ef35bcbc3447edb9ad4"},
-    {file = "filelock-3.12.4.tar.gz", hash = "sha256:2e6f249f1f3654291606e046b09f1fd5eac39b360664c27f5aad072012f8bcbd"},
+    {file = "filelock-3.13.0-py3-none-any.whl", hash = "sha256:a552f4fde758f4eab33191e9548f671970f8b06d436d31388c9aa1e5861a710f"},
+    {file = "filelock-3.13.0.tar.gz", hash = "sha256:63c6052c82a1a24c873a549fbd39a26982e8f35a3016da231ead11a5be9dad44"},
 ]
 frozenlist = [
     {file = "frozenlist-1.4.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:764226ceef3125e53ea2cb275000e309c0aa5464d43bd72abd661e27fffc26ab"},
@@ -1459,7 +1462,7 @@ openai = [
     {file = "openai-0.27.10.tar.gz", hash = "sha256:60e09edf7100080283688748c6803b7b3b52d5a55d21890f3815292a0552d83b"},
 ]
 opentutor-classifier = [
-    {file = "opentutor_classifier-1.0.0.tar.gz", hash = "sha256:15895e9f656c8d9d534abc7b124b5434ec625bd538ef538013bc7c459c1bacb3"},
+    {file = "opentutor_classifier-1.0.0.tar.gz", hash = "sha256:9d4f0fd6817c76a35f10b02246c1083b81b7ddce99d2debd9d26acdb7945c5de"},
 ]
 pandas = [
     {file = "pandas-1.2.5-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:1102d719038e134e648e7920672188a00375f3908f0383fd3b202fbb9d2c3a95"},
