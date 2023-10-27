@@ -60,6 +60,10 @@ license: LICENSE LICENSE_HEADER $(VENV)
 poetry-ensure-installed:
 	sh ./tools/poetry_ensure_installed.sh
 
+.PHONY: build-requirements
+build-requirements:
+	cd serverless && $(MAKE) build-requirements
+
 .PHONY: test
 test:
 	cd opentutor_classifier && $(MAKE) test
