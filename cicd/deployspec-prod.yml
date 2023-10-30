@@ -16,6 +16,10 @@ phases:
     commands:
       - n 18
       - pyenv global $PYTHON_38_VERSION
+      - python3 -m venv /root/venv
+      - . /root/venv/bin/activate
+      - pip3 install poetry
+      - poetry install --no-root
 
   build:
     commands:

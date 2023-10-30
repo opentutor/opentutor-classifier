@@ -7,16 +7,23 @@
 
 from dataclasses import dataclass, field
 import json
-from typing import Dict, Generator, List
+from typing import Dict, Generator, List, Union
 from dataclass_wizard import JSONWizard
 import openai
 import backoff
+from tiktoken import encoding_for_model
 from opentutor_classifier import ExpectationConfig
-from .constants import OPENAI_API_KEY, OPENAI_DEFAULT_TEMP, OPENAI_MODEL
+from opentutor_classifier.config import LABEL_GOOD
+from .train import OpenAIGroundTruth
+from .constants import (
+    OPENAI_API_KEY,
+    OPENAI_DEFAULT_TEMP,
+    OPENAI_MODEL_LARGE,
+    OPENAI_MODEL_SMALL,
+    USER_GROUNDTRUTH,
+)
 from opentutor_classifier.utils import require_env, validate_json
 from opentutor_classifier.log import logger
-
-openai.api_key = require_env(OPENAI_API_KEY)
 
 
 @dataclass
@@ -32,6 +39,7 @@ class OpenAICall(JSONWizard):
     user_answer: List[str]
     user_template: dict
     user_guardrails: str
+    user_groundtruth: Union[OpenAIGroundTruth, None]
 
     def mask_concept_uuids(self) -> ConceptMask:
         concept_mask: ConceptMask = ConceptMask()
@@ -43,6 +51,17 @@ class OpenAICall(JSONWizard):
                 "concept_" + str(index)
             ] = concept.expectation_id
             concept.expectation_id = "concept_" + str(index)
+
+        if self.user_groundtruth is not None:
+            for key in self.user_groundtruth.training_answers.keys():
+                entry = self.user_groundtruth.training_answers[key]
+                masked_concepts: Dict[str, str] = {}
+                for concept_uuid in entry.concepts.keys():
+                    if concept_uuid in concept_mask.uuid_to_numbers.keys():
+                        masked_concepts[
+                            concept_mask.uuid_to_numbers[concept_uuid]
+                        ] = str(entry.concepts[concept_uuid].lower() == LABEL_GOOD)
+                entry.concepts = masked_concepts
 
         return concept_mask
 
@@ -59,6 +78,13 @@ class OpenAICall(JSONWizard):
         result.append({"role": "user", "content": json.dumps(user_answer)})
         result.append({"role": "user", "content": json.dumps(self.user_template)})
         result.append({"role": "user", "content": self.user_guardrails})
+        if self.user_groundtruth is not None:
+            result.append(
+                {
+                    "role": "user",
+                    "content": f"{USER_GROUNDTRUTH}\n{json.dumps(self.user_groundtruth.to_dict())}",
+                }
+            )
         return result
 
 
@@ -97,6 +123,13 @@ class OpenAIResultContent(JSONWizard):
     ),
     logger=logger,
 )
+def num_tokens_from_string(string: str, model_name: str) -> int:
+    """Returns the number of tokens in a text string."""
+    encoding = encoding_for_model(model_name)
+    num_tokens = len(encoding.encode(string))
+    return num_tokens
+
+
 async def completions_with_backoff(**kwargs) -> Generator:
     return await openai.ChatCompletion.acreate(**kwargs)
 
@@ -108,22 +141,42 @@ async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
     result_valid = False
     temperature = OPENAI_DEFAULT_TEMP
 
+    openai.api_key = require_env(OPENAI_API_KEY)
+
+    # logger is not properly logging to cloudwatch.  using print instead for now
+    print(f"Sending messages to openAI: {str(messages)}")
     logger.info("Sending messages to OpenAI: " + str(messages))
+
+    if num_tokens_from_string(str(messages), OPENAI_MODEL_SMALL) >= 4000:
+        openai_model = OPENAI_MODEL_LARGE
+    else:
+        openai_model = OPENAI_MODEL_SMALL
 
     while attempts < 5 and not result_valid:
         attempts += 1
         raw_result = await completions_with_backoff(
-            model=OPENAI_MODEL, temperature=temperature, messages=messages
+            model=openai_model, temperature=temperature, messages=messages
         )
-        content = raw_result.choices[0].message.content
+        content = raw_result.choices[0].message.content  # type: ignore
 
         if validate_json(content, OpenAIResultContent):
-            result_valid = True
             result: OpenAIResultContent = OpenAIResultContent.from_json(content)
-            result.answers[result.answers.__iter__().__next__()].unmask_concept_uuids(
-                concept_mask
-            )
-            return result
+            if len(
+                result.answers[result.answers.__iter__().__next__()].concepts
+            ) == len(call_data.user_concepts):
+                result_valid = True
+                result.answers[
+                    result.answers.__iter__().__next__()
+                ].unmask_concept_uuids(concept_mask)
+                return result
+            else:
+                temperature += 0.1
+                logger.info(
+                    "Invalid JSON returned from OpenAI, increasing temperature to "
+                    + str(temperature)
+                    + " and trying again."
+                )
+
         else:
             temperature += 0.1
             logger.info(

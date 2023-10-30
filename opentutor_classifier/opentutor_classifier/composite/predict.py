@@ -69,8 +69,12 @@ class CompositeAnswerClassifier(AnswerClassifier):
             )
 
         if not isinstance(results[1], AnswerClassifierResult):
+            print("returning LR2 results")
+            print(str(cast(AnswerClassifierResult, results[0]).to_dict()))
             return cast(AnswerClassifierResult, results[0])
         else:
+            print("returning openai results")
+            print(str(cast(AnswerClassifierResult, results[1]).to_dict()))
             return cast(AnswerClassifierResult, results[1])
 
     def get_last_trained_at(self) -> float:

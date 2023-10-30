@@ -12,7 +12,10 @@ from opentutor_classifier import (
     AnswerClassifierResult,
     ExpectationClassifierResult,
     ExpectationConfig,
+    ARCH_OPENAI_CLASSIFIER,
 )
+from opentutor_classifier.dao import ModelRef, find_predicton_config_and_pickle
+from opentutor_classifier.openai.shared import OpenAIGroundTruth
 from opentutor_classifier.speechact import SpeechActClassifier
 from opentutor_classifier.config import EVALUATION_GOOD, EVALUATION_BAD
 from opentutor_classifier.openai.openai_api import (
@@ -21,20 +24,37 @@ from opentutor_classifier.openai.openai_api import (
     OpenAIResultContent,
     openai_create,
 )
-from .constants import SYSTEM_ASSIGNMENT, USER_GUARDRAILS, ANSWER_TEMPLATE
+from .constants import (
+    SYSTEM_ASSIGNMENT,
+    USER_GUARDRAILS,
+    ANSWER_TEMPLATE,
+    GROUNDTRUTH_FILENAME,
+)
 from typing import Dict, List, Any
 
 
 class OpenAIAnswerClassifier(AnswerClassifier):
 
     speech_act_classifier: SpeechActClassifier = SpeechActClassifier()
+    config: ClassifierConfig
 
     def configure(self, config: ClassifierConfig) -> "AnswerClassifier":
+        self.config = config
         return self
 
     async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         if answer.config_data is None:
             raise Exception("missing question data in answer")
+        model_ref = ModelRef(
+            ARCH_OPENAI_CLASSIFIER, self.config.model_name, GROUNDTRUTH_FILENAME
+        )
+        ground_truth_dict = find_predicton_config_and_pickle(
+            model_ref, self.config.dao
+        ).model
+        if ground_truth_dict is not None:
+            ground_truth = OpenAIGroundTruth.from_dict(ground_truth_dict)
+        else:
+            ground_truth = None
         concepts: List[ExpectationConfig] = answer.config_data.expectations
         call = OpenAICall(
             system_assignment=SYSTEM_ASSIGNMENT,
@@ -42,6 +62,7 @@ class OpenAIAnswerClassifier(AnswerClassifier):
             user_answer=[answer.input_sentence],
             user_template=ANSWER_TEMPLATE,
             user_guardrails=USER_GUARDRAILS,
+            user_groundtruth=ground_truth,
         )
         response: OpenAIResultContent = await openai_create(call_data=call)
         expectations: List[ExpectationClassifierResult] = []

@@ -13,6 +13,8 @@ import tempfile
 from typing import Any
 from datetime import datetime
 
+from opentutor_classifier import ARCH_LR2_CLASSIFIER, ARCH_OPENAI_CLASSIFIER
+
 import pandas as pd
 
 from .constants import DEPLOYMENT_MODE_OFFLINE
@@ -164,6 +166,10 @@ class FileDataDao(DataDao):
         with open(self._find_model_file(ref), "rb") as f:
             return pickle.load(f)
 
+    def load_ground_truth(self, ref: ModelRef) -> Any:
+        with open(self._find_model_file(ref, False), "r") as f:
+            return json.load(f)
+
     def trained_model_exists(self, ref: ModelRef) -> bool:
         return path.isfile(self._get_model_file(ref))
 
@@ -186,6 +192,12 @@ class FileDataDao(DataDao):
         tmpf = self._setup_tmp(req.filename)
         with open(tmpf, "wb") as f:
             pickle.dump(req.model, f)
+        self._replace(tmpf, self._get_model_file(req))
+
+    def save_ground_truth(self, req: ModelSaveReq) -> None:
+        tmpf = self._setup_tmp(req.filename)
+        with open(tmpf, "w") as f:
+            json.dump(req.model, f)
         self._replace(tmpf, self._get_model_file(req))
 
     def save_embeddings(self, req: EmbeddingSaveReq) -> None:
@@ -246,6 +258,9 @@ class WebAppDataDao(DataDao):
     def load_pickle(self, ref: ModelRef) -> Any:
         return self.file_dao.load_pickle(ref)
 
+    def load_ground_truth(self, ref: ModelRef) -> Any:
+        return self.file_dao.load_ground_truth(ref)
+
     def trained_model_exists(self, ref: ModelRef) -> bool:
         return self.file_dao.trained_model_exists(ref)
 
@@ -261,6 +276,9 @@ class WebAppDataDao(DataDao):
 
     def save_pickle(self, req: ModelSaveReq) -> None:
         self.file_dao.save_pickle(req)
+
+    def save_ground_truth(self, req: ModelSaveReq) -> None:
+        self.file_dao.save_ground_truth(req)
 
     def save_embeddings(self, req: EmbeddingSaveReq) -> None:
         self.file_dao.save_embeddings(req)
@@ -297,15 +315,13 @@ def find_predicton_config_and_pickle_offline(
     if dao.trained_model_exists(ref):
         return ConfigAndModel(
             config=dao.find_prediction_config(ref),
-            model=dao.load_pickle(ref),
+            model=load_model_file(ref, dao, False),
             is_default=False,
         )
     else:
         return ConfigAndModel(
             config=dao.find_training_config(ref.lesson),
-            model=dao.load_default_pickle(
-                ArchFile(arch=ref.arch, filename=ref.filename)
-            ),
+            model=load_model_file(ref, dao, True),
             is_default=True,
         )
 
@@ -379,6 +395,21 @@ def get_and_update_model_from_s3(ref: ModelRef, model_in_memory_exists: bool = T
         return False
 
 
+def load_model_file(ref: ModelRef, dao: DataDao, is_default: bool) -> Any:
+    if ref.arch is ARCH_LR2_CLASSIFIER:
+        if not is_default:
+            return dao.load_pickle(ref)
+        else:
+            return dao.load_default_pickle(
+                ArchFile(arch=ref.arch, filename=ref.filename)
+            )
+    elif ref.arch is ARCH_OPENAI_CLASSIFIER:
+        if is_default:
+            return None
+        else:
+            return dao.load_ground_truth(ref)
+
+
 def find_predicton_config_and_pickle_online(
     ref: ModelRef, dao: DataDao
 ) -> ConfigAndModel:
@@ -397,14 +428,14 @@ def find_predicton_config_and_pickle_online(
         get_and_update_model_from_s3(ref, model_in_memory_exists=True)
         return ConfigAndModel(
             config=dao.find_prediction_config(ref),
-            model=dao.load_pickle(ref),
+            model=load_model_file(ref, dao, False),
             is_default=False,
         )
     elif get_and_update_model_from_s3(ref, model_in_memory_exists=False):
         logger.info("model not in memory but got it from s3")
         return ConfigAndModel(
             config=dao.find_prediction_config(ref),
-            model=dao.load_pickle(ref),
+            model=load_model_file(ref, dao, False),
             is_default=False,
         )
     else:
@@ -418,8 +449,6 @@ def find_predicton_config_and_pickle_online(
         get_and_update_model_from_s3(default_ref, model_in_memory_exists)
         return ConfigAndModel(
             config=dao.find_training_config(ref.lesson),
-            model=dao.load_default_pickle(
-                ArchFile(arch=ref.arch, filename=ref.filename)
-            ),
+            model=load_model_file(ref, dao, True),
             is_default=True,
         )
