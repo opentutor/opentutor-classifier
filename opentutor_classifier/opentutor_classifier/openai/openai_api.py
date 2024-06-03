@@ -47,9 +47,9 @@ class OpenAICall(JSONWizard):
             concept_mask.uuid_to_numbers[concept.expectation_id] = "concept_" + str(
                 index
             )
-            concept_mask.numbers_to_uuid[
-                "concept_" + str(index)
-            ] = concept.expectation_id
+            concept_mask.numbers_to_uuid["concept_" + str(index)] = (
+                concept.expectation_id
+            )
             concept.expectation_id = "concept_" + str(index)
 
         if self.user_groundtruth is not None:
@@ -58,9 +58,9 @@ class OpenAICall(JSONWizard):
                 masked_concepts: Dict[str, str] = {}
                 for concept_uuid in entry.concepts.keys():
                     if concept_uuid in concept_mask.uuid_to_numbers.keys():
-                        masked_concepts[
-                            concept_mask.uuid_to_numbers[concept_uuid]
-                        ] = str(entry.concepts[concept_uuid].lower() == LABEL_GOOD)
+                        masked_concepts[concept_mask.uuid_to_numbers[concept_uuid]] = (
+                            str(entry.concepts[concept_uuid].lower() == LABEL_GOOD)
+                        )
                 entry.concepts = masked_concepts
 
         return concept_mask

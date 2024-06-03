@@ -279,9 +279,11 @@ def test_predict_off_model_trained_with_cluster_features_but_cluster_features_la
         testset = read_example_testset(lesson)
         run_classifier_testset(
             arch,
-            path.join(path.dirname(train_result.models), DEFAULT_LESSON_NAME)
-            if use_default
-            else train_result.models,
+            (
+                path.join(path.dirname(train_result.models), DEFAULT_LESSON_NAME)
+                if use_default
+                else train_result.models
+            ),
             shared_root,
             testset,
         )

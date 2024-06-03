@@ -94,9 +94,11 @@ class QuestionConfig:
 
     def __post_init__(self):
         self.expectations = [
-            x
-            if isinstance(x, ExpectationConfig)
-            else ExpectationConfig(**dict_camel_to_snake(x))
+            (
+                x
+                if isinstance(x, ExpectationConfig)
+                else ExpectationConfig(**dict_camel_to_snake(x))
+            )
             for x in self.expectations or []
         ]
 
