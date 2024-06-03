@@ -173,15 +173,15 @@ class LRAnswerClassifier(AnswerClassifier):
                 exp_conf.features.get(GOOD) or []
             )
             config_dict[exp.expectation]["regex_bad"] = exp_conf.features.get(BAD) or []
-            config_dict[exp.expectation][
-                "featureRegexAggregateDisabled"
-            ] = exp_conf.features.get("featureRegexAggregateDisabled")
-            config_dict[exp.expectation][
-                "featureDbScanClustersArchetypeEnabled"
-            ] = exp_conf.features.get("featureDbScanClustersArchetypeEnabled")
-            config_dict[exp.expectation][
-                "featureDbScanClustersPatternsEnabled"
-            ] = exp_conf.features.get("featureDbScanClustersPatternsEnabled")
+            config_dict[exp.expectation]["featureRegexAggregateDisabled"] = (
+                exp_conf.features.get("featureRegexAggregateDisabled")
+            )
+            config_dict[exp.expectation]["featureDbScanClustersArchetypeEnabled"] = (
+                exp_conf.features.get("featureDbScanClustersArchetypeEnabled")
+            )
+            config_dict[exp.expectation]["featureDbScanClustersPatternsEnabled"] = (
+                exp_conf.features.get("featureDbScanClustersPatternsEnabled")
+            )
             config_dict[exp.expectation]["featureLengthRatio"] = exp_conf.features.get(
                 "featureLengthRatio"
             )
@@ -281,9 +281,9 @@ class LRAnswerClassifier(AnswerClassifier):
         result = AnswerClassifierResult(input=answer, expectation_results=[])
         word2vec = self.find_word2vec()
         index2word = set(word2vec.index_to_key(False))
-        result.speech_acts[
-            "metacognitive"
-        ] = self.speech_act_classifier.check_meta_cognitive(result)
+        result.speech_acts["metacognitive"] = (
+            self.speech_act_classifier.check_meta_cognitive(result)
+        )
         result.speech_acts["profanity"] = self.speech_act_classifier.check_profanity(
             result
         )
@@ -312,14 +312,18 @@ class LRAnswerClassifier(AnswerClassifier):
                     FEATURE_PATTERNS_ENABLED, exp_conf.features
                 ),
                 expectation_config=conf.get_expectation(exp.expectation),
-                patterns=exp_conf.features.get(PATTERNS_GOOD, [])
-                + exp_conf.features.get(PATTERNS_BAD, [])
-                if not self._is_default
-                else [],
-                archetypes=exp_conf.features.get(ARCHETYPE_GOOD, [])
-                + exp_conf.features.get(ARCHETYPE_BAD, [])
-                if not self._is_default
-                else [],
+                patterns=(
+                    exp_conf.features.get(PATTERNS_GOOD, [])
+                    + exp_conf.features.get(PATTERNS_BAD, [])
+                    if not self._is_default
+                    else []
+                ),
+                archetypes=(
+                    exp_conf.features.get(ARCHETYPE_GOOD, [])
+                    + exp_conf.features.get(ARCHETYPE_BAD, [])
+                    if not self._is_default
+                    else []
+                ),
             )
             result.expectation_results.append(
                 self.find_score_and_class(

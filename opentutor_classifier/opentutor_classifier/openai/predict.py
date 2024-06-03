@@ -81,9 +81,9 @@ class OpenAIAnswerClassifier(AnswerClassifier):
             expectations.append(concept_result)
         result = AnswerClassifierResult(input=answer, expectation_results=expectations)
 
-        result.speech_acts[
-            "metacognitive"
-        ] = self.speech_act_classifier.check_meta_cognitive(result)
+        result.speech_acts["metacognitive"] = (
+            self.speech_act_classifier.check_meta_cognitive(result)
+        )
         result.speech_acts["profanity"] = self.speech_act_classifier.check_profanity(
             result
         )
