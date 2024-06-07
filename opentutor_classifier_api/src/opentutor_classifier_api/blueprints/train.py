@@ -46,11 +46,15 @@ def train_status(task_id: str):
                 "id": task_id,
                 "state": t.state or "PENDING",
                 "status": t.status,
-                "info": None
-                if not t.info
-                else t.info
-                if isinstance(t.info, dict) or isinstance(t.info, list)
-                else str(t.info),
+                "info": (
+                    None
+                    if not t.info
+                    else (
+                        t.info
+                        if isinstance(t.info, dict) or isinstance(t.info, list)
+                        else str(t.info)
+                    )
+                ),
             }
         }
     )

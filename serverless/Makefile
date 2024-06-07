@@ -37,6 +37,15 @@ install: poetry-ensure-installed
 license:
 	cd $(ROOT) && make license
 
+.PHONY: build-requirements
+build-requirements:
+	poetry export --without-hashes --only=evaluate --output=./requirements-evaluate.txt
+	poetry export --without-hashes --only=train --output=./requirements-train_job.txt
+	poetry export --without-hashes --only=extractconfig --output=./requirements-extract_config.txt
+	poetry export --without-hashes --only=trainingconfigdata --output=./requirements-training_config.txt
+	poetry export --without-hashes --only=trainingconfigdata --output=./requirements-training_data.txt
+	poetry export --without-hashes --only=base --output=./requirements.txt
+
 .PHONY: poetry-ensure-installed
 poetry-ensure-installed:
 	sh $(ROOT)/tools/poetry_ensure_installed.sh

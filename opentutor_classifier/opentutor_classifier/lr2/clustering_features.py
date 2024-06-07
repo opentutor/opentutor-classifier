@@ -32,9 +32,9 @@ class CustomDBScanClustering:
     def __init__(self, word2vec: Word2VecWrapper, index2word_set):
         self.word2vec = word2vec
         self.index2word_set = index2word_set
-        self.word_alignment_dp: Dict[
-            Tuple[Tuple[str, ...], Tuple[str, ...]], float
-        ] = dict()
+        self.word_alignment_dp: Dict[Tuple[Tuple[str, ...], Tuple[str, ...]], float] = (
+            dict()
+        )
 
     def word_alignment_feature(self, example: List[str], ia: List[str]) -> float:
         key = (tuple(example), tuple(ia))
@@ -298,10 +298,10 @@ class CustomDBScanClustering:
             useful_features[label] = CustomDBScanClustering.deduplicate_patterns(
                 patterns_with_fpr, fpr_cuttoff
             )
-            useful_features[
-                label
-            ] = CustomDBScanClustering.univariate_feature_selection(
-                useful_features[label], input_x, input_y
+            useful_features[label] = (
+                CustomDBScanClustering.univariate_feature_selection(
+                    useful_features[label], input_x, input_y
+                )
             )
 
         return useful_features

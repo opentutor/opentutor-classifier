@@ -107,8 +107,8 @@ class _TestSetResult:
             n_expectations += x
             n_errors += e
         return _TestSetResultMetrics(
-            accuracy=1.0 - (n_errors / float(n_expectations))
-            if n_expectations > 0
-            else 0.0,
+            accuracy=(
+                1.0 - (n_errors / float(n_expectations)) if n_expectations > 0 else 0.0
+            ),
             n_expectations=n_expectations,
         )

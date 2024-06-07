@@ -11,13 +11,15 @@ from typing import Dict, Generator, List, Union
 from dataclass_wizard import JSONWizard
 import openai
 import backoff
+from tiktoken import encoding_for_model
 from opentutor_classifier import ExpectationConfig
 from opentutor_classifier.config import LABEL_GOOD
 from .train import OpenAIGroundTruth
 from .constants import (
     OPENAI_API_KEY,
     OPENAI_DEFAULT_TEMP,
-    OPENAI_MODEL,
+    OPENAI_MODEL_LARGE,
+    OPENAI_MODEL_SMALL,
     USER_GROUNDTRUTH,
 )
 from opentutor_classifier.utils import require_env, validate_json
@@ -45,9 +47,9 @@ class OpenAICall(JSONWizard):
             concept_mask.uuid_to_numbers[concept.expectation_id] = "concept_" + str(
                 index
             )
-            concept_mask.numbers_to_uuid[
-                "concept_" + str(index)
-            ] = concept.expectation_id
+            concept_mask.numbers_to_uuid["concept_" + str(index)] = (
+                concept.expectation_id
+            )
             concept.expectation_id = "concept_" + str(index)
 
         if self.user_groundtruth is not None:
@@ -56,9 +58,9 @@ class OpenAICall(JSONWizard):
                 masked_concepts: Dict[str, str] = {}
                 for concept_uuid in entry.concepts.keys():
                     if concept_uuid in concept_mask.uuid_to_numbers.keys():
-                        masked_concepts[
-                            concept_mask.uuid_to_numbers[concept_uuid]
-                        ] = str(entry.concepts[concept_uuid].lower() == LABEL_GOOD)
+                        masked_concepts[concept_mask.uuid_to_numbers[concept_uuid]] = (
+                            str(entry.concepts[concept_uuid].lower() == LABEL_GOOD)
+                        )
                 entry.concepts = masked_concepts
 
         return concept_mask
@@ -121,6 +123,13 @@ class OpenAIResultContent(JSONWizard):
     ),
     logger=logger,
 )
+def num_tokens_from_string(string: str, model_name: str) -> int:
+    """Returns the number of tokens in a text string."""
+    encoding = encoding_for_model(model_name)
+    num_tokens = len(encoding.encode(string))
+    return num_tokens
+
+
 async def completions_with_backoff(**kwargs) -> Generator:
     return await openai.ChatCompletion.acreate(**kwargs)
 
@@ -138,12 +147,17 @@ async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
     print(f"Sending messages to openAI: {str(messages)}")
     logger.info("Sending messages to OpenAI: " + str(messages))
 
+    if num_tokens_from_string(str(messages), OPENAI_MODEL_SMALL) >= 4000:
+        openai_model = OPENAI_MODEL_LARGE
+    else:
+        openai_model = OPENAI_MODEL_SMALL
+
     while attempts < 5 and not result_valid:
         attempts += 1
         raw_result = await completions_with_backoff(
-            model=OPENAI_MODEL, temperature=temperature, messages=messages
+            model=openai_model, temperature=temperature, messages=messages
         )
-        content = raw_result.choices[0].message.content
+        content = raw_result.choices[0].message.content  # type: ignore
 
         if validate_json(content, OpenAIResultContent):
             result: OpenAIResultContent = OpenAIResultContent.from_json(content)

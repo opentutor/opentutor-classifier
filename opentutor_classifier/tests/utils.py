@@ -454,9 +454,11 @@ def read_test_set_from_csv(csv_path: str, confidence_threshold=-1.0) -> _TestSet
                         expectation=row[0],
                         evaluation=row[2],
                         score=confidence_threshold_effective,
-                        comparison=ComparisonType.GTE
-                        if row[2] in [LABEL_BAD, LABEL_GOOD]
-                        else ComparisonType.LT,
+                        comparison=(
+                            ComparisonType.GTE
+                            if row[2] in [LABEL_BAD, LABEL_GOOD]
+                            else ComparisonType.LT
+                        ),
                     )
                 ],
             )

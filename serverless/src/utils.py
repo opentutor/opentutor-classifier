@@ -31,9 +31,9 @@ def append_cors_headers(headers, event):
     headers["Access-Control-Allow-Origin"] = origin
     headers["Access-Control-Allow-Origin"] = "*"
     headers["Access-Control-Allow-Headers"] = "GET,PUT,POST,DELETE,OPTIONS"
-    headers[
-        "Access-Control-Allow-Methods"
-    ] = "Authorization,Origin,Accept,Accept-Language,Content-Language,Content-Type"
+    headers["Access-Control-Allow-Methods"] = (
+        "Authorization,Origin,Accept,Accept-Language,Content-Language,Content-Type"
+    )
 
 
 def create_json_response(status, data, event, headers={}):

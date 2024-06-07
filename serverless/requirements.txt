@@ -1,11 +1,24 @@
-python-dotenv>=0.17.1
-requests>=2.25.1
-boto3==1.20.53
-botocore==1.23.53
-boto3_type_annotations>=0.3.1
-jsonschema==4.4.0
-pyjwt==2.3.0
-urllib3==1.26.6
-tqdm>=4.52.0
-pyyaml >=5.4.1
-dataclass-wizard >= 0.22.2
+attrs==23.1.0 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+boto3-type-annotations==0.3.1 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+boto3==1.20.53 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+botocore==1.23.53 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+certifi==2024.6.2 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+charset-normalizer==3.3.1 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+colorama==0.4.6 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0" and platform_system == "Windows"
+dataclass-wizard==0.22.2 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+idna==3.7 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+importlib-resources==6.1.0 ; python_full_version >= "3.8.4" and python_version < "3.9"
+jmespath==0.10.0 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+jsonschema==4.4.0 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+pyjwt==2.4.0 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+pyrsistent==0.20.0 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+python-dateutil==2.8.2 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+python-dotenv==0.17.1 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+pyyaml==5.4.1 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+requests==2.32.2 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+s3transfer==0.5.2 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+six==1.16.0 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+tqdm==4.66.3 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+typing-extensions==4.8.0 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+urllib3==1.26.18 ; python_full_version >= "3.8.4" and python_full_version < "3.9.0"
+zipp==3.17.0 ; python_full_version >= "3.8.4" and python_version < "3.9"
