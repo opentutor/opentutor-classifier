@@ -13,7 +13,7 @@ botocore = "1.23.53"
 boto3_type_annotations = "^0.3.1"
 jsonschema= "4.4.0"
 pyjwt = "2.8.0"
-urllib3 = "^1.26.6"
+urllib3 = "^1.26.19"
 tqdm = "^4.66.4"
 pyyaml = "^5.4.1"
 dataclass-wizard = "^0.22.2"
@@ -47,7 +47,7 @@ pyjwt = "2.8.0"
 pyyaml = "^5.4.1"
 requests = "^2.32.3"
 tqdm = "^4.66.4"
-urllib3 = "^1.26.6"
+urllib3 = "^1.26.19"
 
 
 [tool.poetry.group.evaluate.dependencies]
@@ -72,7 +72,7 @@ text2num = "^2.2.1"
 tok = "^0.1.14"
 tomlkit = "^0.8.0"
 tqdm = "^4.66.4"
-urllib3 = "^1.26.6"
+urllib3 = "^1.26.19"
 werkzeug = "^2.0.1"
 tiktoken = "^0.5.1"
 
@@ -99,7 +99,7 @@ text2num = "^2.2.1"
 tok = "^0.1.14"
 tomlkit = "^0.8.0"
 tqdm = "^4.66.4"
-urllib3 = "^1.26.6"
+urllib3 = "^1.26.19"
 werkzeug = "^2.0.1"
 
 
@@ -121,7 +121,7 @@ scipy = "^1.10.1"
 text2num = "^2.2.1"
 tok = "^0.1.14"
 tqdm = "^4.66.4"
-urllib3 = "^1.26.6"
+urllib3 = "^1.26.19"
 
 
 [tool.poetry.group.trainingconfigdata.dependencies]
@@ -134,7 +134,7 @@ pyyaml = "^5.4.1"
 requests = "^2.32.3"
 scikit-learn = "^1.2.2"
 tqdm = "^4.66.4"
-urllib3 = "^1.26.6"
+urllib3 = "^1.26.19"
 
 
 
