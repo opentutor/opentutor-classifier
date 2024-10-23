@@ -7,6 +7,7 @@
 from datetime import datetime, timezone
 from opentutor_classifier.api import fetch_lesson_updated_at
 from os import environ
+from opentutor_classifier.log import logger
 
 import pylru
 from opentutor_classifier import (
@@ -32,11 +33,7 @@ class ClassifierDao:
         self, lesson: str, config: ClassifierConfig, arch: str = ""
     ) -> AnswerClassifier:
         cfac = ClassifierFactory()
-        lesson_updated_at = (
-            fetch_lesson_updated_at(lesson)
-            if cfac.has_trained_model(lesson, config, arch=arch)
-            else datetime.min.replace(tzinfo=timezone.utc)
-        )
+        lesson_updated_at = fetch_lesson_updated_at(lesson)
         if config.model_name in self.cache:
             e = self.cache[config.model_name]
             if (
