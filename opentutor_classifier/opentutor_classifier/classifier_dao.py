@@ -4,7 +4,7 @@
 #
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
-from datetime import datetime, timezone
+from datetime import datetime
 from opentutor_classifier.api import fetch_lesson_updated_at
 from os import environ
 
@@ -32,11 +32,7 @@ class ClassifierDao:
         self, lesson: str, config: ClassifierConfig, arch: str = ""
     ) -> AnswerClassifier:
         cfac = ClassifierFactory()
-        lesson_updated_at = (
-            fetch_lesson_updated_at(lesson)
-            if cfac.has_trained_model(lesson, config, arch=arch)
-            else datetime.min.replace(tzinfo=timezone.utc)
-        )
+        lesson_updated_at = fetch_lesson_updated_at(lesson)
         if config.model_name in self.cache:
             e = self.cache[config.model_name]
             if (

@@ -1915,7 +1915,7 @@ openai = [
     {file = "openai-0.27.10.tar.gz", hash = "sha256:60e09edf7100080283688748c6803b7b3b52d5a55d21890f3815292a0552d83b"},
 ]
 opentutor_classifier = [
-    {file = "opentutor_classifier-1.0.0.tar.gz", hash = "sha256:97d1731a2f1cbdbc8a73698ab64d074454eb7ec379f38a1d9cffbfc6140ebbdc"},
+    {file = "opentutor_classifier-1.0.0.tar.gz", hash = "sha256:e33ed62b21ab4409a90050ecb7a1f5e8d8ba6ed71b699e3abd77b641851198e4"},
 ]
 packaging = [
     {file = "packaging-24.1-py3-none-any.whl", hash = "sha256:5b8f2217dbdbd2f7f384c41c628544e6d52f2d0f53c6d0c3ea61aa5d1d7ff124"},
