@@ -36,7 +36,7 @@ backoff = "^2.2.1"
 
 
 [tool.poetry.group.base.dependencies]
-python = "~3.8.4"
+python = "~3.11"
 python-dotenv = "^0.17.1"
 boto3 = "1.20.53"
 botocore = "1.23.53"
@@ -51,7 +51,7 @@ urllib3 = "^1.26.6"
 
 
 [tool.poetry.group.evaluate.dependencies]
-python = "~3.8.4"
+python = "~3.11"
 python-dotenv = "^0.17.1"
 backoff = "^2.2.1"
 blinker = "^1.4"
@@ -78,7 +78,7 @@ tiktoken = "^0.5.1"
 
 
 [tool.poetry.group.train.dependencies]
-python = "~3.8.4"
+python = "~3.11"
 python-dotenv = "^0.17.1"
 backoff = "^2.2.1"
 blinker = "^1.4"
@@ -104,7 +104,7 @@ werkzeug = "^3.0.1"
 
 
 [tool.poetry.group.extractconfig.dependencies]
-python = "~3.8.4"
+python = "~3.11"
 python-dotenv = "^0.17.1"
 boto3 = "1.20.53"
 botocore = "1.23.53"
@@ -125,7 +125,7 @@ urllib3 = "^1.26.6"
 
 
 [tool.poetry.group.trainingconfigdata.dependencies]
-python = "~3.8.4"
+python = "~3.11"
 python-dotenv = "^0.17.1"
 dataclass-wizard = "^0.22.2"
 numpy = "^1.23.0"
