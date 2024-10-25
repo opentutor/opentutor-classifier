@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.11-slim
 WORKDIR /app
 COPY poetry.lock pyproject.toml ./
 RUN apt-get update \

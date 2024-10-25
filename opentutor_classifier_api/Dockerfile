@@ -1,4 +1,4 @@
-FROM python:3.8 as builder
+FROM python:3.11 as builder
 WORKDIR /build
 RUN pip install poetry
 COPY opentutor_classifier ./opentutor_classifier
@@ -11,7 +11,7 @@ RUN cd opentutor_classifier \
 	&& poetry config virtualenvs.create false \
 	&& poetry install --no-dev \
 	&& poetry build
-FROM python:3.8-slim
+FROM python:3.11-slim
 ENV STATUS_URL_FORCE_HTTPS=false
 WORKDIR /app
 RUN pip install poetry

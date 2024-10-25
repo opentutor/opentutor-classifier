@@ -5,7 +5,7 @@ A short answer classifier service focused on cold-start performance
 
 ## Requirements
 
-- python3.8 (must be in path as `python3.8` to build virtualenv)
+- python3.11 (must be in path as `python3.11` to build virtualenv)
 - make
 
 ## Development

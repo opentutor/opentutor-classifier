@@ -30,7 +30,7 @@ install: poetry-ensure-installed
 	cd $(ROOT)/opentutor_classifier \
 		&& $(MAKE) poetry-build-classifier
 	poetry config --local virtualenvs.in-project true
-	poetry env use python3.8
+	poetry env use python3.11
 	poetry install
 
 .PHONY: license

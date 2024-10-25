@@ -9,11 +9,8 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.8
+      python: 3.11
     commands:
-      - pyenv global $PYTHON_38_VERSION
-      - python3 -m venv /root/venv
-      - . /root/venv/bin/activate
       - pip3 install poetry
       - poetry install --no-root
       - n 16
