@@ -106,7 +106,9 @@ def test_saves_config_to_model_root_and_features_to_gql(arch: str, tmpdir, monke
         ),
     )
     opentutor_classifier.dao.find_data_dao().save_config(req)
-    assert json.loads(responses.calls[0].request.body) == update_features_gql(req)
+    assert json.loads(responses.calls[0].request.body or "{}") == update_features_gql(
+        req
+    )
     config_file = path.join(model_root, arch, req.lesson, "config.yaml")
     assert path.isfile(config_file)
     assert load_config(config_file).to_dict() == req.config.to_dict()

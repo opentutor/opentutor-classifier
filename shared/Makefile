@@ -23,7 +23,7 @@ deps-update:
 .PHONY: install
 install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
-	poetry env use python3.8
+	poetry env use python3.11
 	poetry install
 
 installed:
