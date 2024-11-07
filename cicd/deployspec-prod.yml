@@ -6,6 +6,9 @@
 ##
 version: 0.2
 
+env:
+  parameter-store:
+    SERVERLESS_ACCESS_KEY: "/shared/serverless-cicd-token"
 
 phases:
   install:
