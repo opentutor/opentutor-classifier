@@ -153,6 +153,7 @@ provider:
     JOBS_TABLE_NAME: opentutor-classifier-jobs-${self:provider.stage}
     JOBS_SQS_NAME: opentutor-classifier-jobs-${self:provider.stage}
     DEPLOYMENT_MODE: "ONLINE"
+    SERVERLESS_ACCESS_KEY: ${ssm:/shared/serverless-cicd-token, ''}
   iam:
     role:
       statements:
