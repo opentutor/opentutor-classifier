@@ -28,7 +28,7 @@ docker-build:
 .PHONY: install
 install: poetry-ensure-installed
 	poetry config --local virtualenvs.in-project true
-	poetry env use python3.8
+	poetry env use python3.11
 	poetry install
 
 .PHONY: format
@@ -47,7 +47,7 @@ LICENSE_HEADER:
 license: LICENSE LICENSE_HEADER $(VENV)
 	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/opentutor_classifier $(args)
 	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/opentutor_classifier_tasks $(args)
-	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/tests $(args)
+	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier/tests $(args) --exclude opentutor_classifier/tests/fixtures/models/**.yaml
 	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier_api/src $(args)
 	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d opentutor_classifier_api/tests $(args)
 	poetry run python -m licenseheaders -t ${LICENSE_HEADER} -d serverless/functions $(args)

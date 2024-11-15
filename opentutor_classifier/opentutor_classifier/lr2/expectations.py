@@ -5,7 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from collections import defaultdict
-from typing import List
+from typing import List, Optional
 
 from sklearn import model_selection, linear_model
 from sklearn.preprocessing import LabelEncoder
@@ -57,7 +57,7 @@ class LRExpectationClassifier:
         mode: ClassifierMode,
         feature_archetype_enabled: bool = False,
         feature_patterns_enabled: bool = False,
-        expectation_config: ExpectationConfig = None,
+        expectation_config: Optional[ExpectationConfig] = None,
         patterns: List[str] = [],
         archetypes: List[str] = [],
     ) -> List[float]:

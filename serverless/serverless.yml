@@ -1,7 +1,7 @@
 service: opentutor-classifier
 
 # pin to a specific Serverless version, major releases might not be backward compatible:
-frameworkVersion: '3'
+frameworkVersion: '4'
 
 plugins:
   - serverless-domain-manager
@@ -49,7 +49,7 @@ custom:
         layersDeploymentBucket: ${self:provider.deploymentBucket.name}
         dependenciesPath: ./requirements.txt
         compatibleRuntimes:
-          - python3.8
+          - python3.11
         functions:
             - train_request
             - train_status
@@ -60,7 +60,7 @@ provider:
   name: aws
   region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
-  runtime: python3.8
+  runtime: python3.11
   endpointType: regional
   memorySize: 256
   tracing:
@@ -93,19 +93,48 @@ provider:
       train_job:
         path: ./
         file: Dockerfile.train_job
+        platform: linux/amd64
+        buildOptions:
+          [
+            "--provenance",
+            "false"
+          ]
       evaluate:
         path: ./
         file: Dockerfile.evaluate
+        platform: linux/amd64
+        buildOptions:
+          [
+            "--provenance",
+            "false"
+          ]
       training_config:
         path: ./
         file: Dockerfile.training_config
+        platform: linux/amd64
+        buildOptions:
+          [
+            "--provenance",
+            "false"
+          ]
       training_data:
         path: ./
         file: Dockerfile.training_data
+        platform: linux/amd64
+        buildOptions:
+          [
+            "--provenance",
+            "false"
+          ]
       extract_config:
         path: ./
         file: Dockerfile.extract_config
-
+        platform: linux/amd64
+        buildOptions:
+          [
+            "--provenance",
+            "false"
+          ]
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     STAGE: ${self:provider.stage}
@@ -401,3 +430,5 @@ resources:
         ResponseType: DEFAULT_4XX
         RestApiId:
           Ref: 'ApiGatewayRestApi'
+
+

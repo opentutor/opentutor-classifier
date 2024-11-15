@@ -5,6 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from os import path
+from typing import Optional
 
 import opentutor_classifier
 from . import (
@@ -19,8 +20,8 @@ from .dao import FileDataDao
 def train(
     lesson: str,
     arch="",
-    config: TrainingConfig = None,
-    dao: DataDao = None,
+    config: Optional[TrainingConfig] = None,
+    dao: Optional[DataDao] = None,
     developer_mode: bool = False,
 ) -> TrainingResult:
     dao = dao or opentutor_classifier.dao.find_data_dao()
@@ -33,7 +34,7 @@ def train(
 
 def train_data_root(
     arch="",
-    config: TrainingConfig = None,
+    config: Optional[TrainingConfig] = None,
     data_root="data",
     output_dir="",
     developer_mode: bool = False,
@@ -49,7 +50,7 @@ def train_data_root(
 
 
 def train_default_data_root(
-    arch="", config: TrainingConfig = None, data_root="data", output_dir=""
+    arch="", config: Optional[TrainingConfig] = None, data_root="data", output_dir=""
 ) -> TrainingResult:
     droot, __default__ = path.split(path.abspath(data_root))
     return train_default(
@@ -59,8 +60,8 @@ def train_default_data_root(
 
 def train_default(
     arch="",
-    config: TrainingConfig = None,
-    dao: DataDao = None,
+    config: Optional[TrainingConfig] = None,
+    dao: Optional[DataDao] = None,
 ) -> TrainingResult:
     dao = dao or opentutor_classifier.dao.find_data_dao()
     data = dao.find_default_training_data()
