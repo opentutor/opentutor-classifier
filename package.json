@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A short answer classifier service",
   "devDependencies": {
-    "serverless": "^4.4.7",
+    "serverless": "4.4.7",
     "serverless-deployment-bucket": "^1.6.0",
     "serverless-domain-manager": "^6.2.1",
     "serverless-layers": "2.5.2"
