@@ -14,7 +14,7 @@ flask-cors = "^4.0.1"
 gunicorn = "^22.0.0"
 python-dotenv = "^0.17.1"
 redis = "^5.0.4"
-werkzeug = "^3.0.1"
+werkzeug = "^3.0.6"
 opentutor-classifier = {path = "../opentutor_classifier/dist/opentutor_classifier-1.0.0.tar.gz"}
 tok = "^0.1.14"
 tqdm = "^4.66.4"
