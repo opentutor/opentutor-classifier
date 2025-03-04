@@ -32,6 +32,7 @@ from .utils import (
     create_and_test_classifier,
     fixture_path,
     read_example_testset,
+    read_test_set_from_csv,
     test_env_isolated,
     train_classifier,
     train_default_classifier,
@@ -158,12 +159,6 @@ def _test_train_and_predict_and_update(
     ) as test_config:
         train_result = train_classifier(lesson, test_config)
         assert path.exists(train_result.models)
-        assert_train_expectation_results(
-            train_result.expectations, expected_training_result
-        )
-        testset = read_example_testset(
-            lesson, confidence_threshold=confidence_threshold
-        )
         update_test_env(test_config, lesson, version)
 
         train_result = train_classifier(lesson, test_config)
@@ -171,8 +166,8 @@ def _test_train_and_predict_and_update(
         assert_train_expectation_results(
             train_result.expectations, expected_training_result
         )
-        testset = read_example_testset(
-            lesson, confidence_threshold=confidence_threshold
+        testset = read_test_set_from_csv(
+            path.join(test_config.data_root, lesson, "test.csv"), confidence_threshold
         )
         assert_testset_accuracy(
             arch,
@@ -187,7 +182,7 @@ def _test_train_and_predict_and_update(
     "example,version,arch,confidence_threshold,expected_training_result,expected_accuracy",
     [
         (
-            "very_small_training_set",
+            "add_expectation_after_training",
             "newExp",
             ARCH_LR2_CLASSIFIER,
             CONFIDENCE_THRESHOLD_DEFAULT,

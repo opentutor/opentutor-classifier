@@ -205,9 +205,10 @@ class LRAnswerClassifier(AnswerClassifier):
     ) -> linear_model.LogisticRegression:
         if expectation in m_by_e:
             return m_by_e[expectation]
-        elif return_first_model_if_only_one and len(m_by_e) == 1:
-            key = list(m_by_e.keys())[0]
-            return m_by_e[key]
+        # TODO: figure out why the hell this was in here to begin with
+        # elif return_first_model_if_only_one and len(m_by_e) == 1:
+        #     key = list(m_by_e.keys())[0]
+        #     return m_by_e[key]
         else:
             key = list(default_m_by_e.keys())[0]
             return default_m_by_e[key]
@@ -265,6 +266,7 @@ class LRAnswerClassifier(AnswerClassifier):
         sent_proc = preprocess_sentence(answer.input_sentence)
         m_by_e, conf = self.model_and_config
         default_m_by_e, default_conf = self.default_model_and_config
+        print(conf.get_all_expectation_names())
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,

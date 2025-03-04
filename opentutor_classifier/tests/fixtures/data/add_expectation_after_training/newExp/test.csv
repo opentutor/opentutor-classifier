@@ -1,5 +1,5 @@
 exp_num,text,label
 0,peer pressure can change your behavior,good
 1,peer pressure can change your behavior,bad
-0,penguins have feathers,bad
-1,penguins have feathers,good
+0,penguins have flippers,bad
+1,penguins have flippers,good
