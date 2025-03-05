@@ -129,9 +129,7 @@ class LRAnswerClassifier(AnswerClassifier):
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
-                classifier=self.find_model_for_expectation(
-                    m_by_e, default_m_by_e, i, return_first_model_if_only_one=True
-                ),
+                classifier=self.find_model_for_expectation(m_by_e, default_m_by_e, i),
             )
             for i in conf.get_all_expectation_names()
         ]
@@ -201,14 +199,9 @@ class LRAnswerClassifier(AnswerClassifier):
         m_by_e: Dict[str, linear_model.LogisticRegression],
         default_m_by_e: Dict[str, linear_model.LogisticRegression],
         expectation: str,
-        return_first_model_if_only_one=False,
     ) -> linear_model.LogisticRegression:
         if expectation in m_by_e:
             return m_by_e[expectation]
-        # TODO: figure out why the hell this was in here to begin with
-        # elif return_first_model_if_only_one and len(m_by_e) == 1:
-        #     key = list(m_by_e.keys())[0]
-        #     return m_by_e[key]
         else:
             key = list(default_m_by_e.keys())[0]
             return default_m_by_e[key]
@@ -270,9 +263,7 @@ class LRAnswerClassifier(AnswerClassifier):
         expectations = [
             ExpectationToEvaluate(
                 expectation=i,
-                classifier=self.find_model_for_expectation(
-                    m_by_e, default_m_by_e, i, return_first_model_if_only_one=True
-                ),
+                classifier=self.find_model_for_expectation(m_by_e, default_m_by_e, i),
             )
             for i in (
                 [answer.expectation]
