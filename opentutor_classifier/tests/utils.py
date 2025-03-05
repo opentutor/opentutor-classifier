@@ -5,6 +5,7 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from os import path
+from shutil import copy
 from contextlib import contextmanager
 from distutils.dir_util import copy_tree
 from pathlib import Path
@@ -49,7 +50,7 @@ from opentutor_classifier.config import (
 )
 from opentutor_classifier import DataDao
 import opentutor_classifier.dao
-from opentutor_classifier.dao import FileDataDao
+from opentutor_classifier.dao import FileDataDao, _TRAINING_CSV, _CONFIG_YAML
 from .types import (
     ComparisonType,
     _TestConfig,
@@ -220,6 +221,21 @@ def example_data_path(example: str) -> str:
 
 def example_testset_path(example: str, testset_name="test.csv") -> str:
     return path.join(example_data_path(example), testset_name)
+
+
+def update_test_env(config: _TestConfig, lesson_name: str, version: str):
+    copy(
+        path.join(config.data_root, lesson_name, version, _TRAINING_CSV),
+        path.join(config.data_root, lesson_name, _TRAINING_CSV),
+    )
+    copy(
+        path.join(config.data_root, lesson_name, version, _CONFIG_YAML),
+        path.join(config.data_root, lesson_name, _CONFIG_YAML),
+    )
+    copy(
+        path.join(config.data_root, lesson_name, version, "test.csv"),
+        path.join(config.data_root, lesson_name, "test.csv"),
+    )
 
 
 def copy_test_env_to_tmp(
