@@ -184,7 +184,6 @@ def assert_testset_accuracy(
 ) -> None:
     result = run_classifier_testset(arch, model_path, shared_root, testset)
     metrics = result.metrics()
-    print(metrics)
     if metrics.accuracy >= expected_accuracy:
         return
     assert metrics.accuracy >= expected_accuracy
