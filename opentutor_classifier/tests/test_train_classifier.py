@@ -32,11 +32,13 @@ from .utils import (
     create_and_test_classifier,
     fixture_path,
     read_example_testset,
+    read_test_set_from_csv,
     test_env_isolated,
     train_classifier,
     train_default_classifier,
     _TestExpectation,
     run_classifier_testset,
+    update_test_env,
 )
 
 CONFIDENCE_THRESHOLD_DEFAULT = confidence_threshold_default()
@@ -136,6 +138,90 @@ def _test_train_and_predict(
             testset,
             expected_accuracy=expected_accuracy,
         )
+
+
+def _test_train_and_predict_and_update(
+    lesson: str,
+    version: str,
+    arch: str,
+    # confidence_threshold for now determines whether an answer
+    # is really classified as GOOD/BAD (confidence >= threshold)
+    # or whether it is interpretted as NEUTRAL (confidence < threshold)
+    confidence_threshold: float,
+    expected_training_result: List[ExpectationTrainingResult],
+    expected_accuracy: float,
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+):
+    with test_env_isolated(
+        tmpdir, data_root, shared_root, arch=arch, lesson=lesson
+    ) as test_config:
+        train_result = train_classifier(lesson, test_config)
+        assert path.exists(train_result.models)
+        update_test_env(test_config, lesson, version)
+
+        train_result = train_classifier(lesson, test_config)
+        assert path.exists(train_result.models)
+        assert_train_expectation_results(
+            train_result.expectations, expected_training_result
+        )
+        testset = read_test_set_from_csv(
+            path.join(test_config.data_root, lesson, "test.csv"), confidence_threshold
+        )
+        assert_testset_accuracy(
+            arch,
+            train_result.models,
+            shared_root,
+            testset,
+            expected_accuracy=expected_accuracy,
+        )
+
+
+@pytest.mark.parametrize(
+    "example,version,arch,confidence_threshold,expected_training_result,expected_accuracy",
+    [
+        (
+            "add_expectation_after_training",
+            "newExp",
+            ARCH_LR2_CLASSIFIER,
+            CONFIDENCE_THRESHOLD_DEFAULT,
+            [
+                ExpectationTrainingResult(expectation_id="0", accuracy=0.4),
+                ExpectationTrainingResult(expectation_id="1", accuracy=0.4),
+            ],
+            0.0,
+        ),
+    ],
+)
+@pytest.mark.slow
+def test_train_and_predict_and_update(
+    example: str,
+    version: str,
+    arch: str,
+    # confidence_threshold for now determines whether an answer
+    # is really classified as GOOD/BAD (confidence >= threshold)
+    # or whether it is interpretted as NEUTRAL (confidence < threshold)
+    confidence_threshold: float,
+    expected_training_result: List[ExpectationTrainingResult],
+    expected_accuracy: float,
+    tmpdir,
+    data_root: str,
+    shared_root: str,
+    monkeypatch,
+):
+    monkeypatch.setenv("OPENAI_API_KEY", "dummy")
+    _test_train_and_predict_and_update(
+        example,
+        version,
+        arch,
+        confidence_threshold,
+        expected_training_result,
+        expected_accuracy,
+        tmpdir,
+        data_root,
+        shared_root,
+    )
 
 
 @pytest.mark.parametrize(
