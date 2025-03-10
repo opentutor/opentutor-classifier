@@ -11,7 +11,7 @@ phases:
     runtime-versions:
       python: 3.11
     commands:
-      - pip3 install poetry=1.2.2
+      - pip3 install poetry==1.2.2
       - poetry install --no-root
       - n 16
       - NODE_ENV=dev npm ci
