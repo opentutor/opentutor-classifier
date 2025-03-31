@@ -39,7 +39,7 @@ def get_api_key() -> str:
     return os.environ.get("API_SECRET") or ""
 
 def get_api_secret_header_and_value() -> Tuple[str, str]:
-    return os.environ.get("API_WAF_SECRET_HEADER"), os.environ.get("API_WAF_SECRET_VALUE")
+    return os.environ.get("API_WAF_SECRET_HEADER"), os.environ.get("API_WAF_SECRET_HEADER_VALUE")
 
 def get_sbert_api_key() -> str:
     return os.environ.get("SBERT_API_SECRET") or ""

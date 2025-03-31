@@ -153,8 +153,8 @@ provider:
     JOBS_TABLE_NAME: opentutor-classifier-jobs-${self:provider.stage}
     JOBS_SQS_NAME: opentutor-classifier-jobs-${self:provider.stage}
     DEPLOYMENT_MODE: "ONLINE"
-    API_WAF_SECRET_HEADER: ${ssm:/shared/api-waf-secret-header, ''}
-    API_WAF_SECRET_HEADER_VALUE: ${ssm:/shared/api-waf-secret-header-value, ''}
+    API_WAF_SECRET_HEADER: ${ssm:/shared/api-secret-header, ''}
+    API_WAF_SECRET_HEADER_VALUE: ${ssm:/shared/api-secret-header-value, ''}
   iam:
     role:
       statements:
