@@ -11,7 +11,7 @@ from io import StringIO
 import json
 import os
 import requests
-from typing import Optional, TypedDict, Dict
+from typing import Optional, TypedDict, Dict, Tuple
 import yaml
 
 
@@ -38,6 +38,8 @@ def get_sbert_endpoint() -> str:
 def get_api_key() -> str:
     return os.environ.get("API_SECRET") or ""
 
+def get_api_secret_header_and_value() -> Tuple[str, str]:
+    return os.environ.get("API_WAF_SECRET_HEADER"), os.environ.get("API_WAF_SECRET_VALUE")
 
 def get_sbert_api_key() -> str:
     return os.environ.get("SBERT_API_SECRET") or ""
@@ -211,6 +213,7 @@ def update_features(req: QuestionConfigSaveReq) -> None:
 
 def __auth_gql(query: GQLQueryBody, url: str = "") -> dict:
     res: Optional[requests.Response] = None
+    secret_header, secret_value = get_api_secret_header_and_value()
     try:
         res = requests.post(
             url or get_graphql_endpoint(),
@@ -218,6 +221,7 @@ def __auth_gql(query: GQLQueryBody, url: str = "") -> dict:
             headers={
                 "opentutor-api-req": "true",
                 "Authorization": f"bearer {get_api_key()}",
+                secret_header: secret_value
             },
         )
         res.raise_for_status()
