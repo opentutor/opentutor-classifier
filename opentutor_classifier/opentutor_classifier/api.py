@@ -41,8 +41,8 @@ def get_api_key() -> str:
 
 def get_api_secret_header_and_value() -> tuple[str, str]:
     return (
-        os.environ.get("API_WAF_SECRET_HEADER") or "",
-        os.environ.get("API_WAF_SECRET_HEADER_VALUE") or "",
+        os.environ.get("API_WAF_SECRET_HEADER") or "secret-header",
+        os.environ.get("API_WAF_SECRET_HEADER_VALUE") or "secret-value",
     )
 
 
