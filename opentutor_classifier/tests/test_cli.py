@@ -58,7 +58,7 @@ def __train_model(
         lesson=lesson,
     )
     command = [
-        "poetry",
+        "uv",
         "run",
         "python",
         "bin/opentutor_classifier",

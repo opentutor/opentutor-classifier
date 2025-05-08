@@ -7,7 +7,7 @@
 from os import path
 from shutil import copy
 from contextlib import contextmanager
-from distutils.dir_util import copy_tree
+from shutil import  copytree
 from pathlib import Path
 from typing import Any, Callable, List, Optional
 from unittest.mock import patch
@@ -260,14 +260,16 @@ def copy_test_env_to_tmp(
         ),
         shared_root=shared_root,
     )
-    copy_tree(path.join(data_root, lesson), path.join(config.data_root, lesson))
-    copy_tree(
+    copytree(path.join(data_root, lesson), path.join(config.data_root, lesson), dirs_exist_ok=True)
+    copytree(
         path.join(data_root, DEFAULT_LESSON_NAME),
         path.join(config.data_root, DEFAULT_LESSON_NAME),
+        dirs_exist_ok=True
     )
-    copy_tree(
+    copytree(
         path.join(deployed_models, ARCH_LR2_CLASSIFIER, DEFAULT_LESSON_NAME),
         path.join(config.output_dir, ARCH_LR2_CLASSIFIER, DEFAULT_LESSON_NAME),
+        dirs_exist_ok=(True)
     )
     return config
 

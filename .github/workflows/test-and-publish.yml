@@ -11,10 +11,7 @@ jobs:
         with:
           python-version: 3.11
       - name: poetry install
-        run: |
-          curl -sSL https://install.python-poetry.org | python - --version 1.2.2
-          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
-          poetry --version
+        run: pipx install uv
       - name: test format
         run: make test-format
       - name: test lint

@@ -9,18 +9,6 @@ $(VENV):
 clean:
 	rm -rf .pytest_cache .mypy_cache $(VENV)
 
-.PHONY: deps-show
-deps-show:
-	poetry show
-
-.PHONY: deps-show
-deps-show-outdated:
-	poetry show --outdated
-
-.PHONY: deps-update
-deps-update:
-	poetry update
-
 .PHONY docker-build:
 docker-build: clean
 	cd .. \
@@ -39,26 +27,20 @@ format: $(VENV)
 	cd $(ROOT) && $(MAKE) format
 
 .PHONY: install
-install: poetry-ensure-installed
+install: 
 	cd $(ROOT)/opentutor_classifier \
 		&& $(MAKE) poetry-build-classifier
-	poetry config --local virtualenvs.in-project true
-	poetry env use python3.11
-	poetry install
+	poetry sync
 
 .PHONY: license
 license:
 	cd $(ROOT) && make license
 
-.PHONY: poetry-ensure-installed
-poetry-ensure-installed:
-	sh $(ROOT)/tools/poetry_ensure_installed.sh
-
 .PHONY: test
 test: $(VENV)
 	cd $(ROOT)/shared/ \
 		&& $(MAKE) installed/word2vec.bin
-	poetry run	coverage run \
+	uv run	coverage run \
 		--omit="$(PWD)/tests" \
 		-m py.test -vv $(args)
 
