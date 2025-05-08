@@ -1,11 +1,10 @@
-[tool]
-[tool.poetry]
+[project]
 name = "word2vec"
 version = "1.0.0"
-description="word2vec"
-authors=[]
-
-[tool.poetry.dependencies]
-python = "~3.11"
-requests = "^2.32.2"
-tqdm = "^4.66.3"
+description = "word2vec"
+authors = []
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "requests>=2.32.2,<3",
+    "tqdm>=4.66.3,<5",
+]
