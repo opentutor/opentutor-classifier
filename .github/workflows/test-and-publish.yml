@@ -11,10 +11,7 @@ jobs:
         with:
           python-version: 3.11
       - name: poetry install
-        run: |
-          curl -sSL https://install.python-poetry.org | python - --version 1.2.2
-          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
-          poetry --version
+        run: pipx install uv
       - name: test format
         run: make test-format
       - name: test lint
@@ -25,8 +22,6 @@ jobs:
         run: make test-license
       - name: test classifier
         run: cd opentutor_classifier && make test
-      - name: test classifier api
-        run: cd opentutor_classifier_api && make test
   publish-check:
     name: publish check
     needs:
@@ -58,19 +53,13 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_LOGIN }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: docker build classifier
         run: cd opentutor_classifier && DOCKER_IMAGE=opentutor/opentutor-classifier:${{ steps.tag.outputs.image_tag }} make docker-build
-      - name: docker build api
-        run: cd opentutor_classifier_api && DOCKER_IMAGE=opentutor/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }} make docker-build
       - name: docker tag release as version
         if: needs.publish-check.outputs.is_release == 'true'
         run: |
           docker tag "opentutor/opentutor-classifier:${{ steps.tag.outputs.image_tag }}" "opentutor/opentutor-classifier:${GITHUB_REF#refs/tags/}"
-          docker tag "opentutor/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }}" "opentutor/opentutor-classifier-api:${GITHUB_REF#refs/tags/}"
       - name: docker tag main as latest
         if: github.ref == 'refs/heads/main'
         run: |
           docker tag "opentutor/opentutor-classifier:${{ steps.tag.outputs.image_tag }}" "opentutor/opentutor-classifier:latest"
-          docker tag "opentutor/opentutor-classifier-api:${{ steps.tag.outputs.image_tag }}" "opentutor/opentutor-classifier-api:latest"
       - name: docker push classifier
         run: docker push --all-tags opentutor/opentutor-classifier
-      - name: docker push api
-        run: docker push --all-tags opentutor/opentutor-classifier-api
