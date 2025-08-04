@@ -30,7 +30,7 @@ format: $(VENV)
 install: 
 	cd $(ROOT)/opentutor_classifier \
 		&& $(MAKE) poetry-build-classifier
-	poetry sync
+	uv sync
 
 .PHONY: license
 license:
