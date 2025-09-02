@@ -28,6 +28,6 @@ USER_GUARDRAILS = "Only respond with the JSON output in the exact format of the 
 USER_GROUNDTRUTH = "Here are some examples that have already been labeled. They are presented in JSON format, where the answer is given, followed by each concept and a true or false label. Consider these to be ground truth examples.\n"
 OPENAI_API_KEY = "OPENAI_API_KEY"
 OPENAI_MODEL_LARGE = "gpt-4.1-mini"
-OPENAI_MODEL_SMALL = "gpt-4.1-mini"
+OPENAI_MODEL_SMALL = "gpt-4o-mini"
 OPENAI_DEFAULT_TEMP = 0.1
 GROUNDTRUTH_FILENAME = "groundtruth.json"

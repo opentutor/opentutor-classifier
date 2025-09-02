@@ -8,9 +8,9 @@ botocore==1.35.48
     # via
     #   boto3
     #   s3transfer
-certifi==2025.4.26
+certifi==2025.8.3
     # via requests
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via requests
 colorama==0.4.6 ; sys_platform == 'win32'
     # via tqdm
@@ -29,7 +29,7 @@ python-dateutil==2.9.0.post0
     # via botocore
 python-dotenv==0.17.1
 pyyaml==6.0.2
-requests==2.32.3
+requests==2.32.5
 s3transfer==0.10.4
     # via boto3
 six==1.17.0
