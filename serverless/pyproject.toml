@@ -72,7 +72,7 @@ evaluate = [
     "tqdm>=4.66.4,<5",
     "urllib3>=1.26.19,<2",
     "werkzeug>=3.0.1,<4",
-    "tiktoken>=0.5.1,<0.6",
+    "tiktoken>=0.6",
 ]
 train = [
     "python-dotenv>=0.17.1,<0.18",
@@ -97,7 +97,7 @@ train = [
     "tqdm>=4.66.4,<5",
     "urllib3>=1.26.19,<2",
     "werkzeug>=3.0.1,<4",
-    "tiktoken>=0.5.1,<0.6",
+    "tiktoken>=0.5.1",
 ]
 extractconfig = [
     "python-dotenv>=0.17.1,<0.18",
