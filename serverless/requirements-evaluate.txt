@@ -106,7 +106,7 @@ tqdm==4.67.1
     # via openai
 typing-extensions==4.15.0
     # via aiosignal
-urllib3==1.26.20
+urllib3==2.5.0
     # via
     #   requests
     #   sentry-sdk

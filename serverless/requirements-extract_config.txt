@@ -76,7 +76,7 @@ tldextract==5.3.0
     # via tok
 tok==0.1.14
 tqdm==4.67.1
-urllib3==1.26.20
+urllib3==2.5.0
     # via
     #   botocore
     #   requests
