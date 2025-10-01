@@ -1,4 +1,4 @@
-# opentutor-classifier-api
+# opentutor-classifier-api (DEPRECATED)
 dockerized REST api for the opentutor classifier
 
 ## Licensing

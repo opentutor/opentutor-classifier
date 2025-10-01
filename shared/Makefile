@@ -8,31 +8,18 @@ $(VENV):
 clean:
 	rm -rf installed $(VENV)
 
-.PHONY: deps-show
-deps-show:
-	poetry show
-
-.PHONY: deps-show
-deps-show-outdated:
-	poetry show --outdated
-
-.PHONY: deps-update
-deps-update:
-	poetry update
 
 .PHONY: install
-install: poetry-ensure-installed
-	poetry config --local virtualenvs.in-project true
-	poetry env use python3.11
-	poetry install
+install:
+	uv sync
 
 installed:
 	mkdir -p installed
 
 installed/word2vec.bin: $(VENV)
 	$(MAKE) installed
-	poetry run python word2vec_download.py 
-	poetry run python word2vec_slim_download.py 
+	uv run python word2vec_download.py 
+	uv run python word2vec_slim_download.py 
 
 
 .PHONY: poetry-ensure-installed
