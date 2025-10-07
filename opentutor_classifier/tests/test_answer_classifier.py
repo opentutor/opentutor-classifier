@@ -10,7 +10,7 @@ import pytest
 import responses
 import json
 import asyncio
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from opentutor_classifier import (
     get_classifier_arch,
     AnswerClassifier,
@@ -164,6 +164,11 @@ def test_composite_answer_classifier_json_response(
         assert result.expectation_results[0].evaluation == EVALUATION_BAD
 
 
+@pytest.mark.only
+@patch(
+    "opentutor_classifier.api.fetch_lesson_llm_model_name", Mock(return_value="dummy")
+)
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "lesson,arch,input_answer,config_data,mock_payload",
     [
@@ -206,7 +211,8 @@ def test_composite_answer_classifier_json_response(
         ),
     ],
 )
-def test_openai_answer_classifier_json_response(
+@responses.activate
+async def test_openai_answer_classifier_json_response(
     model_roots,
     shared_root,
     lesson: str,
@@ -220,14 +226,15 @@ def test_openai_answer_classifier_json_response(
         classifier = _find_or_train_classifier(
             lesson, model_roots[0], model_roots[2], shared_root, arch=arch
         )
+
         with patch("openai.ChatCompletion.acreate") as mock_create:
+            print(opentutor_classifier.api.fetch_lesson_llm_model_name("tets"))
+
             mock_create.return_value = mock_openai_object(json.dumps(mock_payload))
-            result = asyncio.run(
-                classifier.evaluate(
-                    AnswerClassifierInput(
-                        input_sentence=input_answer,
-                        config_data=dict_to_config(config_data),
-                    )
+            result = await classifier.evaluate(
+                AnswerClassifierInput(
+                    input_sentence=input_answer,
+                    config_data=dict_to_config(config_data),
                 )
             )
         print(json.dumps(result.to_dict(), indent=2))

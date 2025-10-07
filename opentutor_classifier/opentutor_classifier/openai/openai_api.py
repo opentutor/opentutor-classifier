@@ -134,7 +134,9 @@ async def completions_with_backoff(**kwargs) -> Generator:
     return await openai.ChatCompletion.acreate(**kwargs)
 
 
-async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
+async def openai_create(
+    call_data: OpenAICall, llm_model_name=None
+) -> OpenAIResultContent:
     concept_mask = call_data.mask_concept_uuids()
     messages = call_data.to_openai_json()
     attempts = 0
@@ -147,10 +149,13 @@ async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
     print(f"Sending messages to openAI: {str(messages)}")
     logger.info("Sending messages to OpenAI: " + str(messages))
 
-    if num_tokens_from_string(str(messages), OPENAI_MODEL_SMALL) >= 4000:
-        openai_model = OPENAI_MODEL_LARGE
+    if llm_model_name is None:
+        if num_tokens_from_string(str(messages), OPENAI_MODEL_SMALL) >= 4000:
+            openai_model = OPENAI_MODEL_LARGE
+        else:
+            openai_model = OPENAI_MODEL_SMALL
     else:
-        openai_model = OPENAI_MODEL_SMALL
+        openai_model = llm_model_name
 
     while attempts < 5 and not result_valid:
         attempts += 1

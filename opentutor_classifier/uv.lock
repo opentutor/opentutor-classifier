@@ -508,7 +508,7 @@ wheels = [
 [[package]]
 name = "opentutor-classifier"
 version = "1.0.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "backoff" },
     { name = "blinker" },
@@ -543,6 +543,7 @@ dev = [
     { name = "freezegun" },
     { name = "pip-upgrader" },
     { name = "pytest" },
+    { name = "pytest-asyncio" },
     { name = "pytest-env" },
     { name = "pytest-mock" },
     { name = "pytest-only" },
@@ -588,6 +589,7 @@ dev = [
     { name = "freezegun", specifier = ">=1.1.0,<2" },
     { name = "pip-upgrader" },
     { name = "pytest", specifier = ">=6.2.4,<7" },
+    { name = "pytest-asyncio", specifier = ">=0.20.3" },
     { name = "pytest-env", specifier = ">=0.6.2,<0.7" },
     { name = "pytest-mock", specifier = ">=3.6.1,<4" },
     { name = "pytest-only", specifier = ">=1.2.2,<2" },
@@ -745,6 +747,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/4b/24/7d1f2d2537de114bdf1e6875115113ca80091520948d370c964b88070af2/pytest-6.2.5.tar.gz", hash = "sha256:131b36680866a76e6781d13f101efb86cf674ebb9762eb70d3082b6f29889e89", size = 1118720 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/40/76/86f886e750b81a4357b6ed606b2bcf0ce6d6c27ad3c09ebf63ed674fc86e/pytest-6.2.5-py3-none-any.whl", hash = "sha256:7310f8d27bc79ced999e760ca304d69f6ba6c6649c0b60fb0e04a4a77cacc134", size = 280654 },
+]
+
+[[package]]
+name = "pytest-asyncio"
+version = "0.20.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6e/06/38b0ca5d53582bb49697626975b5540435ea064762d852b5c66646c729e9/pytest-asyncio-0.20.3.tar.gz", hash = "sha256:83cbf01169ce3e8eb71c6c278ccb0574d1a7a3bb8eaaf5e50e0ad342afb33b36", size = 28942 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/45/74/9421cfde8def10c265b4f9ae19c95b8f4dc227f639cb8b89287d4946ac97/pytest_asyncio-0.20.3-py3-none-any.whl", hash = "sha256:f129998b209d04fcc65c96fc85c11e5316738358909a8399e93be553d7656442", size = 12537 },
 ]
 
 [[package]]

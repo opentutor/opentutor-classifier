@@ -46,6 +46,7 @@ dev = [
     "types-PyYAML>=6.0.12,<7",
     "types-requests>=2.32.0,<3",
     "types-python-dateutil>=2.9.0,<3",
+    "pytest-asyncio>=0.20.3",
 ]
 
 [tool.hatch.build.targets.wheel]

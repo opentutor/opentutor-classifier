@@ -24,6 +24,7 @@ from opentutor_classifier.openai.openai_api import (
     OpenAIResultContent,
     openai_create,
 )
+from opentutor_classifier.api import fetch_lesson_llm_model_name
 from .constants import (
     SYSTEM_ASSIGNMENT,
     USER_GUARDRAILS,
@@ -43,6 +44,9 @@ class OpenAIAnswerClassifier(AnswerClassifier):
         return self
 
     async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+
+        llm_model_name = fetch_lesson_llm_model_name(self.config.model_name)
+
         if answer.config_data is None:
             raise Exception("missing question data in answer")
         model_ref = ModelRef(
@@ -64,7 +68,9 @@ class OpenAIAnswerClassifier(AnswerClassifier):
             user_guardrails=USER_GUARDRAILS,
             user_groundtruth=ground_truth,
         )
-        response: OpenAIResultContent = await openai_create(call_data=call)
+        response: OpenAIResultContent = await openai_create(
+            call_data=call, llm_model_name=llm_model_name
+        )
         expectations: List[ExpectationClassifierResult] = []
         print(response.to_json())
         open_ai_answer: Answer = response.answers[
