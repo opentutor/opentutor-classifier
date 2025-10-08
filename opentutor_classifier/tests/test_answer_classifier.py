@@ -223,8 +223,6 @@ def test_openai_answer_classifier_json_response(
         )
 
         with patch("openai.ChatCompletion.acreate") as mock_create:
-            print(opentutor_classifier.api.fetch_lesson_llm_model_name("tets"))
-
             mock_create.return_value = mock_openai_object(json.dumps(mock_payload))
             result = asyncio.run(
                 classifier.evaluate(
