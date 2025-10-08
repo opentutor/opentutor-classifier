@@ -164,11 +164,6 @@ def test_composite_answer_classifier_json_response(
         assert result.expectation_results[0].evaluation == EVALUATION_BAD
 
 
-@pytest.mark.only
-@patch(
-    "opentutor_classifier.api.fetch_lesson_llm_model_name", Mock(return_value="dummy")
-)
-@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "lesson,arch,input_answer,config_data,mock_payload",
     [
@@ -212,7 +207,7 @@ def test_composite_answer_classifier_json_response(
     ],
 )
 @responses.activate
-async def test_openai_answer_classifier_json_response(
+def test_openai_answer_classifier_json_response(
     model_roots,
     shared_root,
     lesson: str,
@@ -231,10 +226,12 @@ async def test_openai_answer_classifier_json_response(
             print(opentutor_classifier.api.fetch_lesson_llm_model_name("tets"))
 
             mock_create.return_value = mock_openai_object(json.dumps(mock_payload))
-            result = await classifier.evaluate(
-                AnswerClassifierInput(
-                    input_sentence=input_answer,
-                    config_data=dict_to_config(config_data),
+            result = asyncio.run(
+                classifier.evaluate(
+                    AnswerClassifierInput(
+                        input_sentence=input_answer,
+                        config_data=dict_to_config(config_data),
+                    )
                 )
             )
         print(json.dumps(result.to_dict(), indent=2))
