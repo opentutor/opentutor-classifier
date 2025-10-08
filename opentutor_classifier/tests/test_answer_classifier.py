@@ -10,7 +10,7 @@ import pytest
 import responses
 import json
 import asyncio
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from opentutor_classifier import (
     get_classifier_arch,
     AnswerClassifier,
