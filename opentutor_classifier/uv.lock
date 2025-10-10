@@ -508,7 +508,7 @@ wheels = [
 [[package]]
 name = "opentutor-classifier"
 version = "1.0.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "backoff" },
     { name = "blinker" },

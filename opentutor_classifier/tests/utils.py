@@ -293,7 +293,10 @@ def mock_gql_response(lesson: str, data_root: str, is_default_model=False):
                 "config": {
                     "stringified": config_stringified,
                 },
-                "lesson": {"updatedAt": "2021-08-11T20:51:35.083Z"},
+                "lesson": {
+                    "llmModelName": "dummy",
+                    "updatedAt": "2021-08-11T20:51:35.083Z",
+                },
             }
         }
     }
