@@ -16,10 +16,10 @@ import asyncio
 from opentutor_classifier.lr2.predict import LRAnswerClassifier
 from opentutor_classifier.openai.predict import OpenAIAnswerClassifier
 from typing import Dict, Any, Tuple, Union, cast
-from opentutor_classifier.logger import get_logger
+from opentutor_classifier.log import LOGGER
 
 
-log = get_logger()
+log = LOGGER
 
 
 class CompositeAnswerClassifier(AnswerClassifier):
@@ -49,6 +49,7 @@ class CompositeAnswerClassifier(AnswerClassifier):
 
     async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         # lr_task = asyncio.wait_for(self.run_lr_evaluate(answer), timeout=20)
+        log.debug("entering composite classifier")
         openai_task = asyncio.wait_for(self.run_openai_evaluate(answer), timeout=10.0)
         lr_task = self.run_lr_evaluate(answer)
         results: Tuple[
@@ -69,12 +70,16 @@ class CompositeAnswerClassifier(AnswerClassifier):
             )
 
         if not isinstance(results[1], AnswerClassifierResult):
-            print("returning LR2 results")
-            print(str(cast(AnswerClassifierResult, results[0]).to_dict()))
+            log.info(
+                msg="returning LR2 results",
+                extra={"result": cast(AnswerClassifierResult, results[0]).to_dict()},
+            )
             return cast(AnswerClassifierResult, results[0])
         else:
-            print("returning openai results")
-            print(str(cast(AnswerClassifierResult, results[1]).to_dict()))
+            log.info(
+                msg="returning openai results",
+                extra={"result": cast(AnswerClassifierResult, results[1]).to_dict()},
+            )
             return cast(AnswerClassifierResult, results[1])
 
     def get_last_trained_at(self) -> float:

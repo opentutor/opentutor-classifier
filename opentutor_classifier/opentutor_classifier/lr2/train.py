@@ -57,7 +57,7 @@ from opentutor_classifier.config import (
     get_train_quality_default,
     PROP_TRAIN_QUALITY,
 )
-from opentutor_classifier.log import logger
+from opentutor_classifier.log import LOGGER
 
 from .constants import FEATURE_LENGTH_RATIO
 from .expectations import LRExpectationClassifier
@@ -257,7 +257,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 continue
             label = str(train_data["label"][i]).lower().strip()
             if label not in [LABEL_GOOD, LABEL_BAD]:
-                logger.warning(
+                LOGGER.warning(
                     f"ignoring training-data row {i} with invalid label {label}"
                 )
                 continue

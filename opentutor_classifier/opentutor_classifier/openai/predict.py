@@ -32,6 +32,9 @@ from .constants import (
     GROUNDTRUTH_FILENAME,
 )
 from typing import Dict, List, Any
+from opentutor_classifier.log import LOGGER
+
+log = LOGGER
 
 
 class OpenAIAnswerClassifier(AnswerClassifier):
@@ -44,7 +47,7 @@ class OpenAIAnswerClassifier(AnswerClassifier):
         return self
 
     async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
-
+        log.info("entering openai classifier")
         llm_model_name = fetch_lesson_llm_model_name(self.config.model_name)
 
         if answer.config_data is None:
@@ -72,7 +75,7 @@ class OpenAIAnswerClassifier(AnswerClassifier):
             call_data=call, llm_model_name=llm_model_name
         )
         expectations: List[ExpectationClassifierResult] = []
-        print(response.to_json())
+        log.info(response.to_json())
         open_ai_answer: Answer = response.answers[
             response.answers.__iter__().__next__()
         ]

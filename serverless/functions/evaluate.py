@@ -12,7 +12,7 @@ import boto3
 import asyncio
 from dataclass_wizard import JSONWizard
 from src.utils import create_json_response, require_env
-from src.logger import get_logger
+from opentutor_classifier.log import LOGGER
 
 from opentutor_classifier.classifier_dao import ClassifierDao
 from opentutor_classifier.dao import find_data_dao
@@ -29,7 +29,7 @@ class Output(JSONWizard):
     output: AnswerClassifierResult
 
 
-log = get_logger("status")
+log = LOGGER
 JOBS_TABLE_NAME = require_env("JOBS_TABLE_NAME")
 log.info(f"using table {JOBS_TABLE_NAME}")
 aws_region = os.environ.get("REGION", "us-east-1")
@@ -49,7 +49,7 @@ def _get_dao() -> ClassifierDao:
 
 
 def handler(event, context):
-    print(json.dumps(event))
+    log.info(json.dumps(event))
     if "body" not in event:
         return create_json_response(
             400, {"error": "bad request: body not in event"}, event
@@ -85,19 +85,20 @@ def handler(event, context):
 
     data_dao = find_data_dao()
 
-    classifier = _get_dao().find_classifier(
-        lesson,
-        ClassifierConfig(
-            dao=data_dao,
-            model_name=lesson,
-            model_roots=model_roots,
-            shared_root=shared_root,
-        ),
-        arch=arch,
-    )
     if ping:
         return create_json_response(200, {"ping": "pong"}, event)
     else:
+        classifier = _get_dao().find_classifier(
+            lesson,
+            ClassifierConfig(
+                dao=data_dao,
+                model_name=lesson,
+                model_roots=model_roots,
+                shared_root=shared_root,
+            ),
+            arch,
+        )
+
         _model_op = asyncio.run(
             classifier.evaluate(
                 AnswerClassifierInput(
