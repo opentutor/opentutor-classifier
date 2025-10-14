@@ -39,19 +39,19 @@ from .api import (
     update_last_trained_at,
 )
 from .utils import load_data, load_config, require_env
-from opentutor_classifier.log import logger
+from opentutor_classifier.log import LOGGER
 
 import boto3
 import botocore
 
 s3 = boto3.client("s3")
 SHARED = environ.get("SHARED_ROOT") or "shared"
-logger.info(f"shared: {SHARED}")
+LOGGER.info(f"shared: {SHARED}")
 MODELS_BUCKET = require_env("MODELS_BUCKET")
-logger.info(f"bucket: {MODELS_BUCKET}")
+LOGGER.info(f"bucket: {MODELS_BUCKET}")
 
 DEPLOYMENT_MODE = environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
-logger.info(f"Deployment Mode: {DEPLOYMENT_MODE}")
+LOGGER.info(f"Deployment Mode: {DEPLOYMENT_MODE}")
 
 # online mode lambdas only allow writing to /tmp folder
 MODEL_ROOT_DEFAULT = (
@@ -62,7 +62,7 @@ MODELS_DEPLOYED_ROOT_DEFAULT = (
     if DEPLOYMENT_MODE == DEPLOYMENT_MODE_OFFLINE
     else "/tmp/models_deployed"
 )
-logger.info(f"model root default: {MODEL_ROOT_DEFAULT}")
+LOGGER.info(f"model root default: {MODEL_ROOT_DEFAULT}")
 
 
 def _get_model_root() -> str:
@@ -339,13 +339,13 @@ def get_and_update_model_from_s3(ref: ModelRef, model_in_memory_exists: bool = T
     )
     if model_in_memory_exists:
         # Check if model exists in s3 that is more up to date than model in memory
-        logger.info(f"model file exists in lambda memory: {model_lambda_file_path}")
+        LOGGER.info(f"model file exists in lambda memory: {model_lambda_file_path}")
         modified_time = path.getmtime(model_lambda_file_path)
         utc_mod_time = datetime.utcfromtimestamp(modified_time)
-        logger.info(f"model file modified at {utc_mod_time}")
+        LOGGER.info(f"model file modified at {utc_mod_time}")
     try:
         model_s3_path = path.join(ref.lesson, ref.arch, ref.filename)
-        logger.info(f"model s3 path: {model_s3_path}")
+        LOGGER.info(f"model s3 path: {model_s3_path}")
         model_from_s3 = s3.get_object(
             **{
                 "Bucket": MODELS_BUCKET,
@@ -358,7 +358,7 @@ def get_and_update_model_from_s3(ref: ModelRef, model_in_memory_exists: bool = T
             }
         )
         config_s3_path = path.join(ref.lesson, ref.arch, _CONFIG_YAML)
-        logger.info(f"model s3 path: {config_s3_path}")
+        LOGGER.info(f"model s3 path: {config_s3_path}")
 
         config_from_s3 = s3.get_object(
             **{
@@ -371,7 +371,7 @@ def get_and_update_model_from_s3(ref: ModelRef, model_in_memory_exists: bool = T
                 ),
             }
         )
-        logger.info("model and config found in s3")
+        LOGGER.info("model and config found in s3")
         # Update model and config in memory with up to date versions from s3
         makedirs(path.dirname(model_lambda_file_path), exist_ok=True)
         makedirs(path.dirname(config_lambda_file_path), exist_ok=True)
@@ -381,17 +381,17 @@ def get_and_update_model_from_s3(ref: ModelRef, model_in_memory_exists: bool = T
         with open(config_lambda_file_path, "wb") as f:
             for chunk in config_from_s3["Body"].iter_chunks(chunk_size=4096):
                 f.write(chunk)
-        logger.info("model file updated")
+        LOGGER.info("model file updated")
         return True
     except botocore.exceptions.ClientError as e:
         if (
             e.response["Error"]["Code"] != "NoSuchKey"
             and e.response["Error"]["Code"] != "304"
         ):  # indicates no trained model in s3
-            logger.error(ref)
-            logger.error(e)
+            LOGGER.error(ref)
+            LOGGER.error(e)
             raise e
-        logger.debug("model file not updated in s3 since last fetch")
+        LOGGER.debug("model file not updated in s3 since last fetch")
         return False
 
 
@@ -424,7 +424,7 @@ def find_predicton_config_and_pickle_online(
     """
 
     if dao.trained_model_exists(ref):
-        logger.info(f"model in memory for {ref.lesson}, checking s3")
+        LOGGER.info(f"model in memory for {ref.lesson}, checking s3")
         get_and_update_model_from_s3(ref, model_in_memory_exists=True)
         return ConfigAndModel(
             config=dao.find_prediction_config(ref),
@@ -432,7 +432,7 @@ def find_predicton_config_and_pickle_online(
             is_default=False,
         )
     elif get_and_update_model_from_s3(ref, model_in_memory_exists=False):
-        logger.info("model not in memory but got it from s3")
+        LOGGER.info("model not in memory but got it from s3")
         return ConfigAndModel(
             config=dao.find_prediction_config(ref),
             model=load_model_file(ref, dao, False),
@@ -442,7 +442,7 @@ def find_predicton_config_and_pickle_online(
         default_ref: ModelRef = ModelRef(
             filename=ref.filename, lesson=DEFAULT_LESSON_NAME, arch=ref.arch
         )
-        logger.info(
+        LOGGER.info(
             f"No model found for lesson {ref.lesson} in memory nor s3, using default model"
         )
         model_in_memory_exists = dao.trained_model_exists(default_ref)

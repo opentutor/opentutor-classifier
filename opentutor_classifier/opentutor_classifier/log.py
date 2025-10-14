@@ -5,24 +5,8 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 from aws_lambda_powertools import Logger
-from logging.config import dictConfig
 import os
 
 LOG_LEVEL_DEFAULT = os.environ.get("LOG_LEVEL_CLASSIFIER") or "INFO"
 
-# dictConfig(
-#     {
-#         "version": 1,
-#         "handlers": {
-#             "console": {"class": "logging.StreamHandler", "level": LOG_LEVEL_DEFAULT}
-#         },
-#         "formatters": {
-#             "default": {
-#                 "format": "[%(asctime)s] %(levelname)s in %(module)s: %(message)s"
-#             }
-#         },
-#         "root": {"level": LOG_LEVEL_DEFAULT, "handlers": ["console"]},
-#     }
-# )
-
-logger = Logger(level=LOG_LEVEL_DEFAULT, serialize_stacktrace=True)
+LOGGER = Logger(level=LOG_LEVEL_DEFAULT, serialize_stacktrace=True)

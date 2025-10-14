@@ -32,9 +32,9 @@ from .constants import (
     GROUNDTRUTH_FILENAME,
 )
 from typing import Dict, List, Any
-from opentutor_classifier.logger import get_logger
+from opentutor_classifier.log import LOGGER
 
-log = get_logger()
+log = LOGGER
 
 
 class OpenAIAnswerClassifier(AnswerClassifier):

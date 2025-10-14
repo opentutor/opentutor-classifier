@@ -23,7 +23,7 @@ from .constants import (
     USER_GROUNDTRUTH,
 )
 from opentutor_classifier.utils import require_env, validate_json
-from opentutor_classifier.log import logger
+from opentutor_classifier.log import LOGGER
 
 
 @dataclass
@@ -121,7 +121,7 @@ class OpenAIResultContent(JSONWizard):
         openai.error.APIError,
         openai.error.Timeout,
     ),
-    logger=logger,
+    logger=LOGGER,
 )
 def num_tokens_from_string(string: str, model_name: str) -> int:
     """Returns the number of tokens in a text string."""
@@ -147,7 +147,7 @@ async def openai_create(
 
     # logger is not properly logging to cloudwatch.  using print instead for now
     print(f"Sending messages to openAI: {str(messages)}")
-    logger.info("Sending messages to OpenAI: " + str(messages))
+    LOGGER.info("Sending messages to OpenAI: " + str(messages))
 
     if llm_model_name is None:
         if num_tokens_from_string(str(messages), OPENAI_MODEL_SMALL) >= 4000:
@@ -176,7 +176,7 @@ async def openai_create(
                 return result
             else:
                 temperature += 0.1
-                logger.info(
+                LOGGER.info(
                     "Invalid JSON returned from OpenAI, increasing temperature to "
                     + str(temperature)
                     + " and trying again."
@@ -184,7 +184,7 @@ async def openai_create(
 
         else:
             temperature += 0.1
-            logger.info(
+            LOGGER.info(
                 "Invalid JSON returned from OpenAI, increasing temperature to "
                 + str(temperature)
                 + " and trying again."
