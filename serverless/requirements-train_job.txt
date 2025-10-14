@@ -111,7 +111,7 @@ typing-extensions==4.15.0
     # via
     #   aiosignal
     #   aws-lambda-powertools
-urllib3==1.26.20
+urllib3==2.5.0
     # via
     #   requests
     #   sentry-sdk
