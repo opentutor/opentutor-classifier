@@ -7,7 +7,7 @@
 from datetime import datetime
 from opentutor_classifier.api import fetch_lesson_updated_at
 from os import environ
-
+from opentutor_classifier.logger import get_logger
 import pylru
 from opentutor_classifier import (
     get_classifier_arch,
@@ -15,6 +15,8 @@ from opentutor_classifier import (
     ClassifierFactory,
     AnswerClassifier,
 )
+
+log = get_logger()
 
 
 class Entry:
@@ -31,6 +33,7 @@ class ClassifierDao:
     def find_classifier(
         self, lesson: str, config: ClassifierConfig, arch: str = ""
     ) -> AnswerClassifier:
+        log.info(f"arch={arch}")
         cfac = ClassifierFactory()
         lesson_updated_at = fetch_lesson_updated_at(lesson)
         if config.model_name in self.cache:
@@ -40,7 +43,9 @@ class ClassifierDao:
                 and e.last_trained_at >= e.classifier.get_last_trained_at()
                 and e.lesson_updated_at >= lesson_updated_at
             ):
+                log.info(f"returning cached {type(e.classifier)}")
                 return e.classifier
         c = cfac.new_classifier(config=config, arch=arch or get_classifier_arch())
         self.cache[config.model_name] = Entry(c, lesson_updated_at)
+        log.info(f"returning new classifier: {type(c)}")
         return c

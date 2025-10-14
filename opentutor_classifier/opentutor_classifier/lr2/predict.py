@@ -42,9 +42,11 @@ from .dtos import ExpectationToEvaluate, InstanceModels
 from .expectations import LRExpectationClassifier
 from .features import preprocess_sentence
 from opentutor_classifier.config import EVALUATION_BAD, EVALUATION_GOOD
-
+from opentutor_classifier.logger import get_logger
 
 DEPLOYMENT_MODE = environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
+
+log = get_logger()
 
 
 def _confidence_score(
@@ -256,6 +258,7 @@ class LRAnswerClassifier(AnswerClassifier):
         word2vec.get_feature_vectors(final_set)
 
     async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
+        log.info("entering lr2 classifier")
         sent_proc = preprocess_sentence(answer.input_sentence)
         m_by_e, conf = self.model_and_config
         default_m_by_e, default_conf = self.default_model_and_config

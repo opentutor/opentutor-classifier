@@ -85,19 +85,21 @@ def handler(event, context):
 
     data_dao = find_data_dao()
 
-    classifier = _get_dao().find_classifier(
-        lesson,
-        ClassifierConfig(
-            dao=data_dao,
-            model_name=lesson,
-            model_roots=model_roots,
-            shared_root=shared_root,
-        ),
-        arch=arch,
-    )
     if ping:
         return create_json_response(200, {"ping": "pong"}, event)
     else:
+        classifier = _get_dao().find_classifier(
+            lesson,
+            ClassifierConfig(
+                dao=data_dao,
+                model_name=lesson,
+                model_roots=model_roots,
+                shared_root=shared_root,
+            ),
+            arch,
+        )
+        print(type(classifier))
+
         _model_op = asyncio.run(
             classifier.evaluate(
                 AnswerClassifierInput(

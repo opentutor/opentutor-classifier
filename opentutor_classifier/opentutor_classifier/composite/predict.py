@@ -49,6 +49,7 @@ class CompositeAnswerClassifier(AnswerClassifier):
 
     async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
         # lr_task = asyncio.wait_for(self.run_lr_evaluate(answer), timeout=20)
+        log.info("entering composite classifier")
         openai_task = asyncio.wait_for(self.run_openai_evaluate(answer), timeout=10.0)
         lr_task = self.run_lr_evaluate(answer)
         results: Tuple[
@@ -69,12 +70,12 @@ class CompositeAnswerClassifier(AnswerClassifier):
             )
 
         if not isinstance(results[1], AnswerClassifierResult):
-            print("returning LR2 results")
-            print(str(cast(AnswerClassifierResult, results[0]).to_dict()))
+            log.info("returning LR2 results")
+            log.info(str(cast(AnswerClassifierResult, results[0]).to_dict()))
             return cast(AnswerClassifierResult, results[0])
         else:
-            print("returning openai results")
-            print(str(cast(AnswerClassifierResult, results[1]).to_dict()))
+            log.info("returning openai results")
+            log.info(str(cast(AnswerClassifierResult, results[1]).to_dict()))
             return cast(AnswerClassifierResult, results[1])
 
     def get_last_trained_at(self) -> float:
