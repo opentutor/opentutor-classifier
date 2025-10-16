@@ -12,6 +12,7 @@ async-timeout==5.0.1 ; python_full_version < '3.11.3'
     # via redis
 attrs==25.3.0
     # via aiohttp
+aws-lambda-powertools==3.21.0
 backoff==2.2.1
 blinker==1.9.0
 certifi==2025.8.3
@@ -40,6 +41,8 @@ idna==3.10
     #   requests
     #   tldextract
     #   yarl
+jmespath==1.0.1
+    # via aws-lambda-powertools
 joblib==1.5.2
     # via scikit-learn
 markupsafe==3.0.2
@@ -105,7 +108,9 @@ tomlkit==0.8.0
 tqdm==4.67.1
     # via openai
 typing-extensions==4.15.0
-    # via aiosignal
+    # via
+    #   aiosignal
+    #   aws-lambda-powertools
 urllib3==2.5.0
     # via
     #   requests

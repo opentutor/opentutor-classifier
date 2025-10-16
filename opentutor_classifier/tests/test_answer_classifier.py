@@ -25,7 +25,7 @@ from opentutor_classifier import (
 )
 from opentutor_classifier.config import confidence_threshold_default, EVALUATION_BAD
 import opentutor_classifier.dao
-from opentutor_classifier.log import logger
+from opentutor_classifier.log import LOGGER
 from opentutor_classifier.training import train_data_root, train_default_data_root
 from opentutor_classifier.utils import dict_to_config
 from .utils import (
@@ -74,7 +74,7 @@ def _find_or_train_classifier(
     )
     if not cfac.has_trained_model(lesson, cconf, arch=arch):
         example_dir = os.path.join(data_root, lesson)
-        logger.warning(
+        LOGGER.warning(
             f"trained model not found in fixtures for test lesson {lesson}, attempting to train..."
         )
         if lesson == DEFAULT_LESSON_NAME:
@@ -206,6 +206,7 @@ def test_composite_answer_classifier_json_response(
         ),
     ],
 )
+@responses.activate
 def test_openai_answer_classifier_json_response(
     model_roots,
     shared_root,
@@ -220,6 +221,7 @@ def test_openai_answer_classifier_json_response(
         classifier = _find_or_train_classifier(
             lesson, model_roots[0], model_roots[2], shared_root, arch=arch
         )
+
         with patch("openai.ChatCompletion.acreate") as mock_create:
             mock_create.return_value = mock_openai_object(json.dumps(mock_payload))
             result = asyncio.run(

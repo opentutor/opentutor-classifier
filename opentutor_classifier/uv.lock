@@ -104,6 +104,19 @@ wheels = [
 ]
 
 [[package]]
+name = "aws-lambda-powertools"
+version = "3.21.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jmespath" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/27/75/82e48aa3eff9b4fc36faae688136bc44017f649a6ff9bfdeca99a3cf84e5/aws_lambda_powertools-3.21.0.tar.gz", hash = "sha256:f0690676d9eb89cfa9babb847ed8141105898f9915cd5f904e466ae004074427", size = 701342 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9e/29/6a43b564b285f55961a06521059e849218c52d6bf325c71e7db2b4bd5d82/aws_lambda_powertools-3.21.0-py3-none-any.whl", hash = "sha256:bc68373b710f1d8346a9e0a9a4c09b4a46c13daf6352e3e7e80a7a1e8a7c3320", size = 846539 },
+]
+
+[[package]]
 name = "backoff"
 version = "2.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -508,8 +521,9 @@ wheels = [
 [[package]]
 name = "opentutor-classifier"
 version = "1.0.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
+    { name = "aws-lambda-powertools" },
     { name = "backoff" },
     { name = "blinker" },
     { name = "boto3" },
@@ -555,6 +569,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "aws-lambda-powertools", specifier = ">=3.21.0" },
     { name = "backoff", specifier = ">=2.2.1,<3" },
     { name = "blinker", specifier = "~=1.4" },
     { name = "boto3", specifier = "==1.35.48" },

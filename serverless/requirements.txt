@@ -2,6 +2,7 @@
 #    uv export --no-hashes --only-group=base --output-file=./requirements.txt
 attrs==25.3.0
     # via jsonschema
+aws-lambda-powertools==3.21.0
 boto3==1.35.48
 boto3-type-annotations==0.3.1
 botocore==1.35.48
@@ -19,6 +20,7 @@ idna==3.10
     # via requests
 jmespath==1.0.1
     # via
+    #   aws-lambda-powertools
     #   boto3
     #   botocore
 jsonschema==4.4.0
@@ -35,6 +37,8 @@ s3transfer==0.10.4
 six==1.17.0
     # via python-dateutil
 tqdm==4.67.1
+typing-extensions==4.15.0
+    # via aws-lambda-powertools
 urllib3==2.5.0
     # via
     #   botocore

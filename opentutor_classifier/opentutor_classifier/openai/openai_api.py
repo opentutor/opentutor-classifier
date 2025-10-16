@@ -23,7 +23,7 @@ from .constants import (
     USER_GROUNDTRUTH,
 )
 from opentutor_classifier.utils import require_env, validate_json
-from opentutor_classifier.log import logger
+from opentutor_classifier.log import LOGGER
 
 
 @dataclass
@@ -121,7 +121,7 @@ class OpenAIResultContent(JSONWizard):
         openai.error.APIError,
         openai.error.Timeout,
     ),
-    logger=logger,
+    logger=LOGGER,
 )
 def num_tokens_from_string(string: str, model_name: str) -> int:
     """Returns the number of tokens in a text string."""
@@ -134,7 +134,9 @@ async def completions_with_backoff(**kwargs) -> Generator:
     return await openai.ChatCompletion.acreate(**kwargs)
 
 
-async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
+async def openai_create(
+    call_data: OpenAICall, llm_model_name=None
+) -> OpenAIResultContent:
     concept_mask = call_data.mask_concept_uuids()
     messages = call_data.to_openai_json()
     attempts = 0
@@ -145,12 +147,15 @@ async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
 
     # logger is not properly logging to cloudwatch.  using print instead for now
     print(f"Sending messages to openAI: {str(messages)}")
-    logger.info("Sending messages to OpenAI: " + str(messages))
+    LOGGER.info("Sending messages to OpenAI: " + str(messages))
 
-    if num_tokens_from_string(str(messages), OPENAI_MODEL_SMALL) >= 4000:
-        openai_model = OPENAI_MODEL_LARGE
+    if llm_model_name is None:
+        if num_tokens_from_string(str(messages), OPENAI_MODEL_SMALL) >= 4000:
+            openai_model = OPENAI_MODEL_LARGE
+        else:
+            openai_model = OPENAI_MODEL_SMALL
     else:
-        openai_model = OPENAI_MODEL_SMALL
+        openai_model = llm_model_name
 
     while attempts < 5 and not result_valid:
         attempts += 1
@@ -171,7 +176,7 @@ async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
                 return result
             else:
                 temperature += 0.1
-                logger.info(
+                LOGGER.info(
                     "Invalid JSON returned from OpenAI, increasing temperature to "
                     + str(temperature)
                     + " and trying again."
@@ -179,7 +184,7 @@ async def openai_create(call_data: OpenAICall) -> OpenAIResultContent:
 
         else:
             temperature += 0.1
-            logger.info(
+            LOGGER.info(
                 "Invalid JSON returned from OpenAI, increasing temperature to "
                 + str(temperature)
                 + " and trying again."

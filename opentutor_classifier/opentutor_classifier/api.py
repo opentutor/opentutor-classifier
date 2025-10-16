@@ -24,7 +24,7 @@ from opentutor_classifier import (
     TrainingInput,
     dict_to_question_config,
 )
-from opentutor_classifier.log import logger
+from opentutor_classifier.log import LOGGER
 
 
 def get_graphql_endpoint() -> str:
@@ -68,6 +68,16 @@ class GQLQueryBody(TypedDict):
     query: str
     variables: dict
 
+
+GQL_QUERY_LESSON_LLM_MODEL_NAME = """
+query LessonLLMModelName($lessonId: String!) {
+    me {
+        lesson(lessonId: $lessonId) {
+            llmModelName
+        }
+    }
+}
+"""
 
 GQL_QUERY_LESSON_UPDATED_AT = """
 query LessonUpdatedAt($lessonId: String!) {
@@ -146,6 +156,15 @@ mutation UpdateLastTrainedAt(
         }
     }
 }"""
+
+
+def query_lesson_llm_model_name(lesson: str) -> GQLQueryBody:
+    return {
+        "query": GQL_QUERY_LESSON_LLM_MODEL_NAME,
+        "variables": {
+            "lessonId": lesson,
+        },
+    }
 
 
 def query_lesson_updated_at(lesson: str) -> GQLQueryBody:
@@ -232,10 +251,10 @@ def __auth_gql(query: GQLQueryBody, url: str = "") -> dict:
         res.raise_for_status()
         return res.json()
     except BaseException as x:
-        logger.warning(f"error for query: {query}")
+        LOGGER.warning(f"error for query: {query}")
         if res:
-            logger.warning(f"res={res.text}")
-        logger.exception(x)
+            LOGGER.warning(f"res={res.text}")
+        LOGGER.exception(x)
         raise x
 
 
@@ -252,6 +271,14 @@ def fetch_config(lesson: str) -> QuestionConfig:
         raise Exception(json.dumps(tdjson.get("errors")))
     data = tdjson["data"]["me"]["config"]
     return dict_to_question_config(yaml.safe_load(data.get("stringified") or ""))
+
+
+def fetch_lesson_llm_model_name(lesson: str) -> str:
+    tdjson = __auth_gql(query_lesson_llm_model_name(lesson))
+    if "errors" in tdjson:
+        raise Exception(json.dumps(tdjson.get("errors")))
+    llm_model_name = tdjson["data"]["me"]["lesson"]["llmModelName"]
+    return llm_model_name
 
 
 def fetch_lesson_updated_at(lesson: str) -> datetime:
@@ -312,7 +339,7 @@ def sbert_word_to_vec(words: list, slim: bool = False):
         for i in range(0, len(words), req_words_chunk_size)
     ]
     final_res: Dict = {}
-    logger.info(f"Number of chunk requests to make: {len(req_words_chunks)}")
+    LOGGER.info(f"Number of chunk requests to make: {len(req_words_chunks)}")
 
     for i, req_words in enumerate(req_words_chunks):
 
@@ -326,7 +353,7 @@ def sbert_word_to_vec(words: list, slim: bool = False):
             json={"model": model_name, "words": words_appended_by_space},
         )
         res.raise_for_status()
-        logger.info(f"Finished req_chuck #{i+1}")
+        LOGGER.info(f"Finished req_chuck #{i+1}")
         final_res = {**final_res, **res.json()}
     return final_res
 
