@@ -29,5 +29,7 @@ USER_GROUNDTRUTH = "Here are some examples that have already been labeled. They 
 OPENAI_API_KEY = "OPENAI_API_KEY"
 OPENAI_MODEL_LARGE = "gpt-4.1-mini"
 OPENAI_MODEL_SMALL = "gpt-4o-mini"
+OPENAI_MODEL_GPT5 = "gpt-5-mini"
+TEMPERATURE_RESTRICTED_MODELS = [OPENAI_MODEL_GPT5]
 OPENAI_DEFAULT_TEMP = 0.1
 GROUNDTRUTH_FILENAME = "groundtruth.json"

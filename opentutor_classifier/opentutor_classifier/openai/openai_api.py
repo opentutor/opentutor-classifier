@@ -20,6 +20,7 @@ from .constants import (
     OPENAI_DEFAULT_TEMP,
     OPENAI_MODEL_LARGE,
     OPENAI_MODEL_SMALL,
+    TEMPERATURE_RESTRICTED_MODELS,
     USER_GROUNDTRUTH,
 )
 from opentutor_classifier.utils import require_env, validate_json
@@ -157,10 +158,15 @@ async def openai_create(
     else:
         openai_model = llm_model_name
 
+    if openai_model in TEMPERATURE_RESTRICTED_MODELS:
+        actual_temp = 1
+    else:
+        actual_temp = temperature
+
     while attempts < 5 and not result_valid:
         attempts += 1
         raw_result = await completions_with_backoff(
-            model=openai_model, temperature=temperature, messages=messages
+            model=openai_model, temperature=actual_temp, messages=messages
         )
         content = raw_result.choices[0].message.content  # type: ignore
 
@@ -175,18 +181,20 @@ async def openai_create(
                 ].unmask_concept_uuids(concept_mask)
                 return result
             else:
-                temperature += 0.1
+                if openai_model not in TEMPERATURE_RESTRICTED_MODELS:
+                    actual_temp += 0.1
                 LOGGER.info(
                     "Invalid JSON returned from OpenAI, increasing temperature to "
-                    + str(temperature)
+                    + str(actual_temp)
                     + " and trying again."
                 )
 
         else:
-            temperature += 0.1
+            if openai_model not in TEMPERATURE_RESTRICTED_MODELS:
+                actual_temp += 0.1
             LOGGER.info(
                 "Invalid JSON returned from OpenAI, increasing temperature to "
-                + str(temperature)
+                + str(actual_temp)
                 + " and trying again."
             )
 
