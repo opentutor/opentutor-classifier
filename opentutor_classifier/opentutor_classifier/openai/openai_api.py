@@ -159,7 +159,7 @@ async def openai_create(
         openai_model = llm_model_name
 
     if openai_model in TEMPERATURE_RESTRICTED_MODELS:
-        actual_temp = 1
+        actual_temp = 1.0
     else:
         actual_temp = temperature
 
