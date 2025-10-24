@@ -146,6 +146,7 @@ def test_composite_answer_classifier_json_response(
     mock_payload: dict,
 ):
     os.environ["OPENAI_API_KEY"] = "fake"
+    os.environ["OPENAI_ORG_ID_KEY"] = "fake"
     with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
         classifier = _find_or_train_classifier(
             lesson, model_roots[0], model_roots[2], shared_root, arch=arch
@@ -217,6 +218,7 @@ def test_openai_answer_classifier_json_response(
     mock_payload: dict,
 ):
     os.environ["OPENAI_API_KEY"] = "fake"
+    os.environ["OPENAI_ORG_ID_KEY"] = "fake"
     with mocked_data_dao(lesson, example_data_path(""), model_roots[0], model_roots[1]):
         classifier = _find_or_train_classifier(
             lesson, model_roots[0], model_roots[2], shared_root, arch=arch
