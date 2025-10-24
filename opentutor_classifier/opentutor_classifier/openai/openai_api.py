@@ -136,6 +136,12 @@ def num_tokens_from_string(string: str, model_name: str) -> int:
     return num_tokens
 
 
+def error_corrections(content: str) -> str:
+    if '"answer text"' in content:
+        content = content.replace('"answer text"', '"answer_text"')
+    return content
+
+
 async def completions_with_backoff(**kwargs) -> Generator:
     return await openai.ChatCompletion.acreate(**kwargs)
 
@@ -170,11 +176,14 @@ async def openai_create(
             model=openai_model, temperature=temperature, messages=messages
         )
         content = raw_result.choices[0].message.content  # type: ignore
-
+        content = error_corrections(content)
         result: OpenAIResultContent | None = None
         if validate_json(content, OpenAIResultContent2):
             result2: OpenAIResultContent2 = OpenAIResultContent2.from_json(content)
             result = OpenAIResultContent({"answer_1": result2.answers})
+        elif validate_json(content, Answer):
+            badly_formatted_answer: Answer = Answer.from_json(content)
+            result = OpenAIResultContent({"answer_1": badly_formatted_answer})
         elif validate_json(content, OpenAIResultContent):
             result = OpenAIResultContent.from_json(content)
 
