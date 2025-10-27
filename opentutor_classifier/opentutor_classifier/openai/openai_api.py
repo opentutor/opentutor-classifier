@@ -21,6 +21,7 @@ from .constants import (
     OPENAI_MODEL_LARGE,
     OPENAI_MODEL_SMALL,
     USER_GROUNDTRUTH,
+    OPENAI_ORG_ID_KEY,
 )
 from opentutor_classifier.utils import require_env, validate_json
 from opentutor_classifier.log import LOGGER
@@ -113,6 +114,11 @@ class OpenAIResultContent(JSONWizard):
     answers: Dict[str, Answer]
 
 
+@dataclass
+class OpenAIResultContent2(JSONWizard):
+    answers: Answer
+
+
 @backoff.on_exception(
     backoff.expo,
     (
@@ -130,6 +136,12 @@ def num_tokens_from_string(string: str, model_name: str) -> int:
     return num_tokens
 
 
+def error_corrections(content: str) -> str:
+    if '"answer text"' in content:
+        content = content.replace('"answer text"', '"answer_text"')
+    return content
+
+
 async def completions_with_backoff(**kwargs) -> Generator:
     return await openai.ChatCompletion.acreate(**kwargs)
 
@@ -144,6 +156,7 @@ async def openai_create(
     temperature = OPENAI_DEFAULT_TEMP
 
     openai.api_key = require_env(OPENAI_API_KEY)
+    openai.organization = require_env(OPENAI_ORG_ID_KEY)
 
     # logger is not properly logging to cloudwatch.  using print instead for now
     print(f"Sending messages to openAI: {str(messages)}")
@@ -163,9 +176,18 @@ async def openai_create(
             model=openai_model, temperature=temperature, messages=messages
         )
         content = raw_result.choices[0].message.content  # type: ignore
+        content = error_corrections(content)
+        result: OpenAIResultContent | None = None
+        if validate_json(content, OpenAIResultContent2):
+            result2: OpenAIResultContent2 = OpenAIResultContent2.from_json(content)
+            result = OpenAIResultContent({"answer_1": result2.answers})
+        elif validate_json(content, Answer):
+            badly_formatted_answer: Answer = Answer.from_json(content)
+            result = OpenAIResultContent({"answer_1": badly_formatted_answer})
+        elif validate_json(content, OpenAIResultContent):
+            result = OpenAIResultContent.from_json(content)
 
-        if validate_json(content, OpenAIResultContent):
-            result: OpenAIResultContent = OpenAIResultContent.from_json(content)
+        if result is not None:
             if len(
                 result.answers[result.answers.__iter__().__next__()].concepts
             ) == len(call_data.user_concepts):
@@ -177,17 +199,19 @@ async def openai_create(
             else:
                 temperature += 0.1
                 LOGGER.info(
-                    "Invalid JSON returned from OpenAI, increasing temperature to "
+                    msg="Invalid JSON returned from OpenAI, increasing temperature to "
                     + str(temperature)
-                    + " and trying again."
+                    + " and trying again.",
+                    extra={"openAIResponse": content},
                 )
 
         else:
             temperature += 0.1
             LOGGER.info(
-                "Invalid JSON returned from OpenAI, increasing temperature to "
+                msg="Invalid JSON returned from OpenAI, increasing temperature to "
                 + str(temperature)
-                + " and trying again."
+                + " and trying again.",
+                extra={"openAIResponse": content},
             )
 
     raise Exception("Unable to get valid JSON from OpenAI after 5 attempts.")

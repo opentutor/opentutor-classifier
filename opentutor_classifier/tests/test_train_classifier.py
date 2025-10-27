@@ -66,6 +66,7 @@ def test_train_openai_ground_truth(
     expected_length: int,
 ):
     os.environ["OPENAI_API_KEY"] = "fake"
+    os.environ["OPENAI_ORG_ID_KEY"] = "fake"
     with test_env_isolated(
         tmpdir, data_root, shared_root, lesson=lesson, arch=arch
     ) as test_config:
@@ -211,6 +212,7 @@ def test_train_and_predict_and_update(
     monkeypatch,
 ):
     monkeypatch.setenv("OPENAI_API_KEY", "dummy")
+    monkeypatch.setenv("OPENAI_ORG_ID_KEY", "dummy")
     _test_train_and_predict_and_update(
         example,
         version,
@@ -278,6 +280,7 @@ def test_train_and_predict_slow(
     monkeypatch,
 ):
     monkeypatch.setenv("OPENAI_API_KEY", "dummy")
+    monkeypatch.setenv("OPENAI_ORG_ID_KEY", "dummy")
     _test_train_and_predict(
         example,
         arch,
