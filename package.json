@@ -5,7 +5,7 @@
   "devDependencies": {
     "serverless": "4.4.7",
     "serverless-deployment-bucket": "^1.6.0",
-    "serverless-domain-manager": "^6.2.1",
+    "serverless-domain-manager": "^8.0.0",
     "serverless-layers": "2.5.2"
   },
   "scripts": {
