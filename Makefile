@@ -83,3 +83,8 @@ test-types: $(VENV)
 	uv run mypy opentutor_classifier
 	uv run mypy opentutor_classifier_api
 	uv run mypy shared
+
+.PHONY: build-requirements
+build-requirements: $(VENV)
+	uv export --no-hashes --no-groups dev > requirements-full.txt
+	uv export --no-hashes --only-groups dev > requirements.txt
