@@ -264,7 +264,7 @@ def test_train_and_predict_and_update(
         ),
     ],
 )
-@pytest.mark.skipif(SKIP_SLOW)
+@pytest.mark.skipif(SKIP_SLOW, reason="slow")
 def test_train_and_predict_slow(
     example: str,
     arch: str,
@@ -407,7 +407,7 @@ def _test_train_and_predict_specific_answers_slow(
             )
 
 
-@pytest.mark.skipif(SKIP_SLOW)
+@pytest.mark.skipif(SKIP_SLOW, reason="SLOW")
 @pytest.mark.parametrize(
     "lesson,arch,evaluate_input_list,expected_training_result,expected_evaluate_result",
     [

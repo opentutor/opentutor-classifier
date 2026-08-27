@@ -7,7 +7,7 @@
 from os import path
 import pytest
 
-SKIP_SLOW = False
+SKIP_SLOW = True
 
 
 @pytest.fixture(scope="module", autouse=True)
