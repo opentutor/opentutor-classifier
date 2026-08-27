@@ -7,6 +7,8 @@
 from os import path
 import pytest
 
+SKIP_SLOW = False
+
 
 @pytest.fixture(scope="module", autouse=True)
 def word2vec() -> str:

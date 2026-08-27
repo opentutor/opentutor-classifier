@@ -237,7 +237,6 @@ class LRAnswerClassifier(AnswerClassifier):
     def batch_preload_evaluate_features(
         self,
         answer: AnswerClassifierInput,
-        index2word,
         config: QuestionConfig,
         expectations,
     ):
@@ -254,7 +253,7 @@ class LRAnswerClassifier(AnswerClassifier):
         for exp in expectations:
             exp_conf = config.get_expectation(exp.expectation)
             final_list.extend(preprocess_sentence(exp_conf.ideal))
-        final_set = set(final_list).intersection(index2word)
+        final_set = set(final_list)
         word2vec.get_feature_vectors(final_set)
 
     async def evaluate(self, answer: AnswerClassifierInput) -> AnswerClassifierResult:
@@ -276,7 +275,6 @@ class LRAnswerClassifier(AnswerClassifier):
         ]
         result = AnswerClassifierResult(input=answer, expectation_results=[])
         word2vec = self.find_word2vec()
-        index2word = set(word2vec.index_to_key(False))
         result.speech_acts["metacognitive"] = (
             self.speech_act_classifier.check_meta_cognitive(result)
         )
@@ -284,9 +282,9 @@ class LRAnswerClassifier(AnswerClassifier):
             result
         )
         question_proc = preprocess_sentence(conf.question)
-        clustering = CustomDBScanClustering(word2vec)  # , index2word)
+        clustering = CustomDBScanClustering(word2vec)
 
-        self.batch_preload_evaluate_features(answer, index2word, conf, expectations)
+        self.batch_preload_evaluate_features(answer, conf, expectations)
 
         for exp in expectations:
             exp_conf = conf.get_expectation(exp.expectation)
@@ -296,7 +294,6 @@ class LRAnswerClassifier(AnswerClassifier):
                 sent_proc,
                 preprocess_sentence(exp_conf.ideal),
                 word2vec,
-                # index2word,
                 exp_conf.features.get(GOOD) or [],
                 exp_conf.features.get(BAD) or [],
                 clustering,

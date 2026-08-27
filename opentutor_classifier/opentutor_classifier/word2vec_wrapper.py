@@ -9,15 +9,23 @@ from typing import Any, Dict
 from abc import ABC, abstractmethod
 
 from numpy import ndarray
+import openai
 from opentutor_classifier.constants import (
     DEPLOYMENT_MODE_ONLINE,
     DEPLOYMENT_MODE_OFFLINE,
 )
 
+from opentutor_classifier.openai.constants import OPENAI_API_KEY, OPENAI_ORG_ID_KEY
+from opentutor_classifier.utils import require_env
 from opentutor_classifier.word2vec import find_or_load_word2vec
 from opentutor_classifier.api import sbert_word_to_vec, get_sbert_index_to_key
 
 DEPLOYMENT_MODE = os.environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
+
+api_key = require_env(OPENAI_API_KEY, "DUMMY")
+organization = require_env(OPENAI_ORG_ID_KEY, "DUMMY")
+
+open_ai_client = openai.OpenAI(api_key=api_key, organization=organization)
 
 
 class Word2VecWrapper(ABC):
