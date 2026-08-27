@@ -115,7 +115,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             embeddings[word] = list(map(lambda x: round(float(x), 9), word_vecs[word]))
         return embeddings
 
-    def preload_feature_vectors_train_default(self, data: pd.DataFrame, index2word_set):
+    def preload_feature_vectors_train_default(self, data: pd.DataFrame):
         """
         ONLINE USE ONLY
         This function preprocesses data and preloads their vectors for later use by process_features (via calculate_features)
@@ -129,17 +129,12 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             processed_input_sentence = preprocess_sentence(input_sentence)
             processed_question = preprocess_sentence(features["question"])
             processed_ia = preprocess_sentence(features["ideal"])
-            i_processed_input_sentence = set(processed_input_sentence).intersection(
-                index2word_set
-            )
-            i_processed_question = set(processed_question).intersection(index2word_set)
-            i_processed_ia = set(processed_ia).intersection(index2word_set)
             all_words.extend(
-                [*i_processed_input_sentence, *i_processed_question, *i_processed_ia]
+                [*processed_input_sentence, *processed_question, *processed_ia]
             )
         self.word2vec_wrapper.get_feature_vectors(set(all_words))
 
-    def process_features(self, features, input_sentence, index2word_set, clustering):
+    def process_features(self, features, input_sentence, clustering):
         processed_input_sentence = preprocess_sentence(input_sentence)
         processed_question = preprocess_sentence(features["question"])
         processed_ia = preprocess_sentence(features["ideal"])
@@ -150,7 +145,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
             processed_input_sentence,
             processed_ia,
             self.word2vec_wrapper,
-            index2word_set,
             [],
             [],
             clustering,
@@ -162,16 +156,15 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
 
     def train_default(self, data: pd.DataFrame, dao: DataDao) -> TrainingResult:
         model = LRExpectationClassifier.initialize_model()
-        index2word_set = set(self.word2vec_wrapper.index_to_key(True))
         expectation_models: Dict[int, linear_model.LogisticRegression] = {}
-        clustering = CustomDBScanClustering(self.word2vec_wrapper, index2word_set)
+        clustering = CustomDBScanClustering(self.word2vec_wrapper)
 
-        self.preload_feature_vectors_train_default(data, index2word_set)
+        self.preload_feature_vectors_train_default(data)
 
         all_features = list(
             data.apply(
                 lambda row: self.process_features(
-                    json.loads(row["exp_data"]), row["text"], index2word_set, clustering
+                    json.loads(row["exp_data"]), row["text"], clustering
                 ),
                 axis=1,
             )
@@ -267,8 +260,7 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                 str(train_data["text"][i]).lower().strip()
             )
             split_training_sets[exp_num][1].append(label)
-        index2word_set: set = set(self.word2vec_wrapper.index_to_key(False))
-        clustering = CustomDBScanClustering(self.word2vec_wrapper, index2word_set)
+        clustering = CustomDBScanClustering(self.word2vec_wrapper)
         config_updated = train_input.config.clone()
         expectation_results: List[ExpectationTrainingResult] = []
         expectation_models: Dict[str, linear_model.LogisticRegression] = {}
@@ -346,7 +338,6 @@ class LRAnswerClassifierTraining(AnswerClassifierTraining):
                         example,
                         ideal_answer,
                         self.word2vec_wrapper,
-                        index2word_set,
                         good,
                         bad,
                         clustering,

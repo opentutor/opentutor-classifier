@@ -284,7 +284,7 @@ class LRAnswerClassifier(AnswerClassifier):
             result
         )
         question_proc = preprocess_sentence(conf.question)
-        clustering = CustomDBScanClustering(word2vec, index2word)
+        clustering = CustomDBScanClustering(word2vec)  # , index2word)
 
         self.batch_preload_evaluate_features(answer, index2word, conf, expectations)
 
@@ -296,7 +296,7 @@ class LRAnswerClassifier(AnswerClassifier):
                 sent_proc,
                 preprocess_sentence(exp_conf.ideal),
                 word2vec,
-                index2word,
+                # index2word,
                 exp_conf.features.get(GOOD) or [],
                 exp_conf.features.get(BAD) or [],
                 clustering,
