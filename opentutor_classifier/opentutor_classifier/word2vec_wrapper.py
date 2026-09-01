@@ -8,10 +8,10 @@ import os
 from typing import Dict
 from abc import ABC, abstractmethod
 
-from numpy import ndarray
+from numpy import ndarray, array
 import openai
+from openai.types.create_embedding_response import CreateEmbeddingResponse
 from opentutor_classifier.constants import (
-    DEPLOYMENT_MODE_ONLINE,
     DEPLOYMENT_MODE_OFFLINE,
 )
 
@@ -25,7 +25,7 @@ DEPLOYMENT_MODE = os.environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
 api_key = require_env(OPENAI_API_KEY, "DUMMY")
 organization = require_env(OPENAI_ORG_ID_KEY, "DUMMY")
 
-open_ai_client = openai.OpenAI(api_key=api_key, organization=organization)
+open_ai_client = openai.OpenAI(api_key=api_key)
 
 
 class Word2VecWrapper(ABC):
@@ -41,12 +41,23 @@ class Word2VecWrapperOffline(Word2VecWrapper):
 
     def get_feature_vectors(self, words, slim: bool = False) -> Dict[str, ndarray]:
         result: Dict[str, ndarray] = dict()
-        for word in words:
-            if not slim:
-                if word in self.model:
-                    result[word] = self.model[word]
-            elif word in self.model_slim:
-                result[word] = self.model_slim[word]
+        word_list = list(words)
+        if len(word_list) == 0:
+            return result
+        openai_result: CreateEmbeddingResponse = open_ai_client.embeddings.create(
+            input=word_list, dimensions=300, model="text-embedding-3-small"
+        )
+
+        for idx, word in enumerate(word_list):
+            embedding = array(openai_result.data[idx].embedding)
+            result[word] = embedding
+
+        # for word in words:
+        #     if not slim:
+        #         if word in self.model:
+        #             result[word] = self.model[word]
+        #     elif word in self.model_slim:
+        #         result[word] = self.model_slim[word]
         return result
 
 
@@ -98,7 +109,4 @@ class Word2VecWrapperOnline(Word2VecWrapper):
 
 
 def get_word2vec(path, slim_path) -> Word2VecWrapper:
-    if DEPLOYMENT_MODE == DEPLOYMENT_MODE_ONLINE:
-        return Word2VecWrapperOnline(path, slim_path)
-    else:
-        return Word2VecWrapperOffline(path, slim_path)
+    return Word2VecWrapperOffline(path, slim_path)
