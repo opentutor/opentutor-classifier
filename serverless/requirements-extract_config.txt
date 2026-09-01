@@ -2,35 +2,37 @@
 #    uv export --no-hashes --only-group=extractconfig --output-file=./requirements-extract_config.txt
 anyascii==0.3.3
     # via textsearch
-aws-lambda-powertools==3.21.0
+aws-lambda-powertools==3.34.0
 boto3==1.35.48
 boto3-type-annotations==0.3.1
 botocore==1.35.48
     # via
     #   boto3
     #   s3transfer
-certifi==2025.8.3
+certifi==2026.7.22
     # via requests
-charset-normalizer==3.4.3
+charset-normalizer==3.5.1
     # via requests
 colorama==0.4.6 ; sys_platform == 'win32'
     # via tqdm
 contractions==0.1.73
     # via tok
 dataclass-wizard==0.22.3
-filelock==3.19.1
+filelock==3.32.4
     # via tldextract
-gensim==4.3.3
-idna==3.10
+gensim==4.4.0
+idna==3.19
     # via
     #   requests
     #   tldextract
-jmespath==1.0.1
+jmespath==1.1.0
     # via
     #   aws-lambda-powertools
     #   boto3
     #   botocore
-joblib==1.5.2
+joblib==1.5.3
+    # via scikit-learn
+narwhals==2.25.0
     # via scikit-learn
 numpy==1.26.4
     # via
@@ -39,33 +41,33 @@ numpy==1.26.4
     #   scikit-learn
     #   scipy
 pandas==1.5.3
-pyahocorasick==2.2.0
+pyahocorasick==2.3.1
     # via textsearch
-pylru==1.2.1
+pylru==1.3.1
 python-dateutil==2.9.0.post0
     # via
     #   botocore
     #   pandas
 python-dotenv==0.17.1
-pytz==2025.2
+pytz==2026.3.post1
     # via pandas
-pyyaml==6.0.2
-requests==2.32.5
+pyyaml==6.0.3
+requests==2.34.2
     # via
     #   requests-file
     #   tldextract
-requests-file==2.1.0
+requests-file==3.0.1
     # via tldextract
 s3transfer==0.10.4
     # via boto3
-scikit-learn==1.7.1
-scipy==1.13.1
+scikit-learn==1.9.0
+scipy==1.17.1
     # via
     #   gensim
     #   scikit-learn
 six==1.17.0
     # via python-dateutil
-smart-open==7.3.0.post1
+smart-open==8.0.1
     # via gensim
 text2num==2.5.2
 textsearch==0.0.24
@@ -74,15 +76,15 @@ textsearch==0.0.24
     #   tok
 threadpoolctl==3.6.0
     # via scikit-learn
-tldextract==5.3.0
+tldextract==5.3.2
     # via tok
 tok==0.1.14
-tqdm==4.67.1
-typing-extensions==4.15.0
+tqdm==4.70.0
+typing-extensions==4.16.0
     # via aws-lambda-powertools
-urllib3==2.5.0
+urllib3==2.7.0
     # via
     #   botocore
     #   requests
-wrapt==1.17.3
+wrapt==2.3.0
     # via smart-open

@@ -356,16 +356,3 @@ def sbert_word_to_vec(words: list, slim: bool = False):
         LOGGER.info(f"Finished req_chuck #{i+1}")
         final_res = {**final_res, **res.json()}
     return final_res
-
-
-def get_sbert_index_to_key(slim: bool = False):
-    model_name = "word2vec_slim" if slim else "word2vec"
-    res = requests.post(
-        f"{get_sbert_endpoint()}v1/w2v/index_to_key?model={model_name}",
-        headers={
-            "Authorization": f"bearer {get_sbert_api_key()}",
-            f"{get_sbert_waf_secret_header()}": f"{get_sbert_waf_secret_value()}",
-        },
-    )
-    res.raise_for_status()
-    return res.json()

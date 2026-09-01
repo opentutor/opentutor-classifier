@@ -11,7 +11,8 @@ from shutil import copytree
 from pathlib import Path
 from typing import Any, Callable, List, Optional
 from unittest.mock import patch
-from openai.openai_object import OpenAIObject
+from openai.types.chat import ChatCompletionMessage
+from openai.types.chat.chat_completion import ChatCompletion, Choice
 
 import pandas as pd
 import pytest
@@ -64,21 +65,29 @@ from .types import (
 
 
 def mock_openai_timeout(payload):
-    async def side_effects(**kwargs) -> OpenAIObject:
+    async def side_effects(**kwargs) -> ChatCompletion:
         await asyncio.sleep(25)
         return mock_openai_object(payload)
 
     return side_effects
 
 
-def mock_openai_object(payload) -> OpenAIObject:
-    obj = OpenAIObject()
-    message = OpenAIObject()
-    content = OpenAIObject()
-    content.content = payload
-    message.message = content
-    obj.choices = [message]
-    return obj
+def mock_openai_object(payload) -> ChatCompletion:
+    mock_completion = ChatCompletion(
+        id="chatcmpl-123",
+        object="chat.completion",
+        created=1677652288,
+        model="gpt-4",
+        choices=[
+            Choice(
+                index=0,
+                message=ChatCompletionMessage(role="assistant", content=payload),
+                finish_reason="stop",
+            )
+        ],
+        usage={"prompt_tokens": 10, "completion_tokens": 10, "total_tokens": 20},
+    )
+    return mock_completion
 
 
 def assert_train_expectation_results(

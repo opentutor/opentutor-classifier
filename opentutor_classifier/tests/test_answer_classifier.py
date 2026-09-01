@@ -224,7 +224,7 @@ def test_openai_answer_classifier_json_response(
             lesson, model_roots[0], model_roots[2], shared_root, arch=arch
         )
 
-        with patch("openai.ChatCompletion.acreate") as mock_create:
+        with patch("openai.chat.completions.create") as mock_create:
             mock_create.return_value = mock_openai_object(json.dumps(mock_payload))
             result = asyncio.run(
                 classifier.evaluate(

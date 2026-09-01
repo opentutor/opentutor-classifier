@@ -26,6 +26,7 @@ from opentutor_classifier.config import confidence_threshold_default
 from opentutor_classifier.lr2.constants import MODEL_FILE_NAME
 from opentutor_classifier.openai.constants import GROUNDTRUTH_FILENAME
 from opentutor_classifier.openai.train import OpenAIGroundTruth
+from .conftest import SKIP_SLOW
 from .utils import (
     assert_testset_accuracy,
     assert_train_expectation_results,
@@ -195,7 +196,6 @@ def _test_train_and_predict_and_update(
         ),
     ],
 )
-@pytest.mark.slow
 def test_train_and_predict_and_update(
     example: str,
     version: str,
@@ -264,7 +264,7 @@ def test_train_and_predict_and_update(
         ),
     ],
 )
-@pytest.mark.slow
+@pytest.mark.skipif(SKIP_SLOW, reason="slow")
 def test_train_and_predict_slow(
     example: str,
     arch: str,
@@ -407,7 +407,7 @@ def _test_train_and_predict_specific_answers_slow(
             )
 
 
-@pytest.mark.slow
+@pytest.mark.skipif(SKIP_SLOW, reason="SLOW")
 @pytest.mark.parametrize(
     "lesson,arch,evaluate_input_list,expected_training_result,expected_evaluate_result",
     [

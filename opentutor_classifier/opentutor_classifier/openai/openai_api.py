@@ -7,9 +7,10 @@
 
 from dataclasses import dataclass, field
 import json
-from typing import Dict, Generator, List, Union
+from typing import Dict, List, Union
 from dataclass_wizard import JSONWizard
 import openai
+from openai.types.chat.chat_completion import ChatCompletion
 import backoff
 from tiktoken import encoding_for_model
 from opentutor_classifier import ExpectationConfig
@@ -25,6 +26,11 @@ from .constants import (
 )
 from opentutor_classifier.utils import require_env, validate_json
 from opentutor_classifier.log import LOGGER
+
+api_key = require_env(OPENAI_API_KEY, "DUMMY")
+organization = require_env(OPENAI_ORG_ID_KEY, "DUMMY")
+
+open_ai_client = openai.OpenAI(api_key=api_key, organization=organization)
 
 
 @dataclass
@@ -122,10 +128,9 @@ class OpenAIResultContent2(JSONWizard):
 @backoff.on_exception(
     backoff.expo,
     (
-        openai.error.RateLimitError,
-        openai.error.ServiceUnavailableError,
-        openai.error.APIError,
-        openai.error.Timeout,
+        openai.RateLimitError,
+        openai.APIError,
+        openai.Timeout,
     ),
     logger=LOGGER,
 )
@@ -142,8 +147,8 @@ def error_corrections(content: str) -> str:
     return content
 
 
-async def completions_with_backoff(**kwargs) -> Generator:
-    return await openai.ChatCompletion.acreate(**kwargs)
+async def completions_with_backoff(**kwargs) -> ChatCompletion:
+    return openai.chat.completions.create(**kwargs)
 
 
 async def openai_create(
@@ -154,9 +159,6 @@ async def openai_create(
     attempts = 0
     result_valid = False
     temperature = OPENAI_DEFAULT_TEMP
-
-    openai.api_key = require_env(OPENAI_API_KEY)
-    openai.organization = require_env(OPENAI_ORG_ID_KEY)
 
     # logger is not properly logging to cloudwatch.  using print instead for now
     print(f"Sending messages to openAI: {str(messages)}")

@@ -50,7 +50,6 @@ class LRExpectationClassifier:
         example: List[str],
         ideal: List[str],
         word2vec: Word2VecWrapper,
-        index2word_set: set,
         good: List[str],
         bad: List[str],
         clustering: CustomDBScanClustering,
@@ -67,12 +66,8 @@ class LRExpectationClassifier:
         feat = [
             *features.number_of_negatives(example),
             clustering.word_alignment_feature(example, ideal),
-            features.word2vec_example_similarity(
-                word2vec, index2word_set, example, ideal
-            ),
-            features.word2vec_question_similarity(
-                word2vec, index2word_set, example, question
-            ),
+            features.word2vec_example_similarity(word2vec, example, ideal),
+            features.word2vec_question_similarity(word2vec, example, question),
         ]
         if mode == ClassifierMode.TRAIN:
             if features.feature_length_ratio_enabled():
@@ -97,7 +92,7 @@ class LRExpectationClassifier:
             for archetype in archetypes:
                 feat.append(
                     features.word2vec_example_similarity(
-                        word2vec, index2word_set, example, archetype.split(" ")
+                        word2vec, example, archetype.split(" ")
                     )
                 )
         if feature_patterns_enabled:

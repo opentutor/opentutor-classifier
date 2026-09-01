@@ -67,10 +67,13 @@ def load_yaml(file_path: str) -> Dict[str, Any]:
         return yaml.load(yaml_file, Loader=yaml.FullLoader)
 
 
-def require_env(n: str) -> str:
+def require_env(n: str, default: Optional[str] = None) -> str:
     env_val = environ.get(n, "")
     if not env_val:
-        raise EnvironmentError(f"missing required env var {n}")
+        if default is None:
+            raise EnvironmentError(f"missing required env var {n}")
+        else:
+            return default
     return env_val
 
 

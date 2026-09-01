@@ -60,7 +60,7 @@ test: $(VENV)
 		&& $(MAKE) installed/word2vec.bin
 	uv run coverage run \
 		--omit="$(PWD)/tests" \
-		-m py.test -vv $(args)
+		-m pytest -vv $(args)
 
 PHONY: test
 test-not-slow: $(VENV)

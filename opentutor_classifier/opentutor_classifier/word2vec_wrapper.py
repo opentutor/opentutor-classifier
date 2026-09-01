@@ -5,28 +5,32 @@
 # The full terms of this copyright and license should always be found in the root directory of this software deliverable as "license.txt" and if these terms are not found with this software, please contact the USC Stevens Center for the full license.
 #
 import os
-from typing import Any, Dict
+from typing import Dict
 from abc import ABC, abstractmethod
 
-from numpy import ndarray
+from numpy import ndarray, array
+import openai
+from openai.types.create_embedding_response import CreateEmbeddingResponse
 from opentutor_classifier.constants import (
-    DEPLOYMENT_MODE_ONLINE,
     DEPLOYMENT_MODE_OFFLINE,
 )
 
+from opentutor_classifier.openai.constants import OPENAI_API_KEY, OPENAI_ORG_ID_KEY
+from opentutor_classifier.utils import require_env
 from opentutor_classifier.word2vec import find_or_load_word2vec
-from opentutor_classifier.api import sbert_word_to_vec, get_sbert_index_to_key
+from opentutor_classifier.api import sbert_word_to_vec
 
 DEPLOYMENT_MODE = os.environ.get("DEPLOYMENT_MODE") or DEPLOYMENT_MODE_OFFLINE
+
+api_key = require_env(OPENAI_API_KEY, "DUMMY")
+organization = require_env(OPENAI_ORG_ID_KEY, "DUMMY")
+
+open_ai_client = openai.OpenAI(api_key=api_key)
 
 
 class Word2VecWrapper(ABC):
     @abstractmethod
     def get_feature_vectors(self, words, slim: bool = False) -> Dict[str, ndarray]:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def index_to_key(self, slim: bool = False) -> Any:
         raise NotImplementedError()
 
 
@@ -37,18 +41,24 @@ class Word2VecWrapperOffline(Word2VecWrapper):
 
     def get_feature_vectors(self, words, slim: bool = False) -> Dict[str, ndarray]:
         result: Dict[str, ndarray] = dict()
-        for word in words:
-            if not slim:
-                if word in self.model:
-                    result[word] = self.model[word]
-            elif word in self.model_slim:
-                result[word] = self.model_slim[word]
-        return result
+        word_list = list(words)
+        if len(word_list) == 0:
+            return result
+        openai_result: CreateEmbeddingResponse = open_ai_client.embeddings.create(
+            input=word_list, dimensions=300, model="text-embedding-3-small"
+        )
 
-    def index_to_key(self, slim: bool = False) -> Any:
-        if slim:
-            return self.model_slim.index_to_key
-        return self.model.index_to_key
+        for idx, word in enumerate(word_list):
+            embedding = array(openai_result.data[idx].embedding)
+            result[word] = embedding
+
+        # for word in words:
+        #     if not slim:
+        #         if word in self.model:
+        #             result[word] = self.model[word]
+        #     elif word in self.model_slim:
+        #         result[word] = self.model_slim[word]
+        return result
 
 
 class Word2VecWrapperOnline(Word2VecWrapper):
@@ -97,12 +107,6 @@ class Word2VecWrapperOnline(Word2VecWrapper):
             res_words = {**res_words, **sbert_w2v_result}
         return res_words
 
-    def index_to_key(self, slim: bool = False) -> Any:
-        return get_sbert_index_to_key(slim)
-
 
 def get_word2vec(path, slim_path) -> Word2VecWrapper:
-    if DEPLOYMENT_MODE == DEPLOYMENT_MODE_ONLINE:
-        return Word2VecWrapperOnline(path, slim_path)
-    else:
-        return Word2VecWrapperOffline(path, slim_path)
+    return Word2VecWrapperOffline(path, slim_path)

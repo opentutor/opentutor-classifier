@@ -78,12 +78,10 @@ def _avg_feature_vector(
     words: List[str],
     model: Word2VecWrapper,
     num_features: int,
-    index2word_set: set,
 ) -> np.ndarray:
     feature_vec = np.zeros((num_features,), dtype="float32")
     nwords = 0
-    common_words = set(words).intersection(index2word_set)
-    word_vecs = model.get_feature_vectors(common_words, False)
+    word_vecs = model.get_feature_vectors(words, False)
     for word in word_vecs.keys():
         nwords = nwords + 1
         feature_vec = np.add(feature_vec, word_vecs[word])
@@ -133,7 +131,6 @@ def regex_match_ratio(str_example: str, regexes: List[str]) -> float:
 
 def word2vec_example_similarity(
     word2vec: Word2VecWrapper,
-    index2word_set: set,
     example: List[str],
     ideal: List[str],
     num_features: int = 300,
@@ -142,17 +139,15 @@ def word2vec_example_similarity(
         example,
         model=word2vec,
         num_features=num_features,
-        index2word_set=index2word_set,
     )
     ia_feature_vec = _avg_feature_vector(
-        ideal, model=word2vec, num_features=num_features, index2word_set=index2word_set
+        ideal, model=word2vec, num_features=num_features
     )
     return _calculate_similarity(example_feature_vec, ia_feature_vec)
 
 
 def word2vec_question_similarity(
     word2vec: Word2VecWrapper,
-    index2word_set: set,
     example: List[str],
     question: List[str],
     num_features: int = 300,
@@ -161,12 +156,10 @@ def word2vec_question_similarity(
         example,
         model=word2vec,
         num_features=num_features,
-        index2word_set=index2word_set,
     )
     question_feature_vec = _avg_feature_vector(
         question,
         model=word2vec,
         num_features=num_features,
-        index2word_set=index2word_set,
     )
     return _calculate_similarity(example_feature_vec, question_feature_vec)

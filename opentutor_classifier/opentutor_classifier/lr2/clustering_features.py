@@ -29,9 +29,8 @@ from .features import (
 
 
 class CustomDBScanClustering:
-    def __init__(self, word2vec: Word2VecWrapper, index2word_set):
+    def __init__(self, word2vec: Word2VecWrapper):
         self.word2vec = word2vec
-        self.index2word_set = index2word_set
         self.word_alignment_dp: Dict[Tuple[Tuple[str, ...], Tuple[str, ...]], float] = (
             dict()
         )
@@ -53,9 +52,7 @@ class CustomDBScanClustering:
         for ia_i in ia_:
             inner_cost = []
             for e in example_:
-                dist = word2vec_example_similarity(
-                    self.word2vec, self.index2word_set, [e], [ia_i]
-                )
+                dist = word2vec_example_similarity(self.word2vec, [e], [ia_i])
                 inner_cost.append(dist)
             cost.append(inner_cost)
         row_idx, col_idx = linear_sum_assignment(cost, maximize=True)
@@ -75,7 +72,6 @@ class CustomDBScanClustering:
             words=sentence,
             model=self.word2vec,
             num_features=num_features,
-            index2word_set=self.index2word_set,
         )
 
     def get_clusters(
