@@ -486,7 +486,7 @@ wheels = [
 [[package]]
 name = "opentutor-classifier"
 version = "1.0.0"
-source = { path = "../opentutor_classifier/dist/opentutor_classifier-1.0.0.tar.gz" }
+source = { directory = "../opentutor_classifier" }
 dependencies = [
     { name = "aws-lambda-powertools" },
     { name = "backoff" },
@@ -515,7 +515,6 @@ dependencies = [
     { name = "tomlkit" },
     { name = "werkzeug" },
 ]
-sdist = { hash = "sha256:0e8a0e233db57619901ec42d49b7604b2c7a4a9c42413a4362cf484f7c201797" }
 
 [package.metadata]
 requires-dist = [
@@ -545,6 +544,22 @@ requires-dist = [
     { name = "tok", specifier = ">=0.1.14,<0.2" },
     { name = "tomlkit", specifier = ">=0.8.0,<0.9" },
     { name = "werkzeug", specifier = ">=3.0.3,<4" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "coverage", specifier = "~=5.5" },
+    { name = "freezegun", specifier = ">=1.1.0,<2" },
+    { name = "pip-upgrader" },
+    { name = "pytest", specifier = ">=6.2.4,<7" },
+    { name = "pytest-env", specifier = ">=0.6.2,<0.7" },
+    { name = "pytest-mock", specifier = ">=3.6.1,<4" },
+    { name = "pytest-only", specifier = ">=1.2.2,<2" },
+    { name = "responses", specifier = ">=0.13.3,<0.14" },
+    { name = "tqdm", specifier = ">=4.66.4,<5" },
+    { name = "types-python-dateutil", specifier = ">=2.9.0,<3" },
+    { name = "types-pyyaml", specifier = ">=6.0.12,<7" },
+    { name = "types-requests", specifier = ">=2.32.0,<3" },
 ]
 
 [[package]]
@@ -732,7 +747,7 @@ base = [
     { name = "tqdm", specifier = ">=4.66.4,<5" },
     { name = "urllib3", specifier = ">=1.26.19,<3" },
 ]
-dev = [{ name = "opentutor-classifier", path = "../opentutor_classifier/dist/opentutor_classifier-1.0.0.tar.gz" }]
+dev = [{ name = "opentutor-classifier", directory = "../opentutor_classifier" }]
 evaluate = [
     { name = "aws-lambda-powertools", specifier = ">=3.21.0" },
     { name = "backoff", specifier = ">=2.2.1,<3" },
