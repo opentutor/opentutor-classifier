@@ -147,7 +147,7 @@ default-groups = [
 ]
 
 [tool.uv.sources]
-opentutor-classifier = { path = "../opentutor_classifier/dist/opentutor_classifier-1.0.0.tar.gz" }
+opentutor-classifier = { path = "../opentutor_classifier" }
 
 [tool.hatch.build.targets.wheel]
 packages = ["functions", "src"]
